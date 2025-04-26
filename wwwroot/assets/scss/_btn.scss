@@ -1,0 +1,297 @@
+/*--
+	-theme-btn
+----------------------------------------*/
+.ht-btn {
+    overflow: hidden;
+    color: $white;
+    font-size: 20px;
+    font-family: $garamond;
+    font-weight: 500;
+    line-height: 1;
+    background-color: $theme-color;
+    padding: 16px 30px 18px 30px;
+    position: relative;
+    z-index: 1;
+    cursor: pointer;
+    text-decoration: none;
+    text-transform: capitalize;
+    display: inline-block;
+    transition: all;
+    -webkit-transition-duration: 800ms;
+    transition-duration: 800ms;
+
+    &::before {
+        -webkit-transition-duration: 800ms;
+        transition-duration: 800ms;
+        position: absolute;
+        width: 0px;
+        height: 100%;
+        content: "";
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: -1;
+        background: $black;
+    }
+
+    &:hover {
+        color: $white;
+
+        &::before {
+            width: 100%;
+            height: 100%;
+            right: 0;
+            border-radius: 0;
+        }
+    }
+}
+
+.style-2 {
+    color: $white;
+    background: $theme-color;
+    border-radius: 8px;
+}
+
+.style-3 {
+    color: $black;
+    font-size: 16px;
+    font-family: $panchangSemi;
+    font-weight: 600;
+    line-height: 20px;
+    padding: 15px 30px;
+    background: $theme-color2;
+
+    &::before {
+        background: $black;
+    }
+}
+
+.style-4 {
+    color: $black;
+    font-size: 16px;
+    font-family: $panchangBold;
+    font-weight: 700;
+    line-height: 20px;
+    padding: 15px 30px;
+    background: transparent;
+    border: 1px solid $black;
+
+    &::before {
+        background: $black;
+    }
+
+    &:hover {
+        border-color: $black;
+    }
+}
+
+.style-5 {
+    color: $white;
+    font-size: 16px;
+    font-family: $panchangSemi;
+    font-weight: 600;
+    line-height: 20px;
+    padding: 15px 30px;
+    background: $black;
+
+    &::before {
+        background: $white;
+    }
+
+    &:hover {
+        color: $black;
+    }
+}
+
+.style-6 {
+    color: $white;
+    font-size: 20px;
+    font-family: $supremeMedium;
+    font-weight: 500;
+    padding: 15px 30px;
+    background: $black;
+    border-radius: 8px;
+
+    &::before {
+        background: $theme-color;
+    }
+}
+
+.style-7 {
+    color: $white;
+    font-size: 20px;
+    font-family: $supremeMedium;
+    font-weight: 500;
+    text-transform: uppercase;
+    line-height: 30px;
+    padding: 13px 32px;
+    background: transparent;
+    border-radius: 8px;
+    border: 1px solid $white;
+
+    &::before {
+        background: $theme-color;
+    }
+
+    &:hover {
+        border-color: $theme-color;
+    }
+}
+
+.style-8 {
+    color: $white;
+    font-size: 20px;
+    font-family: $supremeMedium;
+    font-weight: 500;
+    text-transform: uppercase;
+    line-height: 30px;
+    padding: 13px 32px;
+    background: transparent;
+    border-radius: 8px;
+    border: 1px solid $white;
+
+    &::before {
+        background: $theme-color3;
+    }
+
+    &:hover {
+        color: $black;
+        border-color: $theme-color3;
+    }
+}
+
+.style-9 {
+    color: $black;
+    border-radius: 8px;
+    background: $theme-color3;
+
+    &::before {
+        background: $black;
+    }
+}
+
+.style-10 {
+    color: $black;
+    font-size: 20px;
+    font-weight: 500;
+    font-family: $supremeMedium;
+    padding: 14px 33px 16px 33px;
+    border-radius: 50px;
+    background: $white;
+    display: inline-block;
+
+    &::before {
+        background: $black;
+    }
+
+}
+
+.style-11 {
+    color: $white;
+    font-size: 20px;
+    font-weight: 500;
+    font-family: $supremeMedium;
+    padding: 23px 65px 25px 65px;
+    border-radius: 50px;
+    background: $black;
+    display: inline-block;
+
+    &::before {
+        background: $white;
+    }
+
+    &:hover {
+        color: $black;
+    }
+
+}
+
+.style-12 {
+    color: $white;
+    font-size: 20px;
+    font-weight: 500;
+    font-family: $supremeMedium;
+    padding: 23px 65px 25px 65px;
+    border-radius: 50px;
+    background: $theme-color;
+    display: inline-block;
+
+    &::before {
+        background: $white;
+    }
+
+    &:hover {
+        color: $black;
+    }
+
+}
+
+.style-13 {
+    color: $black;
+    font-size: 20px;
+    font-weight: 500;
+    font-family: $supremeMedium;
+    padding: 15px 45px 16px 45px;
+    border-radius: 50px;
+    background: $theme-color4;
+    border: 1px solid $black;
+    display: inline-block;
+
+    &::before {
+        background: $theme-color;
+    }
+
+    &:hover {
+        color: $white;
+        border-color: $theme-color;
+    }
+
+}
+
+.style-14 {
+    color: $black;
+    font-size: 20px;
+    font-weight: 500;
+    font-family: $supremeMedium;
+    padding: 16px 33px 18px 33px;
+    border-radius: 50px;
+    background: transparent;
+    border: 1px solid $black;
+    display: inline-block;
+
+    &::before {
+        background: $theme-color4;
+    }
+
+    &:hover {
+        color: $white;
+    }
+
+}
+
+.style-15 {
+    color: $black;
+    padding: 15px 43px;
+    background: transparent;
+    border: 1px solid $black;
+    border-radius: 8px;
+
+    &::before {
+        background: $theme-color;
+    }
+
+    &:hover {
+        border-color: $theme-color;
+    }
+}
+
+
+.arrow-btn {
+    width: 90px;
+    height: 90px;
+    border-radius: 5px;
+    display: inline-block;
+    border: 1px solid $black;
+    text-align: center;
+    line-height: 87px;
+}

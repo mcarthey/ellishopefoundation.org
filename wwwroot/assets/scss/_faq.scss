@@ -1,0 +1,369 @@
+.faq-que-list {
+    .accordion-item:first-of-type>.accordion-header .accordion-button {
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+
+    .accordion-item:last-of-type>.accordion-header .accordion-button.collapsed {
+        border-bottom-right-radius: 10px;
+        border-bottom-left-radius: 10px;
+    }
+
+    .accordion-item {
+        border: 0px;
+        border-radius: 10px;
+        background: transparent;
+        margin-bottom: 25px;
+
+        button:focus,
+        input:focus,
+        input:focus,
+        textarea,
+        textarea:focus {
+            outline: 0;
+        }
+
+        .accordion-button {
+            transition: unset;
+            color: $heding;
+            font-size: 30px;
+            font-family: $garamond;
+            font-weight: 500;
+            line-height: 1.875rem;
+            border: 0;
+            box-shadow: none;
+            background: $theme-color3;
+            border-radius: 10px;
+            padding: 0;
+            padding: 30px 0 34px 20px;
+            position: relative;
+            box-shadow: 0;
+            border-radius: 10px 10px 0 0;
+            -webkit-transition: unset;
+            -moz-transition: unset;
+            -ms-transition: unset;
+            -o-transition: unset;
+            word-wrap: normal;
+            display: inline-block;
+
+            .number {
+                font-size: 18px;
+                font-weight: 400;
+                font-family: $supremeRegular;
+                display: inline-block;
+                margin-right: 15px;
+            }
+
+            &.collapsed {
+                padding-bottom: 24px;
+                background: transparent;
+                border: 0;
+                border: 1px solid $black;
+                border-radius: 10px;
+            }
+
+            @media #{$laptop} {
+                padding: 21px 20px;
+                font-size: 20px;
+            }
+
+            @media #{$lg} {
+                padding: 21px 20px;
+                font-size: 18px;
+            }
+
+            @media #{$xs} {
+                padding: 21px 10px;
+                font-size: 18px;
+            }
+
+            // &:not(.collapsed) {
+            //     color: $white;
+            //     background-color: unset;
+            //     box-shadow: unset;
+            // }
+            &:focus {
+                box-shadow: none;
+                outline: 0;
+            }
+
+            &::before {
+                content: "\F282";
+                position: absolute;
+                font-family: "bootstrap-icons";
+                font-size: 25px;
+                font-weight: 300;
+                color: $heding;
+                line-height: 40px;
+                text-align: center;
+                border-radius: 50%;
+                right: 20px;
+                top: 50%;
+                transform: translateY(-50%) rotate(180deg);
+                transition: 0.3s linear;
+                z-index: 1;
+
+                @media #{$md} {
+                    right: 10px;
+                    font-size: 16px;
+                }
+
+                @media #{$xs} {
+                    color: $heding;
+                    right: 5px;
+                    font-size: 16px;
+                    width: unset;
+                    height: unset;
+                    background: transparent;
+                }
+            }
+
+            &::after {
+                display: none;
+            }
+        }
+
+        .collapsed {
+            border: 0;
+            border-radius: 10px 10px 0 0;
+
+            &::before {
+                content: "\F282";
+                color: $heding;
+                transform: translateY(-50%) rotate(0deg);
+
+                @media #{$xs} {
+                    color: $heding;
+                    right: 5px;
+                    font-size: 16px;
+                    width: unset;
+                    height: unset;
+                    background: transparent;
+                }
+            }
+        }
+
+        .accordion-body {
+            padding-top: 0;
+            background: $theme-color3;
+            border-radius: 0 0 10px 10px;
+
+            p {
+                color: $body-text-color;
+                max-width: 70%;
+            }
+        }
+    }
+
+    &.faq-style-2 {
+        .accordion-item {
+
+            .accordion-button {
+                color: $white;
+                font-size: 40px;
+                font-weight: 400;
+                font-style: italic;
+                font-family: $supremeItalic;
+                background: rgba(255, 255, 255, 0.13);
+                padding-left: 40px;
+                padding-right: 40px;
+                @include transition(.4s);
+
+                &::before {
+                    content: "\F2EA";
+                    color: $white;
+                    font-style: normal;
+                    width: 60px;
+                    height: 60px;
+                    border: 1px solid $theme-color;
+                    line-height: 60px;
+                    font-size: 30px;
+                    background: $theme-color;
+                    top: 47px;
+                    right: 40px;
+                }
+
+                .number {
+                    font-size: 40px;
+                    font-weight: 400;
+                    font-family: $supremeRegular;
+                    font-style: normal;
+                    color: $white;
+                }
+
+                &.collapsed {
+                    border: 0;
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+                    border-radius: 0;
+                    background: transparent;
+                    font-weight: 700;
+                    font-style: italic;
+                    font-family: $supremeItalic;
+                    padding-bottom: 80px;
+                    @include transition(.4s);
+
+                    .number {
+                        color: rgba(255, 255, 255, 0.3);
+                    }
+                }
+
+                @media #{$max-lg} {
+                    font-size: 28px;
+
+                    .number {
+                        font-size: 28px;
+                    }
+                }
+
+                @media #{$max-md} {
+                    font-size: 22px;
+                    padding-left: 15px;
+                    padding-right: 15px;
+
+                    .number {
+                        font-size: 22px;
+                    }
+
+                    &::before {
+                        width: 40px;
+                        height: 40px;
+                        line-height: 40px;
+                        right: 15px;
+                    }
+
+                    &.collapsed {
+                        &::before {
+                            width: 40px;
+                            height: 40px;
+                            line-height: 40px;
+                            right: 15px;
+                        }
+                    }
+                }
+
+                @media #{$max-xs} {
+                    &::before {
+                        right: 5px;
+                    }
+
+                    &.collapsed {
+                        &::before {
+                            right: 5px;
+                        }
+                    }
+                }
+            }
+
+            .collapsed::before {
+                content: "\F4FE";
+                color: $white;
+                font-style: normal;
+                width: 60px;
+                height: 60px;
+                border: 1px solid $white;
+                line-height: 60px;
+                font-size: 30px;
+                background: transparent;
+                top: 34%;
+                right: 40px;
+            }
+
+            .accordion-body {
+                padding-top: 0;
+                background: rgba(255, 255, 255, 0.13);
+
+                p {
+                    color: rgba(255, 255, 255, 0.5);
+                    font-size: 20px;
+                    line-height: 32px;
+                    max-width: 60%;
+                    padding-left: 97px;
+                }
+
+                @media #{$max-md} {
+                    p {
+                        max-width: 90%;
+                        padding-left: 0;
+                        font-size: 18px;
+                    }
+                }
+            }
+        }
+    }
+
+    &.faq-style-3 {
+        .accordion-item:last-of-type>.accordion-header .accordion-button.collapsed {
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        background: $white;
+        border-radius: 30px;
+        padding: 50px 60px 66px 60px;
+
+        .accordion-item {
+            .accordion-button {
+                font-size: 48px;
+                font-weight: 600;
+                font-family: $garamond;
+                background: rgba(255, 255, 255, 0.13);
+                padding-left: 0;
+                padding-right: 0;
+                @include transition(.4s);
+
+                &.collapsed {
+                    border: 0;
+                    border-bottom: 1px solid $black;
+                    border-radius: 0;
+                    background: transparent;
+                    font-weight: 600;
+                    @include transition(.4s);
+                }
+
+                @media #{$max-lg} {
+                    font-size: 28px;
+                }
+
+                @media #{$max-md} {
+                    font-size: 22px;
+                    padding-left: 15px;
+                    padding-right: 15px;
+
+                }
+
+                @media #{$max-xs} {}
+            }
+
+            .accordion-body {
+                padding-top: 0;
+                padding-left: 0;
+                padding-right: 0;
+                background: rgba(255, 255, 255, 0.13);
+
+                p {
+                    color: $body-text-color;
+                    font-size: 22px;
+                    line-height: 40px;
+                    max-width: 100%;
+                }
+
+                @media #{$max-md} {
+                    p {
+                        font-size: 18px;
+                    }
+                }
+            }
+        }
+
+        @media #{$max-lg} {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+    }
+}
+
+.faq-section-two {
+    background: $deep-green;
+    position: relative;
+    z-index: 1;
+}

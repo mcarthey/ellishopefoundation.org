@@ -1,0 +1,61 @@
+// Font Family
+$garamond: "EB Garamond", serif;
+
+$panchangLight: 'Panchang-Light';
+$panchangRegular: 'Panchang-Regular';
+$panchangMedium: 'Panchang-Medium';
+$panchangSemi: 'Panchang-Semibold';
+$panchangBold: "Panchang-Bold";
+$panchangExbold: 'Panchang-Extrabold';
+
+$supremeLight: 'Supreme-Light';
+$supremeRegular: 'Supreme-Regular';
+$supremeItalic: 'Supreme-Italic';
+$supremeMedium: 'Supreme-Medium';
+$supremeMedit: 'Supreme-MediumItalic';
+$supremeBold: 'Supreme-Bold';
+$supremeExbold: 'Supreme-Extrabold';
+
+// Colors ---------------
+$white: #ffffff;
+$black: #000;
+$deep-green: #002B2B;
+$grey: #F4F4F4;
+$light-grey: #EBF3FF;
+$theme-color: #F74F22;
+$theme-color2: #F2C944;
+$theme-color3: #FFDB65;
+$theme-color4: #F3BF56;
+$title: #000000;
+$title2: #103060;
+$body-text-color: rgba(0, 0, 0, 0.7);
+$body-text-color2: rgba(0, 0, 0, 0.5);
+$hr-border-color: rgb(0, 0, 0);
+$yellow-color: #FFE149;
+
+
+// Heading Color
+$heding: #000000;
+
+
+// Responsive Variables
+$xxl: "only screen and (min-width: 1601px) and (max-width: 1900px)";
+$xl: "only screen and (min-width: 1601px) and (max-width: 1800px)";
+$laptop: "only screen and (min-width: 1200px) and (max-width: 1600px)";
+$lg: "only screen and (min-width: 992px) and (max-width: 1200px)";
+$md: "only screen and (min-width: 768px) and (max-width: 991px)";
+$xs: "(max-width: 767px)";
+$sm: "only screen and (min-width: 576px) and (max-width: 767px)";
+
+// Responsive Variables for max-width
+$max-xxl: "only screen and (max-width: 1900px)";
+$max-xl: "only screen and (max-width: 1800px)";
+$max-laptop: "only screen and (max-width: 1600px)";
+$max-lg: "only screen and (max-width: 1200px)";
+$max-md: "only screen and (max-width: 991.98px)";
+$max-xs: "only screen and (max-width: 767.98px)";
+$max-sm: "only screen and (min-width: 576px) and (max-width: 767.98px)";
+$max-xs-s: "only screen and (max-width: 575.98px)";
+
+//Landscape-responsive
+$xs-landscape: "only screen and (min-width: 540px) and (max-width: 767px) and (orientation: landscape)";

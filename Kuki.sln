@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35818.85 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kuki", "Kuki.csproj", "{DF618462-DEE8-4CF7-99C4-CFAB8A1D318C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DF618462-DEE8-4CF7-99C4-CFAB8A1D318C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF618462-DEE8-4CF7-99C4-CFAB8A1D318C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF618462-DEE8-4CF7-99C4-CFAB8A1D318C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF618462-DEE8-4CF7-99C4-CFAB8A1D318C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {630803FE-41A7-433F-8261-B1907AB9E445}
+	EndGlobalSection
+EndGlobal

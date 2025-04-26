@@ -1,0 +1,1447 @@
+.cause-slider-one {
+    margin-left: 200px;
+    width: 104vw;
+
+    @media #{$max-laptop} {
+        margin-left: 0;
+        padding-left: 15px;
+        padding-right: 15px;
+        width: 100%;
+    }
+}
+
+.cause-slider-two {
+    max-width: 1530px;
+    margin-left: 130px;
+    position: relative;
+    z-index: 1;
+
+    @media #{$max-laptop} {
+        margin: 0;
+    }
+}
+
+.cause-slider-three {
+    padding-left: 120px;
+    padding-right: 120px;
+
+    @media #{$max-xl} {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}
+
+.cause-slider-four {
+    width: 118vw;
+    margin-left: -180px;
+
+    @media #{$max-laptop} {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+.cause-slider-six {
+    width: 118vw;
+    margin-left: -180px;
+
+    @media #{$max-laptop} {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+.cause-section-three {
+
+    .shape-1,
+    .shape-2 {
+        position: absolute;
+        z-index: 1;
+    }
+
+    .shape-1 {
+        right: 160px;
+        top: 134px;
+        animation: rotation infinite 8s linear;
+    }
+
+    @media #{$max-lg} {
+
+        .shape-1,
+        .shape-2 {
+            display: none;
+        }
+    }
+}
+
+.cause-section-four {
+    background: #F9F9F9;
+}
+
+.cause-section.arrow-style-2 {
+
+    @media #{$max-xl} {
+
+        .slick-prev,
+        .slick-next {
+            display: none;
+        }
+    }
+}
+
+.causes-wrap-1 {
+    background: $white;
+    padding: 30px 30px 40px 30px;
+    margin-bottom: 45px;
+    margin-top: 15px;
+    box-shadow: 0px 15px 30px 0px rgba(0, 0, 0, 0.10);
+
+    &.cs-style-2 {
+        .progress {
+            .progress-bar {
+                width: 72%;
+            }
+
+            span {
+                right: 21%;
+            }
+        }
+    }
+
+    &.cs-style-3 {
+        .progress {
+            .progress-bar {
+                width: 86%;
+            }
+
+            span {
+                right: 8%;
+            }
+        }
+    }
+
+    .cause-thumb {
+        position: relative;
+        z-index: 1;
+
+        img {
+            width: 100%;
+        }
+
+        .cause-tag {
+            color: $white;
+            font-size: 16px;
+            line-height: 16px;
+            background: $theme-color;
+            padding: 6px 20px;
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            z-index: 1;
+        }
+    }
+
+    .cause-title {
+        margin-top: 25px;
+        margin-bottom: 12px;
+
+        a {
+            color: $heding;
+            font-size: 30px;
+            font-family: $garamond;
+            font-weight: 500;
+            line-height: 1.35;
+            @include transition(.4s);
+
+            &:hover {
+                color: $theme-color;
+            }
+        }
+    }
+
+    .description {
+        color: rgba(0, 0, 0, 0.5);
+        margin-bottom: 55px;
+    }
+
+    .fund {
+        font-size: 20px;
+        font-family: $garamond;
+        font-weight: 400;
+
+        span {
+            font-family: $garamond;
+            font-weight: 700;
+        }
+    }
+
+    .progress {
+        height: 7px;
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 0px;
+        overflow: visible;
+        position: relative;
+        z-index: 1;
+        margin-bottom: 30px;
+
+        .progress-bar {
+            height: 7px;
+            background: $theme-color;
+            width: 64%;
+            border-radius: 0px;
+            overflow: visible;
+        }
+
+        span {
+            color: $heding;
+            font-size: 20px;
+            font-weight: 500;
+            font-family: $supremeMedium;
+            position: absolute;
+            right: 29%;
+            top: -34px;
+        }
+    }
+
+    .donation-btn {
+        color: $white;
+        font-size: 20px;
+        font-family: $garamond;
+        font-weight: 500;
+        line-height: 1;
+        background-color: $black;
+        padding: 16px 30px 18px 30px;
+        margin-top: 35px;
+        text-transform: capitalize;
+        display: inline-block;
+        transition: all;
+        -webkit-transition-duration: 800ms;
+        transition-duration: 800ms;
+        width: 100%;
+        text-align: center;
+
+        &:hover {
+            background: $theme-color;
+        }
+    }
+
+    .cause-title,
+    .description {
+        padding-right: 35px;
+
+    }
+
+    @media #{$max-laptop} {
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-top: 15px;
+
+        .cause-title {
+            a {
+                font-size: 24px;
+            }
+        }
+    }
+
+    @media #{$max-lg} {
+
+        .cause-title,
+        .description {
+            padding-right: 0;
+
+        }
+    }
+}
+
+.causes-wrap-2 {
+    background: $white;
+    padding: 30px 30px 40px 30px;
+    border-radius: 10px;
+    margin-bottom: 45px;
+    margin-top: 15px;
+    box-shadow: 0px 13px 13px 0px rgba(0, 0, 0, 0.07);
+
+    &.cs-style-2 {
+        .progress {
+            .progress-bar {
+                width: 72%;
+            }
+
+            span {
+                right: 21%;
+            }
+        }
+    }
+
+    &.cs-style-3 {
+        .progress {
+            .progress-bar {
+                width: 86%;
+            }
+
+            span {
+                right: 8%;
+            }
+        }
+    }
+
+    .cause-thumb {
+        position: relative;
+        z-index: 1;
+
+        img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .cause-tag {
+            color: $white;
+            font-size: 16px;
+            line-height: 16px;
+            background: $theme-color;
+            padding: 6px 20px;
+            border-radius: 4px;
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            z-index: 1;
+        }
+    }
+
+    .cause-title {
+        margin-top: 25px;
+        margin-bottom: 12px;
+
+        a {
+            color: $heding;
+            font-size: 30px;
+            font-family: $garamond;
+            font-weight: 500;
+            line-height: 1.35;
+            @include transition(.4s);
+
+            &:hover {
+                color: $theme-color;
+            }
+        }
+    }
+
+    .description {
+        color: rgba(0, 0, 0, 0.5);
+        margin-bottom: 55px;
+    }
+
+    .fund {
+        font-size: 20px;
+        font-family: $garamond;
+        font-weight: 400;
+
+        span {
+            font-family: $garamond;
+            font-weight: 700;
+        }
+    }
+
+    .progress {
+        height: 7px;
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 0px;
+        overflow: visible;
+        position: relative;
+        z-index: 1;
+        margin-bottom: 30px;
+
+        .progress-bar {
+            height: 7px;
+            background: $theme-color;
+            width: 64%;
+            border-radius: 0px;
+            overflow: visible;
+        }
+
+        span {
+            color: $heding;
+            font-size: 20px;
+            font-weight: 500;
+            font-family: $supremeMedium;
+            position: absolute;
+            right: 29%;
+            top: -34px;
+        }
+    }
+
+    .donation-btn {
+        color: $black;
+        font-size: 20px;
+        font-family: $garamond;
+        font-weight: 500;
+        line-height: 1;
+        padding: 16px 30px 18px 30px;
+        border: 1.5px solid $black;
+        border-radius: 8px;
+        margin-top: 35px;
+        text-transform: capitalize;
+        display: inline-block;
+        transition: all;
+        -webkit-transition-duration: 800ms;
+        transition-duration: 800ms;
+        width: 100%;
+        text-align: center;
+
+        &:hover {
+            color: $white;
+            border-color: $theme-color;
+            background: $theme-color;
+        }
+    }
+
+    .cause-title,
+    .description {
+        padding-right: 35px;
+    }
+
+    @media #{$max-laptop} {
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-top: 15px;
+
+        .cause-title {
+            a {
+                font-size: 24px;
+            }
+        }
+    }
+
+    @media #{$max-lg} {
+
+        .cause-title,
+        .description {
+            padding-right: 0;
+
+        }
+    }
+}
+
+.causes-wrap-3 {
+    background: $white;
+    border: 3px solid $black;
+    padding: 30px 30px 38px 30px;
+    border-radius: 10px;
+    margin-bottom: 45px;
+    margin-top: 15px;
+    // box-shadow: 0px 30px 60px 0px rgba(0, 0, 0, 0.07);
+
+    .cause-thumb {
+        position: relative;
+        z-index: 1;
+
+        &::before {
+            content: '';
+            position: absolute;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.00) 28.64%, rgba(0, 0, 0, 0.50) 100%);
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            left: 0;
+            top: 0;
+        }
+
+        img {
+            width: 100%;
+            border-radius: 10px;
+        }
+    }
+
+    .cause-donation {
+        position: absolute;
+        z-index: 1;
+        left: 0;
+        right: 0;
+        bottom: 20px;
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .cause-title {
+        margin-top: 25px;
+        margin-bottom: 12px;
+
+        a {
+            color: $heding;
+            font-size: 24px;
+            font-family: $panchangSemi;
+            font-weight: 600;
+            line-height: 1.25;
+            letter-spacing: -2px;
+            @include transition(.4s);
+
+            &:hover {
+                color: $theme-color;
+            }
+        }
+    }
+
+    .description {
+        color: rgba(0, 0, 0, 0.5);
+        margin-bottom: 32px;
+    }
+
+    .fund {
+        font-size: 16px;
+        font-family: $supremeRegular;
+        font-weight: 400;
+        background: $white;
+        border-radius: 4px;
+        padding: 10px 14px;
+
+        &:first-child {
+            margin-right: 25px;
+        }
+
+        span {
+            font-family: $supremeMedium;
+            font-weight: 500;
+        }
+    }
+
+
+    .chart3 {
+        position: relative;
+        z-index: 1;
+
+        span {
+            color: #fff;
+            font-size: 26px;
+            font-weight: 700;
+            font-family: $supremeBold;
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 46%;
+            transform: translateY(-50%);
+            text-align: center;
+        }
+    }
+
+    .donation-btn {
+        color: $black;
+        font-size: 24px;
+        font-family: $supremeMedium;
+        font-weight: 500;
+        line-height: 1;
+        padding: 16px 30px 18px 30px;
+        border: 3px solid $black;
+        border-radius: 8px;
+        text-transform: capitalize;
+        display: inline-block;
+        transition: all;
+        -webkit-transition-duration: 800ms;
+        transition-duration: 800ms;
+        width: 100%;
+        text-align: center;
+
+        &:hover {
+            color: $white;
+            background: $black;
+        }
+    }
+
+
+    @media #{$max-laptop} {
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-top: 15px;
+
+        .cause-title {
+            a {
+                font-size: 24px;
+            }
+        }
+    }
+
+    @media #{$max-xs} {
+        .cause-donation {
+            padding-left: 10px;
+            bottom: 10px;
+        }
+
+        .fund {
+            padding: 4px;
+            font-size: 14px;
+        }
+
+        .chart3 {
+            display: none;
+        }
+
+        .cause-title {
+            a {
+                font-size: 22px;
+            }
+        }
+
+        .donation-btn {
+            font-size: 20px;
+        }
+    }
+}
+
+.causes-wrap-4 {
+    text-align: center;
+    background: $white;
+    padding: 30px 30px 40px 30px;
+    border-radius: 10px;
+    margin-bottom: 45px;
+    margin-top: 15px;
+    margin-left: 10px;
+    margin-right: 10px;
+    box-shadow: 0px 30px 30px 0px rgba(0, 0, 0, 0.03);
+
+    .cause-thumb {
+        position: relative;
+        z-index: 1;
+
+        img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .cause-tag {
+            color: $black;
+            font-size: 16px;
+            line-height: 16px;
+            background: $white;
+            padding: 6px 20px;
+            border-radius: 4px;
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            z-index: 1;
+        }
+    }
+
+    .cause-title {
+        margin-top: 25px;
+        margin-bottom: 12px;
+
+        a {
+            color: $heding;
+            font-size: 30px;
+            font-family: $garamond;
+            font-weight: 600;
+            line-height: 1.35;
+            @include transition(.4s);
+
+            &:hover {
+                color: $theme-color3;
+            }
+        }
+    }
+
+    .description {
+        color: rgba(0, 0, 0, 0.5);
+        margin-bottom: 55px;
+    }
+
+    .fund {
+        font-size: 20px;
+        font-family: $supremeRegular;
+        font-weight: 400;
+
+        span {
+            font-family: $garamond;
+            font-weight: 600;
+        }
+    }
+
+
+    &.cs-style-2 {
+        .progress {
+            .progress-bar {
+                width: 72%;
+            }
+
+            span {
+                right: 21%;
+            }
+        }
+    }
+
+    &.cs-style-3 {
+        .progress {
+            .progress-bar {
+                width: 86%;
+            }
+
+            span {
+                right: 9%;
+            }
+        }
+    }
+
+    .progress {
+        height: 7px;
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 0px;
+        overflow: visible;
+        position: relative;
+        z-index: 1;
+        margin-bottom: 30px;
+
+        .progress-bar {
+            height: 7px;
+            background: $theme-color3;
+            width: 64%;
+            border-radius: 0px;
+            overflow: visible;
+        }
+
+        span {
+            color: $heding;
+            font-size: 20px;
+            font-weight: 500;
+            font-family: $supremeMedium;
+            position: absolute;
+            right: 30%;
+            top: -34px;
+        }
+    }
+
+
+    .donation-btn {
+        color: $black;
+        font-size: 20px;
+        font-family: $supremeMedium;
+        font-weight: 500;
+        line-height: 1;
+        padding: 16px 30px 18px 30px;
+        border: 1.5px solid $black;
+        border-radius: 8px;
+        margin-top: 35px;
+        text-transform: capitalize;
+        display: inline-block;
+        transition: all;
+        -webkit-transition-duration: 800ms;
+        transition-duration: 800ms;
+        width: 100%;
+        text-align: center;
+
+        &:hover {
+            color: $black;
+            border-color: $theme-color3;
+            background: $theme-color3;
+        }
+    }
+
+
+    @media #{$max-laptop} {
+        margin-left: 0;
+        margin-right: 0;
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-top: 15px;
+
+        .cause-title {
+            a {
+                font-size: 24px;
+            }
+        }
+    }
+
+    @media #{$max-lg} {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
+.causes-wrap-5 {
+    text-align: center;
+    background: #FFE2DC;
+    padding: 30px 30px 40px 30px;
+    border-radius: 15px;
+    margin-bottom: 45px;
+    margin-top: 15px;
+    margin-left: 10px;
+    margin-right: 10px;
+
+
+    &.cs-style-2 {
+        background: #FFFDD3;
+
+        .progress {
+            .progress-bar {
+                width: 83%;
+            }
+
+            span {
+                right: 11%;
+            }
+        }
+    }
+
+    &.cs-style-3 {
+        background: #D9EDFF;
+
+        .progress {
+            .progress-bar {
+                width: 72%;
+            }
+
+            span {
+                right: 21%;
+            }
+        }
+    }
+
+    .cause-thumb {
+        position: relative;
+        z-index: 1;
+
+        img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .cause-tag {
+            color: $white;
+            font-size: 16px;
+            line-height: 16px;
+            background: $theme-color;
+            padding: 6px 20px;
+            border-radius: 4px;
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            z-index: 1;
+        }
+    }
+
+    .cause-title {
+        margin-top: 25px;
+        margin-bottom: 12px;
+
+        a {
+            color: $heding;
+            font-size: 30px;
+            font-family: $garamond;
+            font-weight: 500;
+            line-height: 1.35;
+            @include transition(.4s);
+
+            &:hover {
+                color: $theme-color3;
+            }
+        }
+    }
+
+    .description {
+        color: rgba(0, 0, 0, 0.5);
+        margin-bottom: 55px;
+    }
+
+    .fund {
+        font-size: 20px;
+        font-family: $supremeRegular;
+        font-weight: 400;
+
+        span {
+            font-family: $garamond;
+            font-weight: 600;
+        }
+    }
+
+    .progress {
+        height: 7px;
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 0px;
+        overflow: visible;
+        position: relative;
+        z-index: 1;
+        margin-bottom: 30px;
+
+        .progress-bar {
+            height: 7px;
+            background: $theme-color;
+            width: 54%;
+            border-radius: 0px;
+            overflow: visible;
+        }
+
+        span {
+            color: $heding;
+            font-size: 20px;
+            font-weight: 500;
+            font-family: $supremeMedium;
+            position: absolute;
+            right: 40%;
+            top: -34px;
+        }
+    }
+
+
+    .donation-btn {
+        color: $black;
+        font-size: 20px;
+        font-family: $supremeMedium;
+        font-weight: 500;
+        line-height: 1;
+        padding: 14px 30px 16px 30px;
+        border: 1.5px solid $black;
+        border-radius: 50px;
+        margin-top: 35px;
+        text-transform: capitalize;
+        display: inline-block;
+        transition: all;
+        -webkit-transition-duration: 800ms;
+        transition-duration: 800ms;
+        width: 100%;
+        text-align: center;
+
+        &:hover {
+            color: $white;
+            border-color: $black;
+            background: $black;
+        }
+    }
+
+
+    @media #{$max-laptop} {
+        margin-left: 0;
+        margin-right: 0;
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-top: 15px;
+
+        .cause-title {
+            a {
+                font-size: 24px;
+            }
+        }
+    }
+
+    @media #{$max-lg} {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
+.causes-wrap-6 {
+    padding: 30px 30px 40px 30px;
+    border: 1px solid $black;
+    border-radius: 15px;
+    margin-bottom: 45px;
+
+
+    &.cs-style-2 {
+        .progress {
+            .progress-bar {
+                width: 83%;
+            }
+
+            span {
+                right: 11%;
+            }
+        }
+    }
+
+    &.cs-style-3 {
+        .progress {
+            .progress-bar {
+                width: 72%;
+            }
+
+            span {
+                right: 21%;
+            }
+        }
+    }
+
+    .cause-thumb {
+        position: relative;
+        z-index: 1;
+
+        img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .cause-tag {
+            color: $white;
+            font-size: 16px;
+            line-height: 16px;
+            background: #FF6D3B;
+            padding: 6px 20px;
+            border-radius: 30px;
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            z-index: 1;
+        }
+    }
+
+    .cause-title {
+        margin-top: 25px;
+        margin-bottom: 12px;
+
+        a {
+            color: $heding;
+            font-size: 34px;
+            font-family: $garamond;
+            font-weight: 500;
+            line-height: 1.35;
+            @include transition(.4s);
+
+            &:hover {
+                color: $theme-color4;
+            }
+        }
+    }
+
+    .description {
+        color: rgba(0, 0, 0, 0.5);
+        margin-bottom: 55px;
+    }
+
+    .fund {
+        font-size: 20px;
+        font-family: $supremeRegular;
+        font-weight: 400;
+
+        span {
+            font-family: $garamond;
+            font-weight: 600;
+        }
+    }
+
+    .progress {
+        height: 7px;
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 0px;
+        overflow: visible;
+        position: relative;
+        z-index: 1;
+        margin-bottom: 30px;
+
+        .progress-bar {
+            height: 7px;
+            background: $black;
+            width: 54%;
+            border-radius: 0px;
+            overflow: visible;
+        }
+
+        span {
+            color: $heding;
+            font-size: 20px;
+            font-weight: 500;
+            font-family: $supremeMedium;
+            position: absolute;
+            right: 38%;
+            top: -34px;
+        }
+    }
+
+
+    .donation-btn {
+        color: $black;
+        font-size: 20px;
+        font-family: $supremeMedium;
+        font-weight: 500;
+        line-height: 1;
+        padding: 14px 30px 16px 30px;
+        border: 1.5px solid $black;
+        border-radius: 50px;
+        margin-top: 35px;
+        text-transform: capitalize;
+        display: inline-block;
+        transition: all;
+        -webkit-transition-duration: 800ms;
+        transition-duration: 800ms;
+        width: 100%;
+        text-align: center;
+
+        &:hover {
+            border-color: $black;
+            background: $theme-color4;
+        }
+    }
+
+
+    @media #{$max-laptop} {
+        margin-left: 0;
+        margin-right: 0;
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-top: 15px;
+
+        .cause-title {
+            a {
+                font-size: 24px;
+            }
+        }
+    }
+
+    @media #{$max-lg} {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
+.causes-wrap-7 {
+    background: $white;
+    padding: 30px 40px 30px 30px;
+    border-radius: 10px;
+    margin-bottom: 45px;
+    background: $white;
+    box-shadow: 0px 30px 60px 0px rgba(0, 0, 0, 0.07);
+
+    &.cs-style-2 {
+        .progress {
+            .progress-bar {
+                width: 72%;
+            }
+
+            span {
+                right: 21%;
+            }
+        }
+    }
+
+    &.cs-style-3 {
+        .progress {
+            .progress-bar {
+                width: 86%;
+            }
+
+            span {
+                right: 8%;
+            }
+        }
+    }
+
+    .cause-content {
+        margin-left: 60px;
+        flex: 1;
+    }
+
+    .cause-thumb {
+        flex: 1;
+        position: relative;
+        z-index: 1;
+
+        img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .cause-tag {
+            color: $white;
+            font-size: 16px;
+            line-height: 16px;
+            background: $theme-color;
+            padding: 6px 20px;
+            border-radius: 4px;
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            z-index: 1;
+        }
+    }
+
+    .cause-title {
+        margin-bottom: 12px;
+
+        a {
+            color: $heding;
+            font-size: 30px;
+            font-family: $garamond;
+            font-weight: 500;
+            line-height: 1.35;
+            @include transition(.4s);
+
+            &:hover {
+                color: $theme-color;
+            }
+        }
+    }
+
+    .description {
+        color: rgba(0, 0, 0, 0.5);
+        margin-bottom: 55px;
+    }
+
+    .fund-wrap {
+        .fund {
+            &:first-child {
+                margin-right: 40px;
+
+                @media #{$max-lg} {
+                    margin-right: 15px;
+                }
+            }
+        }
+    }
+
+    .fund {
+        font-size: 20px;
+        font-family: $garamond;
+        font-weight: 400;
+
+        span {
+            font-family: $garamond;
+            font-weight: 700;
+        }
+    }
+
+    .progress {
+        height: 7px;
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 0px;
+        overflow: visible;
+        position: relative;
+        z-index: 1;
+        margin-bottom: 60px;
+
+        .progress-bar {
+            height: 7px;
+            background: $theme-color;
+            width: 78%;
+            border-radius: 0px;
+            overflow: visible;
+        }
+
+        span {
+            color: $heding;
+            font-size: 20px;
+            font-weight: 500;
+            font-family: $supremeMedium;
+            position: absolute;
+            right: 16%;
+            top: -34px;
+        }
+    }
+
+    .donation-btn {
+        color: $black;
+        font-size: 20px;
+        font-family: $garamond;
+        font-weight: 500;
+        line-height: 1;
+        padding: 14px 40px 16px 40px;
+        border: 1.5px solid $black;
+        border-radius: 8px;
+        text-transform: capitalize;
+        display: inline-block;
+        transition: all;
+        -webkit-transition-duration: 800ms;
+        transition-duration: 800ms;
+        text-align: center;
+
+        &:hover {
+            color: $white;
+            border-color: $theme-color;
+            background: $theme-color;
+        }
+    }
+
+    @media #{$max-laptop} {
+        padding: 15px;
+
+        .cause-title {
+            a {
+                font-size: 24px;
+            }
+        }
+
+        .cause-content {
+            margin-left: 20px;
+        }
+    }
+
+    @media #{$max-md} {
+        .cause-content {
+            padding-top: 25px;
+            padding-left: 0;
+        }
+    }
+}
+
+.causes-details-wrapper {
+    margin-bottom: 45px;
+
+
+    .cause-thumb {
+        position: relative;
+        z-index: 1;
+
+        img {
+            border-radius: 30px;
+        }
+
+        .cause-tag {
+            color: $heding;
+            font-size: 16px;
+            line-height: 16px;
+            background: $white;
+            padding: 6px 20px;
+            border-radius: 4px;
+            position: absolute;
+            left: 40px;
+            top: 40px;
+            z-index: 1;
+        }
+    }
+
+    .cause-thumb-2 {
+        img {
+            border-radius: 15px;
+        }
+    }
+
+    .cause-title {
+        margin-bottom: 12px;
+
+        a {
+            color: $heding;
+            font-size: 48px;
+            font-family: $garamond;
+            font-weight: 500;
+            line-height: 1.35;
+            @include transition(.4s);
+
+            &:hover {
+                color: $theme-color;
+            }
+        }
+
+        @media #{$max-lg} {
+            a {
+                font-size: 32px;
+            }
+        }
+    }
+
+    .description {
+        font-size: 22px;
+        line-height: 44px;
+        color: rgba(0, 0, 0, 0.5);
+        margin-bottom: 55px;
+    }
+
+    .label {
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 24px;
+        font-family: $garamond;
+        margin-bottom: 0;
+    }
+
+
+    .fund {
+        font-size: 30px;
+        font-family: $supremeMedium;
+        font-weight: 500;
+    }
+
+    .progress {
+        height: 7px;
+        width: 455px;
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 0px;
+        overflow: visible;
+        position: relative;
+        z-index: 1;
+
+        .progress-bar {
+            height: 7px;
+            background: $theme-color;
+            width: 42%;
+            border-radius: 0px;
+            overflow: visible;
+        }
+
+        span {
+            color: $heding;
+            font-size: 20px;
+            font-weight: 500;
+            font-family: $supremeMedium;
+            position: absolute;
+            right: 52%;
+            top: -34px;
+        }
+
+        @media #{$max-xs} {
+            width: 100%;
+        }
+    }
+
+    .donation-btn {
+        color: $black;
+        font-size: 20px;
+        font-family: $garamond;
+        font-weight: 500;
+        line-height: 1;
+        padding: 14px 40px 16px 40px;
+        border: 1.5px solid $black;
+        border-radius: 8px;
+        text-transform: capitalize;
+        display: inline-block;
+        transition: all;
+        -webkit-transition-duration: 800ms;
+        transition-duration: 800ms;
+        text-align: center;
+
+        &:hover {
+            color: $white;
+            border-color: $theme-color;
+            background: $theme-color;
+        }
+    }
+
+    .cause-info {
+        flex-wrap: wrap;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        list-style: none;
+        padding: 0;
+        padding-bottom: 50px;
+
+        li {
+            display: inline-block;
+            position: relative;
+            z-index: 1;
+
+            &::before {
+                content: '';
+                position: absolute;
+                width: 1px;
+                height: 85px;
+                background: rgba(0, 0, 0, 0.1);
+                transform: rotate(19deg);
+                right: -57%;
+                top: 0;
+                z-index: 1;
+            }
+
+            &:nth-child(3) {
+                &::before {
+                    right: -15%;
+                }
+            }
+
+            &:last-child {
+                &::before {
+                    display: none;
+                }
+            }
+
+            @media #{$max-lg} {
+                margin-bottom: 20px;
+                display: block;
+
+                &::before {
+                    display: none;
+                }
+            }
+        }
+    }
+
+}

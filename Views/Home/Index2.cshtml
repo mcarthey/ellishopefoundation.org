@@ -1,0 +1,989 @@
+﻿
+@{
+    ViewBag.Title = "Index2";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+    <header class="theme-main-menu theme-menu-two">
+        <div class="main-header-area pt-25 pb-15">
+            <div class="container-fluid">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-md-auto col-6">
+                        <div class="logo-area">
+                            <a class="logo" href="/home/">
+                                <img src="~/assets/img/logo/header-logo-2.svg"
+                                     alt="Header-logo">
+                            </a>
+                            <a class="sticky-logo" href="/home/">
+                                <img src="~/assets/img/logo/header-logo-1.svg"
+                                     alt="Header-logo">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-auto d-lg-inline-flex align-items-center justify-content-center d-none">
+                        <div class="main-menu">
+                            <nav id="mobile-menu">
+                                <ul class="menu-list">
+                                    <li>
+                                        <a href="#">
+                                            Home
+                                        </a>
+                                        <ul class="sub-menu">
+                                            <li>
+                                                <a href="/home/">Home Style 1</a>
+                                            </li>
+                                            <li>
+                                                <a href="/home/index2">Home Style 2</a>
+                                            </li>
+                                            <li>
+                                                <a href="/home/index3">Home Style 3</a>
+                                            </li>
+                                            <li>
+                                                <a href="/home/index4">Home Style 4</a>
+                                            </li>
+
+                                            <li>
+                                                <a href="/home/index5">Home Style 5</a>
+                                            </li>
+                                            <li>
+                                                <a href="/home/index6">Home Style 6</a>
+                                            </li>
+                                            <li>
+                                                <a href="/home/index7">Home Style 7</a>
+                                            </li>
+
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="#">
+                                            Pages
+                                        </a>
+                                        <ul class="sub-menu">
+                                            <li>
+                                                <a href="/about">About Us</a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    Services <span class="float-end">
+                                                        <i class="bi bi-chevron-down"></i>
+                                                    </span>
+                                                </a>
+                                                <ul class="sub-menu">
+                                                    <li>
+                                                        <a href="/services">Services V1</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/services/v2">Services V2</a>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    Event <span class="float-end">
+                                                        <i class="bi bi-chevron-down"></i>
+                                                    </span>
+                                                </a>
+                                                <ul class="sub-menu">
+                                                    <li>
+                                                        <a href="/event/grid">Event Grid</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/event/list">Event List</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/event/details">Event Details</a>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    Volunteer <span class="float-end">
+                                                        <i class="bi bi-chevron-down"></i>
+                                                    </span>
+                                                </a>
+                                                <ul class="sub-menu">
+                                                    <li>
+                                                        <a href="/team/v1">Volunteer V1</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/team/v2">Volunteer V2</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/team/details">Volunteer Details</a>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                            <li>
+                                                <a href="/contact/v2">Contact V2</a>
+                                            </li>
+                                            <li>
+                                                <a href="/error">Error - 404</a>
+                                            </li>
+                                            <li>
+                                                <a href="/faq">FAQ</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="#">Causes</a>
+                                        <ul class="sub-menu">
+                                            <li>
+                                                <a href="/causes/grid">Causes Grid</a>
+                                            </li>
+                                            <li>
+                                                <a href="/causes/list">Causes List</a>
+                                            </li>
+                                            <li>
+                                                <a href="/causes/details">Causes Details</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="#">Blog</a>
+                                        <ul class="sub-menu">
+                                            <li>
+                                                <a href="/blog/grid">Blog Grid</a>
+                                            </li>
+                                            <li>
+                                                <a href="/blog/classic">Blog Classic</a>
+                                            </li>
+                                            <li>
+                                                <a href="/blog/details">Blog Details</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="/contact">Contact</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="col-md-auto col-6">
+                        <div class="right-nav d-flex align-items-center justify-content-end">
+                            <div class="quote-btn d-lg-inline-block d-none">
+                                <a href="/contact" class="ht-btn bs-btn">Donate Now</a>
+                            </div>
+                            <div class="hamburger-menu d-lg-none d-inline-flex">
+                                <div class="open-sidebar">
+                                    <div class="bar-wrap">
+                                        <div class="bar-1"></div>
+                                        <div class="bar-2"></div>
+                                        <div class="bar-3"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.theme-main-menu -->
+    </header>
+    <!-- header-area end -->
+    <!-- slide-bar start -->
+    <div class="ht-menu-wrapper">
+        <div class="ht-menu-area">
+            <button class="ht-menu-toggle"><i class="bi bi-x-lg"></i></button>
+            <div class="mobile-logo">
+                <a href="/home/">
+                    <img src="~/assets/img/logo/header-logo-2.svg" alt="logo">
+                </a>
+            </div>
+            <div class="mobile-menu-wrapper d-lg-none d-inline-block">
+                <div class="mobile-menu"></div>
+            </div>
+            <div class="offset-widget mb-40">
+                <div class="info-widget">
+                    <h4 class="offset-title mb-20">About Us</h4>
+                    <p class="mb-30">
+                        But I must explain to you how all this mistaken idea of denouncing pleasure and
+                        praising pain was born and will give you a complete account of the system and
+                        expound the actual teachings of the great explore
+                    </p>
+                </div>
+            </div>
+            <div class="offset-widget mb-30 pr-10">
+                <div class="info-widget info-widget2">
+                    <h4 class="offset-title mb-20">Contact Info</h4>
+                    <p>
+                        <i class="fal fa-address-book"></i>
+                        23/A, Miranda City Likaoli Prikano, Dope
+                    </p>
+                    <p>
+                        <i class="fal fa-phone"></i>
+                        +0989 7876 9865 9
+                    </p>
+                    <p>
+                        <i class="fal fa-envelope-open"></i>
+                        info@example.com
+                    </p>
+                </div>
+            </div>
+            <div class="login-btn text-center">
+                <a class="ht_btn w-100" href="#">Login</a>
+            </div>
+
+        </div>
+    </div>
+    <!-- side-bar end -->
+
+    <main>
+        <!-- theme-banner-two start -->
+        <section class="theme-banner-two" data-background="/assets/img/hero/hero-img-2.jpg">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-xl-10 col-lg-10 px-xxl-5">
+                        <h1 class="main-title wow fadeInUp">
+                            Donate Today, <span class="position-relative">
+                                <img class="title-shape" src="~/assets/img/shape/shape-7.png" alt="shape">Make
+                            </span>
+                            A Difference
+                        </h1>
+                        <p class="wow fadeInUp" data-wow-delay="0.1">
+                            Show love and care, supporting the children in
+                            their journey with kindness
+                            and compassion.
+                        </p>
+                        <div class="d-md-flex align-items-center justify-content-center wow fadeInUp"
+                             data-wow-delay="0.2">
+                            <div class="hero-btn-1 me-md-4 mb-md-0 mb-4">
+                                <a href="/contact" class="ht-btn bstyle">support us</a>
+                            </div>
+                            <div class="hero-btn-2">
+                                <a href="/contact" class="ht-btn bstyle-2">check our causes</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- .container -->
+        </section>
+        <!-- theme-banner-two end -->
+        <!-- feature-section start -->
+        <div class="feature-section pb-75 pb-lg-15">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="feature-wrap-4">
+                            <div class="icon">
+                                <img class="front-icon" src="~/assets/img/icon/icon-8.svg" alt="icon">
+                                <img class="back-icon" src="~/assets/img/icon/icon-8w.svg" alt="icon">
+                            </div>
+                            <h4 class="feature-title">Get involved as a volunteer</h4>
+                            <p>Become a member.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="feature-wrap-4">
+                            <div class="icon">
+                                <img class="front-icon" src="~/assets/img/icon/icon-9.svg" alt="icon">
+                                <img class="back-icon" src="~/assets/img/icon/icon-9w.svg" alt="icon">
+                            </div>
+                            <h4 class="feature-title">Send your contribution.</h4>
+                            <p>Send money</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="feature-wrap-4">
+                            <div class="icon">
+                                <img class="front-icon" src="~/assets/img/icon/icon-10.svg" alt="icon">
+                                <img class="back-icon" src="~/assets/img/icon/icon-10w.svg" alt="icon">
+                            </div>
+                            <h4 class="feature-title">Call for donation</h4>
+                            <p>Discover more</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="back-bg"></div>
+        </div>
+        <!-- feature-section end -->
+        <!-- about-section start -->
+        <section class="about-section-two pt-230 pb-45 pt-lg-60 pb-lg-15">
+            <img class="shape-1" src="~/assets/img/shape/shape-8.png" alt="shape">
+            <img class="shape-2" src="~/assets/img/shape/shape-9.png" alt="shape">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-xl-6 col-lg-6">
+                        <div class="text-wrapper-one mb-45 wow fadeInUp" data-wow-delay="0.1">
+                            <div class="title-two mb-50">
+                                <h5 class="sub-title">about us</h5>
+                                <h2 class="title">
+                                    Gifts Elevate <span class="position-relative">
+                                        and <img class="title-img" src="~/assets/img/shape/shape-7.png" alt="shape">
+                                    </span>
+                                    Enrich Lives.
+                                </h2>
+                                <p>Our main purpose revolves around empowering individuals, fostering growth.</p>
+                            </div>
+                            <div class="feature-list-two mb-15">
+                                <span class="icon"><i class="bi bi-check"></i></span>
+                                <span class="feature-title">Contributions foster growth.</span>
+                            </div>
+                            <div class="feature-list-two mb-15">
+                                <span class="icon"><i class="bi bi-check"></i></span>
+                                <span class="feature-title">Supportive acts nurture human potential.</span>
+                            </div>
+                            <div class="feature-list-two">
+                                <span class="icon"><i class="bi bi-check"></i></span>
+                                <span class="feature-title">send us donation every countrys</span>
+                            </div>
+                            <a class="ht-btn style-2 mt-30" href="/about">More Details</a>
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-6">
+                        <div class="img-wrapper-two text-lg-end position-relative mb-45 wow fadeInUp"
+                             data-wow-delay="0.1">
+                            <img class="main-img-2 img-fluid" src="~/assets/img/shape/shape-6.png" alt="shape">
+                            <img class="main-img img-fluid" src="~/assets/img/media/media-9.jpg" alt="About">
+                            <div class="float-content">
+                                <p class="fs-20 text-heding mb-2">Volunteer <span class="counter">102</span>k+</p>
+                                <ul class="user-list">
+                                    <li><img src="~/assets/img/media/media-10.jpg" alt="author"></li>
+                                    <li><img src="~/assets/img/media/media-11.jpg" alt="author"></li>
+                                    <li><img src="~/assets/img/media/media-12.jpg" alt="author"></li>
+                                    <li><img src="~/assets/img/media/media-13.jpg" alt="author"></li>
+                                    <li class="number"><i class="bi bi-arrow-right"></i></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- about-section end -->
+        <!-- fact-section start -->
+        <div class="fact-section pt-90 pt-lg-60 pb-120 pb-lg-60">
+            <div class="container">
+                <div class="row align-items-center justify-content-center row-cols-xl-3 row-cols-lg-2 row-cols-md-2 row-cols-1">
+                    <div class="col d-flex justify-content-xl-start justify-content-center">
+                        <div class="progressbar-content-2 wow fadeInUp">
+                            <div class="chart2" data-percent="90"><span>90%</span></div>
+                            <h3 class="progress-title">Building a hospital</h3>
+                        </div>
+                    </div>
+                    <div class="col d-flex justify-content-center">
+                        <div class="progressbar-content-2 wow fadeInUp" data-wow-delay="0.1">
+                            <div class="chart2" data-percent="70"><span>30k</span></div>
+                            <h3 class="progress-title">Monthly donors</h3>
+                        </div>
+                    </div>
+                    <div class="col d-flex justify-content-xl-end justify-content-center">
+                        <div class="progressbar-content-2 wow fadeInUp" data-wow-delay="0.2">
+                            <div class="chart2" data-percent="82"><span>82%</span></div>
+                            <h3 class="progress-title">Successful campaigns</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- fact-section end -->
+        <!-- ht-feedback-section start -->
+        <div class="black-bg feedback-section-two position-relative z-1 dot-style-2">
+            <img class="shape-1" src="~/assets/img/shape/shape-10.png" alt="">
+            <div class="container-fluid px-lg-0">
+                <div class="row gx-lg-0 align-items-center">
+                    <div class="col-xl-6 black-bg">
+                        <div class="ht-carousel" data-slide-show="1" data-xl-slide-show="1" data-ml-slide-show="1"
+                             data-lg-slide-show="1" data-md-slide-show="1" data-dots="true">
+                            <div class="feedback-wrap-2">
+                                <h5 class="slogan-author">client say</h5>
+                                <p class="feedback-text">
+                                    <span class="highlight">Every effort</span>, no matter how
+                                    small it may seem
+                                    lives,
+                                    who are
+                                    less <span class="highlight">fortunate</span>.
+                                </p>
+                                <h4 class="name">Esther Howard</h4>
+                                <h6 class="designation">London, Uk</h6>
+                            </div>
+                            <div class="feedback-wrap-2">
+                                <h5 class="slogan-author">client say</h5>
+                                <p class="feedback-text">
+                                    <span class="highlight">Every effort</span>, no matter how
+                                    small it may seem
+                                    lives,
+                                    who are
+                                    less <span class="highlight">fortunate</span>.
+                                </p>
+                                <h4 class="name">Martin Gibbs</h4>
+                                <h6 class="designation">Berlin, Uk</h6>
+                            </div>
+                            <div class="feedback-wrap-2">
+                                <h5 class="slogan-author">client say</h5>
+                                <p class="feedback-text">
+                                    <span class="highlight">Every effort</span>, no matter how
+                                    small it may seem
+                                    lives,
+                                    who are
+                                    less <span class="highlight">fortunate</span>.
+                                </p>
+                                <h4 class="name">Hamina Hasan</h4>
+                                <h6 class="designation">Dhaka, BD</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="video-wrap-1 position-relative z-1">
+                            <img class="w-100" src="~/assets/img/media/media-14.jpg" alt="media">
+                            <a href="#" class="popup-video"><i class="bi bi-play-fill"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ht-feedback-section end -->
+        <!-- cause-section start -->
+        <section class="cause-section arrow-style-2 position-relative z-2 pt-140 pb-95 pt-lg-60 pb-lg-75">
+            <div class="container">
+                <div class="row align-items-center justify-content-center">
+                    <div class="col-lg-10">
+                        <div class="title-two text-center mb-50">
+                            <h5 class="sub-title wow fadeInUp">causes</h5>
+                            <h2 class="title px-xxl-5 mx-xxl-5 wow fadeInUp" data-wow-delay="0.1">
+                                Small donations
+                                make <span class="position-relative">
+                                    big <img class="title-img"
+                                             src="~/assets/img/shape/shape-7.png" alt="shape">
+                                </span>
+                                impacts.
+                            </h2>
+                            <p class="wow fadeInUp" data-wow-delay="0.2">
+                                Even modest contributions can lead to
+                                substantial, far-reaching effects and
+                                meaningful social change.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid cause-slider-two">
+                <div id="arrow-2" class="row ht-carousel" data-slide-show="3" data-ml-slide-show="3"
+                     data-lg-slide-show="2" data-md-slide-show="2" data-sm-slide-show="1">
+                    <div class="col-lg-4">
+                        <div class="causes-wrap-2">
+                            <div class="cause-thumb">
+                                <img src="~/assets/img/cause/img-5.jpg" alt="cause">
+                                <div class="cause-tag">children</div>
+                            </div>
+                            <div class="cause-content">
+                                <h3 class="cause-title">
+                                    <a href="/causes/details">
+                                        Pure, drinkable water source
+                                        nearby.
+                                    </a>
+                                </h3>
+                                <p class="description">
+                                    Freshwater is the elixir of life, sustaining ecosystems,
+                                    communities.
+                                </p>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" aria-valuenow="64"
+                                         aria-valuemin="0" aria-valuemax="100">
+                                        <span class="progress-value">64%</span>
+                                    </div>
+                                </div>
+                                <div class="fund-wrap d-flex align-items-center justify-content-between">
+                                    <h5 class="fund"><span>Goal:</span> $76,000</h5>
+                                    <h5 class="fund"><span>Goal:</span> $76,000</h5>
+                                </div>
+                                <a href="/causes/details" class="donation-btn">Donate Now</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="causes-wrap-2 cs-style-2">
+                            <div class="cause-thumb">
+                                <img src="~/assets/img/cause/img-2.jpg" alt="cause">
+                                <div class="cause-tag">children</div>
+                            </div>
+                            <div class="cause-content">
+                                <h3 class="cause-title">
+                                    <a href="/causes/details">
+                                        Providing education for
+                                        better futures.
+                                    </a>
+                                </h3>
+                                <p class="description">
+                                    School education forms the bedrock of knowledge fostering
+                                    social.
+                                </p>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" aria-valuenow="72"
+                                         aria-valuemin="0" aria-valuemax="100">
+                                        <span class="progress-value">72%</span>
+                                    </div>
+                                </div>
+                                <div class="fund-wrap d-flex align-items-center justify-content-between">
+                                    <h5 class="fund"><span>Goal:</span> $76,000</h5>
+                                    <h5 class="fund"><span>Goal:</span> $76,000</h5>
+                                </div>
+                                <a href="/causes/details" class="donation-btn">Donate Now</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="causes-wrap-2 cs-style-3">
+                            <div class="cause-thumb">
+                                <img src="~/assets/img/cause/img-3.jpg" alt="cause">
+                                <div class="cause-tag">children</div>
+                            </div>
+                            <div class="cause-content">
+                                <h3 class="cause-title">
+                                    <a href="/causes/details">
+                                        Diverse medical care
+                                        services offered here.
+                                    </a>
+                                </h3>
+                                <p class="description">
+                                    Unlocking the doors to a brighter tomorrow, we are education
+                                    for all.
+                                </p>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" aria-valuenow="86"
+                                         aria-valuemin="0" aria-valuemax="100">
+                                        <span class="progress-value">86%</span>
+                                    </div>
+                                </div>
+                                <div class="fund-wrap d-flex align-items-center justify-content-between">
+                                    <h5 class="fund"><span>Goal:</span> $76,000</h5>
+                                    <h5 class="fund"><span>Goal:</span> $76,000</h5>
+                                </div>
+                                <a href="/causes/details" class="donation-btn">Donate Now</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="causes-wrap-2">
+                            <div class="cause-thumb">
+                                <img src="~/assets/img/cause/img-5.jpg" alt="cause">
+                                <div class="cause-tag">children</div>
+                            </div>
+                            <div class="cause-content">
+                                <h3 class="cause-title">
+                                    <a href="/causes/details">
+                                        Pure, drinkable water source
+                                        nearby.
+                                    </a>
+                                </h3>
+                                <p class="description">
+                                    Freshwater is the elixir of life, sustaining ecosystems,
+                                    communities.
+                                </p>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" aria-valuenow="64"
+                                         aria-valuemin="0" aria-valuemax="100">
+                                        <span class="progress-value">64%</span>
+                                    </div>
+                                </div>
+                                <div class="fund-wrap d-flex align-items-center justify-content-between">
+                                    <h5 class="fund"><span>Goal:</span> $76,000</h5>
+                                    <h5 class="fund"><span>Goal:</span> $76,000</h5>
+                                </div>
+                                <a href="/causes/details" class="donation-btn">Donate Now</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="causes-wrap-2 cs-style-2">
+                            <div class="cause-thumb">
+                                <img src="~/assets/img/cause/img-2.jpg" alt="cause">
+                                <div class="cause-tag">children</div>
+                            </div>
+                            <div class="cause-content">
+                                <h3 class="cause-title">
+                                    <a href="/causes/details">
+                                        Providing education for
+                                        better futures.
+                                    </a>
+                                </h3>
+                                <p class="description">
+                                    School education forms the bedrock of knowledge fostering
+                                    social.
+                                </p>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" aria-valuenow="72"
+                                         aria-valuemin="0" aria-valuemax="100">
+                                        <span class="progress-value">72%</span>
+                                    </div>
+                                </div>
+                                <div class="fund-wrap d-flex align-items-center justify-content-between">
+                                    <h5 class="fund"><span>Goal:</span> $76,000</h5>
+                                    <h5 class="fund"><span>Goal:</span> $76,000</h5>
+                                </div>
+                                <a href="/causes/details" class="donation-btn">Donate Now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button data-slick-prev="#arrow-2" class="slick-prev">
+                <img src="~/assets/img/icon/arrow-4.svg" alt="arrow">
+            </button>
+            <button data-slick-next="#arrow-2" class="slick-next">
+                <img src="~/assets/img/icon/arrow-3.svg" alt="arrow">
+            </button>
+        </section>
+        <!-- cause-section end -->
+        <!-- marquee-section end -->
+        <div class="black-bg marquee-section pt-50 pb-40">
+            <div class="marquee-wrapper">
+                <div class="marquee-slide">
+                    <div class="donate-title">
+                        <a href="/contact">DONATION <img src="~/assets/img/icon/arrow-2.svg" alt="icon"></a>
+                    </div>
+                    <div class="donate-title">
+                        <a href="/contact">DONATION <img src="~/assets/img/icon/arrow-2.svg" alt="icon"></a>
+                    </div>
+                    <div class="donate-title">
+                        <a href="/contact">DONATION <img src="~/assets/img/icon/arrow-2.svg" alt="icon"></a>
+                    </div>
+                    <div class="donate-title">
+                        <a href="/contact">DONATION <img src="~/assets/img/icon/arrow-2.svg" alt="icon"></a>
+                    </div>
+                    <div class="donate-title">
+                        <a href="/contact">DONATION <img src="~/assets/img/icon/arrow-2.svg" alt="icon"></a>
+                    </div>
+                    <div class="donate-title">
+                        <a href="/contact">DONATION <img src="~/assets/img/icon/arrow-2.svg" alt="icon"></a>
+                    </div>
+                </div>
+                <div class="marquee-slide">
+                    <div class="donate-title">
+                        <a href="/contact">DONATION <img src="~/assets/img/icon/arrow-2.svg" alt="icon"></a>
+                    </div>
+                    <div class="donate-title">
+                        <a href="/contact">DONATION <img src="~/assets/img/icon/arrow-2.svg" alt="icon"></a>
+                    </div>
+                    <div class="donate-title">
+                        <a href="/contact">DONATION <img src="~/assets/img/icon/arrow-2.svg" alt="icon"></a>
+                    </div>
+                    <div class="donate-title">
+                        <a href="/contact">DONATION <img src="~/assets/img/icon/arrow-2.svg" alt="icon"></a>
+                    </div>
+                    <div class="donate-title">
+                        <a href="/contact">DONATION <img src="~/assets/img/icon/arrow-2.svg" alt="icon"></a>
+                    </div>
+                    <div class="donate-title">
+                        <a href="/contact">DONATION <img src="~/assets/img/icon/arrow-2.svg" alt="icon"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- marquee-section end -->
+        <!-- team-section start -->
+        <section class="team-section arrow-style-3 position-relative z-1 pt-140 pt-lg-60 pb-115 pb-lg-15">
+            <div class="container">
+                <div class="title-three text-center mb-70">
+                    <h5 class="sub-title wow fadeInUp">Team</h5>
+                    <h2 class="title">
+                        <span class="position-relative">
+                            Meet<img class="title-img"
+                                     src="~/assets/img/shape/shape-11.png" alt="shape">
+                        </span> our Volunteers
+                    </h2>
+                    <p class="wow fadeInUp" data-wow-delay="0.1">
+                        Our team is a vibrant tapestry of diverse talents
+                        and dedicated individuals.
+                    </p>
+                </div>
+                <div id="arrow-3" class="row ht-carousel" data-slide-show="3" data-ml-slide-show="2"
+                     data-lg-slide-show="3" data-md-slide-show="2">
+                    <div class="team-wrap-1">
+                        <div class="team-thumb">
+                            <img class="w-100" src="~/assets/img/team/team-1.jpg" alt="team">
+                            <div class="team-social">
+                                <a href="#" tabindex="-1"><i class="bi bi-twitter"></i></a>
+                                <a href="#" tabindex="-1"><i class="bi bi-instagram"></i></a>
+                                <a href="#" tabindex="-1"><i class="bi bi-facebook"></i></a>
+                            </div>
+                        </div>
+
+                        <div class="content">
+                            <h4 class="name"><a href="/team/details">Andress Rayna</a></h4>
+                            <p class="designation">Team Manager</p>
+                        </div>
+                    </div>
+                    <div class="team-wrap-1">
+                        <div class="team-thumb">
+                            <img class="w-100" src="~/assets/img/team/team-2.jpg" alt="team">
+                            <div class="team-social">
+                                <a href="#" tabindex="-1"><i class="bi bi-twitter"></i></a>
+                                <a href="#" tabindex="-1"><i class="bi bi-instagram"></i></a>
+                                <a href="#" tabindex="-1"><i class="bi bi-facebook"></i></a>
+                            </div>
+                        </div>
+
+                        <div class="content">
+                            <h4 class="name"><a href="/team/details">Rodela Jahan</a></h4>
+                            <p class="designation">Team Leader</p>
+                        </div>
+                    </div>
+                    <div class="team-wrap-1">
+                        <div class="team-thumb">
+                            <img class="w-100" src="~/assets/img/team/team-3.jpg" alt="team">
+                            <div class="team-social">
+                                <a href="#" tabindex="-1"><i class="bi bi-twitter"></i></a>
+                                <a href="#" tabindex="-1"><i class="bi bi-instagram"></i></a>
+                                <a href="#" tabindex="-1"><i class="bi bi-facebook"></i></a>
+                            </div>
+                        </div>
+
+                        <div class="content">
+                            <h4 class="name"><a href="/team/details">Ria Liz</a></h4>
+                            <p class="designation">Employer</p>
+                        </div>
+                    </div>
+                    <div class="team-wrap-1">
+                        <div class="team-thumb">
+                            <img class="w-100" src="~/assets/img/team/team-1.jpg" alt="team">
+                            <div class="team-social">
+                                <a href="#" tabindex="-1"><i class="bi bi-twitter"></i></a>
+                                <a href="#" tabindex="-1"><i class="bi bi-instagram"></i></a>
+                                <a href="#" tabindex="-1"><i class="bi bi-facebook"></i></a>
+                            </div>
+                        </div>
+
+                        <div class="content">
+                            <h4 class="name"><a href="/team/details">Andress Rayna</a></h4>
+                            <p class="designation">Content Writer</p>
+                        </div>
+                    </div>
+                    <div class="team-wrap-1">
+                        <div class="team-thumb">
+                            <img class="w-100" src="~/assets/img/team/team-2.jpg" alt="team">
+                            <div class="team-social">
+                                <a href="#" tabindex="-1"><i class="bi bi-twitter"></i></a>
+                                <a href="#" tabindex="-1"><i class="bi bi-instagram"></i></a>
+                                <a href="#" tabindex="-1"><i class="bi bi-facebook"></i></a>
+                            </div>
+                        </div>
+
+                        <div class="content">
+                            <h4 class="name"><a href="/team/details">Rodela Jahan</a></h4>
+                            <p class="designation">Team Leader</p>
+                        </div>
+                    </div>
+                    <div class="team-wrap-1">
+                        <div class="team-thumb">
+                            <img class="w-100" src="~/assets/img/team/team-3.jpg" alt="team">
+                            <div class="team-social">
+                                <a href="#" tabindex="-1"><i class="bi bi-twitter"></i></a>
+                                <a href="#" tabindex="-1"><i class="bi bi-instagram"></i></a>
+                                <a href="#" tabindex="-1"><i class="bi bi-facebook"></i></a>
+                            </div>
+                        </div>
+
+                        <div class="content">
+                            <h4 class="name"><a href="/team/details">Ria Liz</a></h4>
+                            <p class="designation">Employer</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button data-slick-prev="#arrow-3" class="slick-prev">
+                <img src="~/assets/img/icon/arrow-left-1.svg" alt="arrow">
+            </button>
+            <button data-slick-next="#arrow-3" class="slick-next">
+                <img src="~/assets/img/icon/arrow-right-1.svg" alt="arrow">
+            </button>
+        </section>
+        <!-- team-section end -->
+        <!-- blog-section start -->
+        <section class="blog-section-two pt-120 pt-lg-60 pb-95 pb-lg-15">
+            <img class="shape-1" src="~/assets/img/shape/shape-12.png" alt="shape">
+            <img class="shape-2" src="~/assets/img/shape/shape-36.png" alt="shape">
+            <img class="shape-3" src="~/assets/img/shape/shape-80.png" alt="shape">
+            <div class="container">
+                <div class="title-two text-center mb-70">
+                    <h5 class="sub-title wow fadeInUp">Our Blog</h5>
+                    <h2 class="title wow fadeInUp" data-wow-delay="0.1">
+                        Check our latest <span class="position-relative">
+                            blog<img class="title-img" src="~/assets/img/shape/shape-7.png"
+                                     alt="shape">
+                        </span>
+                    </h2>
+                    <p class="wow fadeInUp" data-wow-delay="0.2">
+                        Thanks to your generosity, we've achieved success
+                        kindness and compassion in our endeavors.
+                    </p>
+                </div>
+                <div class="row gx-xl-5">
+                    <div class="col-lg-6">
+                        <div class="blog-two wow fadeInUp">
+                            <div class="blog-thumb">
+                                <img src="~/assets/img/blog/blog-4.jpg" alt="blog">
+                                <a href="/blog/details" class="blog-date">08 Jan</a>
+                            </div>
+                            <div class="blog-content">
+                                <div class="blog-meta">
+                                    <a href="/blog/details">Esther Howard .</a>
+                                    <span class="divider"></span>
+                                    <a href="/blog/details">Comment (03)</a>
+                                </div>
+                                <h3 class="blog-title">
+                                    <a href="/blog/details">
+                                        Giving joy transformative
+                                        donations sparks positive change.
+                                    </a>
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="blog-two wow fadeInUp">
+                            <div class="blog-thumb">
+                                <img src="~/assets/img/blog/blog-5.jpg" alt="blog">
+                                <a href="/blog/details" class="blog-date">05 Apr</a>
+                            </div>
+                            <div class="blog-content">
+                                <div class="blog-meta">
+                                    <a href="/blog/details">Esther Howard .</a>
+                                    <span class="divider"></span>
+                                    <a href="/blog/details">Comment (03)</a>
+                                </div>
+                                <h3 class="blog-title">
+                                    <a href="/blog/details">
+                                        Empowering through education for
+                                        brighter tomorrows.
+                                    </a>
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- blog-section end -->
+        <!-- newsletter-section start -->
+        <div class="newsletter-section position-relative z-1 pt-160 pt-lg-60">
+            <img class="shape-1 position-absolute ml-100 mt--90 d-none d-lg-inline-block"
+                 src="~/assets/img/shape/shape-8.png" alt="shape">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <div class="title-one text-lg-start text-center wow fadeInUp">
+                            <h2 class="title">Subscribe to Regular Newsletters.</h2>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="subscribe-form sub-form-2 text-lg-end wow fadeInUp">
+                            <input type="text" placeholder="Enter Your Mail">
+                            <button type="submit">Subscribe</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- newsletter-section end -->
+
+    </main>
+
+
+    <!--footer-area start-->
+    <footer class="footer-two pt-30">
+        <img class="shape-2" src="~/assets/img/shape/shape-12.png" alt="shape">
+        <img class="shape-3" src="~/assets/img/shape/shape-80.png" alt="shape">
+        <div class="container fot-border-2 pt-95">
+            <div class="row mb-30">
+                <div class="col-xl-3 col-lg-3 col-md-6">
+                    <div class="footer-widget ht-about-widget mb-30">
+                        <div class="footer-logo">
+                            <a href="/home/"><img src="~/assets/img/logo/header-logo-1.svg" alt="logo"></a>
+                        </div>
+                        <ul>
+                            <li>
+                                <a href="mailto:infocharity816@gmail.com">infocharity816@gmail.com</a>
+                            </li>
+                            <li>
+                                <a href="#">+1 123 456 7890</a>
+                            </li>
+                        </ul>
+                        <div class="social-links">
+                            <a href="#"><i class="bi bi-facebook"></i></a>
+                            <a href="#"><i class="bi bi-twitter"></i></a>
+                            <a href="#"><i class="bi bi-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-6">
+                    <div class="footer-widget ms-xxl-5 mb-30">
+                        <h4 class="widget-title">Company</h4>
+                        <ul>
+                            <li>
+                                <a href="/about">About us</a>
+                            </li>
+                            <li>
+                                <a href="/contact">Carrer</a>
+                            </li>
+                            <li>
+                                <a href="/blog/grid">Blogs</a>
+                            </li>
+                            <li>
+                                <a href="/about">Testimonial</a>
+                            </li>
+                            <li>
+                                <a href="/contact">Contact us</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 d-flex justify-content-lg-center">
+                    <div class="footer-widget mb-30">
+                        <h4 class="widget-title">Services</h4>
+                        <ul>
+                            <li>
+                                <a href="/about">Donation onlines</a>
+                            </li>
+                            <li>
+                                <a href="/contact">Donor centers</a>
+                            </li>
+                            <li>
+                                <a href="/blog/grid">Volunteering</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 d-flex justify-content-lg-end">
+                    <div class="footer-widget mb-30">
+                        <h4 class="widget-title">Donations</h4>
+                        <ul>
+                            <li>
+                                <a href="/about">Donor wall</a>
+                            </li>
+                            <li>
+                                <a href="/contact">Donation confirmation</a>
+                            </li>
+                            <li>
+                                <a href="/blog/grid">Donation history</a>
+                            </li>
+                            <li>
+                                <a href="/about">Donations details</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="copyright-wrap">
+                <div class="row align-items-center">
+                    <div class="col-xl-6 col-lg-6">
+                        <div class="copyright-text text-lg-start text-center mb-lg-0 mb-md-4">
+                            © Copyright 2025 <a href="https://themeforest.net/user/creativegigs/portfolio">
+                                Kuki
+                            </a>. All
+                            Rights Reserved.
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 text-xl-end text-center">
+                        <ul class="footer-menu">
+                            <li><a href="#">Privacy policy.</a></li>
+                            <li><a href="#">Contact us.</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
