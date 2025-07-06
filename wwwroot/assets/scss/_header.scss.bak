@@ -6,15 +6,12 @@
 	z-index: 999;
 }
 
-/*
 .offset-sidebar {
 	display: block;
 	margin-top: 30px;
 }
-*/
 
 //header-top
-/*
 .header-top {
 	background: #FFC658;
 	padding-top: 10px;
@@ -32,14 +29,12 @@
 		}
 	}
 }
-*/
 
 //theme-main-menu
 .theme-main-menu {
 
 	.ht-promo,
 	.ht-phone,
-/*
 	.ht-email {
 		color: $heding;
 		font-size: 18px;
@@ -71,7 +66,6 @@
 			}
 		}
 	}
-*/
 
 	.hamburger-menu {
 		width: 60px;
@@ -142,7 +136,6 @@
 	}
 }
 
-/*
 .header-social {
 	a {
 		display: inline-block;
@@ -157,7 +150,6 @@
 		margin: 0 5px;
 	}
 }
-*/
 
 //main-menu
 .main-menu {
@@ -301,11 +293,9 @@
 							display: none;
 						}
 
-/*
 						.sub-menu-arrow {
 							float: right;
 						}
-*/
 
 						&.active {
 							// color: $white;
@@ -338,7 +328,6 @@
 }
 
 //sticky-menu
-/*
 .sticky-menu {
 	position: fixed;
 	// width: 100%;
@@ -350,10 +339,8 @@
 	padding-top: 0;
 	padding-bottom: 0;
 }
-*/
 
 //theme-menu-one
-/*
 .theme-menu-one {
 	position: absolute;
 	left: 0;
@@ -444,7 +431,6 @@
 		}
 	}
 }
-*/
 
 //theme-menu-two
 .theme-menu-two {
@@ -564,7 +550,6 @@
 }
 
 //theme-menu-three
-/*
 .theme-menu-three {
 	width: 100%;
 	position: absolute;
@@ -710,10 +695,8 @@
 		}
 	}
 }
-*/
 
 //theme-menu-four
-/*
 .theme-menu-four {
 	padding-left: 170px;
 	padding-right: 170px;
@@ -819,10 +802,8 @@
 		}
 	}
 }
-*/
 
 //theme-menu-five
-/*
 .theme-menu-five {
 	position: absolute;
 	width: 100%;
@@ -958,11 +939,9 @@
 		}
 	}
 }
-*/
 
 
 //theme-menu-six
-/*
 .theme-menu-six {
 	border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 	position: absolute;
@@ -1155,11 +1134,9 @@
 		}
 	}
 }
-*/
 
 
 //theme-menu-seven
-/*
 .theme-menu-seven {
 	border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 	position: absolute;
@@ -1335,10 +1312,8 @@
 		}
 	}
 }
-*/
 
 
-/*
 .header-menu {
 	a {
 		color: $heding;
@@ -1353,16 +1328,13 @@
 		}
 	}
 }
-*/
 
 
-/*
 .onepage-nav {
 	.main-menu ul li a::before {
 		display: none;
 	}
 }
-*/
 
 // .mega-menu {
 // 	min-width: 600px;

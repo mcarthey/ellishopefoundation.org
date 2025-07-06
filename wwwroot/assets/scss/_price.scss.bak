@@ -1,5 +1,4 @@
 //pricing-tab-wrap
-/*
 .pricing-tab-wrap {
     background: $white;
     border-radius: 30px;
@@ -7,9 +6,7 @@
     position: relative;
     z-index: 1;
 }
-*/
 
-/*
 .price-tab {
     border: 0;
     border-radius: 30px;
@@ -60,9 +57,7 @@
 
 
 }
-*/
 
-/*
 .ht-plan-header {
     display: flex;
     align-items: center;
@@ -113,9 +108,7 @@
         }
     }
 }
-*/
 
-/*
 .ht-plan-body {
     background: $white;
     border-radius: 30px;
@@ -220,9 +213,7 @@
     }
 
 }
-*/
 
-/*
 .price-section-one {
     position: relative;
     z-index: 1;
@@ -248,4 +239,3 @@
     }
 
 }
-*/

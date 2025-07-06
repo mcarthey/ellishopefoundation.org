@@ -1,5 +1,4 @@
 //img-wrapper
-/*
 .img-wrapper-one {
 
     .main-img {
@@ -68,7 +67,6 @@
         }
     }
 }
-*/
 
 .img-wrapper-two {
     position: relative;
@@ -107,7 +105,6 @@
     }
 }
 
-/*
 .img-wrapper-three {
     display: inline-block;
     position: relative;
@@ -127,9 +124,7 @@
         z-index: 1;
     }
 }
-*/
 
-/*
 .img-wrapper-four {
     position: relative;
     z-index: 1;
@@ -166,9 +161,7 @@
     }
 
 }
-*/
 
-/*
 .img-wrapper-five {
     display: flex;
     justify-content: space-between;
@@ -179,9 +172,7 @@
         padding-right: 0;
     }
 }
-*/
 
-/*
 .img-wrapper-six {
     .main-img {
         margin-top: -80px;
@@ -211,9 +202,7 @@
         }
     }
 }
-*/
 
-/*
 .img-wrapper-seven {
     margin-left: -52px;
     display: inline-block;
@@ -285,11 +274,9 @@
         }
     }
 }
-*/
 
 
 //text-wrapper
-/*
 .text-wrapper-two {
     position: relative;
     z-index: 1;
@@ -345,9 +332,7 @@
         }
     }
 }
-*/
 
-/*
 .text-wrapper-three {
 
     .title {
@@ -380,11 +365,9 @@
         }
     }
 }
-*/
 
 
 //about-section
-/*
 .about-section-one {
     position: relative;
     z-index: 1;
@@ -411,7 +394,6 @@
         }
     }
 }
-*/
 
 .about-section-two {
     position: relative;
@@ -439,7 +421,6 @@
     }
 }
 
-/*
 .about-section-seven {
     background: #F6EBE1;
     position: relative;
@@ -465,9 +446,7 @@
         bottom: 0;
     }
 }
-*/
 
-/*
 .about-bg-wrapper {
     position: relative;
     z-index: 1;
@@ -492,9 +471,7 @@
         bottom: 0;
     }
 }
-*/
 
-/*
 .work-feature {
     position: relative;
     z-index: 1;
@@ -510,7 +487,6 @@
         z-index: 1;
     }
 }
-*/
 
 ul.worklist {
     position: absolute;
@@ -539,13 +515,11 @@ ul.worklist {
             top: 50%;
             transform: translateY(-50%);
 
-/*
             .tooltip-box {
                 .icon {
                     background: #FF3C82;
                 }
             }
-*/
         }
 
         &:nth-child(3) {
@@ -554,13 +528,11 @@ ul.worklist {
             bottom: -5%;
             transform: translateX(-50%);
 
-/*
             .tooltip-box {
                 .icon {
                     background: #01CE46;
                 }
             }
-*/
         }
 
         &:last-child {
@@ -569,13 +541,11 @@ ul.worklist {
             top: 50%;
             transform: translateY(-50%);
 
-/*
             .tooltip-box {
                 .icon {
                     background: #38D5FF;
                 }
             }
-*/
         }
     }
 }
@@ -606,7 +576,6 @@ ul.worklist {
     }
 }
 
-/*
 .tooltip-box {
     position: relative;
 
@@ -710,11 +679,9 @@ ul.worklist {
         }
     }
 }
-*/
 
 
 //video
-/*
 .video-wrap-1 {
     position: relative;
     z-index: 1;
@@ -733,9 +700,7 @@ ul.worklist {
         }
     }
 }
-*/
 
-/*
 .video-wrap-2 {
     position: relative;
     z-index: 1;
@@ -753,19 +718,15 @@ ul.worklist {
         font-size: 45px;
     }
 }
-*/
 
 
 //counter-style
 
-/*
 .counter-bg-one {
     background: rgba(255, 255, 255, 0.90);
     box-shadow: 0px 30px 60px 0px rgba(8, 215, 77, 0.07);
 }
-*/
 
-/*
 .counter-wrap-1 {
     text-align: center;
     margin-bottom: 45px;
@@ -792,9 +753,7 @@ ul.worklist {
         }
     }
 }
-*/
 
-/*
 .counter-wrap-2 {
     margin-bottom: 45px;
 
@@ -824,9 +783,7 @@ ul.worklist {
         }
     }
 }
-*/
 
-/*
 .counter-wrap-3 {
     margin-bottom: 45px;
 
@@ -857,10 +814,8 @@ ul.worklist {
         }
     }
 }
-*/
 
 .counter-wrap-4,
-/*
 .counter-wrap-5 {
     display: flex;
     align-items: center;
@@ -917,10 +872,8 @@ ul.worklist {
         }
     }
 }
-*/
 
 //block-wrap
-/*
 .block-wrap-1 {
     background: #FFE2DC;
     padding: 50px 55px 75px 50px;
@@ -1018,9 +971,7 @@ ul.worklist {
         }
     }
 }
-*/
 
-/*
 .block-wrap-2 {
     display: flex;
     align-items: center;
@@ -1098,13 +1049,11 @@ ul.worklist {
         }
     }
 }
-*/
 
 
 
 
 //brand 
-/*
 .brand-wrap-1 {
     display: flex;
     justify-content: space-between;
@@ -1124,7 +1073,6 @@ ul.worklist {
     }
 
 }
-*/
 
 .brand-wrap-2 {
     display: flex;
@@ -1192,7 +1140,6 @@ ul.worklist {
 }
 
 //marquee-wrapper
-/*
 .marquee-wrapper {
     width: 130vw;
     margin-left: -10%;
@@ -1229,7 +1176,6 @@ ul.worklist {
         width: 100%;
     }
 }
-*/
 
 @keyframes marqueslide {
     from {
@@ -1241,7 +1187,6 @@ ul.worklist {
     }
 }
 
-/*
 .marquee-wrapper {
     overflow: hidden;
     white-space: nowrap;
@@ -1263,9 +1208,7 @@ ul.worklist {
         animation-play-state: paused;
     }
 }
-*/
 
-/*
 .marquee-slide {
     display: inline-block;
     animation: 35s marqueslide infinite linear;
@@ -1273,4 +1216,3 @@ ul.worklist {
     display: flex;
     align-items: center;
 }
-*/

@@ -24,14 +24,10 @@
 //   --bs-gutter-x: 30px;
 // }
 
-/*
 .custom-container-one {
     max-width: 1570px;
 }
-*/
 
-/*
 .custom-container-two {
     max-width: 1484px;
 }
-*/

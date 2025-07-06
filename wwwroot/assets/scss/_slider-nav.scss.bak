@@ -52,7 +52,6 @@ ul.slick-dots {
     }
 }
 
-/*
 .dot-style-3 {
     ul.slick-dots {
         bottom: -57px;
@@ -98,7 +97,6 @@ ul.slick-dots {
         }
     }
 }
-*/
 
 .dot-style-4 {
     ul.slick-dots {
@@ -119,7 +117,6 @@ ul.slick-dots {
     }
 }
 
-/*
 .dot-style-5 {
     ul.slick-dots {
 
@@ -138,7 +135,6 @@ ul.slick-dots {
         }
     }
 }
-*/
 
 .arrow-style-1,
 .arrow-style-3,
@@ -153,7 +149,6 @@ ul.slick-dots {
     .slick-next,
     .next-p1,
     .prev-p1,
-/*
     .slick-arrow {
         background: transparent;
         padding: 0;
@@ -182,7 +177,6 @@ ul.slick-dots {
             }
         }
     }
-*/
 
     .slick-prev {
         margin-right: 20px;
@@ -244,7 +238,6 @@ ul.slick-dots {
     }
 }
 
-/*
 .arrow-style-4 {
 
     .slick-next,
@@ -259,9 +252,7 @@ ul.slick-dots {
         }
     }
 }
-*/
 
-/*
 .arrow-style-7 {
 
     .slick-next,
@@ -276,9 +267,7 @@ ul.slick-dots {
         }
     }
 }
-*/
 
-/*
 .arrow-style-5 {
 
     .slick-next,
@@ -293,9 +282,7 @@ ul.slick-dots {
         }
     }
 }
-*/
 
-/*
 .arrow-style-6 {
 
     .slick-next,
@@ -315,9 +302,7 @@ ul.slick-dots {
         }
     }
 }
-*/
 
-/*
 .arrow-style-8 {
     position: relative;
     z-index: 1;
@@ -345,9 +330,7 @@ ul.slick-dots {
         }
     }
 }
-*/
 
-/*
 .arrow-style-9 {
 
     .slick-next,
@@ -369,7 +352,6 @@ ul.slick-dots {
         }
     }
 }
-*/
 
 
 .arrow-style-10 {
@@ -392,7 +374,6 @@ ul.slick-dots {
     }
 }
 
-/*
 .number-wrapper {
     position: relative;
     z-index: 1;
@@ -428,4 +409,3 @@ ul.slick-dots {
         transform: rotate(20deg);
     }
 }
-*/

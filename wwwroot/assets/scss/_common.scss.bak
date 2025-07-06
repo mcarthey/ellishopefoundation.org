@@ -74,7 +74,6 @@ body {
 	overflow-x: hidden;
 }
 
-/*
 .spacing-side {
 	padding-left: 85px;
 	padding-right: 85px;
@@ -89,18 +88,15 @@ body {
 		padding-right: 0;
 	}
 }
-*/
 
 // .img,img {
 // 	max-width: 100%;
 // 	@include transition(.3s);
 // }
 
-/*
 .fix {
 	overflow: hidden;
 }
-*/
 
 a,
 .button {
@@ -138,11 +134,9 @@ textarea:focus {
 	text-transform: uppercase;
 }
 
-/*
 .capitalize {
 	text-transform: capitalize;
 }
-*/
 
 h1,
 .h1,
@@ -155,7 +149,6 @@ h4,
 h5,
 .h5,
 h6,
-/*
 .h6 {
 	font-family: $garamond;
 	color: $heding;
@@ -164,7 +157,6 @@ h6,
 	font-weight: 700;
 	text-transform: normal;
 }
-*/
 
 h1 a,
 h2 a,
@@ -200,12 +192,10 @@ h6 {
 	font-size: 16px;
 }
 
-/*
 .list-none {
 	margin: 0px;
 	padding: 0px;
 }
-*/
 
 p {
 	font-size: 18px;
@@ -265,11 +255,9 @@ label {
 /*--
     - Common Classes
 -----------------------------------------*/
-/*
 .fix {
 	overflow: hidden;
 }
-*/
 
 .clear {
 	clear: both;
@@ -277,7 +265,6 @@ label {
 
 //overlay-bg
 
-/*
 .overlay-bg {
 	position: relative;
 	z-index: 2;
@@ -292,7 +279,6 @@ label {
 		height: 100%;
 	}
 }
-*/
 
 //video-icon
 .popup-video {
@@ -321,7 +307,6 @@ label {
 }
 
 //custom-container
-/*
 .custom-container-1600 {
 	padding-left: 145px;
 	padding-right: 145px;
@@ -331,7 +316,6 @@ label {
 		padding-right: 0;
 	}
 }
-*/
 
 // others common css here :)
 //  Preloader
@@ -356,7 +340,6 @@ label {
 		user-select: none;
 		margin-top: 30px;
 
-/*
 		.letters-loading {
 			font-family: $supremeMedium;
 			font-weight: 500;
@@ -406,7 +389,6 @@ label {
 				animation-delay: 1.4s;
 			}
 		}
-*/
 	}
 }
 

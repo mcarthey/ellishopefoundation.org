@@ -265,7 +265,6 @@
 
 
 /*title-four*/
-/*
 .title-four {
     .sub-title {
         color: rgba(247, 79, 34, 0.8);
@@ -342,7 +341,6 @@
         }
     }
 }
-*/
 
 /*title-five*/
 .title-five {
@@ -425,7 +423,6 @@
 
 
 /*title-six*/
-/*
 .title-six {
     .sub-title {
         color: rgba(0, 0, 0, 0.5);
@@ -480,10 +477,8 @@
         }
     }
 }
-*/
 
 /*title-seven*/
-/*
 .title-seven {
     .sub-title {
         color: rgba(247, 79, 34, 0.8);
@@ -545,11 +540,9 @@
         }
     }
 }
-*/
 
 
 //cta-title
-/*
 .cta-title {
     font-size: 48px;
     font-weight: 700;
@@ -564,7 +557,6 @@
         font-size: 32px;
     }
 }
-*/
 
 .contact-title {
     color: $heding;
@@ -596,7 +588,6 @@
 
 }
 
-/*
 .fact-title {
     font-size: 70px;
     line-height: 1.13;
@@ -612,4 +603,3 @@
         font-size: 35px;
     }
 }
-*/

@@ -2,7 +2,6 @@
     - Overlay
 ------------------------------------------*/
 
-/*
 .overlay-soft {
     position: relative;
     z-index: 1;
@@ -17,7 +16,6 @@
         z-index: -1;
     }
 } 
-*/
 [data-overlay] {
     position: relative;
     background-size: cover;

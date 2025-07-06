@@ -1,5 +1,4 @@
 //cart-list-form
-/*
 .cart-list-form {
     border: 1px solid rgba(7, 17, 6, 0.1);
 
@@ -47,10 +46,8 @@
         }
     }
 }
-*/
 
 //cart-list-form
-/*
 .cart-list-form {
     .table-responsive {
         margin-bottom: 30px;
@@ -169,7 +166,6 @@
         }
     }
 }
-*/
 
 .cart-list-form .table .price,
 .cat__section .cart-footer .cart-total-table tr td {
@@ -179,7 +175,6 @@
 }
 
 //cart-footer
-/*
 .cart-footer {
     .coupon-form {
         background: #FCF1EC;
@@ -264,10 +259,8 @@
         margin-top: -3px;
     }
 }
-*/
 
 //cart-total-section
-/*
 .cart-total-section {
     padding: 40px 30px;
     border-radius: 6px;
@@ -292,10 +285,8 @@
         padding: 40px 15px;
     }
 }
-*/
 
 //cart-total-table
-/*
 .cart-total-table {
     tbody {
         tr {
@@ -317,10 +308,8 @@
         }
     }
 }
-*/
 
 //checkout-form
-/*
 .checkout-form {
     label {
         color: $body-text-color;
@@ -407,10 +396,8 @@
         padding: 0;
     }
 }
-*/
 
 //payment-list
-/*
 .payment-list {
     padding: 0;
     list-style: none;
@@ -458,16 +445,12 @@
         }
     }
 }
-*/
 
-/*
 .checkout__section {
     overflow: hidden;
 }
-*/
 
 .cart-info-title,
-/*
 .cart-total-title {
     font-size: 32px;
     font-weight: 600;
@@ -479,4 +462,3 @@
         font-size: 24px;
     }
 }
-*/

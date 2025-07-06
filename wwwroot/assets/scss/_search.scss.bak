@@ -1,5 +1,4 @@
 /* search-area */
-/*
 .search-area {
 	.search-input {
 		color: $heding;
@@ -20,11 +19,9 @@
 		}
 	}
 }
-*/
 
 /* Full screen search
 -------------------------------------------------------*/
-/*
 .offcanvas-top {
 	// height: 50vh;
 	min-height: 150px;
@@ -38,9 +35,7 @@
 		cursor: pointer;
 	}
 }
-*/
 
-/*
 .search-wrap {
 	padding-bottom: 100px;
 
@@ -110,4 +105,3 @@
 		}
 	}
 }
-*/

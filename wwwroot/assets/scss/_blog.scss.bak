@@ -1,4 +1,3 @@
-/*
 .blog-one {
     margin-bottom: 45px;
     position: relative;
@@ -154,9 +153,7 @@
         }
     }
 }
-*/
 
-/*
 .blog-two {
     background: $white;
     border-radius: 15px;
@@ -272,9 +269,7 @@
 
     @media #{$max-xs} {}
 }
-*/
 
-/*
 .blog-three {
 
     margin-bottom: 45px;
@@ -353,9 +348,7 @@
 
     }
 }
-*/
 
-/*
 .blog-four {
     position: relative;
     z-index: 1;
@@ -531,9 +524,7 @@
         }
     }
 }
-*/
 
-/*
 .blog-five {
     background: #EBEBEB;
     padding: 85px 77px 19px 40px;
@@ -647,9 +638,7 @@
         }
     }
 }
-*/
 
-/*
 .blog-six {
     position: relative;
     z-index: 1;
@@ -752,9 +741,7 @@
         }
     }
 }
-*/
 
-/*
 .blog-seven {
     position: relative;
     z-index: 1;
@@ -902,7 +889,6 @@
         }
     }
 }
-*/
 
 .classic-style {
     position: relative;
@@ -1236,7 +1222,6 @@
 }
 
 //blog-section-two
-/*
 .blog-section-two {
     background: #FFF5F2;
     position: relative;
@@ -1268,10 +1253,8 @@
         top: 69px;
     }
 }
-*/
 
 //blog-section-three
-/*
 .blog-section-three {
 
     .shape-1,
@@ -1294,10 +1277,8 @@
         top: 7%;
     }
 }
-*/
 
 //blog-section-four
-/*
 .blog-section-four {
     position: relative;
     z-index: 1;
@@ -1317,9 +1298,7 @@
     }
 
 }
-*/
 
-/*
 .paragraph-text {
     font-size: 24px;
     line-height: 40px;
@@ -1329,7 +1308,6 @@
         line-height: 32px;
     }
 }
-*/
 
 
 //comment-box

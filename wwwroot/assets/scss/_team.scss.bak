@@ -90,7 +90,6 @@
     }
 }
 
-/*
 .team-wrap-2 {
     text-align: center;
     background: $white;
@@ -236,9 +235,7 @@
         }
     }
 }
-*/
 
-/*
 .team-wrap-3 {
     text-align: center;
     border-radius: 20px;
@@ -307,7 +304,6 @@
         }
     }
 }
-*/
 
 .team-wrap-4 {
     text-align: center;
@@ -624,7 +620,6 @@
     }
 }
 
-/*
 .team-section-three {
     background: #030303;
 
@@ -652,4 +647,3 @@
         }
     }
 }
-*/

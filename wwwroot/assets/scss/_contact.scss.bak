@@ -12,7 +12,6 @@
     }
 }
 
-/*
 .contact-form-wrapper-2 {
     background: $white;
     padding: 50px 60px 60px 60px;
@@ -26,9 +25,7 @@
         padding: 50px 15px;
     }
 }
-*/
 
-/*
 .contact-form-wrapper-3 {
     background: $white;
     padding: 80px 60px 90px 60px;
@@ -44,7 +41,6 @@
         padding: 50px 15px;
     }
 }
-*/
 
 .contact-form-wrapper-4 {
     background: $white;
@@ -157,7 +153,6 @@
 
     }
 
-/*
     .submit-btn {
         color: $heding;
         font-size: 18px;
@@ -178,7 +173,6 @@
             background: $black;
         }
     }
-*/
 
     @media #{$max-lg} {
         .input-wrapper {
@@ -220,7 +214,6 @@
             }
         }
 
-/*
         .submit-btn {
             color: $white;
             width: 100%;
@@ -232,7 +225,6 @@
                 background: $theme-color;
             }
         }
-*/
     }
 
     &.form-3 {
@@ -269,7 +261,6 @@
             }
         }
 
-/*
         .submit-btn {
             color: $black;
             font-size: 24px;
@@ -286,7 +277,6 @@
                 background: $black;
             }
         }
-*/
     }
 
     &.form-4 {
@@ -648,7 +638,6 @@
     }
 }
 
-/*
 .booking-form-bg {
     background: $white;
     box-shadow: -20px 20px 60px 0px rgba(0, 0, 0, 0.10);
@@ -751,10 +740,8 @@
         border-top-left-radius: 0;
     }
 }
-*/
 
 //signup-form-section
-/*
 .signup-form-section {
     .contact-wrapper {
         background: rgba(244, 244, 244, 0.5);
@@ -782,9 +769,7 @@
         font-weight: 600;
     }
 }
-*/
 
-/*
 .contact-info-wrapper {
     max-width: 1600px;
     display: grid;
@@ -851,9 +836,7 @@
         grid-template-columns: 100%;
     }
 }
-*/
 
-/*
 .contact-info-wrap-1 {
     margin-top: 45px;
     display: grid;
@@ -892,7 +875,6 @@
         }
     }
 }
-*/
 
 .info-box {
     display: flex;
@@ -1017,7 +999,6 @@
 }
 
 //cta-section
-/*
 .cta-section {
     background-size: cover;
     background-repeat: no-repeat;
@@ -1037,9 +1018,7 @@
         }
     }
 }
-*/
 
-/*
 .cta-wrapper {
     background-position: center;
     background-repeat: no-repeat;
@@ -1063,7 +1042,6 @@
         padding-bottom: 100px;
     }
 }
-*/
 
 //contact-section
 .contact-section {
@@ -1124,7 +1102,6 @@
 }
 
 //newsletter-section-four
-/*
 .newsletter-section-four {
     .shape-1 {
         right: 52%;
@@ -1135,7 +1112,6 @@
         }
     }
 }
-*/
 
 .newsletter-border {
     border-top: 1px solid rgba(0, 0, 0, 0.10);

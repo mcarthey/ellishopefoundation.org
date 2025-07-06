@@ -362,10 +362,8 @@
     }
 }
 
-/*
 .faq-section-two {
     background: $deep-green;
     position: relative;
     z-index: 1;
 }
-*/

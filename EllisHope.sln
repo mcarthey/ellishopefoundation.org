@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35818.85 d17.13
+VisualStudioVersion = 17.13.35818.85
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EllisHope", "EllisHope.csproj", "{DF618462-DEE8-4CF7-99C4-CFAB8A1D318C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScssSelectorScanner", "..\ScssSelectorScanner\ScssSelectorScanner.csproj", "{486DD20A-E77C-4C6C-84CB-034C380FF1C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{DF618462-DEE8-4CF7-99C4-CFAB8A1D318C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF618462-DEE8-4CF7-99C4-CFAB8A1D318C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF618462-DEE8-4CF7-99C4-CFAB8A1D318C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{486DD20A-E77C-4C6C-84CB-034C380FF1C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{486DD20A-E77C-4C6C-84CB-034C380FF1C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{486DD20A-E77C-4C6C-84CB-034C380FF1C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{486DD20A-E77C-4C6C-84CB-034C380FF1C5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

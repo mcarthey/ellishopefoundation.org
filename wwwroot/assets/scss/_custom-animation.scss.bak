@@ -479,7 +479,6 @@
 }
 
 //scale-up-01
-/*
 .scaleUp1 {
     -webkit-animation-name: scaleUp1;
     animation-name: scaleUp1;
@@ -490,7 +489,6 @@
     -webkit-animation-timing-function: linear;
     animation-timing-function: linear;
 }
-*/
 
 @-webkit-keyframes scaleUp1 {
     0% {
@@ -741,11 +739,9 @@
     }
 }
 
-/*
 .movingX {
     animation: movingX 8s linear infinite;
 }
-*/
 
 @keyframes movingX {
     0% {
@@ -761,11 +757,9 @@
     }
 }
 
-/*
 .jump {
     animation: jumpAni 7s linear infinite;
 }
-*/
 
 @keyframes jumpAni {
     0% {
@@ -781,11 +775,9 @@
     }
 }
 
-/*
 .jump-reverse {
     animation: jumpReverseAni 7s linear infinite;
 }
-*/
 
 @keyframes jumpReverseAni {
     0% {
@@ -840,11 +832,9 @@
 }
 
 
-/*
 .jump {
     animation: jumpAni 7s linear infinite;
 }
-*/
 
 @keyframes jumpAni {
     0% {
@@ -860,11 +850,9 @@
     }
 }
 
-/*
 .jump-reverse {
     animation: jumpReverseAni 7s linear infinite;
 }
-*/
 
 @keyframes jumpReverseAni {
     0% {

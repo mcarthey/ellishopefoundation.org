@@ -1,4 +1,3 @@
-/*
 .service-wrap-1 {
     background: $white;
     padding: 45px 80px 40px 55px;
@@ -54,9 +53,7 @@
         padding-right: 15px;
     }
 }
-*/
 
-/*
 .service-wrap-2 {
     text-align: center;
     padding-left: 15px;
@@ -120,9 +117,7 @@
         padding-bottom: 0px;
     }
 }
-*/
 
-/*
 .service-wrap-3 {
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     padding-top: 30px;
@@ -236,21 +231,16 @@
         }
     }
 }
-*/
 
 
 
-/*
 .service-section {
     padding-top: 580px;
     margin-top: -480px;
     position: relative;
     z-index: 1;
 }
-*/
 
-/*
 .service-section-three {
     background: $deep-green;
 }
-*/

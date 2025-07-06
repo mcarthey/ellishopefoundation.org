@@ -1,9 +1,7 @@
 //feedback-wrapper-one
-/*
 .ilustration-shape {
     margin-left: -121px;
 }
-*/
 
 .feedback-section-two {
     .shape-1 {
@@ -20,7 +18,6 @@
     }
 }
 
-/*
 .feedback-section-five {
     position: relative;
     z-index: 1;
@@ -75,9 +72,7 @@
     }
 
 }
-*/
 
-/*
 .feedback-section-six {
     position: relative;
     z-index: 1;
@@ -108,9 +103,7 @@
     }
 
 }
-*/
 
-/*
 .feedback-wrap-1 {
     background: #71F6C7;
     text-align: center;
@@ -170,7 +163,6 @@
         }
     }
 }
-*/
 
 
 .feedback-wrap-2 {
@@ -251,7 +243,6 @@
     }
 }
 
-/*
 .feedback-wrap-3 {
 
 
@@ -316,7 +307,6 @@
         }
     }
 }
-*/
 
 .feedback-wrap-4,
 .feedback-wrap-6 {
@@ -395,7 +385,6 @@
     }
 }
 
-/*
 .feedback-wrap-5 {
     text-align: center;
 
@@ -440,7 +429,6 @@
         }
     }
 }
-*/
 
 .feedback-wrap-6 {
     background: $white;
@@ -456,7 +444,6 @@
 }
 
 .slick-slide.slick-current.slick-active {
-/*
     .feedback-wrap-4 {
         background: $black;
 
@@ -493,7 +480,6 @@
             }
         }
     }
-*/
 
     .feedback-wrap-6 {
         .rating {
@@ -521,7 +507,6 @@
 
 
 
-/*
 .author-avatar-list {
     padding: 0;
     margin: 0;
@@ -533,4 +518,3 @@
         }
     }
 }
-*/

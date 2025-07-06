@@ -1,5 +1,4 @@
 //theme-banner-one
-/*
 .theme-banner-one {
     background-position: center;
     background-repeat: no-repeat;
@@ -161,10 +160,8 @@
         }
     }
 }
-*/
 
 //theme-banner-two
-/*
 .theme-banner-two {
     text-align: center;
     background-position: center;
@@ -295,11 +292,9 @@
         }
     }
 }
-*/
 
 
 //theme-banner-three
-/*
 .theme-banner-three {
     position: relative;
     z-index: 1;
@@ -494,10 +489,8 @@
         }
     }
 }
-*/
 
 //theme-banner-four
-/*
 .theme-banner-four {
     background: #F8F5E4;
     padding-top: 153px;
@@ -666,11 +659,9 @@
         }
     }
 }
-*/
 
 
 //theme-banner-five
-/*
 .theme-banner-five {
     padding-top: 290px;
     padding-bottom: 158px;
@@ -892,11 +883,9 @@
         }
     }
 }
-*/
 
 
 //theme-banner-six
-/*
 .theme-banner-six {
     background: $deep-green;
     padding-top: 280px;
@@ -1032,7 +1021,6 @@
         }
     }
 }
-*/
 
 //theme-banner-seven
 .theme-banner-seven {
@@ -1045,11 +1033,9 @@
     .shape-2,
     .shape-3,
     .shape-4,
-/*
     .shape-5 {
         position: absolute;
     }
-*/
 
     .shape-1 {
         top: 0;
@@ -1076,14 +1062,11 @@
         right: 68%;
     }
 
-/*
     .shape-5 {
         bottom: 127px;
         left: -38%;
     }
-*/
 
-/*
     .hero-counter {
         border-radius: 20px;
         background: $white;
@@ -1096,7 +1079,6 @@
         bottom: 169px;
         z-index: 3;
     }
-*/
 
     .number {
         font-size: 78px;
@@ -1105,11 +1087,9 @@
         line-height: 1;
     }
 
-/*
     .counter-title {
         margin-bottom: 0;
     }
-*/
 
     .hero-img {
         display: inline-block;
@@ -1176,11 +1156,9 @@
             padding-right: 0;
         }
 
-/*
         .hero-counter {
             display: none;
         }
-*/
     }
 
 
@@ -1195,20 +1173,16 @@
             line-height: 38px;
         }
 
-/*
         .bs-btn2 {
             display: none;
         }
-*/
 
         .shape-1,
         .shape-2,
         .shape-4,
-/*
         .shape-5 {
             display: none;
         }
-*/
 
     }
 
@@ -1257,7 +1231,6 @@
 
 //user list thumb
 .user-list,
-/*
 .feedback-user-list {
     padding: 0;
     margin: 0;
@@ -1295,9 +1268,7 @@
         border: 4px solid $white;
     }
 }
-*/
 
-/*
 .user-list-2 {
     padding: 0;
     margin: 0;
@@ -1333,4 +1304,3 @@
         border: 5px solid $black;
     }
 }
-*/

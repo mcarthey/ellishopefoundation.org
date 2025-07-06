@@ -1,5 +1,4 @@
 //feature-list
-/*
 .feature-list-one {
     .icon {
         display: inline-block;
@@ -22,7 +21,6 @@
         }
     }
 }
-*/
 
 .feature-list-two {
     margin-bottom: 20px;
@@ -104,7 +102,6 @@
 //feature wrap
 .feature-wrap-1,
 .feature-wrap-2,
-/*
 .feature-wrap-3 {
     background-position: center;
     background-repeat: no-repeat;
@@ -160,9 +157,7 @@
         }
     }
 }
-*/
 
-/*
 .feature-wrap-2 {
 
     padding: 150px 103px 75px 103px;
@@ -180,16 +175,13 @@
         }
     }
 }
-*/
 
 
-/*
 .feature-wrap-3 {
     &::before {
         background: rgba(33, 252, 186, 0.8);
     }
 }
-*/
 
 .feature-wrap-4 {
     text-align: center;
@@ -243,7 +235,6 @@
     }
 }
 
-/*
 .feature-wrap-5 {
     text-align: center;
     margin-bottom: 35px;
@@ -341,9 +332,7 @@
         }
     }
 }
-*/
 
-/*
 .feature-wrap-6 {
     text-align: center;
     background: #FFBD98;
@@ -408,9 +397,7 @@
         padding-right: 15px;
     }
 }
-*/
 
-/*
 .feature-wrap-7 {
     text-align: center;
     border: 1px solid $black;
@@ -484,7 +471,6 @@
         }
     }
 }
-*/
 
 .feature-wrap-8 {
     text-align: center;
@@ -599,7 +585,6 @@
     }
 }
 
-/*
 .feature-section-two {
     .row {
         .col {
@@ -623,9 +608,7 @@
         }
     }
 }
-*/
 
-/*
 .we-do-section-three {
 
     .shape-1,
@@ -647,7 +630,6 @@
         top: 25%;
     }
 }
-*/
 
 .we-do-section-five {
 

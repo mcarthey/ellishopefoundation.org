@@ -166,8 +166,6 @@ a.meanmenu-reveal {
 	box-sizing: content-box;
 }
 
-/*
 .mean-remove {
 	display: none !important;
 }
-*/
