@@ -3,18 +3,17 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<header class="theme-main-menu theme-menu-seven">
-    <!-- [Header remains unchanged; logo and nav links stay intact] -->
-    <div class="main-header-area">
+<header class="theme-main-menu theme-menu-two">
+    <div class="main-header-area pt-25 pb-15">
         <div class="container-fluid">
             <div class="row align-items-center justify-content-between">
                 <div class="col-md-auto col-6 d-flex align-items-center justify-content-start">
                     <div class="logo-area">
                         <a class="logo" href="/home/">
-                            <img src="~/assets/img/logo/ellis-hope-logo.svg" alt="Header-logo">
+                            <img src="~/assets/img/logo/header-logo-2.svg" alt="Header-logo">
                         </a>
                         <a class="sticky-logo" href="/home/">
-                            <img src="~/assets/img/logo/ellis-hope-logo.svg" alt="Header-logo">
+                            <img src="~/assets/img/logo/header-logo-1.svg" alt="Header-logo">
                         </a>
                     </div>
                     <div class="main-menu d-none d-lg-inline-block pl-90">
@@ -153,21 +152,17 @@
                     </div>
                 </div>
                 <div class="col-md-auto col-6">
-                    <div class="d-flex align-items-center justify-content-end">
-                        <div class="call-btn d-xl-inline-block d-none">
-                            <a href="#">Call Us <span class="phone-number">+757 699-4478</span></a>
-                        </div>
-                        <div class="quote-btn d-xxl-inline-block d-none">
-                            <a href="/contact" class="ht-btn bs-btn2">Contact</a>
-                        </div>
-                        <div class="quote-btn d-md-inline-block d-none">
+                    <div class="right-nav d-flex align-items-center justify-content-end">
+                        <div class="quote-btn d-lg-inline-block d-none">
                             <a href="/contact" class="ht-btn bs-btn">Donate Now</a>
                         </div>
-                        <div class="hamburger-menu d-lg-none d-md-inline-flex">
-                            <div class="bar-wrap">
-                                <div class="bar-1"></div>
-                                <div class="bar-2"></div>
-                                <div class="bar-3"></div>
+                        <div class="hamburger-menu d-lg-none d-inline-flex">
+                            <div class="open-sidebar">
+                                <div class="bar-wrap">
+                                    <div class="bar-1"></div>
+                                    <div class="bar-2"></div>
+                                    <div class="bar-3"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -175,13 +170,12 @@
             </div>
         </div>
     </div>
-    <!-- /.theme-main-menu -->
 </header>
 
 <main>
 
     <!-- HERO SECTION -->
-    <section class="theme-banner-seven">
+    <section class="theme-banner-seven" style="background:#f7f6fb;">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-6">
@@ -190,13 +184,13 @@
                         <p class="description">
                             At Ellis Hope Foundation, we believe that every individual deserves the chance to pursue a healthier and more fulfilling life. Together, we turn dreams into reality.
                         </p>
-                        <a href="/contact" class="ht-btn bstyle">Get Involved</a>
+                        <a href="/contact" class="ht-btn bstyle me-3">Get Involved</a>
+                        <a href="/contact" class="ht-btn bstyle-2">Donate Today</a>
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="hero-img">
                         <img class="hero-main img-fluid" src="~/assets/img/hero/hero-img-6-unsplash.png" alt="hero">
-                        <!-- Shapes kept for visual appeal -->
                     </div>
                 </div>
             </div>
@@ -204,26 +198,23 @@
     </section>
 
     <!-- FEEDBACK / TESTIMONIALS -->
-    <div class="feedback-section-three pt-60 pb-100">
+    <div class="black-bg feedback-section-two position-relative z-1 dot-style-2 pt-60 pb-100">
+        <img class="shape-1" src="~/assets/img/shape/shape-10.png" alt="">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-9">
-                    <div class="feedback-wrap-3">
-                        <div class="author-content">
-                            <h5 class="name">A Grateful Participant</h5>
-                            <p class="designation">Community Member</p>
-                        </div>
-                        <div class="content">
-                            <p class="feedback-text">
-                                "Thanks to Ellis Hope Foundation, I found the support and guidance I needed to regain my health and confidence. They changed my life."
-                            </p>
-                        </div>
+                    <div class="feedback-wrap-2">
+                        <h5 class="slogan-author">A Grateful Participant</h5>
+                        <p class="feedback-text">
+                            "Thanks to Ellis Hope Foundation, I found the support and guidance I needed to regain my health and confidence. They changed my life."
+                        </p>
+                        <h4 class="name">Community Member</h4>
                     </div>
                 </div>
                 <div class="col-lg-3 d-flex justify-content-end">
                     <div class="right-content text-center">
-                        <p>Ready to help?</p>
-                        <a href="/contact" class="ht-btn style-13">Donate Today</a>
+                        <p class="text-white">Ready to help?</p>
+                        <a href="/contact" class="ht-btn bstyle-2">Donate Today</a>
                     </div>
                 </div>
             </div>
@@ -231,11 +222,11 @@
     </div>
 
     <!-- OUR SERVICES ("What We Do") -->
-    <section class="we-do-section-four pt-110 pb-45">
+    <section class="feature-section pb-75 pb-lg-15" style="background:#fff;">
         <div class="container">
             <div class="row gx-xxl-5">
                 <div class="col-lg-4 col-md-6">
-                    <div class="feature-wrap-7">
+                    <div class="feature-wrap-4">
                         <div class="icon">
                             <img class="front-icon" src="~/assets/img/icon/icon-34.svg" alt="Training Icon">
                         </div>
@@ -244,7 +235,7 @@
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
-                    <div class="feature-wrap-7">
+                    <div class="feature-wrap-4">
                         <div class="icon">
                             <img class="front-icon" src="~/assets/img/icon/icon-35.svg" alt="Health Icon">
                         </div>
@@ -253,7 +244,7 @@
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
-                    <div class="feature-wrap-7">
+                    <div class="feature-wrap-4">
                         <div class="icon">
                             <img class="front-icon" src="~/assets/img/icon/icon-36.svg" alt="Community Icon">
                         </div>
@@ -263,23 +254,23 @@
                 </div>
             </div>
         </div>
+        <div class="back-bg"></div>
     </section>
 
     <!-- FEATURED CAUSES -->
-    <section class="cause-section-six pt-90 pb-145">
+    <section class="cause-section arrow-style-2 position-relative z-2 pt-140 pb-95 pt-lg-60 pb-lg-75" style="background:#f7f6fb;">
         <div class="container">
             <div class="row mb-40">
                 <div class="col-xl-6">
-                    <div class="title-one">
+                    <div class="title-two mb-50">
                         <h2 class="title">Our Current Initiatives</h2>
                         <p>Small steps. Big impact. Every effort counts toward building stronger lives.</p>
                     </div>
                 </div>
             </div>
-
             <div class="row">
                 <div class="col-lg-4">
-                    <div class="causes-wrap-6">
+                    <div class="causes-wrap-2">
                         <div class="cause-thumb">
                             <img src="~/assets/img/cause/training-sponsorships-450x300.jpg" alt="Personal Training Sponsorship">
                         </div>
@@ -288,11 +279,12 @@
                                 <a href="/causes/details">Training Sponsorships</a>
                             </h3>
                             <p>Provide professional fitness training scholarships to individuals in need.</p>
+                            <a href="/causes/details" class="donation-btn">Donate Now</a>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-4">
-                    <div class="causes-wrap-6">
+                    <div class="causes-wrap-2">
                         <div class="cause-thumb">
                             <img src="~/assets/img/cause/wellness-workshops-450x300.jpg" alt="Wellness Workshops">
                         </div>
@@ -301,11 +293,12 @@
                                 <a href="/causes/details">Wellness Workshops</a>
                             </h3>
                             <p>Educational classes teaching healthy habits, nutrition, and fitness basics.</p>
+                            <a href="/causes/details" class="donation-btn">Donate Now</a>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-4">
-                    <div class="causes-wrap-6">
+                    <div class="causes-wrap-2">
                         <div class="cause-thumb">
                             <img src="~/assets/img/cause/community-challenges-450x300.jpg" alt="Community Challenges">
                         </div>
@@ -314,6 +307,7 @@
                                 <a href="/causes/details">Community Challenges</a>
                             </h3>
                             <p>Fun local events promoting teamwork, fitness, and mutual encouragement.</p>
+                            <a href="/causes/details" class="donation-btn">Donate Now</a>
                         </div>
                     </div>
                 </div>
@@ -322,21 +316,25 @@
     </section>
 
     <!-- ABOUT SECTION -->
-    <section class="about-section-seven pt-130">
+    <section class="about-section-two pt-230 pb-45 pt-lg-60 pb-lg-15">
+        <img class="shape-1" src="~/assets/img/shape/shape-8.png" alt="shape">
+        <img class="shape-2" src="~/assets/img/shape/shape-9.png" alt="shape">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6">
-                    <div class="img-wrapper-seven text-center">
+                    <div class="img-wrapper-two text-center">
                         <img class="main-img img-fluid" src="~/assets/img/media/about-foundation-663x839.jpg" alt="about us">
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <div class="text-wrapper-four">
-                        <h2 class="title">About Ellis Hope Foundation</h2>
-                        <p>
-                            We are a community-driven organization dedicated to empowering individuals through fitness, education, and support. We believe in the resilience of the human spirit and the power of hope.
-                        </p>
-                        <a class="ht-btn style-13" href="/about">Learn More</a>
+                    <div class="text-wrapper-one mb-45 wow fadeInUp" data-wow-delay="0.1">
+                        <div class="title-two mb-50">
+                            <h2 class="title">About Ellis Hope Foundation</h2>
+                            <p>
+                                We are a community-driven organization dedicated to empowering individuals through fitness, education, and support. We believe in the resilience of the human spirit and the power of hope.
+                            </p>
+                        </div>
+                        <a class="ht-btn style-2 mt-30" href="/about">Learn More</a>
                     </div>
                 </div>
             </div>
@@ -362,46 +360,121 @@
 
 </main>
 
-<footer class="footer-seven">
-    <!-- [Footer remains visually as-is, standard links, social icons, copyright] -->
-    <div class="ht-about-widget">
-        <div class="footer-logo">
-            <a href="/home/">
-                <img src="~/assets/img/logo/ellis-hope-logo.svg" alt="logo">
-            </a>
+<footer class="footer-two pt-30">
+    <img class="shape-2" src="~/assets/img/shape/shape-12.png" alt="shape">
+    <img class="shape-3" src="~/assets/img/shape/shape-80.png" alt="shape">
+    <div class="container fot-border-2 pt-95">
+        <div class="row mb-30">
+            <div class="col-xl-3 col-lg-3 col-md-6">
+                <div class="footer-widget ht-about-widget mb-30">
+                    <div class="footer-logo">
+                        <a href="/home/">
+                            <img src="~/assets/img/logo/header-logo-1.svg" alt="logo">
+                        </a>
+                    </div>
+                    <ul>
+                        <li>
+                            <a href="mailto:infocharity816@gmail.com">infocharity816@gmail.com</a>
+                        </li>
+                        <li>
+                            <a href="#">+1 123 456 7890</a>
+                        </li>
+                    </ul>
+                    <div class="social-links">
+                        <a href="#">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a href="#">
+                            <i class="bi bi-twitter"></i>
+                        </a>
+                        <a href="#">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-6">
+                <div class="footer-widget ms-xxl-5 mb-30">
+                    <h4 class="widget-title">Company</h4>
+                    <ul>
+                        <li>
+                            <a href="/about">About us</a>
+                        </li>
+                        <li>
+                            <a href="/contact">Carrer</a>
+                        </li>
+                        <li>
+                            <a href="/blog/grid">Blogs</a>
+                        </li>
+                        <li>
+                            <a href="/about">Testimonial</a>
+                        </li>
+                        <li>
+                            <a href="/contact">Contact us</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-6 d-flex justify-content-lg-center">
+                <div class="footer-widget mb-30">
+                    <h4 class="widget-title">Services</h4>
+                    <ul>
+                        <li>
+                            <a href="/about">Donation onlines</a>
+                        </li>
+                        <li>
+                            <a href="/contact">Donor centers</a>
+                        </li>
+                        <li>
+                            <a href="/blog/grid">Volunteering</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-6 d-flex justify-content-lg-end">
+                <div class="footer-widget mb-30">
+                    <h4 class="widget-title">Donations</h4>
+                    <ul>
+                        <li>
+                            <a href="/about">Donor wall</a>
+                        </li>
+                        <li>
+                            <a href="/contact">Donation confirmation</a>
+                        </li>
+                        <li>
+                            <a href="/blog/grid">Donation history</a>
+                        </li>
+                        <li>
+                            <a href="/about">Donations details</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        <ul class="footer-menu">
-            <li>
-                <a href="/home/">Home</a>
-            </li>
-            <li>
-                <a href="/home/">Pages</a>
-            </li>
-            <li>
-                <a href="cause-list.html">Causes</a>
-            </li>
-            <li>
-                <a href="/blog/grid">Blog</a>
-            </li>
-            <li>
-                <a href="/contact">Contact</a>
-            </li>
-        </ul>
-
-        <div class="social-links">
-            <a href="#">
-                <i class="bi bi-facebook"></i>
-            </a>
-            <a href="#">
-                <i class="bi bi-twitter"></i>
-            </a>
-            <a href="#">
-                <i class="bi bi-instagram"></i>
-            </a>
-        </div>
-
-        <div class="copyright-text">
-            © Copyright 2025 <a href="https://themeforest.net/user/creativegigs/portfolio">Kuki</a>. All Rights Reserved.
+    </div>
+    <div class="container">
+        <div class="copyright-wrap">
+            <div class="row align-items-center">
+                <div class="col-xl-6 col-lg-6">
+                    <div class="copyright-text text-lg-start text-center mb-lg-0 mb-md-4">
+                        © Copyright 2025
+                        <a href="https://themeforest.net/user/creativegigs/portfolio">
+                            Kuki
+                        </a>. All
+                        Rights Reserved.
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 text-xl-end text-center">
+                    <ul class="footer-menu">
+                        <li>
+                            <a href="#">Privacy policy.</a>
+                        </li>
+                        <li>
+                            <a href="#">Contact us.</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 </footer>
