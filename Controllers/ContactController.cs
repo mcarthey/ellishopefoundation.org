@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Kuki.Controllers
+namespace EllisHope.Controllers;
+
+public class ContactController : Controller
 {
-    public class ContactController : Controller
+    // GET: Contact
+    public IActionResult Index()
     {
-        // GET: Contact
-        public IActionResult Index()
-        {
-            return View();
-        }
-        public IActionResult v2()
-        {
-            return View();
-        }
+        return View();
+    }
+
+    public IActionResult v2()
+    {
+        return View();
     }
 }

@@ -1,21 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Kuki.Controllers
+namespace EllisHope.Controllers;
+
+public class BlogController : Controller
 {
-    public class BlogController : Controller
+    // GET: Blog
+    public IActionResult classic()
     {
-        // GET: Blog
-        public IActionResult classic()
-        {
-            return View();
-        }
-        public IActionResult details()
-        {
-            return View();
-        }
-        public IActionResult grid()
-        {
-            return View();
-        }
+        return View();
+    }
+
+    public IActionResult details()
+    {
+        return View();
+    }
+
+    public IActionResult grid()
+    {
+        return View();
     }
 }

@@ -1,21 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Kuki.Controllers
+namespace EllisHope.Controllers;
+
+public class CausesController : Controller
 {
-    public class CausesController : Controller
+    // GET: Causes
+    public IActionResult details()
     {
-        // GET: Causes
-        public IActionResult details()
-        {
-            return View();
-        }
-        public IActionResult grid()
-        {
-            return View();
-        }
-        public IActionResult list()
-        {
-            return View();
-        }
+        return View();
+    }
+
+    public IActionResult grid()
+    {
+        return View();
+    }
+
+    public IActionResult list()
+    {
+        return View();
     }
 }

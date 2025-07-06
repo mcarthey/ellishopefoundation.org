@@ -18,78 +18,78 @@
 *
 */
 @font-face {
-  font-family: 'Panchang-Extralight';
-  src: url('../fonts/custom-font/Panchang-Extralight.woff2') format('woff2'),
-    url('../fonts/custom-font/Panchang-Extralight.woff') format('woff'),
-    url('../fonts/custom-font/Panchang-Extralight.ttf') format('truetype');
-  font-weight: 200;
-  font-display: swap;
-  font-style: normal;
+    font-display: swap;
+    font-family: 'Panchang-Extralight';
+    font-style: normal;
+    font-weight: 200;
+    src: url('../fonts/custom-font/Panchang-Extralight.woff2') format('woff2'),
+         url('../fonts/custom-font/Panchang-Extralight.woff') format('woff'),
+         url('../fonts/custom-font/Panchang-Extralight.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'Panchang-Light';
-  src: url('../fonts/custom-font/Panchang-Light.woff2') format('woff2'),
-    url('../fonts/custom-font/Panchang-Light.woff') format('woff'),
-    url('../fonts/custom-font/Panchang-Light.eot') format('eot'),
-    url('../fonts/custom-font/Panchang-Light.ttf') format('truetype');
-  font-weight: 300;
-  font-display: swap;
-  font-style: normal;
+    font-display: swap;
+    font-family: 'Panchang-Light';
+    font-style: normal;
+    font-weight: 300;
+    src: url('../fonts/custom-font/Panchang-Light.woff2') format('woff2'),
+         url('../fonts/custom-font/Panchang-Light.woff') format('woff'),
+         url('../fonts/custom-font/Panchang-Light.eot') format('eot'),
+         url('../fonts/custom-font/Panchang-Light.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'Panchang-Regular';
-  src: url('../fonts/custom-font/Panchang-Regular.woff2') format('woff2'),
-    url('../fonts/custom-font/Panchang-Regular.woff') format('woff'),
-    url('../fonts/custom-font/Panchang-Regular.eot') format('eot'),
-    url('../fonts/custom-font/Panchang-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-display: swap;
-  font-style: normal;
+    font-display: swap;
+    font-family: 'Panchang-Regular';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/custom-font/Panchang-Regular.woff2') format('woff2'),
+         url('../fonts/custom-font/Panchang-Regular.woff') format('woff'),
+         url('../fonts/custom-font/Panchang-Regular.eot') format('eot'),
+         url('../fonts/custom-font/Panchang-Regular.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'Panchang-Medium';
-  src: url('../fonts/custom-font/Panchang-Medium.woff2') format('woff2'),
-    url('../fonts/custom-font/Panchang-Medium.woff') format('woff'),
-    url('../fonts/custom-font/Panchang-Medium.eot') format('eot'),
-    url('../fonts/custom-font/Panchang-Medium.ttf') format('truetype');
-  font-weight: 500;
-  font-display: swap;
-  font-style: normal;
+    font-display: swap;
+    font-family: 'Panchang-Medium';
+    font-style: normal;
+    font-weight: 500;
+    src: url('../fonts/custom-font/Panchang-Medium.woff2') format('woff2'),
+         url('../fonts/custom-font/Panchang-Medium.woff') format('woff'),
+         url('../fonts/custom-font/Panchang-Medium.eot') format('eot'),
+         url('../fonts/custom-font/Panchang-Medium.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'Panchang-Semibold';
-  src: url('../fonts/custom-font/Panchang-Semibold.woff2') format('woff2'),
-    url('../fonts/custom-font/Panchang-Semibold.woff') format('woff'),
-    url('../fonts/custom-font/Panchang-Semibold.eot') format('eot'),
-    url('../fonts/custom-font/Panchang-Semibold.ttf') format('truetype');
-  font-weight: 600;
-  font-display: swap;
-  font-style: normal;
+    font-display: swap;
+    font-family: 'Panchang-Semibold';
+    font-style: normal;
+    font-weight: 600;
+    src: url('../fonts/custom-font/Panchang-Semibold.woff2') format('woff2'),
+         url('../fonts/custom-font/Panchang-Semibold.woff') format('woff'),
+         url('../fonts/custom-font/Panchang-Semibold.eot') format('eot'),
+         url('../fonts/custom-font/Panchang-Semibold.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'Panchang-Bold';
-  src: url('../fonts/custom-font/Panchang-Bold.woff2') format('woff2'),
-    url('../fonts/custom-font/Panchang-Bold.woff') format('woff'),
-    url('../fonts/custom-font/Panchang-Bold.eot') format('eot'),
-    url('../fonts/custom-font/Panchang-Bold.ttf') format('truetype');
-  font-weight: 700;
-  font-display: swap;
-  font-style: normal;
+    font-display: swap;
+    font-family: 'Panchang-Bold';
+    font-style: normal;
+    font-weight: 700;
+    src: url('../fonts/custom-font/Panchang-Bold.woff2') format('woff2'),
+         url('../fonts/custom-font/Panchang-Bold.woff') format('woff'),
+         url('../fonts/custom-font/Panchang-Bold.eot') format('eot'),
+         url('../fonts/custom-font/Panchang-Bold.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'Panchang-Extrabold';
-  src: url('../fonts/custom-font/Panchang-Extrabold.woff2') format('woff2'),
-    url('../fonts/custom-font/Panchang-Extrabold.woff') format('woff'),
-    url('../fonts/custom-font/Panchang-Extrabold.ttf') format('truetype');
-  font-weight: 800;
-  font-display: swap;
-  font-style: normal;
+    font-display: swap;
+    font-family: 'Panchang-Extrabold';
+    font-style: normal;
+    font-weight: 800;
+    src: url('../fonts/custom-font/Panchang-Extrabold.woff2') format('woff2'),
+         url('../fonts/custom-font/Panchang-Extrabold.woff') format('woff'),
+         url('../fonts/custom-font/Panchang-Extrabold.ttf') format('truetype');
 }
 
 /**
@@ -100,12 +100,13 @@
 * available axes:
 'wght' (range from 200.0 to 800.0
 */
+
 @font-face {
-  font-family: 'Panchang-Variable';
-  src: url('../fonts/custom-font/Panchang-Variable.woff2') format('woff2'),
-    url('../fonts/custom-font/Panchang-Variable.woff') format('woff'),
-    url('../fonts/custom-font/Panchang-Variable.ttf') format('truetype');
-  font-weight: 200 800;
-  font-display: swap;
-  font-style: normal;
+    font-display: swap;
+    font-family: 'Panchang-Variable';
+    font-style: normal;
+    font-weight: 200 800;
+    src: url('../fonts/custom-font/Panchang-Variable.woff2') format('woff2'),
+         url('../fonts/custom-font/Panchang-Variable.woff') format('woff'),
+         url('../fonts/custom-font/Panchang-Variable.ttf') format('truetype');
 }

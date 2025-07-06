@@ -1,21 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Kuki.Controllers
+namespace EllisHope.Controllers;
+
+public class EventController : Controller
 {
-    public class EventController : Controller
+    // GET: Event
+    public IActionResult details()
     {
-        // GET: Event
-        public IActionResult details()
-        {
-            return View();
-        }
-        public IActionResult grid()
-        {
-            return View();
-        }
-        public IActionResult list()
-        {
-            return View();
-        }
+        return View();
+    }
+
+    public IActionResult grid()
+    {
+        return View();
+    }
+
+    public IActionResult list()
+    {
+        return View();
     }
 }

@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Kuki.Controllers
+namespace EllisHope.Controllers;
+
+public class FaqController : Controller
 {
-    public class FaqController : Controller
+    // GET: Faq
+    public IActionResult Index()
     {
-        // GET: Faq
-        public IActionResult Index()
-        {
-            return View();
-        }
+        return View();
     }
 }
