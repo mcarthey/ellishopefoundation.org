@@ -393,7 +393,7 @@ label {
 
 .main-menu ul li:last-child a { margin-right: 0; }
 
-.main-menu ul li:last-child a::before { display: none; }
+/* .main-menu ul li:last-child a::before { display: none; }*/
 
 .main-menu ul li a {
     color: #000000;
