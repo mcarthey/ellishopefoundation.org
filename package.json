@@ -1,5 +1,11 @@
 {
+  "scripts": {
+    "sass:build": "sass wwwroot/assets/scss/main.scss wwwroot/assets/css/main.css && sass wwwroot/assets/scss/spacing.scss wwwroot/assets/css/spacing.css",
+    "sass:watch": "sass --watch wwwroot/assets/scss:wwwroot/assets/css",
+    "sass:build:compressed": "sass --style=compressed wwwroot/assets/scss/main.scss wwwroot/assets/css/main.css && sass --style=compressed wwwroot/assets/scss/spacing.scss wwwroot/assets/css/spacing.css"
+  },
   "devDependencies": {
-    "purgecss": "^7.0.2"
+    "purgecss": "^7.0.2",
+    "sass": "^1.96.0"
   }
 }

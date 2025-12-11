@@ -1203,7 +1203,10 @@
 
         .shape-1,
         .shape-2,
-        .shape-4,
+        .shape-4 {
+            display: none;
+        }
+
 /*
         .shape-5 {
             display: none;
@@ -1256,7 +1259,44 @@
 }
 
 //user list thumb
-.user-list,
+.user-list {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    list-style: none;
+    border-radius: 70px;
+    width: max-content;
+
+    img {
+        border-radius: 50%;
+        border: 4px solid $white;
+    }
+
+    li {
+        margin-left: -18px;
+        position: relative;
+        z-index: 1;
+
+        &:first-child {
+            margin-left: 0;
+        }
+    }
+
+    .number {
+        border-radius: 50%;
+        background: #000;
+        font-size: 20px;
+        color: $white;
+        width: 50px;
+        height: 50px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 4px solid $white;
+    }
+}
+
 /*
 .feedback-user-list {
     padding: 0;
