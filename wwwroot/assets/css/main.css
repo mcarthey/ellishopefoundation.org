@@ -770,6 +770,17 @@ ul.breadcrumb-menu li a::before {
     z-index: 1;
 }
 
+.ht-menu-wrapper.ht-body-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.ht-menu-wrapper.ht-body-visible .ht-menu-area {
+    left: 0;
+    opacity: 1;
+    visibility: visible;
+}
+
 .offset-widget { margin-top: 50px; }
 
 .offset-widget .info-widget .offset-title {
