@@ -944,6 +944,7 @@ html.lenis {
 }
 */
 .theme-menu-two {
+  background: #000;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   position: absolute;
   width: 100%;
@@ -999,6 +1000,7 @@ html.lenis {
   padding-right: 128px;
 }
 .theme-menu-two .main-header-area.sticky-menu {
+  background: #ffffff;
   padding-top: 10px;
   padding-bottom: 10px;
 }
