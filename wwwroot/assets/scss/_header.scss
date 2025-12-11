@@ -448,6 +448,7 @@
 
 //theme-menu-two
 .theme-menu-two {
+	background: $black; // Added background for readability
 	border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 	position: absolute;
 	width: 100%;
@@ -506,6 +507,7 @@
 		padding-right: 128px;
 
 		&.sticky-menu {
+			background: $white; // White background when sticky
 			padding-top: 10px;
 			padding-bottom: 10px;
 
