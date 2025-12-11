@@ -483,3 +483,4 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 wwwroot/assets/css-backup/
+wwwroot/assets/css-compare/
