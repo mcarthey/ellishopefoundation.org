@@ -2130,7 +2130,8 @@ a.meanmenu-reveal {
   padding-bottom: 31px;
 }
 .ht-menu-wrapper .mobile-menu-wrapper {
-  overflow-y: scroll;
+  overflow-y: auto;
+  overflow-x: hidden;
   max-height: calc(100vh - 200px);
   padding-bottom: 40px;
   margin-top: 33px;
