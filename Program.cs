@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using EllisHope.Data;
+using EllisHope.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +46,10 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.Cookie.SameSite = SameSiteMode.Strict;
 });
+
+// Register application services
+builder.Services.AddScoped<IBlogService, BlogService>();
+builder.Services.AddScoped<IEventService, EventService>();
 
 var app = builder.Build();
 

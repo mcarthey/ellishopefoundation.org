@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using EllisHope.Models.Domain;
 
 namespace EllisHope.Data;
 
@@ -8,6 +9,7 @@ public static class DbSeeder
     {
         var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+        var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
 
         // Create roles
         string[] roleNames = { "Admin", "Editor", "User" };
@@ -41,6 +43,24 @@ public static class DbSeeder
                 Console.WriteLine("Default password: Admin@123456");
                 Console.WriteLine("IMPORTANT: Change this password after first login!");
             }
+        }
+
+        // Seed default blog categories
+        if (!context.BlogCategories.Any())
+        {
+            var categories = new[]
+            {
+                new BlogCategory { Name = "Children", Slug = "children", Description = "Programs and initiatives focused on children" },
+                new BlogCategory { Name = "Education", Slug = "education", Description = "Educational programs and resources" },
+                new BlogCategory { Name = "Healthcare", Slug = "healthcare", Description = "Health and medical support initiatives" },
+                new BlogCategory { Name = "Community", Slug = "community", Description = "Community outreach and support" },
+                new BlogCategory { Name = "Fundraising", Slug = "fundraising", Description = "Fundraising events and campaigns" },
+                new BlogCategory { Name = "Volunteer", Slug = "volunteer", Description = "Volunteer opportunities and stories" }
+            };
+
+            context.BlogCategories.AddRange(categories);
+            await context.SaveChangesAsync();
+            Console.WriteLine("Default blog categories created.");
         }
     }
 }

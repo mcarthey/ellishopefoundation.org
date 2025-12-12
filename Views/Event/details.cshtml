@@ -1,6 +1,12 @@
-﻿@{
-    ViewBag.Title = "details";
+@model EllisHope.Models.Domain.Event
+@{
+    ViewBag.Title = Model.Title;
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var recentEvents = ViewBag.RecentEvents as IEnumerable<EllisHope.Models.Domain.Event> ?? Enumerable.Empty<EllisHope.Models.Domain.Event>();
+    var similarEvents = ViewBag.SimilarEvents as IEnumerable<EllisHope.Models.Domain.Event> ?? Enumerable.Empty<EllisHope.Models.Domain.Event>();
+    var tags = !string.IsNullOrEmpty(Model.Tags)
+        ? Model.Tags.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+        : Array.Empty<string>();
 }
 
 <main>
@@ -18,10 +24,10 @@
                         <a href="/home/">Home</a>
                     </li>
                     <li>
-                        <a href="#">Pages</a>
+                        <a href="/event/list">Events</a>
                     </li>
                     <li>
-                        <a href="#">Event Details</a>
+                        <a href="#">@Model.Title</a>
                     </li>
                 </ul>
             </div>
@@ -29,28 +35,26 @@
     </div>
 </div>
 <!-- page-title-area end -->
+
 <!-- event-section start -->
 <section class="event-section pt-180 pb-120 pt-lg-100 pb-lg-10">
     <div class="container">
         <div class="event-details-content mb-40">
             <h2 class="event-main-title mb-25">
-                Explore a range healthcare services designed to cater
-                to your
-                requirements.
+                @Model.Title
             </h2>
-            <p class="description">
-                Embark on a journey through a diverse selection of healthcare
-                services
-                meticulously crafted to address your specific needs preferences, ensuring that
-                you receive personalized care and support tailored to enhance your overall
-                well-being and meet your unique
-                requirements with precision and compassion.
-            </p>
             <div class="event-thumb mb-50 mt-50">
-                <img class="w-100" src="~/assets/img/event/event-details-1320x743.jpg" alt="event">
-                <div class="event-date">20 <span>feb</span></div>
+                @if (!string.IsNullOrEmpty(Model.FeaturedImageUrl))
+                {
+                    <img class="w-100" src="@Model.FeaturedImageUrl" alt="@Model.Title">
+                }
+                else
+                {
+                    <img class="w-100" src="~/assets/img/event/event-details-1320x743.jpg" alt="@Model.Title">
+                }
+                <div class="event-date">@Model.EventDate.Day <span>@Model.EventDate.ToString("MMM")</span></div>
                 <div class="event-place">
-                    1901 Thornridge Cir. Shiloh, Hawaii 81063
+                    @Model.Location
                 </div>
             </div>
             <div class="event-content">
@@ -62,260 +66,188 @@
                             </li>
                             <li>
                                 <div class="info-label">Date:</div>
-                                <p class="info">20 feb, 2025</p>
+                                <p class="info">@Model.EventDate.ToString("MMM dd, yyyy")</p>
                             </li>
-                            <li>
-                                <div class="info-label">Time:</div>
-                                <p class="info">8:00am - 8:00pm</p>
-                            </li>
-                            <li>
-                                <div class="info-label">Website:</div>
-                                <p class="info">www.mahmudin.com</p>
-                            </li>
+                            @if (Model.StartTime.HasValue && Model.EndTime.HasValue)
+                            {
+                                <li>
+                                    <div class="info-label">Time:</div>
+                                    <p class="info">@Model.StartTime.Value.ToString(@"hh\:mm") - @Model.EndTime.Value.ToString(@"hh\:mm")</p>
+                                </li>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.RegistrationUrl))
+                            {
+                                <li>
+                                    <div class="info-label">Register:</div>
+                                    <p class="info"><a href="@Model.RegistrationUrl" target="_blank">Click here</a></p>
+                                </li>
+                            }
                         </ul>
-                        <ul class="event-details-info d-md-flex flex-wrap justify-content-between border-top-0">
-                            <li>
-                                <h4 class="info-title">Organizer</h4>
-                            </li>
-                            <li>
-                                <div class="info-label">Name:</div>
-                                <p class="info">Arlene McCoy</p>
-                            </li>
-                            <li>
-                                <div class="info-label">Phone:</div>
-                                <p class="info">(208) 555-0112</p>
-                            </li>
-                            <li>
-                                <div class="info-label">Email:</div>
-                                <p class="info">arlenemcCoy@gmail.com</p>
-                            </li>
-                        </ul>
+                        @if (!string.IsNullOrEmpty(Model.OrganizerName) || !string.IsNullOrEmpty(Model.OrganizerEmail) || !string.IsNullOrEmpty(Model.OrganizerPhone))
+                        {
+                            <ul class="event-details-info d-md-flex flex-wrap justify-content-between border-top-0">
+                                <li>
+                                    <h4 class="info-title">Organizer</h4>
+                                </li>
+                                @if (!string.IsNullOrEmpty(Model.OrganizerName))
+                                {
+                                    <li>
+                                        <div class="info-label">Name:</div>
+                                        <p class="info">@Model.OrganizerName</p>
+                                    </li>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.OrganizerPhone))
+                                {
+                                    <li>
+                                        <div class="info-label">Phone:</div>
+                                        <p class="info">@Model.OrganizerPhone</p>
+                                    </li>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.OrganizerEmail))
+                                {
+                                    <li>
+                                        <div class="info-label">Email:</div>
+                                        <p class="info">@Model.OrganizerEmail</p>
+                                    </li>
+                                }
+                            </ul>
+                        }
                         <h3 class="event-title mt-55">
-                            <a href="/event/details">Overview</a>
+                            <a href="#">Overview</a>
                         </h3>
-                        <p class="description">
-                            Explore a diverse range of healthcare services
-                            tailored to meet your unique needs and preferences, providing
-                            personalized care and support to enhance your
-                            well-being with compassion and precision.
-                        </p>
-                        <p class="description">
-                            and support tailored to enhance your overall
-                            well-being and meet your unique
-                            requirements with precision and compassion.
-                        </p>
+                        <div class="description">
+                            @Html.Raw(Model.Description)
+                        </div>
                     </div>
                     <div class="col-lg-4">
                         <div class="event-sidebar mb-40">
-                            <div class="widget widget-post">
-                                <h3 class="widget-title">Recent Events</h3>
-                                <article class="recent-post mb-20">
-                                    <a href="/blog/details">
-                                        <figure class="post-thumb"
-                                                    data-background="/assets/img/blog/event1-100x84.jpg">
-                                        </figure>
-                                    </a>
-                                    <div class="post-content mb-2">
-                                        <h5 class="post-title">
-                                            <a href="/blog/details">
-                                                Pristine
-                                                kitchens with every
-                                                clean
+                            @if (recentEvents.Any())
+                            {
+                                <div class="widget widget-post">
+                                    <h3 class="widget-title">Recent Events</h3>
+                                    @foreach (var recentEvent in recentEvents)
+                                    {
+                                        <article class="recent-post mb-20">
+                                            <a href="/event/details/@recentEvent.Slug">
+                                                @if (!string.IsNullOrEmpty(recentEvent.FeaturedImageUrl))
+                                                {
+                                                    <figure class="post-thumb" style="background-image: url('@recentEvent.FeaturedImageUrl')">
+                                                    </figure>
+                                                }
+                                                else
+                                                {
+                                                    <figure class="post-thumb" data-background="/assets/img/blog/event1-100x84.jpg">
+                                                    </figure>
+                                                }
                                             </a>
-                                        </h5>
-                                        <span class="date">
-                                            <i class="bi bi-clock"></i> Jan 12,
-                                            2024
-                                        </span>
-                                    </div>
-                                </article>
-                                <article class="recent-post mb-20">
-                                    <a href="/blog/details">
-                                        <figure class="post-thumb"
-                                                    data-background="/assets/img/blog/event2-100x84.jpg">
-                                        </figure>
-                                    </a>
-                                    <div class="post-content mb-2">
-                                        <h5 class="post-title">
-                                            <a href="/blog/details">
-                                                Many
-                                                passages
-                                                undergo various alterations.
-                                            </a>
-                                        </h5>
-                                        <span class="date">
-                                            <i class="bi bi-clock"></i> 01
-                                            Apr,2023
-                                        </span>
-                                    </div>
-                                </article>
-                                <article class="recent-post">
-                                    <a href="/blog/details">
-                                        <figure class="post-thumb"
-                                                    data-background="/assets/img/blog/event3-425x500.jpg">
-                                        </figure>
-                                    </a>
-                                    <div class="post-content mb-2">
-                                        <h5 class="post-title">
-                                            <a href="/blog/details">
-                                                Volunteering
-                                                supports the
-                                                fortunate in poverty.
-                                            </a>
-                                        </h5>
-                                        <span class="date">
-                                            <i class="bi bi-clock"></i> 18
-                                            Feb,2023
-                                        </span>
-                                    </div>
-                                </article>
-                            </div>
-                            <div class="widget widget-categories-tag mt-50">
-                                <h3 class="widget-title">Tags</h3>
-                                <div class="tagcloud">
-                                    <a href="#">Children</a>
-                                    <a href="#">Education</a>
-                                    <a href="#">Medical</a>
-                                    <a href="#">Ecology</a>
-                                    <a href="#">Water</a>
-                                    <a href="#">Volunteer</a>
+                                            <div class="post-content mb-2">
+                                                <h5 class="post-title">
+                                                    <a href="/event/details/@recentEvent.Slug">
+                                                        @recentEvent.Title
+                                                    </a>
+                                                </h5>
+                                                <span class="date">
+                                                    <i class="bi bi-clock"></i> @recentEvent.EventDate.ToString("MMM dd, yyyy")
+                                                </span>
+                                            </div>
+                                        </article>
+                                    }
                                 </div>
+                            }
+                            @if (tags.Any())
+                            {
+                                <div class="widget widget-categories-tag mt-50">
+                                    <h3 class="widget-title">Tags</h3>
+                                    <div class="tagcloud">
+                                        @foreach (var tag in tags)
+                                        {
+                                            <a href="/event/list?search=@tag">@tag</a>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- event-section end -->
+
+<!-- similar events section start -->
+@if (similarEvents.Any())
+{
+    <section class="event-section pt-140 pb-95 pt-lg-60 pb-lg-15" data-bg-color="#FDF3F0">
+        <div class="container">
+            <div class="row align-items-center justify-content-center mb-20">
+                <div class="col-lg-8 col-md-6">
+                    <div class="title-one text-md-start text-center mb-30">
+                        <h2 class="title">
+                            Similar
+                            <span class="position-relative">
+                                Events
+                                <img class="title-img-2"
+                                     src="~/assets/img/shape/shape-7.png" alt="shape">
+                            </span>
+                        </h2>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="arrow-style-1 text-md-end text-center mb-30">
+                        <button data-slick-prev="#arrow-12" class="slick-prev">
+                            <img src="~/assets/img/icon/arrow-left-1.svg" alt="arrow">
+                        </button>
+                        <button data-slick-next="#arrow-12" class="slick-next">
+                            <img src="~/assets/img/icon/arrow-right-1.svg" alt="arrow">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div id="arrow-12" class="row ht-carousel" data-slide-show="2" data-ml-slide-show="2"
+                 data-lg-slide-show="2" data-md-slide-show="2" data-sm-slide-show="1">
+                @foreach (var similarEvent in similarEvents)
+                {
+                    <div class="col-md-6">
+                        <div class="event-wrap-1 mb-60">
+                            <div class="event-thumb">
+                                @if (!string.IsNullOrEmpty(similarEvent.FeaturedImageUrl))
+                                {
+                                    <img src="@similarEvent.FeaturedImageUrl" alt="@similarEvent.Title">
+                                }
+                                else
+                                {
+                                    <img src="~/assets/img/event/event1-630x450.jpg" alt="@similarEvent.Title">
+                                }
+                                <div class="event-date">@similarEvent.EventDate.Day <span>@similarEvent.EventDate.ToString("MMM")</span></div>
+                            </div>
+                            <div class="event-content">
+                                <div class="event-meta">
+                                    @if (similarEvent.StartTime.HasValue && similarEvent.EndTime.HasValue)
+                                    {
+                                        <a href="#"><i class="bi bi-clock"></i> @similarEvent.StartTime.Value.ToString(@"hh\:mm") - @similarEvent.EndTime.Value.ToString(@"hh\:mm")</a>
+                                    }
+                                    <a href="#">
+                                        <i class="bi bi-geo-alt"></i> @similarEvent.Location
+                                    </a>
+                                </div>
+                                <h3 class="event-title">
+                                    <a href="/event/details/@similarEvent.Slug">
+                                        @similarEvent.Title
+                                    </a>
+                                </h3>
                             </div>
                         </div>
                     </div>
-                </div>
+                }
             </div>
         </div>
-    </div>
-</section>
+    </section>
+}
 <!-- event-section end -->
-<!-- event-section start -->
-<section class="event-section pt-140 pb-95 pt-lg-60 pb-lg-15" data-bg-color="#FDF3F0">
-    <div class="container">
-        <div class="row align-items-center justify-content-center mb-20">
-            <div class="col-lg-8 col-md-6">
-                <div class="title-one text-md-start text-center mb-30">
-                    <h2 class="title">
-                        Similar
-                        <span class="position-relative">
-                            Event
-                            <img class="title-img-2"
-                                 src="~/assets/img/shape/shape-7.png" alt="shape">
-                        </span>
-                    </h2>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
-                <div class="arrow-style-1 text-md-end text-center mb-30">
-                    <button data-slick-prev="#arrow-12" class="slick-prev">
-                        <img src="~/assets/img/icon/arrow-left-1.svg" alt="arrow">
-                    </button>
-                    <button data-slick-next="#arrow-12" class="slick-next">
-                        <img src="~/assets/img/icon/arrow-right-1.svg" alt="arrow">
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="container">
-        <div id="arrow-12" class="row ht-carousel" data-slide-show="2" data-ml-slide-show="2"
-             data-lg-slide-show="2" data-md-slide-show="2" data-sm-slide-show="1">
-            <div class="col-md-6">
-                <div class="event-wrap-1 mb-60">
-                    <div class="event-thumb">
-                        <img src="~/assets/img/event/event1-630x450.jpg" alt="event">
-                        <div class="event-date">20 <span>feb</span></div>
-                    </div>
-                    <div class="event-content">
-                        <div class="event-meta">
-                            <a href="#"><i class="bi bi-clock"></i> 8:00 am - 8:00pm</a>
-                            <a href="#">
-                                <i class="bi bi-geo-alt"></i> 1901 Thornridge Cir. Shiloh, Hawaii
-                                81063
-                            </a>
-                        </div>
-                        <h3 class="event-title">
-                            <a href="/event/details">
-                                Support children's
-                                education for a better life your donation inspires hope.
-                            </a>
-                        </h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="event-wrap-1 mb-60">
-                    <div class="event-thumb">
-                        <img src="~/assets/img/event/event3-630x450.jpg" alt="event">
-                        <div class="event-date">20 <span>feb</span></div>
-                    </div>
-                    <div class="event-content">
-                        <div class="event-meta">
-                            <a href="#"><i class="bi bi-clock"></i> 8:00 am - 8:00pm</a>
-                            <a href="#">
-                                <i class="bi bi-geo-alt"></i> 1901 Thornridge Cir. Shiloh, Hawaii
-                                81063
-                            </a>
-                        </div>
-                        <h3 class="event-title">
-                            <a href="/event/details">
-                                Here, find a variety of
-                                healthcare services to meet your needs.
-                            </a>
-                        </h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="event-wrap-1 mb-60">
-                    <div class="event-thumb">
-                        <img src="~/assets/img/event/event4-630x450.jpg" alt="event">
-                        <div class="event-date">20 <span>feb</span></div>
-                    </div>
-                    <div class="event-content">
-                        <div class="event-meta">
-                            <a href="#"><i class="bi bi-clock"></i> 8:00 am - 8:00pm</a>
-                            <a href="#">
-                                <i class="bi bi-geo-alt"></i> 1901 Thornridge Cir. Shiloh, Hawaii
-                                81063
-                            </a>
-                        </div>
-                        <h3 class="event-title">
-                            <a href="/event/details">
-                                Volunteering to aid the less
-                                fortunate in impoverished communities.
-                            </a>
-                        </h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="event-wrap-1 mb-60">
-                    <div class="event-thumb">
-                        <img src="~/assets/img/event/event2-630x450.jpg" alt="event">
-                        <div class="event-date">20 <span>feb</span></div>
-                    </div>
-                    <div class="event-content">
-                        <div class="event-meta">
-                            <a href="#"><i class="bi bi-clock"></i> 8:00 am - 8:00pm</a>
-                            <a href="#">
-                                <i class="bi bi-geo-alt"></i> 1901 Thornridge Cir. Shiloh, Hawaii
-                                81063
-                            </a>
-                        </div>
-                        <h3 class="event-title">
-                            <a href="/event/details">
-                                Support children's
-                                education for a better life your donation inspires hope.
-                            </a>
-                        </h3>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<!-- event-section end -->
+
 <!-- newsletter-section start -->
 <div class="newsletter-section position-relative z-1 pt-180 pt-lg-60">
     <img class="shape-1 position-absolute ml-100 mt-50 d-none d-lg-inline-block"

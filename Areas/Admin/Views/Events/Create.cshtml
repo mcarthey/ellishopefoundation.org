@@ -1,0 +1,203 @@
+@model EllisHope.Areas.Admin.Models.EventViewModel
+@{
+    ViewData["Title"] = "Create Event";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Create Event</h2>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Back to List
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <!-- Title -->
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label"></label>
+                        <input asp-for="Title" class="form-control" id="titleInput" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <!-- Slug -->
+                    <div class="mb-3">
+                        <label asp-for="Slug" class="form-label"></label>
+                        <input asp-for="Slug" class="form-control" id="slugInput" placeholder="Auto-generated from title" />
+                        <span asp-validation-for="Slug" class="text-danger"></span>
+                        <small class="form-text text-muted">Leave blank to auto-generate from title</small>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label"></label>
+                        <textarea asp-for="Description" class="form-control" id="descriptionEditor"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <!-- Location -->
+                    <div class="mb-3">
+                        <label asp-for="Location" class="form-label"></label>
+                        <textarea asp-for="Location" class="form-control" rows="2"></textarea>
+                        <span asp-validation-for="Location" class="text-danger"></span>
+                    </div>
+
+                    <!-- Registration URL -->
+                    <div class="mb-3">
+                        <label asp-for="RegistrationUrl" class="form-label"></label>
+                        <input asp-for="RegistrationUrl" class="form-control" type="url" />
+                        <span asp-validation-for="RegistrationUrl" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <!-- Event Details Card -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <strong>Event Details</strong>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label asp-for="EventDate" class="form-label"></label>
+                                <input asp-for="EventDate" class="form-control" type="date" />
+                                <span asp-validation-for="EventDate" class="text-danger"></span>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <label asp-for="StartTime" class="form-label"></label>
+                                    <input asp-for="StartTime" class="form-control" type="time" />
+                                </div>
+                                <div class="col-6">
+                                    <label asp-for="EndTime" class="form-label"></label>
+                                    <input asp-for="EndTime" class="form-control" type="time" />
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="MaxAttendees" class="form-label"></label>
+                                <input asp-for="MaxAttendees" class="form-control" type="number" />
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input asp-for="IsPublished" class="form-check-input" type="checkbox" id="isPublished">
+                                    <label asp-for="IsPublished" class="form-check-label" for="isPublished"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Organizer Card -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <strong>Organizer Information</strong>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label asp-for="OrganizerName" class="form-label"></label>
+                                <input asp-for="OrganizerName" class="form-control" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="OrganizerEmail" class="form-label"></label>
+                                <input asp-for="OrganizerEmail" class="form-control" type="email" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="OrganizerPhone" class="form-label"></label>
+                                <input asp-for="OrganizerPhone" class="form-control" type="tel" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Featured Image -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <strong>Featured Image</strong>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <input asp-for="FeaturedImageFile" class="form-control" type="file" accept="image/*" id="featuredImage" />
+                                <span asp-validation-for="FeaturedImageFile" class="text-danger"></span>
+                            </div>
+                            <div id="imagePreview" class="mt-2" style="display:none;">
+                                <img id="previewImg" src="#" alt="Preview" class="img-fluid" style="max-height: 200px;" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tags -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <strong>Tags</strong>
+                        </div>
+                        <div class="card-body">
+                            <input asp-for="Tags" class="form-control" placeholder="e.g., fundraiser, community, education" />
+                            <small class="form-text text-muted">Separate tags with commas</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Create Event
+                </button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <!-- TinyMCE -->
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        // Initialize TinyMCE
+        tinymce.init({
+            selector: '#descriptionEditor',
+            height: 400,
+            plugins: 'anchor autolink charmap codesample emoticons link lists searchreplace table visualblocks wordcount',
+            toolbar: 'undo redo | blocks fontsize | bold italic underline | link table | align lineheight | numlist bullist | removeformat',
+            menubar: false,
+            content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 14px; }'
+        });
+
+        // Auto-generate slug from title
+        document.getElementById('titleInput').addEventListener('input', function(e) {
+            const slugInput = document.getElementById('slugInput');
+            if (!slugInput.value || slugInput.dataset.autoGenerated === 'true') {
+                const slug = e.target.value
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/^-+|-+$/g, '');
+                slugInput.value = slug;
+                slugInput.dataset.autoGenerated = 'true';
+            }
+        });
+
+        document.getElementById('slugInput').addEventListener('input', function() {
+            this.dataset.autoGenerated = 'false';
+        });
+
+        // Image preview
+        document.getElementById('featuredImage').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewImg').src = e.target.result;
+                    document.getElementById('imagePreview').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+}
