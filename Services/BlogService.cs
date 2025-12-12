@@ -60,7 +60,7 @@ public class BlogService : IBlogService
             .Where(p => p.IsPublished &&
                    (p.Title.Contains(searchTerm) ||
                     p.Content.Contains(searchTerm) ||
-                    p.Excerpt.Contains(searchTerm)))
+                    (p.Summary != null && p.Summary.Contains(searchTerm))))
             .OrderByDescending(p => p.PublishedDate)
             .ToListAsync();
     }
@@ -86,7 +86,7 @@ public class BlogService : IBlogService
 
         post.Slug = await EnsureUniqueSlugAsync(post.Slug);
         post.CreatedDate = DateTime.UtcNow;
-        post.UpdatedDate = DateTime.UtcNow;
+        post.ModifiedDate = DateTime.UtcNow;
 
         _context.BlogPosts.Add(post);
         await _context.SaveChangesAsync();
@@ -95,7 +95,7 @@ public class BlogService : IBlogService
 
     public async Task<BlogPost> UpdatePostAsync(BlogPost post)
     {
-        post.UpdatedDate = DateTime.UtcNow;
+        post.ModifiedDate = DateTime.UtcNow;
         _context.BlogPosts.Update(post);
         await _context.SaveChangesAsync();
         return post;
