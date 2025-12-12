@@ -49,6 +49,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 // Register application services
 builder.Services.AddScoped<IBlogService, BlogService>();
+builder.Services.AddScoped<IEventService, EventService>();
 
 var app = builder.Build();
 
