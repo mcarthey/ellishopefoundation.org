@@ -92,6 +92,20 @@ Edit `EllisHope/appsettings.json`:
 }
 ```
 
+**IMPORTANT - Secrets Management**: 
+The repository does not contain API keys or sensitive credentials. You must configure secrets before running the application.
+
+**Quick Setup:**
+```bash
+cd EllisHope
+dotnet user-secrets init
+dotnet user-secrets set "Unsplash:AccessKey" "YOUR_ACCESS_KEY"
+dotnet user-secrets set "Unsplash:SecretKey" "YOUR_SECRET_KEY"
+dotnet user-secrets set "Unsplash:ApplicationName" "EllisHopeFoundation"
+```
+
+For detailed secrets management instructions, see [SECRETS-MANAGEMENT.md](SECRETS-MANAGEMENT.md).
+
 4. **Apply database migrations**
 ```bash
 cd EllisHope
