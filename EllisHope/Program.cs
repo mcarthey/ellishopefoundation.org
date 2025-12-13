@@ -98,6 +98,12 @@ app.MapControllerRoute(
     pattern: "blog/details/{slug}",
     defaults: new { controller = "Blog", action = "details" });
 
+// Event details route with slug
+app.MapControllerRoute(
+    name: "eventDetails",
+    pattern: "event/details/{slug}",
+    defaults: new { controller = "Event", action = "details" });
+
 // Admin area route
 app.MapControllerRoute(
     name: "admin",
