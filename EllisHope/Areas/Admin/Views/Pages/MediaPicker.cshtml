@@ -1,0 +1,154 @@
+@model EllisHope.Areas.Admin.Models.QuickEditImageViewModel
+@{
+    ViewData["Title"] = $"Select Image for {Model.ImageKey}";
+    var availableMedia = ViewBag.AvailableMedia as IEnumerable<EllisHope.Models.Domain.Media> ?? Enumerable.Empty<EllisHope.Models.Domain.Media>();
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <i class="bi bi-image"></i> Select Image: <span class="text-primary">@Model.ImageKey</span>
+            </h2>
+            <a asp-action="Edit" asp-route-id="@Model.PageId" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Page
+            </a>
+        </div>
+
+        <!-- Current Image -->
+        @if (Model.CurrentMediaId.HasValue)
+        {
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Current Image</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-3">
+                            <img src="@Model.CurrentMediaPath" alt="Current" class="img-fluid" />
+                        </div>
+                        <div class="col-md-9">
+                            <p><strong>Image Key:</strong> @Model.ImageKey</p>
+                            <p><strong>Page:</strong> @Model.PageName</p>
+                            <p class="text-muted">Select a new image below to replace this one.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Media Library Grid -->
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-images"></i> Media Library
+                </h5>
+            </div>
+            <div class="card-body">
+                @if (availableMedia.Any())
+                {
+                    <div class="row">
+                        @foreach (var media in availableMedia.OrderByDescending(m => m.UploadedDate))
+                        {
+                            var isSelected = media.Id == Model.CurrentMediaId;
+                            
+                            <div class="col-md-3 col-sm-6 mb-4">
+                                <div class="card h-100 @(isSelected ? "border-primary" : "")">
+                                    <div class="position-relative">
+                                        <div style="height: 200px; overflow: hidden; background: #f5f5f5;">
+                                            <img src="@media.FilePath" 
+                                                 alt="@media.AltText" 
+                                                 class="w-100 h-100" 
+                                                 style="object-fit: cover;" />
+                                        </div>
+                                        @if (isSelected)
+                                        {
+                                            <div class="position-absolute top-0 end-0 m-2">
+                                                <span class="badge bg-primary">Current</span>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="card-body p-2">
+                                        <h6 class="card-title small mb-1">@media.Title</h6>
+                                        <p class="card-text small text-muted mb-2">
+                                            @media.FileName
+                                        </p>
+                                        <div class="d-grid">
+                                            <form asp-action="UpdateImage" method="post">
+                                                <input type="hidden" name="PageId" value="@Model.PageId" />
+                                                <input type="hidden" name="PageName" value="@Model.PageName" />
+                                                <input type="hidden" name="ImageKey" value="@Model.ImageKey" />
+                                                <input type="hidden" name="MediaId" value="@media.Id" />
+                                                <input type="hidden" name="DisplayOrder" value="@Model.DisplayOrder" />
+                                                
+                                                <button type="submit" class="btn btn-sm @(isSelected ? "btn-success" : "btn-primary") w-100">
+                                                    @if (isSelected)
+                                                    {
+                                                        <i class="bi bi-check-circle"></i> <text>Selected</text>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="bi bi-hand-index"></i> <text>Select This</text>
+                                                    }
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer p-2">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-muted">
+                                                @if (media.Width.HasValue && media.Height.HasValue)
+                                                {
+                                                    <span>@media.Width x @media.Height</span>
+                                                }
+                                            </small>
+                                            <span class="badge bg-secondary">@media.Category</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i> No images found in Media Library.
+                        <a asp-area="Admin" asp-controller="Media" asp-action="Upload" class="alert-link">Upload images first</a>.
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card mt-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <a asp-area="Admin" asp-controller="Media" asp-action="Upload" class="btn btn-success w-100">
+                            <i class="bi bi-cloud-upload"></i> Upload New Image
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a asp-area="Admin" asp-controller="Media" asp-action="UnsplashSearch" class="btn btn-info w-100">
+                            <i class="bi bi-search"></i> Find Image on Unsplash
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Add visual feedback when selecting an image
+        document.querySelectorAll('form[action*="UpdateImage"]').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const button = this.querySelector('button[type="submit"]');
+                button.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Updating...';
+                button.disabled = true;
+            });
+        });
+    </script>
+}

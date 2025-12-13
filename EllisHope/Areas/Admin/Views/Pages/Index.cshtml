@@ -1,0 +1,152 @@
+@model EllisHope.Areas.Admin.Models.PageListViewModel
+@{
+    ViewData["Title"] = "Page Manager";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>@ViewData["Title"]</h2>
+        </div>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <!-- Search Box -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form asp-action="Index" method="get" class="row g-3">
+                    <div class="col-md-10">
+                        <input type="text" 
+                               name="searchTerm" 
+                               value="@Model.SearchTerm" 
+                               class="form-control" 
+                               placeholder="Search pages..." />
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Pages List -->
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-file-earmark-text"></i> Website Pages
+                </h5>
+            </div>
+            <div class="card-body">
+                @if (Model.Pages.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Page Name</th>
+                                    <th>Title</th>
+                                    <th>Sections</th>
+                                    <th>Images</th>
+                                    <th>Status</th>
+                                    <th>Last Modified</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var page in Model.Pages)
+                                {
+                                    <tr>
+                                        <td>
+                                            <strong>@(page.PageName)</strong>
+                                        </td>
+                                        <td>@(page.Title)</td>
+                                        <td>
+                                            <span class="badge bg-info">
+                                                @(page.ContentSections.Count) sections
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-secondary">
+                                                @(page.PageImages.Count) images
+                                            </span>
+                                        </td>
+                                        <td>
+                                            @if (page.IsPublished)
+                                            {
+                                                <span class="badge bg-success">Published</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-warning">Draft</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (page.ModifiedDate.HasValue)
+                                            {
+                                                @(page.ModifiedDate.Value.ToLocalTime().ToString("MM/dd/yyyy"))
+                                            }
+                                            else
+                                            {
+                                                @(page.CreatedDate.ToLocalTime().ToString("MM/dd/yyyy"))
+                                            }
+                                        </td>
+                                        <td>
+                                            <a asp-action="Edit" 
+                                               asp-route-id="@(page.Id)" 
+                                               class="btn btn-sm btn-primary">
+                                                <i class="bi bi-pencil"></i> Edit Content
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> No pages found.
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Help Card -->
+        <div class="card mt-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-question-circle"></i> How to Use Page Manager
+                </h5>
+            </div>
+            <div class="card-body">
+                <ol>
+                    <li><strong>Edit Content:</strong> Click "Edit Content" to manage text and images for any page</li>
+                    <li><strong>Update Sections:</strong> Each page can have multiple text sections (like "Header", "AboutText", etc.)</li>
+                    <li><strong>Manage Images:</strong> Select images from your Media Library to display on each page</li>
+                    <li><strong>Image Keys:</strong> Use keys like "HeroImage", "HeaderBackground" to identify where images appear</li>
+                </ol>
+                <p class="mb-0">
+                    <i class="bi bi-lightbulb text-warning"></i>
+                    <strong>Tip:</strong> Always select images from the Media Library for best performance and management.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

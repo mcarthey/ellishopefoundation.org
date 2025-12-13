@@ -66,6 +66,7 @@ builder.Services.AddScoped<IBlogService, BlogService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IImageProcessingService, ImageProcessingService>();
 builder.Services.AddScoped<IMediaService, MediaService>();
+builder.Services.AddScoped<IPageService, PageService>();
 
 var app = builder.Build();
 
@@ -136,6 +137,11 @@ using (var scope = app.Services.CreateScope())
         // Seed data (idempotent - safe to run multiple times)
         await DbSeeder.SeedAsync(services);
         logger.LogInformation("Database seeding completed.");
+        
+        // Initialize default pages
+        var pageService = services.GetRequiredService<IPageService>();
+        await pageService.InitializeDefaultPagesAsync();
+        logger.LogInformation("Default pages initialized.");
     }
     catch (Exception ex)
     {

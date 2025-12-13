@@ -1,0 +1,277 @@
+@model EllisHope.Areas.Admin.Models.PageEditViewModel
+@{
+    ViewData["Title"] = $"Edit Page: {Model.PageName}";
+    var availableMedia = ViewBag.AvailableMedia as IEnumerable<EllisHope.Models.Domain.Media> ?? Enumerable.Empty<EllisHope.Models.Domain.Media>();
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <i class="bi bi-pencil-square"></i> Edit Page: <span class="text-primary">@Model.PageName</span>
+            </h2>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Pages
+            </a>
+        </div>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <!-- Page Images Section -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-images"></i> Page Images
+                </h5>
+            </div>
+            <div class="card-body">
+                @if (Model.PageImages.Any())
+                {
+                    <div class="row">
+                        @foreach (var image in Model.PageImages.OrderBy(i => i.DisplayOrder))
+                        {
+                            <div class="col-md-4 mb-3">
+                                <div class="card">
+                                    <div class="card-img-top" style="height: 200px; overflow: hidden; background: #f5f5f5;">
+                                        @if (!string.IsNullOrEmpty(image.MediaFilePath))
+                                        {
+                                            <img src="@image.MediaFilePath" 
+                                                 alt="@image.MediaAltText" 
+                                                 class="w-100 h-100" 
+                                                 style="object-fit: cover;" />
+                                        }
+                                        else
+                                        {
+                                            <div class="d-flex align-items-center justify-content-center h-100">
+                                                <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <span class="badge bg-info">@image.ImageKey</span>
+                                        </h6>
+                                        <p class="card-text small text-muted mb-2">
+                                            @image.MediaFileName
+                                        </p>
+                                        <div class="btn-group w-100">
+                                            <a asp-action="MediaPicker" 
+                                               asp-route-pageId="@Model.Id" 
+                                               asp-route-imageKey="@image.ImageKey" 
+                                               class="btn btn-sm btn-primary">
+                                                <i class="bi bi-pencil"></i> Change
+                                            </a>
+                                            <button type="button" 
+                                                    class="btn btn-sm btn-danger" 
+                                                    onclick="removeImage('@Model.Id', '@image.ImageKey')">
+                                                <i class="bi bi-trash"></i> Remove
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> No images configured for this page yet.
+                    </div>
+                }
+
+                <!-- Add New Image -->
+                <div class="card bg-light mt-3">
+                    <div class="card-body">
+                        <h6><i class="bi bi-plus-circle"></i> Add New Image</h6>
+                        <form asp-action="UpdateImage" method="post" class="row g-3">
+                            <input type="hidden" name="PageId" value="@Model.Id" />
+                            <input type="hidden" name="PageName" value="@Model.PageName" />
+                            
+                            <div class="col-md-4">
+                                <label class="form-label">Image Key *</label>
+                                <input type="text" name="ImageKey" class="form-control" placeholder="e.g., HeroImage, HeaderBackground" required />
+                                <small class="form-text text-muted">Unique identifier for this image</small>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Select Media *</label>
+                                <select name="MediaId" class="form-select" required>
+                                    <option value="">-- Choose from Media Library --</option>
+                                    @foreach (var media in availableMedia)
+                                    {
+                                        <option value="@media.Id">@media.FileName (@media.Title)</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Display Order</label>
+                                <input type="number" name="DisplayOrder" class="form-control" value="0" />
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">&nbsp;</label>
+                                <button type="submit" class="btn btn-success w-100">
+                                    <i class="bi bi-plus"></i> Add Image
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Sections -->
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-file-text"></i> Content Sections
+                </h5>
+            </div>
+            <div class="card-body">
+                @if (Model.ContentSections.Any())
+                {
+                    @foreach (var section in Model.ContentSections.OrderBy(s => s.DisplayOrder))
+                    {
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <strong>@(section.SectionKey)</strong>
+                                <span class="badge bg-secondary">@(section.ContentType)</span>
+                            </div>
+                            <div class="card-body">
+                                <form asp-action="UpdateSection" method="post">
+                                    <input type="hidden" name="PageId" value="@Model.Id" />
+                                    <input type="hidden" name="SectionKey" value="@(section.SectionKey)" />
+                                    <input type="hidden" name="ContentType" value="@(section.ContentType)" />
+                                    
+                                    <div class="mb-3">
+                                        @if (section.ContentType == "RichText")
+                                        {
+                                            <textarea name="Content" class="form-control tinymce-editor">@(section.Content)</textarea>
+                                        }
+                                        else
+                                        {
+                                            <textarea name="Content" class="form-control" rows="4">@(section.Content)</textarea>
+                                        }
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-save"></i> Update @(section.SectionKey)
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> No content sections configured yet.
+                    </div>
+                }
+
+                <!-- Add New Section -->
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h6><i class="bi bi-plus-circle"></i> Add New Content Section</h6>
+                        <form asp-action="UpdateSection" method="post" class="row g-3">
+                            <input type="hidden" name="PageId" value="@Model.Id" />
+                            
+                            <div class="col-md-4">
+                                <label class="form-label">Section Key *</label>
+                                <input type="text" name="SectionKey" class="form-control" placeholder="e.g., WelcomeText, AboutDescription" required />
+                                <small class="form-text text-muted">Unique identifier for this section</small>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Content Type *</label>
+                                <select name="ContentType" class="form-select" required>
+                                    <option value="RichText">Rich Text (HTML Editor)</option>
+                                    <option value="Text">Plain Text</option>
+                                    <option value="HTML">Raw HTML</option>
+                                </select>
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label">Content</label>
+                                <textarea name="Content" class="form-control" rows="2" placeholder="Enter your content here..."></textarea>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-plus"></i> Add Section
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Help Section -->
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-question-circle"></i> Quick Guide
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Managing Images</h6>
+                        <ul>
+                            <li><strong>Image Key:</strong> A unique name to identify where the image appears (e.g., "HeroImage" for header)</li>
+                            <li><strong>Media Library:</strong> All images must be uploaded to Media Library first</li>
+                            <li><strong>Display Order:</strong> Controls the order images appear (lower numbers first)</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Managing Content</h6>
+                        <ul>
+                            <li><strong>Section Key:</strong> A unique name for each content area (e.g., "WelcomeText")</li>
+                            <li><strong>Rich Text:</strong> Full formatting with HTML editor</li>
+                            <li><strong>Plain Text:</strong> Simple text without formatting</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden form for removing images -->
+<form id="removeImageForm" asp-action="RemoveImage" method="post" style="display:none;">
+    <input type="hidden" id="removePageId" name="pageId" />
+    <input type="hidden" id="removeImageKey" name="imageKey" />
+</form>
+
+@section Scripts {
+    <script src="https://cdn.tiny.cloud/1/@ViewData["TinyMceApiKey"]/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: 'textarea.tinymce-editor',
+            plugins: 'anchor autolink charmap code codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+            height: 400,
+            menubar: false,
+            branding: false
+        });
+
+        function removeImage(pageId, imageKey) {
+            if (confirm('Are you sure you want to remove this image?')) {
+                document.getElementById('removePageId').value = pageId;
+                document.getElementById('removeImageKey').value = imageKey;
+                document.getElementById('removeImageForm').submit();
+            }
+        }
+    </script>
+}
