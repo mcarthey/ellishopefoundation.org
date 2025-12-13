@@ -44,8 +44,14 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromHours(24);
     options.SlidingExpiration = true;
     options.Cookie.HttpOnly = true;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.Cookie.SameSite = SameSiteMode.Strict;
+    
+    // Only require HTTPS in production if HTTPS is available
+    // SmarterASP.net temporary URL uses HTTP, so we need to allow HTTP cookies
+    options.Cookie.SecurePolicy = builder.Environment.IsDevelopment() 
+        ? CookieSecurePolicy.None 
+        : CookieSecurePolicy.SameAsRequest; // Use HTTPS if available, HTTP if not
+    
+    options.Cookie.SameSite = SameSiteMode.Lax; // Changed from Strict to Lax for better compatibility
 });
 
 // Configure Unsplash settings
@@ -70,7 +76,13 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+// Only redirect to HTTPS if the request is already HTTPS or in development
+// SmarterASP.net temporary URL is HTTP-only
+if (app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseStaticFiles();
 app.UseRouting();
 
