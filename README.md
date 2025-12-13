@@ -105,8 +105,7 @@ dotnet user-secrets set "Unsplash:ApplicationName" "EllisHopeFoundation"
 dotnet user-secrets set "TinyMCE:ApiKey" "YOUR_TINYMCE_API_KEY"
 ```
 
-For detailed secrets management instructions, see [SECRETS-MANAGEMENT.md](SECRETS-MANAGEMENT.md).
-For TinyMCE API key setup, see [TINYMCE-SETUP.md](TINYMCE-SETUP.md).
+For detailed instructions, see [Secrets Management Guide](./docs/development/secrets-management.md).
 
 4. **Apply database migrations**
 ```bash
@@ -198,26 +197,38 @@ GitHub Actions automatically:
 - ? Publishes test results
 - ? Collects code coverage
 
-See [CI-CD-SETUP.md](CI-CD-SETUP.md) for detailed documentation.
+See [CI/CD Setup Guide](./docs/development/ci-cd-setup.md) for detailed documentation.
 
-### Manual Deployment
+### Production Deployment
 
-1. **Publish the application**
-```bash
-dotnet publish EllisHope/EllisHope.csproj -c Release -o ./publish
-```
+See the [Deployment Guide](./docs/deployment/deployment-guide.md) for complete instructions on deploying to production.
 
-2. **Configure production settings**
-- Update `appsettings.Production.json`
-- Set connection strings
-- Configure logging
-- Set up HTTPS certificates
+**Quick Start:**
+1. Configure `appsettings.Production.json`
+2. Set up HTTPS (see [HTTPS Setup Guide](./docs/deployment/https-setup-guide.md))
+3. Deploy using Web Deploy or your preferred method
 
-3. **Deploy to hosting platform**
-- Azure App Service
-- IIS
-- Docker
-- Or any ASP.NET Core compatible host
+## ?? Documentation
+
+Comprehensive documentation is available in the [`/docs`](./docs) folder:
+
+### ?? For Developers
+- [Configuration Guide](./docs/development/configuration.md) - Application configuration strategy
+- [Secrets Management](./docs/development/secrets-management.md) - Managing sensitive data locally
+- [CI/CD Setup](./docs/development/ci-cd-setup.md) - Continuous integration and deployment
+- [TinyMCE Setup](./docs/development/tinymce-setup.md) - Rich text editor configuration
+
+### ?? For Deployment
+- [Deployment Guide](./docs/deployment/deployment-guide.md) - Complete deployment instructions
+- [HTTPS Setup Guide](./docs/deployment/https-setup-guide.md) - Setting up SSL/HTTPS
+- [Quick Reference](./docs/deployment/quick-reference.md) - Quick deployment commands
+- [Deployment Checklists](./docs/deployment/) - Step-by-step checklists
+
+### ?? For Security
+- [HTTPS Configuration](./docs/security/https-configuration.md) - HTTPS security settings
+- [Encrypted Configuration](./docs/security/encrypted-configuration.md) - Advanced security options
+
+**See the [Documentation Index](./docs/README.md) for a complete list.**
 
 ## ?? Development Guidelines
 
@@ -286,7 +297,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## ?? Links
 
-- [CI/CD Documentation](CI-CD-SETUP.md)
+- [Complete Documentation](./docs/README.md)
 - [.NET 10 Documentation](https://docs.microsoft.com/dotnet/)
 - [ASP.NET Core Documentation](https://docs.microsoft.com/aspnet/core/)
 - [Entity Framework Core](https://docs.microsoft.com/ef/core/)
