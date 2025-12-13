@@ -142,7 +142,9 @@ dotnet test EllisHope.sln --collect:"XPlat Code Coverage"
 ### Test Coverage
 - **BlogService**: 22 tests (CRUD, search, categories, slug generation)
 - **EventService**: 23 tests (CRUD, filtering, date handling, search)
-- **Total**: 45 tests with 100% pass rate ?
+- **BlogController**: 16 tests (routing, ViewBag population, error handling)
+- **Other Services**: 24 tests (various service layer tests)
+- **Total**: **85 tests** with **100% pass rate** ?
 
 ## ?? Domain Models
 

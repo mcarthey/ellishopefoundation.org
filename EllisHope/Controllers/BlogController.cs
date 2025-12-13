@@ -51,6 +51,24 @@ public class BlogController : Controller
             return NotFound();
         }
 
+        // Populate sidebar data
+        ViewBag.Categories = await _blogService.GetAllCategoriesAsync();
+        
+        // Get recent posts (excluding current post)
+        var allPosts = await _blogService.GetAllPostsAsync();
+        ViewBag.RecentPosts = allPosts
+            .Where(p => p.Id != post.Id)
+            .OrderByDescending(p => p.PublishedDate)
+            .Take(3);
+        
+        // Get all tags from all posts
+        var allTags = allPosts
+            .Where(p => !string.IsNullOrEmpty(p.Tags))
+            .SelectMany(p => p.Tags!.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            .Distinct()
+            .Take(10);
+        ViewBag.AllTags = allTags;
+
         return View(post);
     }
 

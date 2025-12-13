@@ -92,6 +92,12 @@ app.UseAuthorization();
 
 app.MapStaticAssets();
 
+// Blog details route with slug
+app.MapControllerRoute(
+    name: "blogDetails",
+    pattern: "blog/details/{slug}",
+    defaults: new { controller = "Blog", action = "details" });
+
 // Admin area route
 app.MapControllerRoute(
     name: "admin",

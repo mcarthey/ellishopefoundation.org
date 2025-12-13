@@ -1,5 +1,6 @@
-﻿@{
-    ViewBag.Title = "details";
+﻿@model EllisHope.Models.Domain.BlogPost
+@{
+    ViewBag.Title = Model.Title;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -12,16 +13,16 @@
         <img class="shape-2" src="~/assets/img/shape/shape-82.png" alt="shape">
         <div class="container">
             <div class="breadcrumb-content text-center">
-                <h2 class="breadcrumb-title">Blog Details</h2>
+                <h2 class="breadcrumb-title">@Model.Title</h2>
                 <ul class="breadcrumb-menu">
                     <li>
-                        <a href="/home/">Home</a>
+                        <a href="/">Home</a>
                     </li>
                     <li>
-                        <a href="#">Pages</a>
+                        <a href="/blog/classic">Blog</a>
                     </li>
                     <li>
-                        <a href="#">Blog Details</a>
+                        <a href="#">@Model.Title</a>
                     </li>
                 </ul>
             </div>
@@ -37,333 +38,178 @@
 <div class="blog-details-wrapper mb-45">
 <div class="classic-style">
     <h2 class="blog-title mb-5">
-        <a href="/blog/details">
-            Passages undergo various
-            alterations over time.
-        </a>
+        @Model.Title
     </h2>
-    <a href="/blog/details" class="blog-thumb">
-        <img class="w-100" src="~/assets/img/blog/blog-17.jpg" alt="blog">
-    </a>
+    @if (!string.IsNullOrEmpty(Model.FeaturedImageUrl))
+    {
+        <div class="blog-thumb mb-4">
+            <img class="w-100" src="@Model.FeaturedImageUrl" alt="@Model.Title">
+        </div>
+    }
     <div class="blog-content">
         <div class="blog-meta">
-            <a href="/blog/details">Esther Howard</a>
+            <a href="#">@Model.AuthorName</a>
             <span class="divider"></span>
-            <a href="/blog/details">Comments(02)</a>
-            <span class="divider"></span>
-            <a href="/blog/details">05 Oct 2024</a>
+            @if (Model.PublishedDate.HasValue)
+            {
+                <span>@Model.PublishedDate.Value.ToString("MMMM dd, yyyy")</span>
+            }
         </div>
-        <p class="fs-22">
-            Over time, passages transform through numerous alterations,
-            reflecting changing interpretations, linguistic shifts, and cultural
-            dynamics, highlighting the
-            fluidity and adaptability of written expression across generations.
-        </p>
+        @if (!string.IsNullOrEmpty(Model.Excerpt))
+        {
+            <p class="fs-22">
+                @Model.Excerpt
+            </p>
+        }
     </div>
 </div>
 
-<blockquote class="blockquote mb-65">
-    <div class="quote-icon">
-        <img src="~/assets/img/icon/quote.png" alt="author">
-    </div>
-    <p>Even tiny actions can significantly impact the lives of the less fortunate.</p>
-    <div class="blockquote-footer">
-        Denis Robinson
-    </div>
-</blockquote>
-
-<h3 class="blog-details-title mt-4 mb-4">Gifts elevate & enrich lives.</h3>
-<p>
-    Acts of giving elevate and enrich lives by spreading joy, fostering connections, and
-    creating meaningful experiences for all involved.
-</p>
-
-<div class="feature-list-three pt-5">
-    <span class="icon">
-        <i class="bi bi-check-lg"></i>
-    </span>
-    <span class="feature-title">Residential and commercial cleaning expertise</span>
-</div>
-<div class="feature-list-three">
-    <span class="icon">
-        <i class="bi bi-check-lg"></i>
-    </span>
-    <span class="feature-title">Crystal-clear windows guaranteed</span>
-</div>
-<div class="feature-list-three">
-    <span class="icon">
-        <i class="bi bi-check-lg"></i>
-    </span>
-    <span class="feature-title">Processing customer feedback to improve cleaning.</span>
-</div>
-<div class="feature-list-three">
-    <span class="icon">
-        <i class="bi bi-check-lg"></i>
-    </span>
-    <span class="feature-title">Eco-friendly cleaning solutions used</span>
+<div class="blog-content-full mt-4">
+    @Html.Raw(Model.Content)
 </div>
 
-<p class="pt-30 fs-22">
-    The act of giving gifts elevates and enriches lives by
-    fostering gratitude, strengthening relationships, and spreading happiness. It
-    symbolizes care, generosity, and thoughtfulness, creating lasting impressions and
-    cherished memories. Through gifts, we express love, appreciation, and support,
-    ultimately contributing to the well-being and fulfillment of both giver and
-    receiver.
-</p>
-
-<div class="row media-content pt-30 mb-80">
-    <div class="col-md-6">
-        <div class="tagcloud mb-30">
-            <span>Tags :</span>
-            <a href="#">Clean Water , </a>
-            <a href="#">Ecology ,</a>
-            <a href="#">Animal Rescue</a>
-        </div>
-    </div>
-    <div class="col-md-6 text-md-end text-center">
-        <div class="social-media mb-30">
-            <span>Media :</span>
-            <a href="#">
-                <img src="~/assets/img/icon/facebook.svg" alt="social">
-            </a>
-            <a href="#">
-                <img src="~/assets/img/icon/twitter.svg" alt="social">
-            </a>
-            <a href="#">
-                <img src="~/assets/img/icon/insta.svg" alt="social">
-            </a>
-            <a href="#">
-                <img src="~/assets/img/icon/linkedin.svg" alt="social">
-            </a>
-        </div>
-    </div>
-</div>
-<div class="comment-list">
-    <h3 class="comment-title mb-30">Comment Reviews</h3>
-    <ul class="list-unstyled p-0 m-0">
-        <li>
-            <div class="comment-box d-sm-flex">
-                <div class="comment-avatar">
-                    <img alt="author" src="~/assets/img/blog/comment-1.jpg"
-                         class="avatar">
-                </div>
-                <div class="comment-content">
-                    <div class="avatar-name mb-10">
-                        <div class="name">
-                            <a href="#">Esther Howard</a>
-                        </div>
-                        <p class="date">May 13, 2024</p>
-                    </div>
-                    <p>
-                        Hamina Lorem Ipsum is simply dummy text of the printing and
-                        typesetting industry. Lorem Ipsum has been the industry’s
-                        standard dummy text ever since the 1500s.
-                    </p>
-
-                    <div class="comments-replay">
-                        <a rel="nofollow" class="comment-reply-link" href="#">
-                            <i class="bi bi-reply"></i> Reply
-                        </a>
-                    </div>
-
-                </div>
-            </div>
-        </li>
-        <li class="ps-md-5 ms-xxl-5">
-            <div class="comment-box d-sm-flex">
-                <div class="comment-avatar">
-                    <img alt="author" src="~/assets/img/blog/comment-2.jpg"
-                         class="avatar">
-                </div>
-                <div class="comment-content">
-
-                    <div class="avatar-name mb-10">
-                        <div class="name">
-                            <a href="#">Kristin Watson</a>
-                        </div>
-                        <p class="date">May 13, 2024</p>
-                    </div>
-                    <p>
-                        Hamina Lorem Ipsum is simply dummy text of the printing and
-                        typesetting industry. Lorem Ipsum has been the industry’s
-                        standard dummy text ever since the 1500s.
-                    </p>
-
-                    <div class="comments-replay">
-                        <a rel="nofollow" class="comment-reply-link" href="#">
-                            <i class="bi bi-reply"></i> Reply
-                        </a>
-                    </div>
-
-                </div>
-            </div>
-        </li>
-        <li>
-            <div class="comment-box d-sm-flex">
-                <div class="comment-avatar">
-                    <img alt="author" src="~/assets/img/blog/comment-3.jpg"
-                         class="avatar">
-                </div>
-                <div class="comment-content">
-
-                    <div class="avatar-name mb-10">
-                        <div class="name">
-                            <a href="#">Eleanor Pena</a>
-                        </div>
-                        <p class="date">May 13, 2024</p>
-                    </div>
-                    <p>
-                        Hamina Lorem Ipsum is simply dummy text of the printing and
-                        typesetting industry. Lorem Ipsum has been the industry’s
-                        standard dummy text ever since the 1500s.
-                    </p>
-
-                    <div class="comments-replay">
-                        <a rel="nofollow" class="comment-reply-link" href="#">
-                            <i class="bi bi-reply"></i> Reply
-                        </a>
-                    </div>
-
-                </div>
-            </div>
-        </li>
-    </ul>
-</div>
-<div class="comment-form mb-10 mt-65">
-    <h3 class="comment-reply-title mb-10">Leave a comment</h3>
-    <p class="opacity-50 mb-35">
-        Your email address will not be published. Required
-        fields are marked *
-    </p>
-    <form action="#">
-        <div class="row">
-            <div class="col-md-12">
-                <input type="text" name="fname" placeholder="First Name">
-            </div>
-            <div class="col-md-12">
-                <input type="email" name="email" placeholder="Email">
-            </div>
-            <div class="col-md-12">
-                <textarea name="message" placeholder="Write Your Message"
-                                                      spellcheck="false"></textarea>
-            </div>
-            <div class="col-md-12">
-                <p class="mb-0">
-                    <input type="checkbox" value="" checked>
-                    Remember my name, email, and website for future comments.
-                </p>
+@if (!string.IsNullOrEmpty(Model.Tags))
+{
+    <div class="row media-content pt-30 mb-80">
+        <div class="col-md-6">
+            <div class="tagcloud mb-30">
+                <span>Tags :</span>
+                @{
+                    var tags = Model.Tags.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                }
+                @foreach (var tag in tags)
+                {
+                    <a href="/blog/classic?search=@tag">@tag</a>
+                }
             </div>
         </div>
-    </form>
-    <div class="mt-50">
-        <button class="ht-btn">Post Comment</button>
+        <div class="col-md-6 text-md-end text-center">
+            <div class="social-media mb-30">
+                <span>Share :</span>
+                <a href="https://www.facebook.com/sharer/sharer.php?u=@Url.Action("details", "Blog", new { slug = Model.Slug }, Context.Request.Scheme)" target="_blank">
+                    <img src="~/assets/img/icon/facebook.svg" alt="Facebook">
+                </a>
+                <a href="https://twitter.com/intent/tweet?url=@Url.Action("details", "Blog", new { slug = Model.Slug }, Context.Request.Scheme)&text=@Model.Title" target="_blank">
+                    <img src="~/assets/img/icon/twitter.svg" alt="Twitter">
+                </a>
+                <a href="https://www.linkedin.com/shareArticle?mini=true&url=@Url.Action("details", "Blog", new { slug = Model.Slug }, Context.Request.Scheme)&title=@Model.Title" target="_blank">
+                    <img src="~/assets/img/icon/linkedin.svg" alt="LinkedIn">
+                </a>
+            </div>
+        </div>
     </div>
-</div>
+}
+else
+{
+    <div class="row media-content pt-30 mb-80">
+        <div class="col-md-12 text-md-end text-center">
+            <div class="social-media mb-30">
+                <span>Share :</span>
+                <a href="https://www.facebook.com/sharer/sharer.php?u=@Url.Action("details", "Blog", new { slug = Model.Slug }, Context.Request.Scheme)" target="_blank">
+                    <img src="~/assets/img/icon/facebook.svg" alt="Facebook">
+                </a>
+                <a href="https://twitter.com/intent/tweet?url=@Url.Action("details", "Blog", new { slug = Model.Slug }, Context.Request.Scheme)&text=@Model.Title" target="_blank">
+                    <img src="~/assets/img/icon/twitter.svg" alt="Twitter">
+                </a>
+                <a href="https://www.linkedin.com/shareArticle?mini=true&url=@Url.Action("details", "Blog", new { slug = Model.Slug }, Context.Request.Scheme)&title=@Model.Title" target="_blank">
+                    <img src="~/assets/img/icon/linkedin.svg" alt="LinkedIn">
+                </a>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Comments section removed for now - can be added later with a comments system -->
+
 </div>
 </div>
 <div class="col-lg-4">
     <div class="blog-sidebar mb-40 ps-xxl-4">
+        <!-- Search Widget -->
         <div class="widget widget-search mb-50">
             <h3 class="widget-title">Search</h3>
-            <form class="search-form" action="#" method="get">
-                <input type="text" placeholder="Search">
+            <form class="search-form" asp-controller="Blog" asp-action="classic" method="get">
+                <input type="text" name="search" placeholder="Search">
                 <button class="widget-btn" type="submit">
                     <i class="bi bi-search"></i>
                 </button>
             </form>
         </div>
-        <div class="widget category-widget-content">
-            <h3 class="widget-title">Categories</h3>
-            <ul class="list-unstyled category-widget mb-0">
-                <li>
-                    <a href="#">Kitchen Cleaning <span class="float-end">(05)</span> </a>
-                </li>
-                <li>
-                    <a href="#">Window Cleaning <span class="float-end">(02)</span> </a>
-                </li>
-                <li>
-                    <a href="#">Toilet Cleaning <span class="float-end">(04)</span> </a>
-                </li>
-                <li>
-                    <a href="#">Office Cleaning <span class="float-end">(03)</span> </a>
-                </li>
-                <li>
-                    <a href="#">Carpet Cleaning <span class="float-end">(07)</span> </a>
-                </li>
-            </ul>
-        </div>
-        <div class="widget widget-post mt-50">
-            <h3 class="widget-title">Recent Events</h3>
-            <article class="recent-post mb-20">
-                <a href="/blog/details">
-                    <figure class="post-thumb" data-background="/assets/img/blog/post-1.jpg">
-                    </figure>
-                </a>
-                <div class="post-content mb-2">
-                    <h5 class="post-title">
-                        <a href="/blog/details">
-                            Pristine
-                            kitchens with every
-                            clean
-                        </a>
-                    </h5>
-                    <span class="date">
-                        <i class="bi bi-clock"></i> Jan 12,
-                        2024
-                    </span>
-                </div>
-            </article>
-            <article class="recent-post mb-20">
-                <a href="/blog/details">
-                    <figure class="post-thumb" data-background="/assets/img/blog/post-2.jpg">
-                    </figure>
-                </a>
-                <div class="post-content mb-2">
-                    <h5 class="post-title">
-                        <a href="/blog/details">
-                            Many
-                            passages
-                            undergo various alterations.
-                        </a>
-                    </h5>
-                    <span class="date">
-                        <i class="bi bi-clock"></i> 01
-                        Apr,2023
-                    </span>
-                </div>
-            </article>
-            <article class="recent-post">
-                <a href="/blog/details">
-                    <figure class="post-thumb" data-background="/assets/img/blog/blog-3.jpg">
-                    </figure>
-                </a>
-                <div class="post-content mb-2">
-                    <h5 class="post-title">
-                        <a href="/blog/details">
-                            Volunteering
-                            supports the
-                            fortunate in poverty.
-                        </a>
-                    </h5>
-                    <span class="date">
-                        <i class="bi bi-clock"></i> 18
-                        Feb,2023
-                    </span>
-                </div>
-            </article>
-        </div>
-        <div class="widget widget-categories-tag mt-50">
-            <h3 class="widget-title">Tags</h3>
-            <div class="tagcloud">
-                <a href="#">Children</a>
-                <a href="#">Education</a>
-                <a href="#">Medical</a>
-                <a href="#">Ecology</a>
-                <a href="#">Water</a>
-                <a href="#">Volunteer</a>
+
+        <!-- Categories Widget -->
+        @{
+            var categories = ViewBag.Categories as IEnumerable<EllisHope.Models.Domain.BlogCategory>;
+        }
+        @if (categories != null && categories.Any())
+        {
+            <div class="widget category-widget-content">
+                <h3 class="widget-title">Categories</h3>
+                <ul class="list-unstyled category-widget mb-0">
+                    @foreach (var category in categories)
+                    {
+                        var count = category.BlogPostCategories?.Count ?? 0;
+                        <li>
+                            <a href="/blog/classic?category=@category.Id">
+                                @category.Name <span class="float-end">(@count)</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
             </div>
-        </div>
+        }
+
+        <!-- Recent Posts Widget -->
+        @{
+            var recentPosts = ViewBag.RecentPosts as IEnumerable<EllisHope.Models.Domain.BlogPost>;
+        }
+        @if (recentPosts != null && recentPosts.Any())
+        {
+            <div class="widget widget-post mt-50">
+                <h3 class="widget-title">Recent Posts</h3>
+                @foreach (var recentPost in recentPosts)
+                {
+                    <article class="recent-post mb-20">
+                        @if (!string.IsNullOrEmpty(recentPost.FeaturedImageUrl))
+                        {
+                            <a href="/blog/details/@recentPost.Slug">
+                                <figure class="post-thumb" style="background-image: url('@recentPost.FeaturedImageUrl')">
+                                </figure>
+                            </a>
+                        }
+                        <div class="post-content mb-2">
+                            <h5 class="post-title">
+                                <a href="/blog/details/@recentPost.Slug">
+                                    @recentPost.Title
+                                </a>
+                            </h5>
+                            @if (recentPost.PublishedDate.HasValue)
+                            {
+                                <span class="date">
+                                    <i class="bi bi-clock"></i> @recentPost.PublishedDate.Value.ToString("MMM dd, yyyy")
+                                </span>
+                            }
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+
+        <!-- Tags Widget -->
+        @{
+            var allTags = ViewBag.AllTags as IEnumerable<string>;
+        }
+        @if (allTags != null && allTags.Any())
+        {
+            <div class="widget widget-categories-tag mt-50">
+                <h3 class="widget-title">Tags</h3>
+                <div class="tagcloud">
+                    @foreach (var tag in allTags)
+                    {
+                        <a href="/blog/classic?search=@tag">@tag</a>
+                    }
+                </div>
+            </div>
+        }
     </div>
 </div>
 </div>
