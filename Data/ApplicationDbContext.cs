@@ -15,6 +15,8 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<Page> Pages { get; set; }
     public DbSet<ContentSection> ContentSections { get; set; }
     public DbSet<Media> MediaLibrary { get; set; }
+    public DbSet<MediaUsage> MediaUsages { get; set; }
+    public DbSet<ImageSize> ImageSizes { get; set; }
     public DbSet<PageImage> PageImages { get; set; }
     public DbSet<BlogPost> BlogPosts { get; set; }
     public DbSet<BlogCategory> BlogCategories { get; set; }
@@ -39,6 +41,13 @@ public class ApplicationDbContext : IdentityDbContext
             .WithMany(c => c.BlogPostCategories)
             .HasForeignKey(bc => bc.CategoryId);
 
+        // Configure Media relationships
+        builder.Entity<MediaUsage>()
+            .HasOne(mu => mu.Media)
+            .WithMany(m => m.Usages)
+            .HasForeignKey(mu => mu.MediaId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         // Configure indexes for better performance
         builder.Entity<BlogPost>()
             .HasIndex(b => b.Slug)
@@ -49,6 +58,15 @@ public class ApplicationDbContext : IdentityDbContext
             .IsUnique();
 
         builder.Entity<Event>()
-            .HasIndex(e => e.StartDate);
+            .HasIndex(e => e.EventDate);
+
+        builder.Entity<Media>()
+            .HasIndex(m => m.Source);
+
+        builder.Entity<Media>()
+            .HasIndex(m => m.Category);
+
+        builder.Entity<MediaUsage>()
+            .HasIndex(mu => new { mu.EntityType, mu.EntityId });
     }
 }
