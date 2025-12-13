@@ -13,11 +13,13 @@ public class BlogController : Controller
 {
     private readonly IBlogService _blogService;
     private readonly IWebHostEnvironment _environment;
+    private readonly IConfiguration _configuration;
 
-    public BlogController(IBlogService blogService, IWebHostEnvironment environment)
+    public BlogController(IBlogService blogService, IWebHostEnvironment environment, IConfiguration configuration)
     {
         _blogService = blogService;
         _environment = environment;
+        _configuration = configuration;
     }
 
     // GET: Admin/Blog
@@ -52,6 +54,8 @@ public class BlogController : Controller
     // GET: Admin/Blog/Create
     public async Task<IActionResult> Create()
     {
+        SetTinyMceApiKey();
+        
         var viewModel = new BlogPostViewModel
         {
             PublishedDate = DateTime.Now,
@@ -109,6 +113,7 @@ public class BlogController : Controller
             return RedirectToAction(nameof(Index));
         }
 
+        SetTinyMceApiKey();
         model.AvailableCategories = await GetCategorySelectListAsync();
         return View(model);
     }
@@ -116,6 +121,8 @@ public class BlogController : Controller
     // GET: Admin/Blog/Edit/5
     public async Task<IActionResult> Edit(int id)
     {
+        SetTinyMceApiKey();
+        
         var post = await _blogService.GetPostByIdAsync(id);
         if (post == null)
         {
@@ -200,6 +207,7 @@ public class BlogController : Controller
             return RedirectToAction(nameof(Index));
         }
 
+        SetTinyMceApiKey();
         model.AvailableCategories = await GetCategorySelectListAsync();
         return View(model);
     }
@@ -228,6 +236,11 @@ public class BlogController : Controller
     }
 
     // Helper methods
+    private void SetTinyMceApiKey()
+    {
+        ViewData["TinyMceApiKey"] = _configuration["TinyMCE:ApiKey"] ?? "no-api-key";
+    }
+
     private async Task<List<SelectListItem>> GetCategorySelectListAsync()
     {
         var categories = await _blogService.GetAllCategoriesAsync();

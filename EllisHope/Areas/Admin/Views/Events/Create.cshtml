@@ -158,7 +158,7 @@
     <partial name="_ValidationScriptsPartial" />
 
     <!-- TinyMCE -->
-    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://cdn.tiny.cloud/1/@(ViewData["TinyMceApiKey"] ?? "no-api-key")/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <script>
         // Initialize TinyMCE
         tinymce.init({

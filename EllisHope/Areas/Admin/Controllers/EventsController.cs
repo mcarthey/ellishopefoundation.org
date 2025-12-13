@@ -12,11 +12,13 @@ public class EventsController : Controller
 {
     private readonly IEventService _eventService;
     private readonly IWebHostEnvironment _environment;
+    private readonly IConfiguration _configuration;
 
-    public EventsController(IEventService eventService, IWebHostEnvironment environment)
+    public EventsController(IEventService eventService, IWebHostEnvironment environment, IConfiguration configuration)
     {
         _eventService = eventService;
         _environment = environment;
+        _configuration = configuration;
     }
 
     // GET: Admin/Events
@@ -51,6 +53,8 @@ public class EventsController : Controller
     // GET: Admin/Events/Create
     public IActionResult Create()
     {
+        SetTinyMceApiKey();
+        
         var viewModel = new EventViewModel
         {
             EventDate = DateTime.Now.AddDays(7),
@@ -100,12 +104,15 @@ public class EventsController : Controller
             return RedirectToAction(nameof(Index));
         }
 
+        SetTinyMceApiKey();
         return View(model);
     }
 
     // GET: Admin/Events/Edit/5
     public async Task<IActionResult> Edit(int id)
     {
+        SetTinyMceApiKey();
+        
         var eventItem = await _eventService.GetEventByIdAsync(id);
         if (eventItem == null)
         {
@@ -187,6 +194,7 @@ public class EventsController : Controller
             return RedirectToAction(nameof(Index));
         }
 
+        SetTinyMceApiKey();
         return View(model);
     }
 
@@ -214,6 +222,11 @@ public class EventsController : Controller
     }
 
     // Helper methods
+    private void SetTinyMceApiKey()
+    {
+        ViewData["TinyMceApiKey"] = _configuration["TinyMCE:ApiKey"] ?? "no-api-key";
+    }
+
     private async Task<string> SaveFeaturedImageAsync(IFormFile file)
     {
         var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads", "events");

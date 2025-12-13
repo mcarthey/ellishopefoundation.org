@@ -11,7 +11,10 @@ This guide explains how to manage sensitive configuration data (API keys, connec
    - `Unsplash:SecretKey`
    - `Unsplash:ApplicationName`
 
-2. **Database Connection String**
+2. **TinyMCE API Key**
+   - `TinyMCE:ApiKey`
+
+3. **Database Connection String**
    - `ConnectionStrings:DefaultConnection`
 
 ## ?? Development Environment Setup
@@ -36,6 +39,9 @@ User Secrets are stored outside your project folder in:
    dotnet user-secrets set "Unsplash:AccessKey" "YOUR_ACCESS_KEY_HERE"
    dotnet user-secrets set "Unsplash:SecretKey" "YOUR_SECRET_KEY_HERE"
    dotnet user-secrets set "Unsplash:ApplicationName" "EllisHopeFoundation"
+   
+   # TinyMCE API Key
+   dotnet user-secrets set "TinyMCE:ApiKey" "YOUR_TINYMCE_API_KEY"
    
    # Database Connection
    dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=(localdb)\\mssqllocaldb;Database=EllisHopeDb;Trusted_Connection=True;MultipleActiveResultSets=true"
@@ -95,6 +101,9 @@ If you prefer a local file approach:
        "AccessKey": "YOUR_ACCESS_KEY",
        "SecretKey": "YOUR_SECRET_KEY",
        "ApplicationName": "EllisHopeFoundation"
+     },
+     "TinyMCE": {
+       "ApiKey": "YOUR_TINYMCE_API_KEY"
      }
    }
    ```
@@ -113,6 +122,7 @@ If you prefer a local file approach:
    Unsplash__AccessKey = YOUR_ACCESS_KEY
    Unsplash__SecretKey = YOUR_SECRET_KEY
    Unsplash__ApplicationName = EllisHopeFoundation
+   TinyMCE__ApiKey = YOUR_TINYMCE_API_KEY
    ConnectionStrings__DefaultConnection = YOUR_PRODUCTION_CONNECTION_STRING
    ```
 
@@ -139,6 +149,7 @@ if (builder.Environment.IsProduction())
 ```powershell
 setx Unsplash__AccessKey "YOUR_ACCESS_KEY"
 setx Unsplash__SecretKey "YOUR_SECRET_KEY"
+setx TinyMCE__ApiKey "YOUR_TINYMCE_API_KEY"
 setx ConnectionStrings__DefaultConnection "YOUR_CONNECTION_STRING"
 ```
 
@@ -146,6 +157,7 @@ setx ConnectionStrings__DefaultConnection "YOUR_CONNECTION_STRING"
 ```bash
 export Unsplash__AccessKey="YOUR_ACCESS_KEY"
 export Unsplash__SecretKey="YOUR_SECRET_KEY"
+export TinyMCE__ApiKey="YOUR_TINYMCE_API_KEY"
 export ConnectionStrings__DefaultConnection="YOUR_CONNECTION_STRING"
 ```
 
@@ -160,11 +172,12 @@ Create a `setup-secrets.ps1` (PowerShell) or `setup-secrets.sh` (Bash) in your *
 **PowerShell:**
 ```powershell
 # setup-secrets.ps1
-cd "E:\Documents\Work\dev\repos\EHF\EllisHopeFoundation\EllisHope"
+cd "E:\Documents\Work\dev\repos\EHF\EllisHope"
 
 dotnet user-secrets set "Unsplash:AccessKey" "9IEyanBmuyo8qB-v37hdi8PcPpqVV9R1voLgdhhn9hQ"
 dotnet user-secrets set "Unsplash:SecretKey" "VMH2nCK7eAwvOZTOv1Czfkf1C813P6hazOSRIrlj0Yk"
 dotnet user-secrets set "Unsplash:ApplicationName" "EllisHopeFoundation"
+dotnet user-secrets set "TinyMCE:ApiKey" "YOUR_TINYMCE_API_KEY"
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=(localdb)\\mssqllocaldb;Database=EllisHopeDb;Trusted_Connection=True;MultipleActiveResultSets=true"
 
 Write-Host "Secrets configured successfully!" -ForegroundColor Green
@@ -180,6 +193,7 @@ cd ~/repos/EllisHopeFoundation/EllisHope
 dotnet user-secrets set "Unsplash:AccessKey" "9IEyanBmuyo8qB-v37hdi8PcPpqVV9R1voLgdhhn9hQ"
 dotnet user-secrets set "Unsplash:SecretKey" "VMH2nCK7eAwvOZTOv1Czfkf1C813P6hazOSRIrlj0Yk"
 dotnet user-secrets set "Unsplash:ApplicationName" "EllisHopeFoundation"
+dotnet user-secrets set "TinyMCE:ApiKey" "YOUR_TINYMCE_API_KEY"
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=(localdb)\\mssqllocaldb;Database=EllisHopeDb;Trusted_Connection=True;MultipleActiveResultSets=true"
 
 echo "Secrets configured successfully!"
@@ -311,4 +325,3 @@ echo "$env:APPDATA\Microsoft\UserSecrets\$userSecretsId\secrets.json"
 # Bash/Mac
 USER_SECRETS_ID=$(grep -oP '(?<=<UserSecretsId>)[^<]+' EllisHope.csproj)
 echo "~/.microsoft/usersecrets/$USER_SECRETS_ID/secrets.json"
-```

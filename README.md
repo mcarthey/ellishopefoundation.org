@@ -102,9 +102,11 @@ dotnet user-secrets init
 dotnet user-secrets set "Unsplash:AccessKey" "YOUR_ACCESS_KEY"
 dotnet user-secrets set "Unsplash:SecretKey" "YOUR_SECRET_KEY"
 dotnet user-secrets set "Unsplash:ApplicationName" "EllisHopeFoundation"
+dotnet user-secrets set "TinyMCE:ApiKey" "YOUR_TINYMCE_API_KEY"
 ```
 
 For detailed secrets management instructions, see [SECRETS-MANAGEMENT.md](SECRETS-MANAGEMENT.md).
+For TinyMCE API key setup, see [TINYMCE-SETUP.md](TINYMCE-SETUP.md).
 
 4. **Apply database migrations**
 ```bash

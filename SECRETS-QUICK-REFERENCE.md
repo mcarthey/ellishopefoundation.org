@@ -13,11 +13,14 @@ dotnet user-secrets init
 dotnet user-secrets set "Unsplash:AccessKey" "9IEyanBmuyo8qB-v37hdi8PcPpqVV9R1voLgdhhn9hQ"
 dotnet user-secrets set "Unsplash:SecretKey" "VMH2nCK7eAwvOZTOv1Czfkf1C813P6hazOSRIrlj0Yk"
 dotnet user-secrets set "Unsplash:ApplicationName" "EllisHopeFoundation"
+dotnet user-secrets set "TinyMCE:ApiKey" "YOUR_TINYMCE_API_KEY_HERE"
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=(localdb)\\mssqllocaldb;Database=EllisHopeDb;Trusted_Connection=True;MultipleActiveResultSets=true"
 
 # Verify
 dotnet user-secrets list
 ```
+
+**Note**: Get your free TinyMCE API key from https://www.tiny.cloud/auth/signup/ (see [TINYMCE-SETUP.md](TINYMCE-SETUP.md))
 
 ## ?? Backup Your Secrets
 
