@@ -2,6 +2,7 @@ using EllisHope.Data;
 using EllisHope.Models.Domain;
 using EllisHope.Services;
 using Microsoft.EntityFrameworkCore;
+using Xunit;
 
 namespace EllisHope.Tests.Services;
 
