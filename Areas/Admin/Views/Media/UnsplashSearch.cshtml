@@ -1,0 +1,235 @@
+@model EllisHope.Models.ViewModels.UnsplashSearchViewModel
+@{
+    ViewData["Title"] = "Browse Unsplash";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Browse Unsplash</h2>
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Media Library
+    </a>
+</div>
+
+<!-- Search Form -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form asp-action="UnsplashSearch" method="post">
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <input type="text"
+                           name="query"
+                           value="@Model.Query"
+                           class="form-control form-control-lg"
+                           placeholder="Search for free images..."
+                           required>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        <i class="bi bi-search"></i> Search Unsplash
+                    </button>
+                </div>
+            </div>
+        </form>
+        <div class="mt-2 text-muted small">
+            <i class="bi bi-info-circle"></i>
+            Photos provided by <a href="https://unsplash.com" target="_blank">Unsplash</a>.
+            Free to use with attribution.
+        </div>
+    </div>
+</div>
+
+@if (Model.Results != null)
+{
+    <div class="mb-3">
+        <h5>Found @Model.Results.Total images for "@Model.Query"</h5>
+    </div>
+
+    @if (Model.Results.Results.Any())
+    {
+        <div class="row g-3">
+            @foreach (var photo in Model.Results.Results)
+            {
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="card h-100">
+                        <div class="position-relative" style="padding-top: 66.67%; overflow: hidden;">
+                            <img src="@photo.Urls.Small"
+                                 alt="@photo.Description"
+                                 class="position-absolute top-0 start-0 w-100 h-100"
+                                 style="object-fit: cover; cursor: pointer;"
+                                 data-bs-toggle="modal"
+                                 data-bs-target="#photoModal-@photo.Id">
+                        </div>
+                        <div class="card-body p-2">
+                            <p class="small mb-1">
+                                <strong>@(photo.Width) × @(photo.Height)</strong>
+                            </p>
+                            <p class="small text-muted mb-0">
+                                Photo by <a href="https://unsplash.com/@@(@photo.User.Username)" target="_blank">@photo.User.Name</a>
+                            </p>
+                        </div>
+                        <div class="card-footer p-2">
+                            <button type="button"
+                                    class="btn btn-sm btn-primary w-100"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#importModal-@photo.Id">
+                                <i class="bi bi-download"></i> Import
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Photo Detail Modal -->
+                <div class="modal fade" id="photoModal-@photo.Id" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Photo Preview</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <img src="@photo.Urls.Regular" alt="@photo.Description" class="img-fluid mb-3">
+                                <table class="table table-sm">
+                                    <tr><th>Photographer:</th><td><a href="https://unsplash.com/@@(@photo.User.Username)" target="_blank">@photo.User.Name</a></td></tr>
+                                    <tr><th>Dimensions:</th><td>@(photo.Width) × @(photo.Height)</td></tr>
+                                    @if (!string.IsNullOrEmpty(photo.Description))
+                                    {
+                                        <tr><th>Description:</th><td>@photo.Description</td></tr>
+                                    }
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <a href="@photo.Urls.Full" target="_blank" class="btn btn-secondary">
+                                    <i class="bi bi-box-arrow-up-right"></i> View on Unsplash
+                                </a>
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#importModal-@photo.Id">
+                                    <i class="bi bi-download"></i> Import This Photo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Import Modal -->
+                <div class="modal fade" id="importModal-@photo.Id" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form asp-action="ImportFromUnsplash" method="post">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Import from Unsplash</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <input type="hidden" name="UnsplashPhotoId" value="@photo.Id" />
+
+                                    <div class="mb-3">
+                                        <img src="@photo.Urls.Small" alt="@photo.Description" class="img-fluid mb-2" style="max-height: 200px;">
+                                        <p class="small text-muted">
+                                            Photo by <a href="https://unsplash.com/@@(@photo.User.Username)" target="_blank">@photo.User.Name</a>
+                                        </p>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Alt Text</label>
+                                        <input type="text"
+                                               name="AltText"
+                                               class="form-control"
+                                               value="@photo.Description"
+                                               placeholder="Describe the image">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Category</label>
+                                        <select name="Category" class="form-select">
+                                            @foreach (var category in Enum.GetValues<EllisHope.Models.Domain.MediaCategory>())
+                                            {
+                                                <option value="@((int)category)">@category</option>
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Tags</label>
+                                        <input type="text"
+                                               name="Tags"
+                                               class="form-control"
+                                               placeholder="e.g., events, children, fundraising">
+                                        <div class="form-text">Separate multiple tags with commas</div>
+                                    </div>
+
+                                    <div class="alert alert-info small mb-0">
+                                        <i class="bi bi-info-circle"></i>
+                                        By importing this photo, you agree to give credit to the photographer as required by Unsplash.
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-download"></i> Import Photo
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Pagination -->
+        @if (Model.Results.Total > Model.PerPage)
+        {
+            <div class="mt-4">
+                <nav>
+                    <ul class="pagination justify-content-center">
+                        @if (Model.Page > 1)
+                        {
+                            <li class="page-item">
+                                <form asp-action="UnsplashSearch" method="post" class="d-inline">
+                                    <input type="hidden" name="query" value="@Model.Query" />
+                                    <input type="hidden" name="page" value="@(Model.Page - 1)" />
+                                    <button type="submit" class="page-link">Previous</button>
+                                </form>
+                            </li>
+                        }
+
+                        <li class="page-item active">
+                            <span class="page-link">Page @Model.Page</span>
+                        </li>
+
+                        @if (Model.Results.Results.Count >= Model.PerPage)
+                        {
+                            <li class="page-item">
+                                <form asp-action="UnsplashSearch" method="post" class="d-inline">
+                                    <input type="hidden" name="query" value="@Model.Query" />
+                                    <input type="hidden" name="page" value="@(Model.Page + 1)" />
+                                    <button type="submit" class="page-link">Next</button>
+                                </form>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i>
+            No results found for "@Model.Query". Try a different search term.
+        </div>
+    }
+}
+else
+{
+    <div class="text-center py-5">
+        <i class="bi bi-search" style="font-size: 48px; color: #ccc;"></i>
+        <h4 class="mt-3">Search Unsplash</h4>
+        <p class="text-muted">Enter a search term above to find free, high-quality images</p>
+        <p class="small text-muted">
+            Popular searches: <a href="#" onclick="document.querySelector('input[name=query]').value='charity'; return false;">charity</a>,
+            <a href="#" onclick="document.querySelector('input[name=query]').value='children'; return false;">children</a>,
+            <a href="#" onclick="document.querySelector('input[name=query]').value='community'; return false;">community</a>,
+            <a href="#" onclick="document.querySelector('input[name=query]').value='volunteers'; return false;">volunteers</a>,
+            <a href="#" onclick="document.querySelector('input[name=query]').value='fundraising'; return false;">fundraising</a>
+        </p>
+    </div>
+}

@@ -1,0 +1,224 @@
+@model EllisHope.Models.ViewModels.MediaPickerViewModel
+@{
+    var modalId = Model.ModalId ?? $"mediaPicker_{Guid.NewGuid():N}";
+    var inputId = $"{Model.InputName}_Input";
+    var previewId = $"{Model.InputName}_Preview";
+}
+
+<!-- Hidden input to store selected media ID -->
+<input type="hidden" id="@inputId" name="@Model.InputName" value="@Model.SelectedMediaId" />
+
+<!-- Image Preview -->
+<div id="@previewId" class="border rounded p-3 text-center mb-3" style="min-height: 200px; @(Model.SelectedMediaId.HasValue ? "" : "background-color: #f8f9fa;")">
+    @if (Model.SelectedMediaId.HasValue && !string.IsNullOrEmpty(Model.SelectedMediaUrl))
+    {
+        <img src="@Model.SelectedMediaUrl" alt="Selected" class="img-fluid mb-2" style="max-height: 250px;">
+        <div>
+            <button type="button" class="btn btn-sm btn-danger" onclick="clearMediaSelection('@inputId', '@previewId')">
+                <i class="bi bi-x-circle"></i> Remove
+            </button>
+        </div>
+    }
+    else
+    {
+        <div class="py-5">
+            <i class="bi bi-image" style="font-size: 48px; color: #ccc;"></i>
+            <p class="text-muted mt-2">No image selected</p>
+        </div>
+    }
+</div>
+
+<!-- Action Buttons -->
+<div class="d-flex gap-2 mb-3">
+    <button type="button" class="btn btn-outline-primary flex-fill" data-bs-toggle="modal" data-bs-target="#@modalId" data-action="library">
+        <i class="bi bi-folder2-open"></i> Choose from Library
+    </button>
+    @if (Model.AllowUpload)
+    {
+        <button type="button" class="btn btn-outline-primary flex-fill" data-bs-toggle="modal" data-bs-target="#@modalId" data-action="upload">
+            <i class="bi bi-upload"></i> Upload New
+        </button>
+    }
+    @if (Model.AllowUnsplash)
+    {
+        <button type="button" class="btn btn-outline-primary flex-fill" data-bs-toggle="modal" data-bs-target="#@modalId" data-action="unsplash">
+            <i class="bi bi-images"></i> Unsplash
+        </button>
+    }
+</div>
+
+<!-- Media Picker Modal -->
+<div class="modal fade" id="@modalId" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Select Image</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Tabs -->
+                <ul class="nav nav-tabs mb-3" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="tab-library-@modalId" data-bs-toggle="tab" data-bs-target="#content-library-@modalId" type="button">
+                            <i class="bi bi-folder2-open"></i> Media Library
+                        </button>
+                    </li>
+                    @if (Model.AllowUpload)
+                    {
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="tab-upload-@modalId" data-bs-toggle="tab" data-bs-target="#content-upload-@modalId" type="button">
+                                <i class="bi bi-upload"></i> Upload
+                            </button>
+                        </li>
+                    }
+                    @if (Model.AllowUnsplash)
+                    {
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="tab-unsplash-@modalId" data-bs-toggle="tab" data-bs-target="#content-unsplash-@modalId" type="button">
+                                <i class="bi bi-images"></i> Unsplash
+                            </button>
+                        </li>
+                    }
+                </ul>
+
+                <!-- Tab Content -->
+                <div class="tab-content">
+                    <!-- Media Library Tab -->
+                    <div class="tab-pane fade show active" id="content-library-@modalId">
+                        <div class="mb-3">
+                            <input type="text" class="form-control" placeholder="Search media..." id="search-@modalId" onkeyup="searchMedia('@modalId')">
+                        </div>
+                        <div id="mediaGrid-@modalId" style="max-height: 400px; overflow-y: auto;">
+                            <div class="text-center py-4">
+                                <div class="spinner-border" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upload Tab -->
+                    @if (Model.AllowUpload)
+                    {
+                        <div class="tab-pane fade" id="content-upload-@modalId">
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i>
+                                To upload images, please use the <a asp-area="Admin" asp-controller="Media" asp-action="Upload" target="_blank">Media Library Upload page</a>.
+                                After uploading, return here and select from the Media Library tab.
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Unsplash Tab -->
+                    @if (Model.AllowUnsplash)
+                    {
+                        <div class="tab-pane fade" id="content-unsplash-@modalId">
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i>
+                                To import from Unsplash, please use the <a asp-area="Admin" asp-controller="Media" asp-action="UnsplashSearch" target="_blank">Unsplash Search page</a>.
+                                After importing, return here and select from the Media Library tab.
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Load media library when modal is shown
+        document.getElementById('@modalId').addEventListener('shown.bs.modal', function () {
+            loadMediaLibrary('@modalId', @(Model.FilterCategory.HasValue ? ((int)Model.FilterCategory.Value).ToString() : "null"));
+        });
+
+        function loadMediaLibrary(modalId, category) {
+            const gridContainer = document.getElementById('mediaGrid-' + modalId);
+
+            fetch('/Admin/Media/GetMediaJson' + (category ? '?category=' + category : ''))
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length === 0) {
+                        gridContainer.innerHTML = '<div class="text-center py-4"><p class="text-muted">No media found</p></div>';
+                        return;
+                    }
+
+                    let html = '<div class="row g-2">';
+                    data.forEach(media => {
+                        html += `
+                            <div class="col-lg-2 col-md-3 col-4">
+                                <div class="card h-100 media-item" data-filename="${media.fileName.toLowerCase()}" data-alt="${(media.altText || '').toLowerCase()}">
+                                    <div class="position-relative" style="padding-top: 100%; overflow: hidden; cursor: pointer;"
+                                         onclick="selectMedia(@inputId, @previewId, ${media.id}, '${media.filePath}', '${media.fileName}')">
+                                        <img src="${media.filePath}"
+                                             alt="${media.altText || media.fileName}"
+                                             class="position-absolute top-0 start-0 w-100 h-100"
+                                             style="object-fit: cover;">
+                                    </div>
+                                    <div class="card-body p-2">
+                                        <p class="small mb-0 text-truncate" title="${media.fileName}">${media.fileName}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                    gridContainer.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error loading media:', error);
+                    gridContainer.innerHTML = '<div class="alert alert-danger">Error loading media library</div>';
+                });
+        }
+
+        function selectMedia(inputId, previewId, mediaId, filePath, fileName) {
+            // Set the hidden input value
+            document.getElementById(inputId).value = mediaId;
+
+            // Update the preview
+            document.getElementById(previewId).innerHTML = `
+                <img src="${filePath}" alt="${fileName}" class="img-fluid mb-2" style="max-height: 250px;">
+                <div>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="clearMediaSelection('${inputId}', '${previewId}')">
+                        <i class="bi bi-x-circle"></i> Remove
+                    </button>
+                </div>
+            `;
+            document.getElementById(previewId).style.backgroundColor = '';
+
+            // Close the modal
+            const modalElement = document.querySelector('[id^="mediaPicker_"]');
+            if (modalElement) {
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                if (modal) modal.hide();
+            }
+        }
+
+        function clearMediaSelection(inputId, previewId) {
+            document.getElementById(inputId).value = '';
+            document.getElementById(previewId).innerHTML = `
+                <div class="py-5">
+                    <i class="bi bi-image" style="font-size: 48px; color: #ccc;"></i>
+                    <p class="text-muted mt-2">No image selected</p>
+                </div>
+            `;
+            document.getElementById(previewId).style.backgroundColor = '#f8f9fa';
+        }
+
+        function searchMedia(modalId) {
+            const searchTerm = document.getElementById('search-' + modalId).value.toLowerCase();
+            const items = document.querySelectorAll('#mediaGrid-' + modalId + ' .media-item');
+
+            items.forEach(item => {
+                const filename = item.dataset.filename || '';
+                const alt = item.dataset.alt || '';
+                const matches = filename.includes(searchTerm) || alt.includes(searchTerm);
+                item.closest('.col-lg-2').style.display = matches ? '' : 'none';
+            });
+        }
+    </script>
+}
