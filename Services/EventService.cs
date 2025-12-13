@@ -68,8 +68,8 @@ public class EventService : IEventService
         return await _context.Events
             .Where(e => e.IsPublished &&
                    (e.Title.Contains(searchTerm) ||
-                    e.Description.Contains(searchTerm) ||
-                    e.Location.Contains(searchTerm)))
+                    (e.Description != null && e.Description.Contains(searchTerm)) ||
+                    (e.Location != null && e.Location.Contains(searchTerm))))
             .OrderByDescending(e => e.StartDate)
             .ToListAsync();
     }

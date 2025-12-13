@@ -88,6 +88,25 @@ Tests cover:
 - Changed `p.Excerpt.Contains(searchTerm)` to `(p.Summary != null && p.Summary.Contains(searchTerm))`
 - Added null check for safety
 
+### 5. BlogService - Null Safety in Search (Additional)
+**File**: `Services/BlogService.cs`
+**Issue**: SearchPostsAsync didn't check for null on `Content` property which is nullable
+**Impact**: Potential null reference exceptions
+**Line fixed**: 62
+
+**Changes**:
+- Added null check: `(p.Content != null && p.Content.Contains(searchTerm))`
+
+### 6. EventService - Null Safety in Search
+**File**: `Services/EventService.cs`
+**Issue**: SearchEventsAsync didn't check for null on `Description` and `Location` properties which are nullable
+**Impact**: Potential null reference exceptions
+**Lines fixed**: 71-72
+
+**Changes**:
+- Added null checks for Description and Location properties
+- Changed to: `(e.Description != null && e.Description.Contains(searchTerm))` and `(e.Location != null && e.Location.Contains(searchTerm))`
+
 ## Next Steps
 
 To run the tests (requires .NET 9.0 SDK):
@@ -120,15 +139,32 @@ The tests provide comprehensive coverage for:
 4. Edge cases are tested (null values, missing entities, empty results)
 5. The bug fixes were essential - the application would not have compiled without them
 
-## Files Modified
+## CI/CD Integration
+
+A GitHub Actions workflow has been added to automatically build and test the application on every push and pull request.
+
+**File**: `.github/workflows/dotnet-ci.yml`
+
+The workflow:
+- Runs on Ubuntu latest
+- Uses .NET 9.0
+- Builds both the main project and test project
+- Runs all tests with detailed logging
+- Publishes test results as artifacts
+- Triggers on pushes to main, develop, and claude/** branches
+- Triggers on pull requests to main and develop
+
+## Files Modified/Created
 
 1. Created: `EllisHope.Tests/EllisHope.Tests.csproj`
 2. Created: `EllisHope.Tests/Services/BlogServiceTests.cs`
 3. Created: `EllisHope.Tests/Services/EventServiceTests.cs`
-4. Modified: `EllisHope.sln` (added test project)
-5. Modified: `Services/BlogService.cs` (fixed property names)
-6. Modified: `Services/EventService.cs` (fixed property names)
+4. Created: `.github/workflows/dotnet-ci.yml`
+5. Modified: `EllisHope.sln` (added test project)
+6. Modified: `Services/BlogService.cs` (fixed property names and null safety)
+7. Modified: `Services/EventService.cs` (fixed property names and null safety)
+8. Modified: `.gitignore` (added test result patterns)
 
 ## Summary
 
-This testing effort identified and fixed 4 critical bugs that would have prevented the application from compiling. The comprehensive test suite now provides a solid foundation for ensuring code quality and catching regressions in future development.
+This testing effort identified and fixed 6 bugs (4 critical compilation errors and 2 null safety issues) that would have prevented the application from compiling or caused runtime exceptions. The comprehensive test suite now provides a solid foundation for ensuring code quality and catching regressions in future development. CI/CD integration via GitHub Actions ensures all tests run automatically on every code change.
