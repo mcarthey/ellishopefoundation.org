@@ -28,8 +28,8 @@ jobs:
     - name: Build solution
       run: dotnet build EllisHope.sln --configuration Release --no-restore
 
-    - name: Run tests
-      run: dotnet test EllisHope.sln --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage"
+    - name: Run tests with coverage
+      run: dotnet test EllisHope.sln --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" --results-directory ./coverage
 
     - name: Publish test results
       uses: dorny/test-reporter@v1
@@ -40,12 +40,13 @@ jobs:
         reporter: dotnet-trx
         fail-on-error: true
 
-    - name: Upload coverage reports
-      uses: codecov/codecov-action@v4
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v5
       if: always()
       with:
-        files: '**/coverage.cobertura.xml'
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./coverage/**/coverage.cobertura.xml
         fail_ci_if_error: false
         verbose: true
-      env:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        flags: unittests
+        name: codecov-umbrella

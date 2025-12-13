@@ -1,6 +1,7 @@
 # Ellis Hope Foundation Website
 
 ![.NET CI](https://github.com/mcarthey/ellishopefoundation.org/workflows/.NET%20CI/badge.svg)
+[![codecov](https://codecov.io/gh/mcarthey/ellishopefoundation.org/branch/main/graph/badge.svg)](https://codecov.io/gh/mcarthey/ellishopefoundation.org)
 [![.NET Version](https://img.shields.io/badge/.NET-10.0-purple)](https://dotnet.microsoft.com/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
