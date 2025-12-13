@@ -12,7 +12,6 @@
 appsettings.Development.json
 appsettings.*.json
 !appsettings.json
-!appsettings.Production.json
 
 # Secret files and backups
 *secrets*.json
