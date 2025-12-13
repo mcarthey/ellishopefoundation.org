@@ -1,0 +1,106 @@
+@model IEnumerable<EllisHope.Models.Domain.MediaUsage>
+@{
+    ViewData["Title"] = "Media Usages";
+    var media = ViewBag.Media as EllisHope.Models.Domain.Media;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Media Usages</h2>
+    <div>
+        <a asp-action="Edit" asp-route-id="@media.Id" class="btn btn-outline-primary me-2">
+            <i class="bi bi-pencil"></i> Edit Media
+        </a>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Media Library
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Media Preview</h5>
+            </div>
+            <div class="card-body text-center">
+                <img src="@media.FilePath" alt="@media.AltText" class="img-fluid mb-3">
+                <h6>@media.FileName</h6>
+                <p class="small text-muted">@(media.Width) × @(media.Height)</p>
+                <span class="badge bg-secondary">@media.Category</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Where This Image is Used</h5>
+            </div>
+            <div class="card-body">
+                @if (Model.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Entity Type</th>
+                                    <th>Entity ID</th>
+                                    <th>Usage Type</th>
+                                    <th>Date Added</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var usage in Model.OrderByDescending(u => u.DateAdded))
+                                {
+                                    <tr>
+                                        <td>
+                                            <span class="badge bg-primary">@usage.EntityType</span>
+                                        </td>
+                                        <td>
+                                            @switch (usage.EntityType.ToLower())
+                                            {
+                                                case "blog":
+                                                    <a asp-area="Admin" asp-controller="Blog" asp-action="Edit" asp-route-id="@usage.EntityId">
+                                                        #@usage.EntityId
+                                                    </a>
+                                                    break;
+                                                case "event":
+                                                    <a asp-area="Admin" asp-controller="Events" asp-action="Edit" asp-route-id="@usage.EntityId">
+                                                        #@usage.EntityId
+                                                    </a>
+                                                    break;
+                                                case "page":
+                                                    <a asp-area="Admin" asp-controller="Pages" asp-action="Edit" asp-route-id="@usage.EntityId">
+                                                        #@usage.EntityId
+                                                    </a>
+                                                    break;
+                                                default:
+                                                    <span>#@usage.EntityId</span>
+                                                    break;
+                                            }
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-info">@usage.UsageType</span>
+                                        </td>
+                                        <td>
+                                            @usage.DateAdded.ToString("MMM dd, yyyy HH:mm")
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <i class="bi bi-info-circle" style="font-size: 48px; color: #ccc;"></i>
+                        <h5 class="mt-3">Not Currently in Use</h5>
+                        <p class="text-muted">This image is not currently being used anywhere on the site.</p>
+                        <p class="small text-muted">You can safely delete it if no longer needed.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

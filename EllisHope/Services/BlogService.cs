@@ -20,7 +20,7 @@ public class BlogService : IBlogService
     {
         var query = _context.BlogPosts
             .Include(p => p.BlogPostCategories)
-            .ThenInclude(pc => pc.BlogCategory)
+            .ThenInclude(pc => pc.Category)
             .OrderByDescending(p => p.PublishedDate);
 
         if (!includeUnpublished)
@@ -35,7 +35,7 @@ public class BlogService : IBlogService
     {
         return await _context.BlogPosts
             .Include(p => p.BlogPostCategories)
-            .ThenInclude(pc => pc.BlogCategory)
+            .ThenInclude(pc => pc.Category)
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 
@@ -43,7 +43,7 @@ public class BlogService : IBlogService
     {
         return await _context.BlogPosts
             .Include(p => p.BlogPostCategories)
-            .ThenInclude(pc => pc.BlogCategory)
+            .ThenInclude(pc => pc.Category)
             .FirstOrDefaultAsync(p => p.Slug == slug && p.IsPublished);
     }
 
@@ -56,11 +56,11 @@ public class BlogService : IBlogService
 
         return await _context.BlogPosts
             .Include(p => p.BlogPostCategories)
-            .ThenInclude(pc => pc.BlogCategory)
+            .ThenInclude(pc => pc.Category)
             .Where(p => p.IsPublished &&
                    (p.Title.Contains(searchTerm) ||
-                    (p.Content != null && p.Content.Contains(searchTerm)) ||
-                    (p.Summary != null && p.Summary.Contains(searchTerm))))
+                    p.Content.Contains(searchTerm) ||
+                    p.Excerpt.Contains(searchTerm)))
             .OrderByDescending(p => p.PublishedDate)
             .ToListAsync();
     }
@@ -69,7 +69,7 @@ public class BlogService : IBlogService
     {
         return await _context.BlogPosts
             .Include(p => p.BlogPostCategories)
-            .ThenInclude(pc => pc.BlogCategory)
+            .ThenInclude(pc => pc.Category)
             .Where(p => p.IsPublished &&
                    p.BlogPostCategories.Any(pc => pc.CategoryId == categoryId))
             .OrderByDescending(p => p.PublishedDate)
@@ -86,7 +86,7 @@ public class BlogService : IBlogService
 
         post.Slug = await EnsureUniqueSlugAsync(post.Slug);
         post.CreatedDate = DateTime.UtcNow;
-        post.ModifiedDate = DateTime.UtcNow;
+        post.UpdatedDate = DateTime.UtcNow;
 
         _context.BlogPosts.Add(post);
         await _context.SaveChangesAsync();
@@ -95,7 +95,7 @@ public class BlogService : IBlogService
 
     public async Task<BlogPost> UpdatePostAsync(BlogPost post)
     {
-        post.ModifiedDate = DateTime.UtcNow;
+        post.UpdatedDate = DateTime.UtcNow;
         _context.BlogPosts.Update(post);
         await _context.SaveChangesAsync();
         return post;
