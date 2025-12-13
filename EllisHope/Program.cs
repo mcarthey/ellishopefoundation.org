@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using EllisHope.Data;
 using EllisHope.Services;
+using EllisHope.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,9 +48,18 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.SameSite = SameSiteMode.Strict;
 });
 
+// Configure Unsplash settings
+builder.Services.Configure<UnsplashSettings>(
+    builder.Configuration.GetSection("Unsplash"));
+
+// Register HttpClient for Unsplash service
+builder.Services.AddHttpClient<IUnsplashService, UnsplashService>();
+
 // Register application services
 builder.Services.AddScoped<IBlogService, BlogService>();
 builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<IImageProcessingService, ImageProcessingService>();
+builder.Services.AddScoped<IMediaService, MediaService>();
 
 var app = builder.Build();
 
