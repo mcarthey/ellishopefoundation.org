@@ -18,7 +18,7 @@ public class EventService : IEventService
 
     public async Task<IEnumerable<Event>> GetAllEventsAsync(bool includeUnpublished = false)
     {
-        var query = _context.Events.OrderByDescending(e => e.EventDate);
+        var query = _context.Events.OrderByDescending(e => e.StartDate);
 
         if (!includeUnpublished)
         {
@@ -32,8 +32,8 @@ public class EventService : IEventService
     {
         var now = DateTime.UtcNow;
         return await _context.Events
-            .Where(e => e.IsPublished && e.EventDate >= now)
-            .OrderBy(e => e.EventDate)
+            .Where(e => e.IsPublished && e.StartDate >= now)
+            .OrderBy(e => e.StartDate)
             .Take(count)
             .ToListAsync();
     }
@@ -42,8 +42,8 @@ public class EventService : IEventService
     {
         var now = DateTime.UtcNow;
         return await _context.Events
-            .Where(e => e.IsPublished && e.EventDate < now)
-            .OrderByDescending(e => e.EventDate)
+            .Where(e => e.IsPublished && e.StartDate < now)
+            .OrderByDescending(e => e.StartDate)
             .ToListAsync();
     }
 
@@ -70,7 +70,7 @@ public class EventService : IEventService
                    (e.Title.Contains(searchTerm) ||
                     e.Description.Contains(searchTerm) ||
                     e.Location.Contains(searchTerm)))
-            .OrderByDescending(e => e.EventDate)
+            .OrderByDescending(e => e.StartDate)
             .ToListAsync();
     }
 
@@ -84,8 +84,8 @@ public class EventService : IEventService
 
         // Get events with similar tags or upcoming events
         var similarEvents = await _context.Events
-            .Where(e => e.IsPublished && e.Id != eventId && e.EventDate >= now)
-            .OrderBy(e => e.EventDate)
+            .Where(e => e.IsPublished && e.Id != eventId && e.StartDate >= now)
+            .OrderBy(e => e.StartDate)
             .Take(count)
             .ToListAsync();
 
@@ -101,7 +101,7 @@ public class EventService : IEventService
 
         eventItem.Slug = await EnsureUniqueSlugAsync(eventItem.Slug);
         eventItem.CreatedDate = DateTime.UtcNow;
-        eventItem.UpdatedDate = DateTime.UtcNow;
+        eventItem.ModifiedDate = DateTime.UtcNow;
 
         _context.Events.Add(eventItem);
         await _context.SaveChangesAsync();
@@ -110,7 +110,7 @@ public class EventService : IEventService
 
     public async Task<Event> UpdateEventAsync(Event eventItem)
     {
-        eventItem.UpdatedDate = DateTime.UtcNow;
+        eventItem.ModifiedDate = DateTime.UtcNow;
         _context.Events.Update(eventItem);
         await _context.SaveChangesAsync();
         return eventItem;
