@@ -91,18 +91,37 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
-// Seed database
+// Apply migrations and seed database
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    
     try
     {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        
+        // Apply pending migrations automatically
+        if (context.Database.GetPendingMigrations().Any())
+        {
+            logger.LogInformation("Applying pending database migrations...");
+            await context.Database.MigrateAsync();
+            logger.LogInformation("Database migrations applied successfully.");
+        }
+        
+        // Seed data (idempotent - safe to run multiple times)
         await DbSeeder.SeedAsync(services);
+        logger.LogInformation("Database seeding completed.");
     }
     catch (Exception ex)
     {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while seeding the database.");
+        logger.LogError(ex, "An error occurred while migrating or seeding the database.");
+        
+        // In production, you might want to prevent the app from starting if DB setup fails
+        if (!app.Environment.IsDevelopment())
+        {
+            throw; // Re-throw to prevent app from starting with broken database
+        }
     }
 }
 
