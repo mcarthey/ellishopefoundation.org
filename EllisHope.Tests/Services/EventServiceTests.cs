@@ -25,8 +25,8 @@ public class EventServiceTests
         var service = new EventService(context);
 
         context.Events.AddRange(
-            new Event { Id = 1, Title = "Published Event", Slug = "published-event", IsPublished = true, StartDate = DateTime.UtcNow },
-            new Event { Id = 2, Title = "Draft Event", Slug = "draft-event", IsPublished = false, StartDate = DateTime.UtcNow }
+            new Event { Id = 1, Title = "Published Event", Slug = "published-event", IsPublished = true, EventDate = DateTime.UtcNow, Location = "Test" },
+            new Event { Id = 2, Title = "Draft Event", Slug = "draft-event", IsPublished = false, EventDate = DateTime.UtcNow, Location = "Test" }
         );
         await context.SaveChangesAsync();
 
@@ -46,8 +46,8 @@ public class EventServiceTests
         var service = new EventService(context);
 
         context.Events.AddRange(
-            new Event { Id = 1, Title = "Published Event", Slug = "published-event", IsPublished = true, StartDate = DateTime.UtcNow },
-            new Event { Id = 2, Title = "Draft Event", Slug = "draft-event", IsPublished = false, StartDate = DateTime.UtcNow }
+            new Event { Id = 1, Title = "Published Event", Slug = "published-event", IsPublished = true, EventDate = DateTime.UtcNow, Location = "Test" },
+            new Event { Id = 2, Title = "Draft Event", Slug = "draft-event", IsPublished = false, EventDate = DateTime.UtcNow, Location = "Test" }
         );
         await context.SaveChangesAsync();
 
@@ -67,10 +67,10 @@ public class EventServiceTests
 
         var now = DateTime.UtcNow;
         context.Events.AddRange(
-            new Event { Id = 1, Title = "Future Event 1", Slug = "future-1", IsPublished = true, StartDate = now.AddDays(1) },
-            new Event { Id = 2, Title = "Future Event 2", Slug = "future-2", IsPublished = true, StartDate = now.AddDays(2) },
-            new Event { Id = 3, Title = "Past Event", Slug = "past", IsPublished = true, StartDate = now.AddDays(-1) },
-            new Event { Id = 4, Title = "Draft Future Event", Slug = "draft-future", IsPublished = false, StartDate = now.AddDays(3) }
+            new Event { Id = 1, Title = "Future Event 1", Slug = "future-1", IsPublished = true, EventDate = now.AddDays(1), Location = "Test" },
+            new Event { Id = 2, Title = "Future Event 2", Slug = "future-2", IsPublished = true, EventDate = now.AddDays(2), Location = "Test" },
+            new Event { Id = 3, Title = "Past Event", Slug = "past", IsPublished = true, EventDate = now.AddDays(-1), Location = "Test" },
+            new Event { Id = 4, Title = "Draft Future Event", Slug = "draft-future", IsPublished = false, EventDate = now.AddDays(3), Location = "Test" }
         );
         await context.SaveChangesAsync();
 
@@ -79,7 +79,7 @@ public class EventServiceTests
 
         // Assert
         Assert.Equal(2, result.Count());
-        Assert.All(result, e => Assert.True(e.StartDate >= now));
+        Assert.All(result, e => Assert.True(e.EventDate >= now));
         Assert.All(result, e => Assert.True(e.IsPublished));
     }
 
@@ -92,9 +92,9 @@ public class EventServiceTests
 
         var now = DateTime.UtcNow;
         context.Events.AddRange(
-            new Event { Id = 1, Title = "Event 1", Slug = "event-1", IsPublished = true, StartDate = now.AddDays(1) },
-            new Event { Id = 2, Title = "Event 2", Slug = "event-2", IsPublished = true, StartDate = now.AddDays(2) },
-            new Event { Id = 3, Title = "Event 3", Slug = "event-3", IsPublished = true, StartDate = now.AddDays(3) }
+            new Event { Id = 1, Title = "Event 1", Slug = "event-1", IsPublished = true, EventDate = now.AddDays(1), Location = "Test" },
+            new Event { Id = 2, Title = "Event 2", Slug = "event-2", IsPublished = true, EventDate = now.AddDays(2), Location = "Test" },
+            new Event { Id = 3, Title = "Event 3", Slug = "event-3", IsPublished = true, EventDate = now.AddDays(3), Location = "Test" }
         );
         await context.SaveChangesAsync();
 
@@ -114,10 +114,10 @@ public class EventServiceTests
 
         var now = DateTime.UtcNow;
         context.Events.AddRange(
-            new Event { Id = 1, Title = "Past Event 1", Slug = "past-1", IsPublished = true, StartDate = now.AddDays(-2) },
-            new Event { Id = 2, Title = "Past Event 2", Slug = "past-2", IsPublished = true, StartDate = now.AddDays(-1) },
-            new Event { Id = 3, Title = "Future Event", Slug = "future", IsPublished = true, StartDate = now.AddDays(1) },
-            new Event { Id = 4, Title = "Draft Past Event", Slug = "draft-past", IsPublished = false, StartDate = now.AddDays(-3) }
+            new Event { Id = 1, Title = "Past Event 1", Slug = "past-1", IsPublished = true, EventDate = now.AddDays(-2), Location = "Test" },
+            new Event { Id = 2, Title = "Past Event 2", Slug = "past-2", IsPublished = true, EventDate = now.AddDays(-1), Location = "Test" },
+            new Event { Id = 3, Title = "Future Event", Slug = "future", IsPublished = true, EventDate = now.AddDays(1), Location = "Test" },
+            new Event { Id = 4, Title = "Draft Past Event", Slug = "draft-past", IsPublished = false, EventDate = now.AddDays(-3), Location = "Test" }
         );
         await context.SaveChangesAsync();
 
@@ -126,7 +126,7 @@ public class EventServiceTests
 
         // Assert
         Assert.Equal(2, result.Count());
-        Assert.All(result, e => Assert.True(e.StartDate < now));
+        Assert.All(result, e => Assert.True(e.EventDate < now));
         Assert.All(result, e => Assert.True(e.IsPublished));
     }
 
@@ -137,7 +137,7 @@ public class EventServiceTests
         using var context = GetInMemoryDbContext();
         var service = new EventService(context);
 
-        var eventItem = new Event { Id = 1, Title = "Test Event", Slug = "test-event", StartDate = DateTime.UtcNow };
+        var eventItem = new Event { Id = 1, Title = "Test Event", Slug = "test-event", EventDate = DateTime.UtcNow, Location = "Test" };
         context.Events.Add(eventItem);
         await context.SaveChangesAsync();
 
@@ -176,7 +176,8 @@ public class EventServiceTests
             Title = "Test Event",
             Slug = "test-event",
             IsPublished = true,
-            StartDate = DateTime.UtcNow
+            EventDate = DateTime.UtcNow,
+            Location = "Test"
         });
         await context.SaveChangesAsync();
 
@@ -201,7 +202,8 @@ public class EventServiceTests
             Title = "Draft Event",
             Slug = "draft-event",
             IsPublished = false,
-            StartDate = DateTime.UtcNow
+            EventDate = DateTime.UtcNow,
+            Location = "Test"
         });
         await context.SaveChangesAsync();
 
@@ -220,9 +222,9 @@ public class EventServiceTests
         var service = new EventService(context);
 
         context.Events.AddRange(
-            new Event { Id = 1, Title = "Tech Conference", Slug = "tech-conf", Description = "Technology event", Location = "Seattle", IsPublished = true, StartDate = DateTime.UtcNow },
-            new Event { Id = 2, Title = "Music Festival", Slug = "music-fest", Description = "Music event", Location = "Portland", IsPublished = true, StartDate = DateTime.UtcNow },
-            new Event { Id = 3, Title = "Art Show", Slug = "art-show", Description = "Art exhibition", Location = "Seattle", IsPublished = true, StartDate = DateTime.UtcNow }
+            new Event { Id = 1, Title = "Tech Conference", Slug = "tech-conf", Description = "Technology event", Location = "Seattle", IsPublished = true, EventDate = DateTime.UtcNow },
+            new Event { Id = 2, Title = "Music Festival", Slug = "music-fest", Description = "Music event", Location = "Portland", IsPublished = true, EventDate = DateTime.UtcNow },
+            new Event { Id = 3, Title = "Art Show", Slug = "art-show", Description = "Art exhibition", Location = "Seattle", IsPublished = true, EventDate = DateTime.UtcNow }
         );
         await context.SaveChangesAsync();
 
@@ -241,8 +243,8 @@ public class EventServiceTests
         var service = new EventService(context);
 
         context.Events.AddRange(
-            new Event { Id = 1, Title = "Event 1", Slug = "event-1", IsPublished = true, StartDate = DateTime.UtcNow },
-            new Event { Id = 2, Title = "Event 2", Slug = "event-2", IsPublished = false, StartDate = DateTime.UtcNow }
+            new Event { Id = 1, Title = "Event 1", Slug = "event-1", IsPublished = true, EventDate = DateTime.UtcNow, Location = "Test" },
+            new Event { Id = 2, Title = "Event 2", Slug = "event-2", IsPublished = false, EventDate = DateTime.UtcNow, Location = "Test" }
         );
         await context.SaveChangesAsync();
 
@@ -262,10 +264,10 @@ public class EventServiceTests
 
         var now = DateTime.UtcNow;
         context.Events.AddRange(
-            new Event { Id = 1, Title = "Current Event", Slug = "current", IsPublished = true, StartDate = now.AddDays(1) },
-            new Event { Id = 2, Title = "Similar Event 1", Slug = "similar-1", IsPublished = true, StartDate = now.AddDays(2) },
-            new Event { Id = 3, Title = "Similar Event 2", Slug = "similar-2", IsPublished = true, StartDate = now.AddDays(3) },
-            new Event { Id = 4, Title = "Past Event", Slug = "past", IsPublished = true, StartDate = now.AddDays(-1) }
+            new Event { Id = 1, Title = "Current Event", Slug = "current", IsPublished = true, EventDate = now.AddDays(1), Location = "Test" },
+            new Event { Id = 2, Title = "Similar Event 1", Slug = "similar-1", IsPublished = true, EventDate = now.AddDays(2), Location = "Test" },
+            new Event { Id = 3, Title = "Similar Event 2", Slug = "similar-2", IsPublished = true, EventDate = now.AddDays(3), Location = "Test" },
+            new Event { Id = 4, Title = "Past Event", Slug = "past", IsPublished = true, EventDate = now.AddDays(-1), Location = "Test" }
         );
         await context.SaveChangesAsync();
 
@@ -275,7 +277,7 @@ public class EventServiceTests
         // Assert
         Assert.Equal(2, result.Count());
         Assert.DoesNotContain(result, e => e.Id == 1); // Should not include the current event
-        Assert.All(result, e => Assert.True(e.StartDate >= now)); // Should only include future events
+        Assert.All(result, e => Assert.True(e.EventDate >= now)); // Should only include future events
     }
 
     [Fact]
@@ -303,7 +305,8 @@ public class EventServiceTests
         {
             Title = "My New Event",
             Slug = "",
-            StartDate = DateTime.UtcNow
+            EventDate = DateTime.UtcNow,
+            Location = "Test"
         };
 
         // Act
@@ -325,7 +328,8 @@ public class EventServiceTests
         {
             Title = "Test Event",
             Slug = "test-event",
-            StartDate = DateTime.UtcNow
+            EventDate = DateTime.UtcNow,
+            Location = "Test"
         });
         await context.SaveChangesAsync();
 
@@ -333,7 +337,8 @@ public class EventServiceTests
         {
             Title = "Test Event",
             Slug = "",
-            StartDate = DateTime.UtcNow
+            EventDate = DateTime.UtcNow,
+            Location = "Test"
         };
 
         // Act
@@ -344,7 +349,7 @@ public class EventServiceTests
     }
 
     [Fact]
-    public async Task CreateEventAsync_SetsCreatedAndModifiedDates()
+    public async Task CreateEventAsync_SetsCreatedAndUpdatedDates()
     {
         // Arrange
         using var context = GetInMemoryDbContext();
@@ -354,7 +359,8 @@ public class EventServiceTests
         {
             Title = "Test Event",
             Slug = "test-event",
-            StartDate = DateTime.UtcNow
+            EventDate = DateTime.UtcNow,
+            Location = "Test"
         };
 
         // Act
@@ -362,11 +368,11 @@ public class EventServiceTests
 
         // Assert
         Assert.NotEqual(default, result.CreatedDate);
-        Assert.NotEqual(default, result.ModifiedDate);
+        Assert.NotEqual(default, result.UpdatedDate);
     }
 
     [Fact]
-    public async Task UpdateEventAsync_UpdatesModifiedDate()
+    public async Task UpdateEventAsync_UpdatesUpdatedDate()
     {
         // Arrange
         using var context = GetInMemoryDbContext();
@@ -376,14 +382,15 @@ public class EventServiceTests
         {
             Title = "Test Event",
             Slug = "test-event",
-            StartDate = DateTime.UtcNow,
+            EventDate = DateTime.UtcNow,
+            Location = "Test",
             CreatedDate = DateTime.UtcNow.AddDays(-1),
-            ModifiedDate = DateTime.UtcNow.AddDays(-1)
+            UpdatedDate = DateTime.UtcNow.AddDays(-1)
         };
         context.Events.Add(eventItem);
         await context.SaveChangesAsync();
 
-        var oldUpdateDate = eventItem.ModifiedDate;
+        var oldUpdateDate = eventItem.UpdatedDate;
 
         // Detach the entity to avoid tracking conflicts
         context.Entry(eventItem).State = EntityState.Detached;
@@ -394,7 +401,7 @@ public class EventServiceTests
         var result = await service.UpdateEventAsync(eventItem);
 
         // Assert
-        Assert.True(result.ModifiedDate > oldUpdateDate);
+        Assert.True(result.UpdatedDate > oldUpdateDate);
     }
 
     [Fact]
@@ -404,7 +411,7 @@ public class EventServiceTests
         using var context = GetInMemoryDbContext();
         var service = new EventService(context);
 
-        var eventItem = new Event { Title = "Test Event", Slug = "test-event", StartDate = DateTime.UtcNow };
+        var eventItem = new Event { Title = "Test Event", Slug = "test-event", EventDate = DateTime.UtcNow, Location = "Test" };
         context.Events.Add(eventItem);
         await context.SaveChangesAsync();
 
@@ -435,7 +442,7 @@ public class EventServiceTests
         using var context = GetInMemoryDbContext();
         var service = new EventService(context);
 
-        context.Events.Add(new Event { Title = "Test", Slug = "test-slug", StartDate = DateTime.UtcNow });
+        context.Events.Add(new Event { Title = "Test", Slug = "test-slug", EventDate = DateTime.UtcNow, Location = "Test" });
         await context.SaveChangesAsync();
 
         // Act
@@ -466,7 +473,7 @@ public class EventServiceTests
         using var context = GetInMemoryDbContext();
         var service = new EventService(context);
 
-        context.Events.Add(new Event { Id = 1, Title = "Test", Slug = "test-slug", StartDate = DateTime.UtcNow });
+        context.Events.Add(new Event { Id = 1, Title = "Test", Slug = "test-slug", EventDate = DateTime.UtcNow, Location = "Test" });
         await context.SaveChangesAsync();
 
         // Act

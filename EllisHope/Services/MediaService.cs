@@ -82,10 +82,16 @@ public class MediaService : IMediaService
             .Select(t => t.Trim().ToLower())
             .ToList();
 
-        return await _context.MediaLibrary
-            .Where(m => m.Tags != null && tagList.Any(tag => m.Tags.ToLower().Contains(tag)))
-            .OrderByDescending(m => m.UploadedDate)
+        // Load all media with tags, then filter in memory (more testable with InMemory provider)
+        var allMedia = await _context.MediaLibrary
+            .Where(m => m.Tags != null)
             .ToListAsync();
+            
+        // Filter in memory to avoid InMemory provider limitations
+        return allMedia
+            .Where(m => tagList.Any(tag => m.Tags!.ToLower().Contains(tag)))
+            .OrderByDescending(m => m.UploadedDate)
+            .ToList();
     }
 
     #endregion
@@ -419,13 +425,16 @@ public class MediaService : IMediaService
         // Get sizes from ImageSizes table based on category
         var sizes = await _context.ImageSizes
             .Where(s => s.IsActive && s.Category == category)
-            .Select(s => (s.Name, s.Width, s.Height))
+            .Select(s => new { s.Name, s.Width, s.Height })
             .ToListAsync();
 
+        // Convert to tuple list
+        var tupleList = sizes.Select(s => (s.Name, s.Width, s.Height)).ToList();
+
         // If no specific sizes found, use general sizes
-        if (!sizes.Any())
+        if (!tupleList.Any())
         {
-            sizes = new List<(string, int, int)>
+            tupleList = new List<(string, int, int)>
             {
                 ("thumbnail", 150, 150),
                 ("small", 300, 300),
@@ -433,7 +442,7 @@ public class MediaService : IMediaService
             };
         }
 
-        return sizes;
+        return tupleList;
     }
 
     #endregion

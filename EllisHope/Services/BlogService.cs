@@ -20,31 +20,65 @@ public class BlogService : IBlogService
     {
         var query = _context.BlogPosts
             .Include(p => p.BlogPostCategories)
-            .ThenInclude(pc => pc.Category)
             .OrderByDescending(p => p.PublishedDate);
 
+        IEnumerable<BlogPost> posts;
+        
         if (!includeUnpublished)
         {
-            return await query.Where(p => p.IsPublished).ToListAsync();
+            posts = await query.Where(p => p.IsPublished).ToListAsync();
         }
-
-        return await query.ToListAsync();
+        else
+        {
+            posts = await query.ToListAsync();
+        }
+        
+        // Manually load categories
+        foreach (var post in posts)
+        {
+            foreach (var bpc in post.BlogPostCategories)
+            {
+                await _context.Entry(bpc).Reference(x => x.BlogCategory).LoadAsync();
+            }
+        }
+        
+        return posts;
     }
 
     public async Task<BlogPost?> GetPostByIdAsync(int id)
     {
-        return await _context.BlogPosts
+        var post = await _context.BlogPosts
             .Include(p => p.BlogPostCategories)
-            .ThenInclude(pc => pc.Category)
             .FirstOrDefaultAsync(p => p.Id == id);
+            
+        if (post != null)
+        {
+            // Manually load categories
+            foreach (var bpc in post.BlogPostCategories)
+            {
+                await _context.Entry(bpc).Reference(x => x.BlogCategory).LoadAsync();
+            }
+        }
+        
+        return post;
     }
 
     public async Task<BlogPost?> GetPostBySlugAsync(string slug)
     {
-        return await _context.BlogPosts
+        var post = await _context.BlogPosts
             .Include(p => p.BlogPostCategories)
-            .ThenInclude(pc => pc.Category)
             .FirstOrDefaultAsync(p => p.Slug == slug && p.IsPublished);
+            
+        if (post != null)
+        {
+            // Manually load categories
+            foreach (var bpc in post.BlogPostCategories)
+            {
+                await _context.Entry(bpc).Reference(x => x.BlogCategory).LoadAsync();
+            }
+        }
+        
+        return post;
     }
 
     public async Task<IEnumerable<BlogPost>> SearchPostsAsync(string searchTerm)
@@ -54,26 +88,46 @@ public class BlogService : IBlogService
             return await GetAllPostsAsync();
         }
 
-        return await _context.BlogPosts
+        var posts = await _context.BlogPosts
             .Include(p => p.BlogPostCategories)
-            .ThenInclude(pc => pc.Category)
             .Where(p => p.IsPublished &&
                    (p.Title.Contains(searchTerm) ||
                     p.Content.Contains(searchTerm) ||
                     p.Excerpt.Contains(searchTerm)))
             .OrderByDescending(p => p.PublishedDate)
             .ToListAsync();
+            
+        // Manually load categories
+        foreach (var post in posts)
+        {
+            foreach (var bpc in post.BlogPostCategories)
+            {
+                await _context.Entry(bpc).Reference(x => x.BlogCategory).LoadAsync();
+            }
+        }
+        
+        return posts;
     }
 
     public async Task<IEnumerable<BlogPost>> GetPostsByCategoryAsync(int categoryId)
     {
-        return await _context.BlogPosts
+        var posts = await _context.BlogPosts
             .Include(p => p.BlogPostCategories)
-            .ThenInclude(pc => pc.Category)
             .Where(p => p.IsPublished &&
                    p.BlogPostCategories.Any(pc => pc.CategoryId == categoryId))
             .OrderByDescending(p => p.PublishedDate)
             .ToListAsync();
+            
+        // Manually load categories
+        foreach (var post in posts)
+        {
+            foreach (var bpc in post.BlogPostCategories)
+            {
+                await _context.Entry(bpc).Reference(x => x.BlogCategory).LoadAsync();
+            }
+        }
+        
+        return posts;
     }
 
     public async Task<BlogPost> CreatePostAsync(BlogPost post)
@@ -86,7 +140,7 @@ public class BlogService : IBlogService
 
         post.Slug = await EnsureUniqueSlugAsync(post.Slug);
         post.CreatedDate = DateTime.UtcNow;
-        post.UpdatedDate = DateTime.UtcNow;
+        post.ModifiedDate = DateTime.UtcNow;
 
         _context.BlogPosts.Add(post);
         await _context.SaveChangesAsync();
@@ -95,7 +149,7 @@ public class BlogService : IBlogService
 
     public async Task<BlogPost> UpdatePostAsync(BlogPost post)
     {
-        post.UpdatedDate = DateTime.UtcNow;
+        post.ModifiedDate = DateTime.UtcNow;
         _context.BlogPosts.Update(post);
         await _context.SaveChangesAsync();
         return post;
