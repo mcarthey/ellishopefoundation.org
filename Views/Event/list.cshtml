@@ -81,7 +81,8 @@
                                     <p class="description">
                                         @if (!string.IsNullOrEmpty(ev.Description) && ev.Description.Length > 200)
                                         {
-                                            @Html.Raw(ev.Description.Substring(0, 200))...
+                                            @Html.Raw(ev.Description.Substring(0, 200))
+                                            <text>...</text>
                                         }
                                         else
                                         {

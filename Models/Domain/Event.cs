@@ -21,6 +21,13 @@ public class Event
 
     public DateTime? EndDate { get; set; }
 
+    // Additional date/time properties
+    public DateTime EventDate { get; set; }
+    
+    public TimeSpan? StartTime { get; set; }
+    
+    public TimeSpan? EndTime { get; set; }
+
     [MaxLength(200)]
     public string? Location { get; set; }
 
@@ -31,10 +38,26 @@ public class Event
     public Media? FeaturedImage { get; set; }
 
     [MaxLength(500)]
+    public string? FeaturedImageUrl { get; set; }
+
+    [MaxLength(500)]
     public string? RegistrationUrl { get; set; }
 
     public int? MaxAttendees { get; set; }
     public int CurrentAttendees { get; set; } = 0;
+
+    // Organizer information
+    [MaxLength(200)]
+    public string? OrganizerName { get; set; }
+
+    [MaxLength(200)]
+    public string? OrganizerEmail { get; set; }
+
+    [MaxLength(50)]
+    public string? OrganizerPhone { get; set; }
+
+    [MaxLength(500)]
+    public string? Tags { get; set; }
 
     public bool IsPublished { get; set; } = false;
 

@@ -7,4 +7,7 @@ public class BlogPostCategory
 
     public int CategoryId { get; set; }
     public BlogCategory BlogCategory { get; set; } = null!;
+    
+    // Alias for easier access
+    public BlogCategory Category => BlogCategory;
 }

@@ -14,6 +14,9 @@ public class BlogCategory
     [MaxLength(100)]
     public string Slug { get; set; } = string.Empty;
 
+    [MaxLength(500)]
+    public string? Description { get; set; }
+
     // Navigation properties
     public ICollection<BlogPostCategory> BlogPostCategories { get; set; } = new List<BlogPostCategory>();
 }
