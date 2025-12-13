@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EllisHope.csproj" />
+    <ProjectReference Include="..\EllisHope\EllisHope.csproj" />
   </ItemGroup>
 
 </Project>

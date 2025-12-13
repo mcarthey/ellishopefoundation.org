@@ -20,7 +20,7 @@ public class BlogService : IBlogService
     {
         var query = _context.BlogPosts
             .Include(p => p.BlogPostCategories)
-            .ThenInclude(pc => pc.Category)
+            .ThenInclude(pc => pc.BlogCategory)
             .OrderByDescending(p => p.PublishedDate);
 
         if (!includeUnpublished)
@@ -35,7 +35,7 @@ public class BlogService : IBlogService
     {
         return await _context.BlogPosts
             .Include(p => p.BlogPostCategories)
-            .ThenInclude(pc => pc.Category)
+            .ThenInclude(pc => pc.BlogCategory)
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 
@@ -43,7 +43,7 @@ public class BlogService : IBlogService
     {
         return await _context.BlogPosts
             .Include(p => p.BlogPostCategories)
-            .ThenInclude(pc => pc.Category)
+            .ThenInclude(pc => pc.BlogCategory)
             .FirstOrDefaultAsync(p => p.Slug == slug && p.IsPublished);
     }
 
@@ -56,7 +56,7 @@ public class BlogService : IBlogService
 
         return await _context.BlogPosts
             .Include(p => p.BlogPostCategories)
-            .ThenInclude(pc => pc.Category)
+            .ThenInclude(pc => pc.BlogCategory)
             .Where(p => p.IsPublished &&
                    (p.Title.Contains(searchTerm) ||
                     (p.Content != null && p.Content.Contains(searchTerm)) ||
@@ -69,7 +69,7 @@ public class BlogService : IBlogService
     {
         return await _context.BlogPosts
             .Include(p => p.BlogPostCategories)
-            .ThenInclude(pc => pc.Category)
+            .ThenInclude(pc => pc.BlogCategory)
             .Where(p => p.IsPublished &&
                    p.BlogPostCategories.Any(pc => pc.CategoryId == categoryId))
             .OrderByDescending(p => p.PublishedDate)
