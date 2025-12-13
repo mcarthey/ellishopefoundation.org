@@ -52,6 +52,10 @@ Generated\ Files/
 TestResult.xml
 nunit-*.xml
 
+# xUnit / Test Results
+*.trx
+TestResults/
+
 # Build Results of an ATL Project
 [Dd]ebugPS/
 [Rr]eleasePS/

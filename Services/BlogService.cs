@@ -59,7 +59,7 @@ public class BlogService : IBlogService
             .ThenInclude(pc => pc.Category)
             .Where(p => p.IsPublished &&
                    (p.Title.Contains(searchTerm) ||
-                    p.Content.Contains(searchTerm) ||
+                    (p.Content != null && p.Content.Contains(searchTerm)) ||
                     (p.Summary != null && p.Summary.Contains(searchTerm))))
             .OrderByDescending(p => p.PublishedDate)
             .ToListAsync();
