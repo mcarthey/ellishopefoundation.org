@@ -67,6 +67,7 @@ builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<ICauseService, CauseService>();
 builder.Services.AddScoped<IImageProcessingService, ImageProcessingService>();
 builder.Services.AddScoped<IMediaService, MediaService>();
+builder.Services.AddScoped<IMediaMigrationService, MediaMigrationService>();
 builder.Services.AddScoped<IPageService, PageService>();
 
 var app = builder.Build();

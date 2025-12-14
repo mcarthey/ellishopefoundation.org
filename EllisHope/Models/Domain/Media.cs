@@ -69,6 +69,10 @@ public class Media
     public int? Width { get; set; }
     public int? Height { get; set; }
 
+    // File hash for duplicate detection (SHA256 Base64)
+    [MaxLength(100)]
+    public string? FileHash { get; set; }
+
     // JSON storage for different size URLs/paths
     [MaxLength(2000)]
     public string? Thumbnails { get; set; }
