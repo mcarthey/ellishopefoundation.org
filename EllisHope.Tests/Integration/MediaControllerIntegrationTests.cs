@@ -20,6 +20,7 @@ public class MediaControllerIntegrationTests : IClassFixture<CustomWebApplicatio
     public MediaControllerIntegrationTests(CustomWebApplicationFactory factory)
     {
         _factory = factory;
+        _factory.EnsureDatabaseCreated(); // Initialize database before running tests
         _client = factory.CreateClient(new WebApplicationFactoryClientOptions
         {
             AllowAutoRedirect = false

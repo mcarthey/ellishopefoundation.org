@@ -17,6 +17,7 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
     public CausesControllerIntegrationTests(CustomWebApplicationFactory factory)
     {
         _factory = factory;
+        _factory.EnsureDatabaseCreated(); // Initialize database before running tests
         _client = factory.CreateClient(new WebApplicationFactoryClientOptions
         {
             AllowAutoRedirect = false
