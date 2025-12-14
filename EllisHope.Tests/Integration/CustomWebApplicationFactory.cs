@@ -20,16 +20,27 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     {
         builder.ConfigureServices(services =>
         {
-            // Remove all DbContext-related registrations
-            var descriptorsToRemove = services
-                .Where(d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>) ||
-                           d.ServiceType == typeof(DbContextOptions))
-                .ToList();
+            // Remove ALL existing DbContext-related registrations
+            var dbContextDescriptor = services.SingleOrDefault(
+                d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
+            
+            if (dbContextDescriptor != null)
+                services.Remove(dbContextDescriptor);
 
-            foreach (var descriptor in descriptorsToRemove)
+            var dbContextOptionsDescriptor = services.Where(d => d.ServiceType == typeof(DbContextOptions))
+                .ToList();
+            
+            foreach (var descriptor in dbContextOptionsDescriptor)
             {
                 services.Remove(descriptor);
             }
+
+            // Remove ApplicationDbContext itself
+            var appDbContextDescriptor = services.SingleOrDefault(
+                d => d.ServiceType == typeof(ApplicationDbContext));
+            
+            if (appDbContextDescriptor != null)
+                services.Remove(appDbContextDescriptor);
 
             // Add ApplicationDbContext using an in-memory database for testing
             services.AddDbContext<ApplicationDbContext>(options =>

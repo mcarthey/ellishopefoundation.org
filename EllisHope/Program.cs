@@ -64,6 +64,7 @@ builder.Services.AddHttpClient<IUnsplashService, UnsplashService>();
 // Register application services
 builder.Services.AddScoped<IBlogService, BlogService>();
 builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<ICauseService, CauseService>();
 builder.Services.AddScoped<IImageProcessingService, ImageProcessingService>();
 builder.Services.AddScoped<IMediaService, MediaService>();
 builder.Services.AddScoped<IPageService, PageService>();
@@ -104,6 +105,12 @@ app.MapControllerRoute(
     name: "eventDetails",
     pattern: "event/details/{slug}",
     defaults: new { controller = "Event", action = "details" });
+
+// Cause details route with slug
+app.MapControllerRoute(
+    name: "causeDetails",
+    pattern: "causes/details/{slug}",
+    defaults: new { controller = "Causes", action = "details" });
 
 // Admin area route
 app.MapControllerRoute(

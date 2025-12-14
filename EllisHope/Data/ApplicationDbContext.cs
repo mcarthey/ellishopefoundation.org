@@ -22,6 +22,7 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<BlogCategory> BlogCategories { get; set; }
     public DbSet<BlogPostCategory> BlogPostCategories { get; set; }
     public DbSet<Event> Events { get; set; }
+    public DbSet<Cause> Causes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -68,5 +69,24 @@ public class ApplicationDbContext : IdentityDbContext
 
         builder.Entity<MediaUsage>()
             .HasIndex(mu => new { mu.EntityType, mu.EntityId });
+
+        // Cause indexes and configuration
+        builder.Entity<Cause>()
+            .Property(c => c.GoalAmount)
+            .HasPrecision(18, 2);
+
+        builder.Entity<Cause>()
+            .Property(c => c.RaisedAmount)
+            .HasPrecision(18, 2);
+
+        builder.Entity<Cause>()
+            .HasIndex(c => c.Slug)
+            .IsUnique();
+
+        builder.Entity<Cause>()
+            .HasIndex(c => c.Category);
+
+        builder.Entity<Cause>()
+            .HasIndex(c => c.IsPublished);
     }
 }
