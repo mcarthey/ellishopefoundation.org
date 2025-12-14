@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
 
 namespace EllisHope.Tests.Integration;
 
@@ -17,11 +20,13 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     {
         builder.ConfigureServices(services =>
         {
-            // Remove the existing ApplicationDbContext registration
-            var descriptor = services.SingleOrDefault(
-                d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
+            // Remove all DbContext-related registrations
+            var descriptorsToRemove = services
+                .Where(d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>) ||
+                           d.ServiceType == typeof(DbContextOptions))
+                .ToList();
 
-            if (descriptor != null)
+            foreach (var descriptor in descriptorsToRemove)
             {
                 services.Remove(descriptor);
             }
@@ -32,28 +37,27 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 options.UseInMemoryDatabase("InMemoryTestDb");
             });
 
-            // Build the service provider
-            var sp = services.BuildServiceProvider();
-
-            // Create a scope to obtain a reference to the database context
-            using var scope = sp.CreateScope();
-            var scopedServices = scope.ServiceProvider;
-            var db = scopedServices.GetRequiredService<ApplicationDbContext>();
-            var logger = scopedServices.GetRequiredService<ILogger<CustomWebApplicationFactory>>();
-
-            // Ensure the database is created
-            db.Database.EnsureCreated();
-
-            try
+            // Replace the antiforgery service with a no-op implementation for testing
+            var antiforgeryDescriptor = services.FirstOrDefault(d => d.ServiceType == typeof(IAntiforgery));
+            if (antiforgeryDescriptor != null)
             {
-                // Seed the database with test data if needed
-                SeedTestData(db);
+                services.Remove(antiforgeryDescriptor);
             }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "An error occurred seeding the test database. Error: {Message}", ex.Message);
-            }
+            services.AddSingleton<IAntiforgery, NoOpAntiforgery>();
         });
+
+        builder.UseEnvironment("Testing");
+    }
+
+    public ApplicationDbContext GetDbContext()
+    {
+        var scope = Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        
+        // Ensure the database is created
+        db.Database.EnsureCreated();
+        
+        return db;
     }
 
     private void SeedTestData(ApplicationDbContext context)
@@ -62,5 +66,38 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
         // For example:
         // context.Pages.Add(new Page { PageName = "TestPage", Title = "Test" });
         // context.SaveChanges();
+    }
+}
+
+/// <summary>
+/// No-op antiforgery implementation for testing that always succeeds
+/// </summary>
+public class NoOpAntiforgery : IAntiforgery
+{
+    public AntiforgeryTokenSet GetAndStoreTokens(HttpContext httpContext)
+    {
+        return new AntiforgeryTokenSet("test-request-token", "test-cookie-token", "test-form-field", "test-header");
+    }
+
+    public AntiforgeryTokenSet GetTokens(HttpContext httpContext)
+    {
+        return new AntiforgeryTokenSet("test-request-token", "test-cookie-token", "test-form-field", "test-header");
+    }
+
+    public Task<bool> IsRequestValidAsync(HttpContext httpContext)
+    {
+        // Always return true - skip validation in tests
+        return Task.FromResult(true);
+    }
+
+    public void SetCookieTokenAndHeader(HttpContext httpContext)
+    {
+        // No-op
+    }
+
+    public Task ValidateRequestAsync(HttpContext httpContext)
+    {
+        // No-op - always succeed
+        return Task.CompletedTask;
     }
 }

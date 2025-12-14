@@ -117,40 +117,43 @@ app.MapControllerRoute(
     .WithStaticAssets();
 
 // Apply migrations and seed database
-using (var scope = app.Services.CreateScope())
+if (!app.Environment.IsEnvironment("Testing"))
 {
-    var services = scope.ServiceProvider;
-    var logger = services.GetRequiredService<ILogger<Program>>();
-    
-    try
+    using (var scope = app.Services.CreateScope())
     {
-        var context = services.GetRequiredService<ApplicationDbContext>();
+        var services = scope.ServiceProvider;
+        var logger = services.GetRequiredService<ILogger<Program>>();
         
-        // Apply pending migrations automatically
-        if (context.Database.GetPendingMigrations().Any())
+        try
         {
-            logger.LogInformation("Applying pending database migrations...");
-            await context.Database.MigrateAsync();
-            logger.LogInformation("Database migrations applied successfully.");
+            var context = services.GetRequiredService<ApplicationDbContext>();
+            
+            // Apply pending migrations automatically
+            if (context.Database.GetPendingMigrations().Any())
+            {
+                logger.LogInformation("Applying pending database migrations...");
+                await context.Database.MigrateAsync();
+                logger.LogInformation("Database migrations applied successfully.");
+            }
+            
+            // Seed data (idempotent - safe to run multiple times)
+            await DbSeeder.SeedAsync(services);
+            logger.LogInformation("Database seeding completed.");
+            
+            // Initialize default pages
+            var pageService = services.GetRequiredService<IPageService>();
+            await pageService.InitializeDefaultPagesAsync();
+            logger.LogInformation("Default pages initialized.");
         }
-        
-        // Seed data (idempotent - safe to run multiple times)
-        await DbSeeder.SeedAsync(services);
-        logger.LogInformation("Database seeding completed.");
-        
-        // Initialize default pages
-        var pageService = services.GetRequiredService<IPageService>();
-        await pageService.InitializeDefaultPagesAsync();
-        logger.LogInformation("Default pages initialized.");
-    }
-    catch (Exception ex)
-    {
-        logger.LogError(ex, "An error occurred while migrating or seeding the database.");
-        
-        // In production, you might want to prevent the app from starting if DB setup fails
-        if (!app.Environment.IsDevelopment())
+        catch (Exception ex)
         {
-            throw; // Re-throw to prevent app from starting with broken database
+            logger.LogError(ex, "An error occurred while migrating or seeding the database.");
+            
+            // In production, you might want to prevent the app from starting if DB setup fails
+            if (!app.Environment.IsDevelopment())
+            {
+                throw; // Re-throw to prevent app from starting with broken database
+            }
         }
     }
 }
