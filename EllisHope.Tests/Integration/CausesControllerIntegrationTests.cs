@@ -25,7 +25,7 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
 
     #region List Action Integration Tests
 
-    [Fact(Skip = "Known issue: CustomWebApplicationFactory DbContext initialization - See docs/issues/causes-integration-tests-failing.md")]
+    [Fact]
     public async Task List_ReturnsSuccess()
     {
         // Act
@@ -38,7 +38,7 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
         Assert.Contains("Causes", content);
     }
 
-    [Fact(Skip = "Known issue: CustomWebApplicationFactory DbContext initialization - See docs/issues/causes-integration-tests-failing.md")]
+    [Fact]
     public async Task List_WithSearchTerm_ReturnsFilteredResults()
     {
         // Act
@@ -52,7 +52,7 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
 
     #region Details Action Integration Tests
 
-    [Fact(Skip = "Known issue: CustomWebApplicationFactory DbContext initialization - See docs/issues/causes-integration-tests-failing.md")]
+    [Fact]
     public async Task Details_WithValidSlug_ReturnsSuccess()
     {
         // Note: This will return NotFound since no causes exist in test database
@@ -68,7 +68,7 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
             $"Expected OK or NotFound, got {response.StatusCode}");
     }
 
-    [Fact(Skip = "Known issue: CustomWebApplicationFactory DbContext initialization - See docs/issues/causes-integration-tests-failing.md")]
+    [Fact]
     public async Task Details_WithInvalidSlug_ReturnsNotFound()
     {
         // Act
@@ -82,7 +82,7 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
 
     #region Grid Action Integration Tests
 
-    [Fact(Skip = "Known issue: CustomWebApplicationFactory DbContext initialization - See docs/issues/causes-integration-tests-failing.md")]
+    [Fact]
     public async Task Grid_ReturnsSuccess()
     {
         // Act
@@ -355,7 +355,7 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
         }
     }
 
-    [Fact(Skip = "Known issue: CustomWebApplicationFactory DbContext initialization - See docs/issues/causes-integration-tests-failing.md")]
+    [Fact]
     public async Task PublicCausesEndpoints_AllowAnonymousAccess()
     {
         // Test that public endpoints are accessible without authentication
@@ -376,7 +376,7 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
 
     #region Routing Tests
 
-    [Fact(Skip = "Known issue: CustomWebApplicationFactory DbContext initialization - See docs/issues/causes-integration-tests-failing.md")]
+    [Fact]
     public async Task CauseDetailsRoute_WithSlug_MapsCorrectly()
     {
         // Act
@@ -394,7 +394,7 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
 
     #region Full Workflow Integration Tests
 
-    [Fact(Skip = "Known issue: CustomWebApplicationFactory DbContext initialization - See docs/issues/causes-integration-tests-failing.md")]
+    [Fact]
     public async Task FullWorkflow_BrowseCausesPublicly()
     {
         // Act 1: Visit causes list

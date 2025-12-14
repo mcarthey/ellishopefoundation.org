@@ -158,7 +158,7 @@ public class EventsControllerTests
             e.FeaturedImageUrl == "/uploads/media/new.jpg")), Times.Once);
     }
 
-    [Fact(Skip = "Test needs to be updated for new flow - UpdateEventAsync called twice")]
+    [Fact]
     public async Task Edit_Post_ValidModel_NewFileUpload_UpdatesSuccessfully()
     {
         // Arrange
