@@ -232,6 +232,7 @@ public class CausesController : Controller
                 // Track new usage
                 await _mediaService.TrackMediaUsageAsync(media.Id, "Cause", cause.Id, UsageType.Featured);
             }
+            // If neither condition is met, image stays the same (which is correct)
 
             await _causeService.UpdateCauseAsync(cause);
 
@@ -239,6 +240,10 @@ public class CausesController : Controller
             return RedirectToAction(nameof(Index));
         }
 
+        // If we get here, ModelState is invalid - log the errors
+        var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+        TempData["ErrorMessage"] = $"Validation failed: {string.Join(", ", errors)}";
+        
         SetTinyMceApiKey();
         return View(model);
     }

@@ -319,6 +319,7 @@ public class MediaController : Controller
 
     // POST: Admin/Media/RemoveDuplicates
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemoveDuplicates()
     {
         try
@@ -357,6 +358,7 @@ public class MediaController : Controller
 
     // POST: Admin/Media/DeleteAllUnused
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteAllUnused()
     {
         try
