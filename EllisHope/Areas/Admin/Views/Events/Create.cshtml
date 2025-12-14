@@ -121,13 +121,16 @@
                             <strong>Featured Image</strong>
                         </div>
                         <div class="card-body">
-                            <div class="mb-3">
-                                <input asp-for="FeaturedImageFile" class="form-control" type="file" accept="image/*" id="featuredImage" />
-                                <span asp-validation-for="FeaturedImageFile" class="text-danger"></span>
-                            </div>
-                            <div id="imagePreview" class="mt-2" style="display:none;">
-                                <img id="previewImg" src="#" alt="Preview" class="img-fluid" style="max-height: 200px;" />
-                            </div>
+                            @{
+                                ViewData["FieldName"] = "FeaturedImageUrl";
+                                ViewData["FieldLabel"] = "Featured Image";
+                                ViewData["AllowUpload"] = true;
+                                ViewData["Category"] = "4"; // MediaCategory.Event
+                            }
+                            <partial name="_MediaPicker" model="@Model.FeaturedImageUrl" />
+                            
+                            <!-- Legacy file upload (hidden, for backward compatibility) -->
+                            <input asp-for="FeaturedImageFile" type="file" accept="image/*" style="display:none;" id="legacyFileUpload" />
                         </div>
                     </div>
 

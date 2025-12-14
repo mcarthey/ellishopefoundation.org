@@ -89,22 +89,16 @@
                             <strong>Featured Image</strong>
                         </div>
                         <div class="card-body">
-                            @if (!string.IsNullOrEmpty(Model.FeaturedImageUrl))
-                            {
-                                <div class="mb-3">
-                                    <p class="small text-muted">Current Image:</p>
-                                    <img src="@Model.FeaturedImageUrl" alt="Current Featured" class="img-fluid" style="max-height: 200px;" />
-                                </div>
+                            @{
+                                ViewData["FieldName"] = "FeaturedImageUrl";
+                                ViewData["FieldLabel"] = "Featured Image";
+                                ViewData["AllowUpload"] = true;
+                                ViewData["Category"] = "3"; // MediaCategory.Blog
                             }
-                            <div class="mb-3">
-                                <label asp-for="FeaturedImageFile" class="form-label">Upload New Image</label>
-                                <input asp-for="FeaturedImageFile" class="form-control" type="file" accept="image/*" id="featuredImage" />
-                                <span asp-validation-for="FeaturedImageFile" class="text-danger"></span>
-                            </div>
-                            <div id="imagePreview" class="mt-2" style="display:none;">
-                                <p class="small text-muted">New Image Preview:</p>
-                                <img id="previewImg" src="#" alt="Preview" class="img-fluid" style="max-height: 200px;" />
-                            </div>
+                            <partial name="_MediaPicker" model="@Model.FeaturedImageUrl" />
+                            
+                            <!-- Legacy file upload (hidden, for backward compatibility) -->
+                            <input asp-for="FeaturedImageFile" type="file" accept="image/*" style="display:none;" id="legacyFileUpload" />
                         </div>
                     </div>
 
@@ -172,19 +166,6 @@
             toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
             menubar: 'file edit view insert format tools table help',
             content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 14px; }'
-        });
-
-        // Image preview
-        document.getElementById('featuredImage').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('previewImg').src = e.target.result;
-                    document.getElementById('imagePreview').style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
         });
     </script>
 }

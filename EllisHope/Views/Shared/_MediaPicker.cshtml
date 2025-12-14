@@ -1,0 +1,307 @@
+@model string
+@{
+    var fieldName = ViewData["FieldName"] as string ?? "FeaturedImageUrl";
+    var fieldLabel = ViewData["FieldLabel"] as string ?? "Featured Image";
+    var currentValue = Model ?? "";
+    var allowUpload = ViewData["AllowUpload"] as bool? ?? true;
+    var category = ViewData["Category"] as string ?? "";
+}
+
+<div class="media-picker-container">
+    <label class="form-label">@fieldLabel</label>
+    
+    <!-- Current Image Display -->
+    <div class="current-image-display mb-3" id="currentImage_@fieldName" style="@(string.IsNullOrEmpty(currentValue) ? "display:none;" : "")">
+        <img src="@currentValue" alt="Current Image" class="img-fluid" style="max-height: 200px; border: 1px solid #dee2e6; border-radius: 4px;" />
+        <div class="mt-2">
+            <small class="text-muted">Current Image</small>
+            <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="clearMediaSelection('@fieldName')">
+                <i class="bi bi-x"></i> Remove
+            </button>
+        </div>
+    </div>
+
+    <!-- Hidden input to store selected image URL -->
+    <input type="hidden" name="@fieldName" id="@fieldName" value="@currentValue" />
+
+    <!-- Action Buttons -->
+    <div class="btn-group w-100 mb-3" role="group">
+        <button type="button" class="btn btn-outline-primary" onclick="openMediaLibraryModal('@fieldName', '@category')">
+            <i class="bi bi-images"></i> Browse Media Library
+        </button>
+        @if (allowUpload)
+        {
+            <button type="button" class="btn btn-outline-secondary" onclick="toggleLocalUpload('@fieldName')">
+                <i class="bi bi-upload"></i> Upload New
+            </button>
+        }
+    </div>
+
+    <!-- Local Upload Option (Initially Hidden) -->
+    @if (allowUpload)
+    {
+        <div id="localUpload_@fieldName" class="local-upload-section" style="display:none;">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">Upload from Device</h6>
+                    <input type="file" class="form-control" accept="image/*" 
+                           id="fileUpload_@fieldName" 
+                           onchange="previewLocalImage(this, '@fieldName')" />
+                    <div id="preview_@fieldName" class="mt-3" style="display:none;">
+                        <img id="previewImg_@fieldName" src="#" alt="Preview" class="img-fluid" style="max-height: 200px;" />
+                    </div>
+                    <small class="form-text text-muted">Note: Uploading here bypasses the Media Manager. Consider using "Browse Media Library" for better organization.</small>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Media Library Modal -->
+<div class="modal fade" id="mediaLibraryModal_@fieldName" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Select Image from Media Library</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Search and Filter -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="mediaSearch_@fieldName" placeholder="Search images...">
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" id="mediaCategory_@fieldName" onchange="loadMediaLibrary('@fieldName')">
+                            <option value="">All Categories</option>
+                            <option value="0">Uncategorized</option>
+                            <option value="1">Hero</option>
+                            <option value="2">Page</option>
+                            <option value="3">Blog</option>
+                            <option value="4">Event</option>
+                            <option value="5">Cause</option>
+                            <option value="6">Team</option>
+                            <option value="7">Gallery</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-primary w-100" onclick="loadMediaLibrary('@fieldName')">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="mb-3">
+                    <a href="/Admin/Media/Upload" target="_blank" class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-upload"></i> Upload to Media Library
+                    </a>
+                    <a href="/Admin/Media/UnsplashSearch" target="_blank" class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-image"></i> Import from Unsplash
+                    </a>
+                </div>
+
+                <!-- Media Grid -->
+                <div id="mediaGrid_@fieldName" class="row g-3">
+                    <div class="col-12 text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading media library...</p>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div id="mediaPagination_@fieldName" class="mt-3"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let currentFieldName = '';
+        let selectedMediaUrl = '';
+
+        function openMediaLibraryModal(fieldName, category) {
+            currentFieldName = fieldName;
+            const modal = new bootstrap.Modal(document.getElementById('mediaLibraryModal_' + fieldName));
+            modal.show();
+            
+            // Set category filter if provided
+            if (category) {
+                document.getElementById('mediaCategory_' + fieldName).value = category;
+            }
+            
+            loadMediaLibrary(fieldName);
+        }
+
+        function loadMediaLibrary(fieldName) {
+            const searchTerm = document.getElementById('mediaSearch_' + fieldName).value;
+            const category = document.getElementById('mediaCategory_' + fieldName).value;
+            const gridContainer = document.getElementById('mediaGrid_' + fieldName);
+
+            // Build query string
+            let url = '/Admin/Media/GetMediaJson';
+            if (category) {
+                url += '?category=' + category;
+            }
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    // Filter by search term if provided
+                    let filteredData = data;
+                    if (searchTerm) {
+                        const searchLower = searchTerm.toLowerCase();
+                        filteredData = data.filter(m =>
+                            (m.fileName && m.fileName.toLowerCase().includes(searchLower)) ||
+                            (m.altText && m.altText.toLowerCase().includes(searchLower)) ||
+                            (m.title && m.title.toLowerCase().includes(searchLower))
+                        );
+                    }
+
+                    if (filteredData.length === 0) {
+                        gridContainer.innerHTML = `
+                            <div class="col-12 text-center py-5">
+                                <i class="bi bi-images" style="font-size: 3rem; color: #ccc;"></i>
+                                <p class="mt-3">No images found</p>
+                                <a href="/Admin/Media/Upload" target="_blank" class="btn btn-primary">
+                                    <i class="bi bi-upload"></i> Upload Images
+                                </a>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    let html = '';
+                    filteredData.forEach(media => {
+                        html += `
+                            <div class="col-lg-2 col-md-3 col-sm-4 col-6">
+                                <div class="card h-100 media-item" style="cursor: pointer;" onclick="selectMedia('${fieldName}', '${media.filePath}')">
+                                    <div class="position-relative" style="padding-top: 100%; overflow: hidden;">
+                                        <img src="${media.filePath}" 
+                                             alt="${media.altText || ''}" 
+                                             class="position-absolute top-0 start-0 w-100 h-100"
+                                             style="object-fit: cover;">
+                                    </div>
+                                    <div class="card-body p-2">
+                                        <small class="text-truncate d-block" title="${media.fileName}">${media.fileName}</small>
+                                        ${media.width && media.height ? `<small class="text-muted">${media.width}×${media.height}</small>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    gridContainer.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error loading media:', error);
+                    gridContainer.innerHTML = `
+                        <div class="col-12 text-center py-5">
+                            <div class="alert alert-danger">
+                                <i class="bi bi-exclamation-triangle"></i>
+                                Error loading media library. Please try again.
+                            </div>
+                        </div>
+                    `;
+                });
+        }
+
+        function selectMedia(fieldName, imageUrl) {
+            // Set the hidden input value
+            document.getElementById(fieldName).value = imageUrl;
+            
+            // Update the current image display
+            const currentImageDiv = document.getElementById('currentImage_' + fieldName);
+            currentImageDiv.querySelector('img').src = imageUrl;
+            currentImageDiv.style.display = 'block';
+            
+            // Hide local upload section
+            const uploadSection = document.getElementById('localUpload_' + fieldName);
+            if (uploadSection) {
+                uploadSection.style.display = 'none';
+            }
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('mediaLibraryModal_' + fieldName));
+            if (modal) {
+                modal.hide();
+            }
+        }
+
+        function clearMediaSelection(fieldName) {
+            document.getElementById(fieldName).value = '';
+            document.getElementById('currentImage_' + fieldName).style.display = 'none';
+            
+            // Also clear file input if exists
+            const fileInput = document.getElementById('fileUpload_' + fieldName);
+            if (fileInput) {
+                fileInput.value = '';
+            }
+        }
+
+        function toggleLocalUpload(fieldName) {
+            const uploadSection = document.getElementById('localUpload_' + fieldName);
+            if (uploadSection.style.display === 'none') {
+                uploadSection.style.display = 'block';
+            } else {
+                uploadSection.style.display = 'none';
+            }
+        }
+
+        function previewLocalImage(input, fieldName) {
+            const preview = document.getElementById('previewImg_' + fieldName);
+            const previewContainer = document.getElementById('preview_' + fieldName);
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+                
+                // Clear the media library selection since we're uploading new
+                document.getElementById(fieldName).value = '';
+                document.getElementById('currentImage_' + fieldName).style.display = 'none';
+            } else {
+                preview.src = '';
+                previewContainer.style.display = 'none';
+            }
+        }
+
+        // Add search on enter key
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInputs = document.querySelectorAll('[id^="mediaSearch_"]');
+            searchInputs.forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const fieldName = this.id.replace('mediaSearch_', '');
+                        loadMediaLibrary(fieldName);
+                    }
+                });
+            });
+        });
+
+        // Add hover effect to media items
+        document.addEventListener('DOMContentLoaded', function() {
+            const style = document.createElement('style');
+            style.textContent = `
+                .media-item:hover {
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+                    transform: translateY(-2px);
+                    transition: all 0.2s;
+                }
+                .media-item {
+                    transition: all 0.2s;
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+}

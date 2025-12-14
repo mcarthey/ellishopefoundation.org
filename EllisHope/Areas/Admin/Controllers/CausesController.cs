@@ -102,9 +102,15 @@ public class CausesController : Controller
                 Tags = model.Tags
             };
 
-            // Handle featured image upload
-            if (model.FeaturedImageFile != null)
+            // Handle featured image - prioritize FeaturedImageUrl (from Media Library) over file upload
+            if (!string.IsNullOrWhiteSpace(model.FeaturedImageUrl))
             {
+                // Image selected from Media Library
+                cause.FeaturedImageUrl = model.FeaturedImageUrl;
+            }
+            else if (model.FeaturedImageFile != null)
+            {
+                // Legacy: File uploaded directly (bypassing Media Library)
                 cause.FeaturedImageUrl = await SaveFeaturedImageAsync(model.FeaturedImageFile);
             }
 
@@ -185,11 +191,28 @@ public class CausesController : Controller
             cause.IsFeatured = model.IsFeatured;
             cause.Tags = model.Tags;
 
-            // Handle featured image upload
-            if (model.FeaturedImageFile != null)
+            // Handle featured image - prioritize FeaturedImageUrl (from Media Library) over file upload
+            if (!string.IsNullOrWhiteSpace(model.FeaturedImageUrl) && model.FeaturedImageUrl != cause.FeaturedImageUrl)
             {
-                // Delete old image if exists
-                if (!string.IsNullOrEmpty(cause.FeaturedImageUrl))
+                // New image selected from Media Library
+                // Only delete old if it was from local uploads, not Media Library
+                if (!string.IsNullOrEmpty(cause.FeaturedImageUrl) && 
+                    (cause.FeaturedImageUrl.Contains("/uploads/causes/") || 
+                     cause.FeaturedImageUrl.Contains("/uploads/blog/") || 
+                     cause.FeaturedImageUrl.Contains("/uploads/events/")))
+                {
+                    DeleteFeaturedImage(cause.FeaturedImageUrl);
+                }
+                cause.FeaturedImageUrl = model.FeaturedImageUrl;
+            }
+            else if (model.FeaturedImageFile != null)
+            {
+                // Legacy: New file uploaded directly (bypassing Media Library)
+                // Delete old image if exists and was from local uploads
+                if (!string.IsNullOrEmpty(cause.FeaturedImageUrl) && 
+                    (cause.FeaturedImageUrl.Contains("/uploads/causes/") || 
+                     cause.FeaturedImageUrl.Contains("/uploads/blog/") || 
+                     cause.FeaturedImageUrl.Contains("/uploads/events/")))
                 {
                     DeleteFeaturedImage(cause.FeaturedImageUrl);
                 }
