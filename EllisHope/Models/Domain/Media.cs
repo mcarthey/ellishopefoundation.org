@@ -14,6 +14,7 @@ public enum MediaCategory
     Hero,
     Blog,
     Event,
+    Cause,
     Team,
     Gallery,
     Page,

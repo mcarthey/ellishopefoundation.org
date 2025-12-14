@@ -66,56 +66,149 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- Search and Filter -->
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <input type="text" class="form-control" id="mediaSearch_@fieldName" placeholder="Search images...">
-                    </div>
-                    <div class="col-md-3">
-                        <select class="form-select" id="mediaCategory_@fieldName" onchange="loadMediaLibrary('@fieldName')">
-                            <option value="">All Categories</option>
-                            <option value="0">Uncategorized</option>
-                            <option value="1">Hero</option>
-                            <option value="2">Page</option>
-                            <option value="3">Blog</option>
-                            <option value="4">Event</option>
-                            <option value="5">Cause</option>
-                            <option value="6">Team</option>
-                            <option value="7">Gallery</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <button type="button" class="btn btn-primary w-100" onclick="loadMediaLibrary('@fieldName')">
-                            <i class="bi bi-search"></i> Search
+                <!-- Tab Navigation -->
+                <ul class="nav nav-tabs mb-3" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="browseTab_@fieldName" data-bs-toggle="tab" 
+                                data-bs-target="#browsePanel_@fieldName" type="button" role="tab">
+                            <i class="bi bi-images"></i> Browse Library
                         </button>
-                    </div>
-                </div>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="uploadTab_@fieldName" data-bs-toggle="tab" 
+                                data-bs-target="#uploadPanel_@fieldName" type="button" role="tab">
+                            <i class="bi bi-cloud-upload"></i> Upload New
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="unsplashTab_@fieldName" data-bs-toggle="tab" 
+                                data-bs-target="#unsplashPanel_@fieldName" type="button" role="tab">
+                            <i class="bi bi-image-alt"></i> Unsplash
+                        </button>
+                    </li>
+                </ul>
 
-                <!-- Quick Actions -->
-                <div class="mb-3">
-                    <a href="/Admin/Media/Upload" target="_blank" class="btn btn-sm btn-outline-secondary">
-                        <i class="bi bi-upload"></i> Upload to Media Library
-                    </a>
-                    <a href="/Admin/Media/UnsplashSearch" target="_blank" class="btn btn-sm btn-outline-secondary">
-                        <i class="bi bi-image"></i> Import from Unsplash
-                    </a>
-                </div>
-
-                <!-- Media Grid -->
-                <div id="mediaGrid_@fieldName" class="row g-3">
-                    <div class="col-12 text-center py-5">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
+                <!-- Tab Content -->
+                <div class="tab-content">
+                    <!-- Browse Library Tab -->
+                    <div class="tab-pane fade show active" id="browsePanel_@fieldName" role="tabpanel">
+                        <!-- Search and Filter -->
+                        <div class="row mb-3">
+                            <div class="col-md-9">
+                                <input type="text" class="form-control" id="mediaSearch_@fieldName" placeholder="Search images...">
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select" id="mediaCategory_@fieldName" onchange="loadMediaLibrary('@fieldName')">
+                                    <option value="">All Categories</option>
+                                    <option value="0">Uncategorized</option>
+                                    <option value="1">Hero</option>
+                                    <option value="2">Page</option>
+                                    <option value="3">Blog</option>
+                                    <option value="4">Event</option>
+                                    <option value="5">Cause</option>
+                                    <option value="6">Team</option>
+                                    <option value="7">Gallery</option>
+                                </select>
+                            </div>
                         </div>
-                        <p class="mt-2">Loading media library...</p>
+
+                        <!-- Media Grid -->
+                        <div id="mediaGrid_@fieldName" class="row g-3" style="max-height: 400px; overflow-y: auto;">
+                            <div class="col-12 text-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Loading media library...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upload New Tab -->
+                    <div class="tab-pane fade" id="uploadPanel_@fieldName" role="tabpanel">
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            Upload images directly to your Media Library. Images will be available for reuse across all content.
+                        </div>
+                        
+                        <form id="uploadForm_@fieldName" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label class="form-label">Select Image</label>
+                                <input type="file" class="form-control" id="uploadFile_@fieldName" accept="image/*" required
+                                       onchange="previewUploadImage(this, '@fieldName')" />
+                                <small class="form-text text-muted">Accepted: JPG, PNG, GIF, WebP (Max 10MB)</small>
+                            </div>
+
+                            <div id="uploadPreview_@fieldName" class="mb-3" style="display:none;">
+                                <img id="uploadPreviewImg_@fieldName" src="#" alt="Preview" class="img-fluid" 
+                                     style="max-height: 200px; border: 1px solid #dee2e6; border-radius: 4px;" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Alt Text (for accessibility)</label>
+                                <input type="text" class="form-control" id="uploadAltText_@fieldName" 
+                                       placeholder="Describe the image..." />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Title (optional)</label>
+                                <input type="text" class="form-control" id="uploadTitle_@fieldName" 
+                                       placeholder="Image title..." />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Tags (optional)</label>
+                                <input type="text" class="form-control" id="uploadTags_@fieldName" 
+                                       placeholder="e.g., event, fundraiser, community" />
+                                <small class="form-text text-muted">Separate with commas</small>
+                            </div>
+
+                            <input type="hidden" id="uploadCategory_@fieldName" value="@category" />
+
+                            <div class="d-grid gap-2">
+                                <button type="button" class="btn btn-primary" onclick="uploadToMediaLibrary('@fieldName')">
+                                    <i class="bi bi-cloud-upload"></i> Upload to Media Library
+                                </button>
+                            </div>
+
+                            <div id="uploadProgress_@fieldName" class="mt-3" style="display:none;">
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                         role="progressbar" style="width: 100%">Uploading...</div>
+                                </div>
+                            </div>
+
+                            <div id="uploadResult_@fieldName" class="mt-3"></div>
+                        </form>
+                    </div>
+
+                    <!-- Unsplash Tab -->
+                    <div class="tab-pane fade" id="unsplashPanel_@fieldName" role="tabpanel">
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            Search and import professional photos from Unsplash (free to use with attribution).
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="unsplashSearch_@fieldName" 
+                                       placeholder="Search Unsplash (e.g., 'volunteers', 'charity')..." />
+                                <button class="btn btn-primary" type="button" onclick="searchUnsplash('@fieldName')">
+                                    <i class="bi bi-search"></i> Search
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="unsplashResults_@fieldName" style="max-height: 400px; overflow-y: auto;">
+                            <div class="text-center py-5 text-muted">
+                                <i class="bi bi-search" style="font-size: 3rem;"></i>
+                                <p class="mt-3">Enter a search term to find images</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Pagination -->
-                <div id="mediaPagination_@fieldName" class="mt-3"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -170,10 +263,8 @@
                         gridContainer.innerHTML = `
                             <div class="col-12 text-center py-5">
                                 <i class="bi bi-images" style="font-size: 3rem; color: #ccc;"></i>
-                                <p class="mt-3">No images found</p>
-                                <a href="/Admin/Media/Upload" target="_blank" class="btn btn-primary">
-                                    <i class="bi bi-upload"></i> Upload Images
-                                </a>
+                                <p class="mt-3 text-muted">No images found</p>
+                                <p class="small text-muted">Try uploading images using the "Upload New" tab above</p>
                             </div>
                         `;
                         return;
@@ -303,6 +394,147 @@
             }
         };
 
+        window.previewUploadImage = window.previewUploadImage || function(input, fieldName) {
+            const preview = document.getElementById('uploadPreviewImg_' + fieldName);
+            const previewContainer = document.getElementById('uploadPreview_' + fieldName);
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    if (preview) {
+                        preview.src = e.target.result;
+                    }
+                    if (previewContainer) {
+                        previewContainer.style.display = 'block';
+                    }
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                if (preview) {
+                    preview.src = '';
+                }
+                if (previewContainer) {
+                    previewContainer.style.display = 'none';
+                }
+            }
+        };
+
+        window.uploadToMediaLibrary = window.uploadToMediaLibrary || function(fieldName) {
+            const fileInput = document.getElementById('uploadFile_' + fieldName);
+            const altText = document.getElementById('uploadAltText_' + fieldName).value;
+            const title = document.getElementById('uploadTitle_' + fieldName).value;
+            const tags = document.getElementById('uploadTags_' + fieldName).value;
+            const category = document.getElementById('uploadCategory_' + fieldName).value;
+            const progressDiv = document.getElementById('uploadProgress_' + fieldName);
+            const resultDiv = document.getElementById('uploadResult_' + fieldName);
+
+            if (!fileInput.files || !fileInput.files[0]) {
+                resultDiv.innerHTML = '<div class="alert alert-warning"><i class="bi bi-exclamation-triangle"></i> Please select a file</div>';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('File', fileInput.files[0]);
+            formData.append('AltText', altText);
+            formData.append('Title', title);
+            formData.append('Tags', tags);
+            formData.append('Category', category || '0');
+
+            // Get anti-forgery token
+            const token = document.querySelector('input[name="__RequestVerificationToken"]');
+            if (token) {
+                formData.append('__RequestVerificationToken', token.value);
+            }
+
+            progressDiv.style.display = 'block';
+            resultDiv.innerHTML = '';
+
+            fetch('/Admin/Media/Upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                progressDiv.style.display = 'none';
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle"></i> Image uploaded successfully! 
+                            <button type="button" class="btn btn-sm btn-success ms-2" onclick="switchToBrowseTab('${fieldName}')">
+                                Browse to select it
+                            </button>
+                        </div>
+                    `;
+                    
+                    // Clear form
+                    fileInput.value = '';
+                    document.getElementById('uploadAltText_' + fieldName).value = '';
+                    document.getElementById('uploadTitle_' + fieldName).value = '';
+                    document.getElementById('uploadTags_' + fieldName).value = '';
+                    document.getElementById('uploadPreview_' + fieldName).style.display = 'none';
+                    
+                    // Reload media library
+                    loadMediaLibrary(fieldName);
+                    
+                    return response.text();
+                } else {
+                    throw new Error('Upload failed with status: ' + response.status);
+                }
+            })
+            .catch(error => {
+                progressDiv.style.display = 'none';
+                resultDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle"></i> Upload failed. Please try again.
+                        <div class="small mt-1">Error: ${error.message}</div>
+                    </div>
+                `;
+                console.error('Upload error:', error);
+            });
+        };
+
+        window.switchToBrowseTab = window.switchToBrowseTab || function(fieldName) {
+            const browseTab = document.getElementById('browseTab_' + fieldName);
+            if (browseTab) {
+                const tab = new bootstrap.Tab(browseTab);
+                tab.show();
+                loadMediaLibrary(fieldName);
+            }
+        };
+
+        window.searchUnsplash = window.searchUnsplash || function(fieldName) {
+            const searchInput = document.getElementById('unsplashSearch_' + fieldName);
+            const resultsDiv = document.getElementById('unsplashResults_' + fieldName);
+            const query = searchInput.value.trim();
+
+            if (!query) {
+                resultsDiv.innerHTML = `
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i> Please enter a search term
+                    </div>
+                `;
+                return;
+            }
+
+            resultsDiv.innerHTML = `
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Searching...</span>
+                    </div>
+                    <p class="mt-2">Searching Unsplash...</p>
+                </div>
+            `;
+
+            // Note: This is a placeholder. Real implementation would need server-side Unsplash API integration
+            resultsDiv.innerHTML = `
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    Unsplash integration coming soon! For now, please use the 
+                    <a href="/Admin/Media/UnsplashSearch" target="_blank">dedicated Unsplash page</a>
+                    to import images, then return here to select them.
+                </div>
+            `;
+        };
+
         // Add search on enter key for this field
         const searchInput_@(fieldName.Replace(".", "_")) = document.getElementById('mediaSearch_@fieldName');
         if (searchInput_@(fieldName.Replace(".", "_"))) {
@@ -325,6 +557,9 @@
                 }
                 .media-item {
                     transition: all 0.2s;
+                }
+                .nav-tabs .nav-link {
+                    cursor: pointer;
                 }
             `;
             document.head.appendChild(style);

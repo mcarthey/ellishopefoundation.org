@@ -12,12 +12,18 @@ namespace EllisHope.Areas.Admin.Controllers;
 public class BlogController : Controller
 {
     private readonly IBlogService _blogService;
+    private readonly IMediaService _mediaService;
     private readonly IWebHostEnvironment _environment;
     private readonly IConfiguration _configuration;
 
-    public BlogController(IBlogService blogService, IWebHostEnvironment environment, IConfiguration configuration)
+    public BlogController(
+        IBlogService blogService, 
+        IMediaService mediaService,
+        IWebHostEnvironment environment, 
+        IConfiguration configuration)
     {
         _blogService = blogService;
+        _mediaService = mediaService;
         _environment = environment;
         _configuration = configuration;
     }
@@ -87,16 +93,45 @@ public class BlogController : Controller
                 Tags = model.Tags
             };
 
-            // Handle featured image - prioritize FeaturedImageUrl (from Media Library) over file upload
+            // Handle featured image - prioritize Media Library
             if (!string.IsNullOrWhiteSpace(model.FeaturedImageUrl))
             {
-                // Image selected from Media Library
                 post.FeaturedImageUrl = model.FeaturedImageUrl;
             }
             else if (model.FeaturedImageFile != null)
             {
-                // Legacy: File uploaded directly (bypassing Media Library)
-                post.FeaturedImageUrl = await SaveFeaturedImageAsync(model.FeaturedImageFile);
+                // Upload to centralized Media Manager
+                var uploadedBy = User.Identity?.Name;
+                var media = await _mediaService.UploadLocalImageAsync(
+                    model.FeaturedImageFile,
+                    $"Blog: {model.Title}",
+                    model.Title,
+                    MediaCategory.Blog,
+                    model.Tags,
+                    uploadedBy);
+                
+                post.FeaturedImageUrl = media.FilePath;
+                
+                // Track usage
+                await _blogService.CreatePostAsync(post);
+                await _mediaService.TrackMediaUsageAsync(media.Id, "BlogPost", post.Id, UsageType.Featured);
+
+                // Handle categories
+                if (model.SelectedCategoryIds.Any())
+                {
+                    foreach (var categoryId in model.SelectedCategoryIds)
+                    {
+                        post.BlogPostCategories.Add(new BlogPostCategory
+                        {
+                            BlogPostId = post.Id,
+                            CategoryId = categoryId
+                        });
+                    }
+                    await _blogService.UpdatePostAsync(post);
+                }
+
+                TempData["SuccessMessage"] = "Blog post created successfully!";
+                return RedirectToAction(nameof(Index));
             }
 
             await _blogService.CreatePostAsync(post);
@@ -185,32 +220,28 @@ public class BlogController : Controller
             post.MetaDescription = model.MetaDescription;
             post.Tags = model.Tags;
 
-            // Handle featured image - prioritize FeaturedImageUrl (from Media Library) over file upload
+            // Handle featured image update
             if (!string.IsNullOrWhiteSpace(model.FeaturedImageUrl) && model.FeaturedImageUrl != post.FeaturedImageUrl)
             {
-                // New image selected from Media Library
-                // Only delete old if it was from local uploads, not Media Library
-                if (!string.IsNullOrEmpty(post.FeaturedImageUrl) && 
-                    (post.FeaturedImageUrl.Contains("/uploads/causes/") || 
-                     post.FeaturedImageUrl.Contains("/uploads/blog/") || 
-                     post.FeaturedImageUrl.Contains("/uploads/events/")))
-                {
-                    DeleteFeaturedImage(post.FeaturedImageUrl);
-                }
+                // New image from Media Library - just update URL
                 post.FeaturedImageUrl = model.FeaturedImageUrl;
             }
             else if (model.FeaturedImageFile != null)
             {
-                // Legacy: New file uploaded directly (bypassing Media Library)
-                // Delete old image if exists and was from local uploads
-                if (!string.IsNullOrEmpty(post.FeaturedImageUrl) && 
-                    (post.FeaturedImageUrl.Contains("/uploads/causes/") || 
-                     post.FeaturedImageUrl.Contains("/uploads/blog/") || 
-                     post.FeaturedImageUrl.Contains("/uploads/events/")))
-                {
-                    DeleteFeaturedImage(post.FeaturedImageUrl);
-                }
-                post.FeaturedImageUrl = await SaveFeaturedImageAsync(model.FeaturedImageFile);
+                // New file upload - use Media Manager
+                var uploadedBy = User.Identity?.Name;
+                var media = await _mediaService.UploadLocalImageAsync(
+                    model.FeaturedImageFile,
+                    $"Blog: {model.Title}",
+                    model.Title,
+                    MediaCategory.Blog,
+                    model.Tags,
+                    uploadedBy);
+                
+                post.FeaturedImageUrl = media.FilePath;
+                
+                // Track new usage
+                await _mediaService.TrackMediaUsageAsync(media.Id, "BlogPost", post.Id, UsageType.Featured);
             }
 
             // Update categories
@@ -246,10 +277,16 @@ public class BlogController : Controller
             return NotFound();
         }
 
-        // Delete featured image if exists
+        // Remove media usage tracking
         if (!string.IsNullOrEmpty(post.FeaturedImageUrl))
         {
-            DeleteFeaturedImage(post.FeaturedImageUrl);
+            // Find media by path
+            var allMedia = await _mediaService.GetAllMediaAsync();
+            var media = allMedia.FirstOrDefault(m => m.FilePath == post.FeaturedImageUrl);
+            if (media != null)
+            {
+                await _mediaService.RemoveMediaUsageAsync(media.Id, "BlogPost", id);
+            }
         }
 
         await _blogService.DeletePostAsync(id);
@@ -272,30 +309,5 @@ public class BlogController : Controller
             Value = c.Id.ToString(),
             Text = c.Name
         }).ToList();
-    }
-
-    private async Task<string> SaveFeaturedImageAsync(IFormFile file)
-    {
-        var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads", "blog");
-        Directory.CreateDirectory(uploadsFolder);
-
-        var uniqueFileName = $"{Guid.NewGuid()}_{file.FileName}";
-        var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-        using (var fileStream = new FileStream(filePath, FileMode.Create))
-        {
-            await file.CopyToAsync(fileStream);
-        }
-
-        return $"/uploads/blog/{uniqueFileName}";
-    }
-
-    private void DeleteFeaturedImage(string imageUrl)
-    {
-        var imagePath = Path.Combine(_environment.WebRootPath, imageUrl.TrimStart('/'));
-        if (System.IO.File.Exists(imagePath))
-        {
-            System.IO.File.Delete(imagePath);
-        }
     }
 }

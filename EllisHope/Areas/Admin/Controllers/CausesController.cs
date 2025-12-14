@@ -11,17 +11,20 @@ namespace EllisHope.Areas.Admin.Controllers;
 public class CausesController : Controller
 {
     private readonly ICauseService _causeService;
+    private readonly IMediaService _mediaService;
     private readonly IWebHostEnvironment _environment;
     private readonly IConfiguration _configuration;
     private readonly ILogger<CausesController> _logger;
 
     public CausesController(
         ICauseService causeService,
+        IMediaService mediaService,
         IWebHostEnvironment environment,
         IConfiguration configuration,
         ILogger<CausesController> logger)
     {
         _causeService = causeService;
+        _mediaService = mediaService;
         _environment = environment;
         _configuration = configuration;
         _logger = logger;
@@ -102,16 +105,31 @@ public class CausesController : Controller
                 Tags = model.Tags
             };
 
-            // Handle featured image - prioritize FeaturedImageUrl (from Media Library) over file upload
+            // Handle featured image - prioritize Media Library
             if (!string.IsNullOrWhiteSpace(model.FeaturedImageUrl))
             {
-                // Image selected from Media Library
                 cause.FeaturedImageUrl = model.FeaturedImageUrl;
             }
             else if (model.FeaturedImageFile != null)
             {
-                // Legacy: File uploaded directly (bypassing Media Library)
-                cause.FeaturedImageUrl = await SaveFeaturedImageAsync(model.FeaturedImageFile);
+                // Upload to centralized Media Manager
+                var uploadedBy = User.Identity?.Name;
+                var media = await _mediaService.UploadLocalImageAsync(
+                    model.FeaturedImageFile,
+                    $"Cause: {model.Title}",
+                    model.Title,
+                    MediaCategory.Cause,
+                    model.Tags,
+                    uploadedBy);
+                
+                cause.FeaturedImageUrl = media.FilePath;
+                
+                // Track usage
+                await _causeService.CreateCauseAsync(cause);
+                await _mediaService.TrackMediaUsageAsync(media.Id, "Cause", cause.Id, UsageType.Featured);
+                
+                TempData["SuccessMessage"] = "Cause created successfully!";
+                return RedirectToAction(nameof(Index));
             }
 
             await _causeService.CreateCauseAsync(cause);
@@ -191,32 +209,28 @@ public class CausesController : Controller
             cause.IsFeatured = model.IsFeatured;
             cause.Tags = model.Tags;
 
-            // Handle featured image - prioritize FeaturedImageUrl (from Media Library) over file upload
+            // Handle featured image update
             if (!string.IsNullOrWhiteSpace(model.FeaturedImageUrl) && model.FeaturedImageUrl != cause.FeaturedImageUrl)
             {
-                // New image selected from Media Library
-                // Only delete old if it was from local uploads, not Media Library
-                if (!string.IsNullOrEmpty(cause.FeaturedImageUrl) && 
-                    (cause.FeaturedImageUrl.Contains("/uploads/causes/") || 
-                     cause.FeaturedImageUrl.Contains("/uploads/blog/") || 
-                     cause.FeaturedImageUrl.Contains("/uploads/events/")))
-                {
-                    DeleteFeaturedImage(cause.FeaturedImageUrl);
-                }
+                // New image from Media Library - just update URL
                 cause.FeaturedImageUrl = model.FeaturedImageUrl;
             }
             else if (model.FeaturedImageFile != null)
             {
-                // Legacy: New file uploaded directly (bypassing Media Library)
-                // Delete old image if exists and was from local uploads
-                if (!string.IsNullOrEmpty(cause.FeaturedImageUrl) && 
-                    (cause.FeaturedImageUrl.Contains("/uploads/causes/") || 
-                     cause.FeaturedImageUrl.Contains("/uploads/blog/") || 
-                     cause.FeaturedImageUrl.Contains("/uploads/events/")))
-                {
-                    DeleteFeaturedImage(cause.FeaturedImageUrl);
-                }
-                cause.FeaturedImageUrl = await SaveFeaturedImageAsync(model.FeaturedImageFile);
+                // New file upload - use Media Manager
+                var uploadedBy = User.Identity?.Name;
+                var media = await _mediaService.UploadLocalImageAsync(
+                    model.FeaturedImageFile,
+                    $"Cause: {model.Title}",
+                    model.Title,
+                    MediaCategory.Cause,
+                    model.Tags,
+                    uploadedBy);
+                
+                cause.FeaturedImageUrl = media.FilePath;
+                
+                // Track new usage
+                await _mediaService.TrackMediaUsageAsync(media.Id, "Cause", cause.Id, UsageType.Featured);
             }
 
             await _causeService.UpdateCauseAsync(cause);
@@ -240,10 +254,16 @@ public class CausesController : Controller
             return NotFound();
         }
 
-        // Delete featured image if exists
+        // Remove media usage tracking
         if (!string.IsNullOrEmpty(cause.FeaturedImageUrl))
         {
-            DeleteFeaturedImage(cause.FeaturedImageUrl);
+            // Find media by path
+            var allMedia = await _mediaService.GetAllMediaAsync();
+            var media = allMedia.FirstOrDefault(m => m.FilePath == cause.FeaturedImageUrl);
+            if (media != null)
+            {
+                await _mediaService.RemoveMediaUsageAsync(media.Id, "Cause", id);
+            }
         }
 
         await _causeService.DeleteCauseAsync(id);
@@ -256,30 +276,5 @@ public class CausesController : Controller
     private void SetTinyMceApiKey()
     {
         ViewData["TinyMceApiKey"] = _configuration["TinyMCE:ApiKey"] ?? "no-api-key";
-    }
-
-    private async Task<string> SaveFeaturedImageAsync(IFormFile file)
-    {
-        var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads", "causes");
-        Directory.CreateDirectory(uploadsFolder);
-
-        var uniqueFileName = $"{Guid.NewGuid()}_{file.FileName}";
-        var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-        using (var fileStream = new FileStream(filePath, FileMode.Create))
-        {
-            await file.CopyToAsync(fileStream);
-        }
-
-        return $"/uploads/causes/{uniqueFileName}";
-    }
-
-    private void DeleteFeaturedImage(string imageUrl)
-    {
-        var imagePath = Path.Combine(_environment.WebRootPath, imageUrl.TrimStart('/'));
-        if (System.IO.File.Exists(imagePath))
-        {
-            System.IO.File.Delete(imagePath);
-        }
     }
 }
