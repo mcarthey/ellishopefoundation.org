@@ -240,28 +240,17 @@
 
         // Wait for DOM to be fully loaded
         document.addEventListener('DOMContentLoaded', function() {
-            // Find ALL forms on page
+            // Find the main edit form
             const allForms = document.querySelectorAll('form');
-            console.log('?? Total forms found:', allForms.length);
-            
-            // Find the main edit form (the one with action containing "/Admin/Causes/Edit")
             const mainForm = Array.from(allForms).find(f => f.action.includes('/Admin/Causes/Edit'));
             
             if (mainForm) {
-                console.log('? Found edit form:', mainForm.action);
-                console.log('?? Submit button inside form:', mainForm.querySelector('button[type="submit"]') !== null);
-                
                 mainForm.addEventListener('submit', function(e) {
-                    console.log('?? Form submit triggered');
                     if (typeof tinymce !== 'undefined') {
                         tinymce.triggerSave();
-                        console.log('? TinyMCE content saved');
                     }
-                    // Let the form submit naturally
                     return true;
                 });
-            } else {
-                console.error('? Could not find edit form!');
             }
         });
     </script>

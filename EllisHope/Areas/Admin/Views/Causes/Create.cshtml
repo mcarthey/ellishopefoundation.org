@@ -209,24 +209,16 @@
             }
         });
 
-        // CRITICAL: Find the CREATE form specifically
-        // We need to find the form that's in the card-body (not the modal forms or logout form)
+        // Find the CREATE form specifically
         const mainForm = document.querySelector('.card form[enctype="multipart/form-data"]');
         
         if (mainForm) {
-            console.log('? Found create form:', mainForm.action);
-            
             mainForm.addEventListener('submit', function(e) {
-                console.log('?? Form submit triggered');
                 if (typeof tinymce !== 'undefined') {
                     tinymce.triggerSave();
-                    console.log('? TinyMCE content saved');
                 }
-                // Let the form submit naturally
                 return true;
             });
-        } else {
-            console.error('? Could not find create form!');
         }
 
         // Auto-generate slug from title
