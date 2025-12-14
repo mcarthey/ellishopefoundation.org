@@ -25,17 +25,18 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     {
         builder.ConfigureServices(services =>
         {
-            // Remove ALL DbContext and provider-related services
-            var descriptorsToRemove = services
-                .Where(d =>
-                    d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>) ||
-                    d.ServiceType == typeof(DbContextOptions) ||
-                    d.ServiceType == typeof(ApplicationDbContext))
-                .ToList();
-
-            foreach (var descriptor in descriptorsToRemove)
+            // Remove the existing DbContext registration
+            var dbContextDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
+            if (dbContextDescriptor != null)
             {
-                services.Remove(descriptor);
+                services.Remove(dbContextDescriptor);
+            }
+
+            // Remove any DbContextOptions
+            var dbContextOptionsDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions));
+            if (dbContextOptionsDescriptor != null)
+            {
+                services.Remove(dbContextOptionsDescriptor);
             }
 
             // Create and open SQLite in-memory connection
@@ -60,16 +61,16 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
         });
 
         builder.UseEnvironment("Testing");
+        
+        // Ensure database is created after all services are configured
+        builder.ConfigureServices(services =>
+        {
+            var sp = services.BuildServiceProvider();
+            EnsureDatabaseCreated(sp);
+        });
     }
 
-    protected override HttpClient CreateClient(WebApplicationFactoryClientOptions options)
-    {
-        // Ensure database is initialized before creating client
-        EnsureDatabaseCreated();
-        return base.CreateClient(options);
-    }
-
-    private void EnsureDatabaseCreated()
+    private void EnsureDatabaseCreated(IServiceProvider serviceProvider)
     {
         if (_databaseInitialized)
             return;
@@ -79,7 +80,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             if (_databaseInitialized)
                 return;
 
-            using var scope = Services.CreateScope();
+            using var scope = serviceProvider.CreateScope();
             var scopedServices = scope.ServiceProvider;
             var db = scopedServices.GetRequiredService<ApplicationDbContext>();
             var logger = scopedServices.GetRequiredService<ILogger<CustomWebApplicationFactory>>();
@@ -101,7 +102,6 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
     public ApplicationDbContext GetDbContext()
     {
-        EnsureDatabaseCreated();
         var scope = Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         return db;

@@ -270,6 +270,12 @@ public class EventsController : Controller
                 TempData["SuccessMessage"] = "Event updated successfully!";
                 return RedirectToAction(nameof(Index));
             }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed to upload image. Please try again.";
+                SetTinyMceApiKey();
+                return View(model);
+            }
         }
         // If neither condition is met, image stays the same (which is correct)
 

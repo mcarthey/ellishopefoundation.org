@@ -30,4 +30,8 @@
     <ProjectReference Include="..\EllisHope\EllisHope.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Integration\Debugging\" />
+  </ItemGroup>
+
 </Project>

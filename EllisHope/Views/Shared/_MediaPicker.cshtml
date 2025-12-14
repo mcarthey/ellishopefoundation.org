@@ -123,17 +123,18 @@
                         </div>
                     </div>
 
-                    <!-- Upload New Tab -->
+                    <!-- Upload New Tab - NO FORM ELEMENT! -->
                     <div class="tab-pane fade" id="uploadPanel_@fieldName" role="tabpanel">
                         <div class="alert alert-info">
                             <i class="bi bi-info-circle"></i>
                             Upload images directly to your Media Library. Images will be available for reuse across all content.
                         </div>
                         
-                        <form id="uploadForm_@fieldName" enctype="multipart/form-data">
+                        <!-- NO <form> tag here - just inputs -->
+                        <div id="uploadFormInputs_@fieldName">
                             <div class="mb-3">
                                 <label class="form-label">Select Image</label>
-                                <input type="file" class="form-control" id="uploadFile_@fieldName" accept="image/*" required
+                                <input type="file" class="form-control" id="uploadFile_@fieldName" accept="image/*"
                                        onchange="previewUploadImage(this, '@fieldName')" />
                                 <small class="form-text text-muted">Accepted: JPG, PNG, GIF, WebP (Max 10MB)</small>
                             </div>
@@ -178,7 +179,7 @@
                             </div>
 
                             <div id="uploadResult_@fieldName" class="mt-3"></div>
-                        </form>
+                        </div>
                     </div>
 
                     <!-- Unsplash Tab -->
@@ -440,7 +441,7 @@
             formData.append('Tags', tags);
             formData.append('Category', category || '0');
 
-            // Get anti-forgery token
+            // Get anti-forgery token from the PARENT form (not from a nested form)
             const token = document.querySelector('input[name="__RequestVerificationToken"]');
             if (token) {
                 formData.append('__RequestVerificationToken', token.value);
