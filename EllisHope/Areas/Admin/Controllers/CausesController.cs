@@ -84,44 +84,64 @@ public class CausesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CauseViewModel model)
     {
-        if (ModelState.IsValid)
+        // Log all ModelState errors for debugging
+        if (!ModelState.IsValid)
         {
-            var cause = new Cause
-            {
-                Title = model.Title,
-                Slug = string.IsNullOrWhiteSpace(model.Slug)
-                    ? _causeService.GenerateSlug(model.Title)
-                    : model.Slug,
-                Description = model.Description,
-                ShortDescription = model.ShortDescription,
-                Category = model.Category,
-                GoalAmount = model.GoalAmount,
-                RaisedAmount = model.RaisedAmount,
-                StartDate = model.StartDate,
-                EndDate = model.EndDate,
-                DonationUrl = model.DonationUrl,
-                IsPublished = model.IsPublished,
-                IsFeatured = model.IsFeatured,
-                Tags = model.Tags
-            };
+            var errors = ModelState
+                .Where(x => x.Value?.Errors.Count > 0)
+                .Select(x => new
+                {
+                    Field = x.Key,
+                    Errors = x.Value?.Errors.Select(e => e.ErrorMessage ?? e.Exception?.Message).ToList()
+                })
+                .ToList();
 
-            // Handle featured image - prioritize Media Library
-            if (!string.IsNullOrWhiteSpace(model.FeaturedImageUrl))
+            var errorMessage = string.Join("; ", errors.Select(e => 
+                $"{e.Field}: {string.Join(", ", e.Errors ?? new List<string>())}"));
+
+            TempData["ErrorMessage"] = $"Validation failed: {errorMessage}";
+            SetTinyMceApiKey();
+            return View(model);
+        }
+
+        var cause = new Cause
+        {
+            Title = model.Title,
+            Slug = string.IsNullOrWhiteSpace(model.Slug)
+                ? _causeService.GenerateSlug(model.Title)
+                : model.Slug,
+            Description = model.Description,
+            ShortDescription = model.ShortDescription,
+            Category = model.Category,
+            GoalAmount = model.GoalAmount,
+            RaisedAmount = model.RaisedAmount,
+            StartDate = model.StartDate,
+            EndDate = model.EndDate,
+            DonationUrl = model.DonationUrl,
+            IsPublished = model.IsPublished,
+            IsFeatured = model.IsFeatured,
+            Tags = model.Tags
+        };
+
+        // Handle featured image - prioritize Media Library
+        if (!string.IsNullOrWhiteSpace(model.FeaturedImageUrl))
+        {
+            cause.FeaturedImageUrl = model.FeaturedImageUrl;
+        }
+        else if (model.FeaturedImageFile != null)
+        {
+            // Upload to centralized Media Manager
+            var uploadedBy = User.Identity?.Name ?? "System";
+            var media = await _mediaService.UploadLocalImageAsync(
+                model.FeaturedImageFile,
+                $"Cause: {model.Title}",
+                model.Title,
+                MediaCategory.Cause,
+                model.Tags,
+                uploadedBy);
+            
+            if (media != null)
             {
-                cause.FeaturedImageUrl = model.FeaturedImageUrl;
-            }
-            else if (model.FeaturedImageFile != null)
-            {
-                // Upload to centralized Media Manager
-                var uploadedBy = User.Identity?.Name;
-                var media = await _mediaService.UploadLocalImageAsync(
-                    model.FeaturedImageFile,
-                    $"Cause: {model.Title}",
-                    model.Title,
-                    MediaCategory.Cause,
-                    model.Tags,
-                    uploadedBy);
-                
                 cause.FeaturedImageUrl = media.FilePath;
                 
                 // Track usage
@@ -131,15 +151,12 @@ public class CausesController : Controller
                 TempData["SuccessMessage"] = "Cause created successfully!";
                 return RedirectToAction(nameof(Index));
             }
-
-            await _causeService.CreateCauseAsync(cause);
-
-            TempData["SuccessMessage"] = "Cause created successfully!";
-            return RedirectToAction(nameof(Index));
         }
 
-        SetTinyMceApiKey();
-        return View(model);
+        await _causeService.CreateCauseAsync(cause);
+
+        TempData["SuccessMessage"] = "Cause created successfully!";
+        return RedirectToAction(nameof(Index));
     }
 
     // GET: Admin/Causes/Edit/5
@@ -185,67 +202,86 @@ public class CausesController : Controller
             return NotFound();
         }
 
-        if (ModelState.IsValid)
+        // Log all ModelState errors for debugging
+        if (!ModelState.IsValid)
         {
-            var cause = await _causeService.GetCauseByIdAsync(id);
-            if (cause == null)
-            {
-                return NotFound();
-            }
+            var errors = ModelState
+                .Where(x => x.Value?.Errors.Count > 0)
+                .Select(x => new
+                {
+                    Field = x.Key,
+                    Errors = x.Value?.Errors.Select(e => e.ErrorMessage ?? e.Exception?.Message).ToList()
+                })
+                .ToList();
 
-            cause.Title = model.Title;
-            cause.Slug = string.IsNullOrWhiteSpace(model.Slug)
-                ? _causeService.GenerateSlug(model.Title)
-                : model.Slug;
-            cause.Description = model.Description;
-            cause.ShortDescription = model.ShortDescription;
-            cause.Category = model.Category;
-            cause.GoalAmount = model.GoalAmount;
-            cause.RaisedAmount = model.RaisedAmount;
-            cause.StartDate = model.StartDate;
-            cause.EndDate = model.EndDate;
-            cause.DonationUrl = model.DonationUrl;
-            cause.IsPublished = model.IsPublished;
-            cause.IsFeatured = model.IsFeatured;
-            cause.Tags = model.Tags;
+            var errorMessage = string.Join("; ", errors.Select(e => 
+                $"{e.Field}: {string.Join(", ", e.Errors ?? new List<string>())}"));
 
-            // Handle featured image update
-            if (!string.IsNullOrWhiteSpace(model.FeaturedImageUrl) && model.FeaturedImageUrl != cause.FeaturedImageUrl)
-            {
-                // New image from Media Library - just update URL
-                cause.FeaturedImageUrl = model.FeaturedImageUrl;
-            }
-            else if (model.FeaturedImageFile != null)
-            {
-                // New file upload - use Media Manager
-                var uploadedBy = User.Identity?.Name;
-                var media = await _mediaService.UploadLocalImageAsync(
-                    model.FeaturedImageFile,
-                    $"Cause: {model.Title}",
-                    model.Title,
-                    MediaCategory.Cause,
-                    model.Tags,
-                    uploadedBy);
-                
-                cause.FeaturedImageUrl = media.FilePath;
-                
-                // Track new usage
-                await _mediaService.TrackMediaUsageAsync(media.Id, "Cause", cause.Id, UsageType.Featured);
-            }
-            // If neither condition is met, image stays the same (which is correct)
-
-            await _causeService.UpdateCauseAsync(cause);
-
-            TempData["SuccessMessage"] = "Cause updated successfully!";
-            return RedirectToAction(nameof(Index));
+            TempData["ErrorMessage"] = $"Validation failed: {errorMessage}";
+            SetTinyMceApiKey();
+            return View(model);
         }
 
-        // If we get here, ModelState is invalid - log the errors
-        var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-        TempData["ErrorMessage"] = $"Validation failed: {string.Join(", ", errors)}";
-        
-        SetTinyMceApiKey();
-        return View(model);
+        var cause = await _causeService.GetCauseByIdAsync(id);
+        if (cause == null)
+        {
+            return NotFound();
+        }
+
+        cause.Title = model.Title;
+        cause.Slug = string.IsNullOrWhiteSpace(model.Slug)
+            ? _causeService.GenerateSlug(model.Title)
+            : model.Slug;
+        cause.Description = model.Description;
+        cause.ShortDescription = model.ShortDescription;
+        cause.Category = model.Category;
+        cause.GoalAmount = model.GoalAmount;
+        cause.RaisedAmount = model.RaisedAmount;
+        cause.StartDate = model.StartDate;
+        cause.EndDate = model.EndDate;
+        cause.DonationUrl = model.DonationUrl;
+        cause.IsPublished = model.IsPublished;
+        cause.IsFeatured = model.IsFeatured;
+        cause.Tags = model.Tags;
+
+        // Handle featured image update
+        if (!string.IsNullOrWhiteSpace(model.FeaturedImageUrl) && model.FeaturedImageUrl != cause.FeaturedImageUrl)
+        {
+            // New image from Media Library - just update URL
+            cause.FeaturedImageUrl = model.FeaturedImageUrl;
+        }
+        else if (model.FeaturedImageFile != null)
+        {
+            // New file upload - use Media Manager
+            var uploadedBy = User.Identity?.Name ?? "System";
+            var media = await _mediaService.UploadLocalImageAsync(
+                model.FeaturedImageFile,
+                $"Cause: {model.Title}",
+                model.Title,
+                MediaCategory.Cause,
+                model.Tags,
+                uploadedBy);
+            
+            if (media != null)
+            {
+                cause.FeaturedImageUrl = media.FilePath;
+                
+                // Save first to get the ID
+                await _causeService.UpdateCauseAsync(cause);
+                
+                // Then track usage
+                await _mediaService.TrackMediaUsageAsync(media.Id, "Cause", cause.Id, UsageType.Featured);
+                
+                TempData["SuccessMessage"] = "Cause updated successfully!";
+                return RedirectToAction(nameof(Index));
+            }
+        }
+        // If neither condition is met, image stays the same (which is correct)
+
+        await _causeService.UpdateCauseAsync(cause);
+
+        TempData["SuccessMessage"] = "Cause updated successfully!";
+        return RedirectToAction(nameof(Index));
     }
 
     // POST: Admin/Causes/Delete/5

@@ -76,45 +76,65 @@ public class EventsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(EventViewModel model)
     {
-        if (ModelState.IsValid)
+        // Log all ModelState errors for debugging
+        if (!ModelState.IsValid)
         {
-            var eventItem = new Event
-            {
-                Title = model.Title,
-                Slug = string.IsNullOrWhiteSpace(model.Slug)
-                    ? _eventService.GenerateSlug(model.Title)
-                    : model.Slug,
-                Description = model.Description,
-                EventDate = model.EventDate,
-                StartTime = model.StartTime,
-                EndTime = model.EndTime,
-                Location = model.Location,
-                OrganizerName = model.OrganizerName,
-                OrganizerEmail = model.OrganizerEmail,
-                OrganizerPhone = model.OrganizerPhone,
-                RegistrationUrl = model.RegistrationUrl,
-                IsPublished = model.IsPublished,
-                Tags = model.Tags,
-                MaxAttendees = model.MaxAttendees
-            };
+            var errors = ModelState
+                .Where(x => x.Value?.Errors.Count > 0)
+                .Select(x => new
+                {
+                    Field = x.Key,
+                    Errors = x.Value?.Errors.Select(e => e.ErrorMessage ?? e.Exception?.Message).ToList()
+                })
+                .ToList();
 
-            // Handle featured image - prioritize Media Library
-            if (!string.IsNullOrWhiteSpace(model.FeaturedImageUrl))
+            var errorMessage = string.Join("; ", errors.Select(e => 
+                $"{e.Field}: {string.Join(", ", e.Errors ?? new List<string>())}"));
+
+            TempData["ErrorMessage"] = $"Validation failed: {errorMessage}";
+            SetTinyMceApiKey();
+            return View(model);
+        }
+
+        var eventItem = new Event
+        {
+            Title = model.Title,
+            Slug = string.IsNullOrWhiteSpace(model.Slug)
+                ? _eventService.GenerateSlug(model.Title)
+                : model.Slug,
+            Description = model.Description,
+            EventDate = model.EventDate,
+            StartTime = model.StartTime,
+            EndTime = model.EndTime,
+            Location = model.Location,
+            OrganizerName = model.OrganizerName,
+            OrganizerEmail = model.OrganizerEmail,
+            OrganizerPhone = model.OrganizerPhone,
+            RegistrationUrl = model.RegistrationUrl,
+            IsPublished = model.IsPublished,
+            Tags = model.Tags,
+            MaxAttendees = model.MaxAttendees
+        };
+
+        // Handle featured image - prioritize Media Library
+        if (!string.IsNullOrWhiteSpace(model.FeaturedImageUrl))
+        {
+            eventItem.FeaturedImageUrl = model.FeaturedImageUrl;
+        }
+        else if (model.FeaturedImageFile != null)
+        {
+            // Upload to centralized Media Manager
+            var uploadedBy = User.Identity?.Name ?? "System";
+            var media = await _mediaService.UploadLocalImageAsync(
+                model.FeaturedImageFile,
+                $"Event: {model.Title}",
+                model.Title,
+                MediaCategory.Event,
+                model.Tags,
+                uploadedBy);
+            
+            if (media != null)
             {
-                eventItem.FeaturedImageUrl = model.FeaturedImageUrl;
-            }
-            else if (model.FeaturedImageFile != null)
-            {
-                // Upload to centralized Media Manager
-                var uploadedBy = User.Identity?.Name;
-                var media = await _mediaService.UploadLocalImageAsync(
-                    model.FeaturedImageFile,
-                    $"Event: {model.Title}",
-                    model.Title,
-                    MediaCategory.Event,
-                    model.Tags,
-                    uploadedBy);
-                
                 eventItem.FeaturedImageUrl = media.FilePath;
                 
                 // Track usage
@@ -124,15 +144,12 @@ public class EventsController : Controller
                 TempData["SuccessMessage"] = "Event created successfully!";
                 return RedirectToAction(nameof(Index));
             }
-
-            await _eventService.CreateEventAsync(eventItem);
-
-            TempData["SuccessMessage"] = "Event created successfully!";
-            return RedirectToAction(nameof(Index));
         }
 
-        SetTinyMceApiKey();
-        return View(model);
+        await _eventService.CreateEventAsync(eventItem);
+
+        TempData["SuccessMessage"] = "Event created successfully!";
+        return RedirectToAction(nameof(Index));
     }
 
     // GET: Admin/Events/Edit/5
@@ -179,68 +196,87 @@ public class EventsController : Controller
             return NotFound();
         }
 
-        if (ModelState.IsValid)
+        // Log all ModelState errors for debugging
+        if (!ModelState.IsValid)
         {
-            var eventItem = await _eventService.GetEventByIdAsync(id);
-            if (eventItem == null)
-            {
-                return NotFound();
-            }
+            var errors = ModelState
+                .Where(x => x.Value?.Errors.Count > 0)
+                .Select(x => new
+                {
+                    Field = x.Key,
+                    Errors = x.Value?.Errors.Select(e => e.ErrorMessage ?? e.Exception?.Message).ToList()
+                })
+                .ToList();
 
-            eventItem.Title = model.Title;
-            eventItem.Slug = string.IsNullOrWhiteSpace(model.Slug)
-                ? _eventService.GenerateSlug(model.Title)
-                : model.Slug;
-            eventItem.Description = model.Description;
-            eventItem.EventDate = model.EventDate;
-            eventItem.StartTime = model.StartTime;
-            eventItem.EndTime = model.EndTime;
-            eventItem.Location = model.Location;
-            eventItem.OrganizerName = model.OrganizerName;
-            eventItem.OrganizerEmail = model.OrganizerEmail;
-            eventItem.OrganizerPhone = model.OrganizerPhone;
-            eventItem.RegistrationUrl = model.RegistrationUrl;
-            eventItem.IsPublished = model.IsPublished;
-            eventItem.Tags = model.Tags;
-            eventItem.MaxAttendees = model.MaxAttendees;
+            var errorMessage = string.Join("; ", errors.Select(e => 
+                $"{e.Field}: {string.Join(", ", e.Errors ?? new List<string>())}"));
 
-            // Handle featured image update
-            if (!string.IsNullOrWhiteSpace(model.FeaturedImageUrl) && model.FeaturedImageUrl != eventItem.FeaturedImageUrl)
-            {
-                // New image from Media Library - just update URL
-                eventItem.FeaturedImageUrl = model.FeaturedImageUrl;
-            }
-            else if (model.FeaturedImageFile != null)
-            {
-                // New file upload - use Media Manager
-                var uploadedBy = User.Identity?.Name;
-                var media = await _mediaService.UploadLocalImageAsync(
-                    model.FeaturedImageFile,
-                    $"Event: {model.Title}",
-                    model.Title,
-                    MediaCategory.Event,
-                    model.Tags,
-                    uploadedBy);
-                
-                eventItem.FeaturedImageUrl = media.FilePath;
-                
-                // Track new usage
-                await _mediaService.TrackMediaUsageAsync(media.Id, "Event", eventItem.Id, UsageType.Featured);
-            }
-            // If neither condition is met, image stays the same (which is correct)
-
-            await _eventService.UpdateEventAsync(eventItem);
-
-            TempData["SuccessMessage"] = "Event updated successfully!";
-            return RedirectToAction(nameof(Index));
+            TempData["ErrorMessage"] = $"Validation failed: {errorMessage}";
+            SetTinyMceApiKey();
+            return View(model);
         }
 
-        // If we get here, ModelState is invalid - log the errors
-        var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-        TempData["ErrorMessage"] = $"Validation failed: {string.Join(", ", errors)}";
-        
-        SetTinyMceApiKey();
-        return View(model);
+        var eventItem = await _eventService.GetEventByIdAsync(id);
+        if (eventItem == null)
+        {
+            return NotFound();
+        }
+
+        eventItem.Title = model.Title;
+        eventItem.Slug = string.IsNullOrWhiteSpace(model.Slug)
+            ? _eventService.GenerateSlug(model.Title)
+            : model.Slug;
+        eventItem.Description = model.Description;
+        eventItem.EventDate = model.EventDate;
+        eventItem.StartTime = model.StartTime;
+        eventItem.EndTime = model.EndTime;
+        eventItem.Location = model.Location;
+        eventItem.OrganizerName = model.OrganizerName;
+        eventItem.OrganizerEmail = model.OrganizerEmail;
+        eventItem.OrganizerPhone = model.OrganizerPhone;
+        eventItem.RegistrationUrl = model.RegistrationUrl;
+        eventItem.IsPublished = model.IsPublished;
+        eventItem.Tags = model.Tags;
+        eventItem.MaxAttendees = model.MaxAttendees;
+
+        // Handle featured image update
+        if (!string.IsNullOrWhiteSpace(model.FeaturedImageUrl) && model.FeaturedImageUrl != eventItem.FeaturedImageUrl)
+        {
+            // New image from Media Library - just update URL
+            eventItem.FeaturedImageUrl = model.FeaturedImageUrl;
+        }
+        else if (model.FeaturedImageFile != null)
+        {
+            // New file upload - use Media Manager
+            var uploadedBy = User.Identity?.Name ?? "System";
+            var media = await _mediaService.UploadLocalImageAsync(
+                model.FeaturedImageFile,
+                $"Event: {model.Title}",
+                model.Title,
+                MediaCategory.Event,
+                model.Tags,
+                uploadedBy);
+            
+            if (media != null)
+            {
+                eventItem.FeaturedImageUrl = media.FilePath;
+                
+                // Save first to get the ID
+                await _eventService.UpdateEventAsync(eventItem);
+                
+                // Then track usage
+                await _mediaService.TrackMediaUsageAsync(media.Id, "Event", eventItem.Id, UsageType.Featured);
+                
+                TempData["SuccessMessage"] = "Event updated successfully!";
+                return RedirectToAction(nameof(Index));
+            }
+        }
+        // If neither condition is met, image stays the same (which is correct)
+
+        await _eventService.UpdateEventAsync(eventItem);
+
+        TempData["SuccessMessage"] = "Event updated successfully!";
+        return RedirectToAction(nameof(Index));
     }
 
     // POST: Admin/Events/Delete/5
