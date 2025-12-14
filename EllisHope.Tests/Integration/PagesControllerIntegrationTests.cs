@@ -17,7 +17,6 @@ public class PagesControllerIntegrationTests : IClassFixture<CustomWebApplicatio
     public PagesControllerIntegrationTests(CustomWebApplicationFactory factory)
     {
         _factory = factory;
-        _factory.EnsureDatabaseCreated(); // Initialize database before running tests
         _client = factory.CreateClient(new WebApplicationFactoryClientOptions
         {
             AllowAutoRedirect = false
