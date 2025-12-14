@@ -121,30 +121,33 @@
     </div>
 </div>
 
-@section Scripts {
-    <script>
-        let currentFieldName = '';
-        let selectedMediaUrl = '';
-
-        function openMediaLibraryModal(fieldName, category) {
-            currentFieldName = fieldName;
+<script>
+    (function() {
+        // Media Picker JavaScript for @fieldName
+        window.openMediaLibraryModal = window.openMediaLibraryModal || function(fieldName, category) {
             const modal = new bootstrap.Modal(document.getElementById('mediaLibraryModal_' + fieldName));
             modal.show();
             
-            // Set category filter if provided
             if (category) {
-                document.getElementById('mediaCategory_' + fieldName).value = category;
+                const categorySelect = document.getElementById('mediaCategory_' + fieldName);
+                if (categorySelect) {
+                    categorySelect.value = category;
+                }
             }
             
             loadMediaLibrary(fieldName);
-        }
+        };
 
-        function loadMediaLibrary(fieldName) {
-            const searchTerm = document.getElementById('mediaSearch_' + fieldName).value;
-            const category = document.getElementById('mediaCategory_' + fieldName).value;
+        window.loadMediaLibrary = window.loadMediaLibrary || function(fieldName) {
+            const searchInput = document.getElementById('mediaSearch_' + fieldName);
+            const categorySelect = document.getElementById('mediaCategory_' + fieldName);
             const gridContainer = document.getElementById('mediaGrid_' + fieldName);
+            
+            if (!searchInput || !categorySelect || !gridContainer) return;
+            
+            const searchTerm = searchInput.value;
+            const category = categorySelect.value;
 
-            // Build query string
             let url = '/Admin/Media/GetMediaJson';
             if (category) {
                 url += '?category=' + category;
@@ -153,7 +156,6 @@
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
-                    // Filter by search term if provided
                     let filteredData = data;
                     if (searchTerm) {
                         const searchLower = searchTerm.toLowerCase();
@@ -210,87 +212,111 @@
                         </div>
                     `;
                 });
-        }
+        };
 
-        function selectMedia(fieldName, imageUrl) {
-            // Set the hidden input value
-            document.getElementById(fieldName).value = imageUrl;
-            
-            // Update the current image display
+        window.selectMedia = window.selectMedia || function(fieldName, imageUrl) {
+            const hiddenInput = document.getElementById(fieldName);
             const currentImageDiv = document.getElementById('currentImage_' + fieldName);
-            currentImageDiv.querySelector('img').src = imageUrl;
-            currentImageDiv.style.display = 'block';
             
-            // Hide local upload section
+            if (hiddenInput) {
+                hiddenInput.value = imageUrl;
+            }
+            
+            if (currentImageDiv) {
+                const img = currentImageDiv.querySelector('img');
+                if (img) {
+                    img.src = imageUrl;
+                }
+                currentImageDiv.style.display = 'block';
+            }
+            
             const uploadSection = document.getElementById('localUpload_' + fieldName);
             if (uploadSection) {
                 uploadSection.style.display = 'none';
             }
             
-            // Close modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('mediaLibraryModal_' + fieldName));
-            if (modal) {
-                modal.hide();
+            const modalElement = document.getElementById('mediaLibraryModal_' + fieldName);
+            if (modalElement) {
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                if (modal) {
+                    modal.hide();
+                }
             }
-        }
+        };
 
-        function clearMediaSelection(fieldName) {
-            document.getElementById(fieldName).value = '';
-            document.getElementById('currentImage_' + fieldName).style.display = 'none';
+        window.clearMediaSelection = window.clearMediaSelection || function(fieldName) {
+            const hiddenInput = document.getElementById(fieldName);
+            const currentImageDiv = document.getElementById('currentImage_' + fieldName);
             
-            // Also clear file input if exists
+            if (hiddenInput) {
+                hiddenInput.value = '';
+            }
+            
+            if (currentImageDiv) {
+                currentImageDiv.style.display = 'none';
+            }
+            
             const fileInput = document.getElementById('fileUpload_' + fieldName);
             if (fileInput) {
                 fileInput.value = '';
             }
-        }
+        };
 
-        function toggleLocalUpload(fieldName) {
+        window.toggleLocalUpload = window.toggleLocalUpload || function(fieldName) {
             const uploadSection = document.getElementById('localUpload_' + fieldName);
-            if (uploadSection.style.display === 'none') {
-                uploadSection.style.display = 'block';
-            } else {
-                uploadSection.style.display = 'none';
+            if (uploadSection) {
+                uploadSection.style.display = uploadSection.style.display === 'none' ? 'block' : 'none';
             }
-        }
+        };
 
-        function previewLocalImage(input, fieldName) {
+        window.previewLocalImage = window.previewLocalImage || function(input, fieldName) {
             const preview = document.getElementById('previewImg_' + fieldName);
             const previewContainer = document.getElementById('preview_' + fieldName);
+            const hiddenInput = document.getElementById(fieldName);
+            const currentImageDiv = document.getElementById('currentImage_' + fieldName);
 
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
-                    preview.src = e.target.result;
-                    previewContainer.style.display = 'block';
+                    if (preview) {
+                        preview.src = e.target.result;
+                    }
+                    if (previewContainer) {
+                        previewContainer.style.display = 'block';
+                    }
                 };
                 reader.readAsDataURL(input.files[0]);
                 
-                // Clear the media library selection since we're uploading new
-                document.getElementById(fieldName).value = '';
-                document.getElementById('currentImage_' + fieldName).style.display = 'none';
+                if (hiddenInput) {
+                    hiddenInput.value = '';
+                }
+                if (currentImageDiv) {
+                    currentImageDiv.style.display = 'none';
+                }
             } else {
-                preview.src = '';
-                previewContainer.style.display = 'none';
+                if (preview) {
+                    preview.src = '';
+                }
+                if (previewContainer) {
+                    previewContainer.style.display = 'none';
+                }
             }
+        };
+
+        // Add search on enter key for this field
+        const searchInput_@(fieldName.Replace(".", "_")) = document.getElementById('mediaSearch_@fieldName');
+        if (searchInput_@(fieldName.Replace(".", "_"))) {
+            searchInput_@(fieldName.Replace(".", "_")).addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    loadMediaLibrary('@fieldName');
+                }
+            });
         }
 
-        // Add search on enter key
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInputs = document.querySelectorAll('[id^="mediaSearch_"]');
-            searchInputs.forEach(input => {
-                input.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        const fieldName = this.id.replace('mediaSearch_', '');
-                        loadMediaLibrary(fieldName);
-                    }
-                });
-            });
-        });
-
-        // Add hover effect to media items
-        document.addEventListener('DOMContentLoaded', function() {
+        // Add hover styles
+        if (!document.getElementById('mediaPicker_styles')) {
             const style = document.createElement('style');
+            style.id = 'mediaPicker_styles';
             style.textContent = `
                 .media-item:hover {
                     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
@@ -302,6 +328,6 @@
                 }
             `;
             document.head.appendChild(style);
-        });
-    </script>
-}
+        }
+    })();
+</script>
