@@ -15,6 +15,14 @@
         <form asp-action="Create" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle"></i> @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
             <div class="row">
                 <div class="col-md-8">
                     <!-- Title -->
@@ -192,7 +200,20 @@
             plugins: 'anchor autolink charmap codesample emoticons link lists searchreplace table visualblocks wordcount',
             toolbar: 'undo redo | blocks fontsize | bold italic underline | link table | align lineheight | numlist bullist | removeformat',
             menubar: false,
-            content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 14px; }'
+            content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 14px; }',
+            setup: function (editor) {
+                // Sync content before form submit
+                editor.on('change', function () {
+                    editor.save();
+                });
+            }
+        });
+
+        // CRITICAL: Ensure TinyMCE content is saved before form submission
+        document.querySelector('form').addEventListener('submit', function(e) {
+            if (typeof tinymce !== 'undefined') {
+                tinymce.triggerSave();
+            }
         });
 
         // Auto-generate slug from title
