@@ -25,10 +25,12 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     {
         builder.ConfigureServices(services =>
         {
-            // Remove existing DbContext and DbContextOptions registrations
+            // Remove ALL DbContext and provider-related services
             var descriptorsToRemove = services
-                .Where(d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>) ||
-                           d.ServiceType == typeof(ApplicationDbContext))
+                .Where(d =>
+                    d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>) ||
+                    d.ServiceType == typeof(DbContextOptions) ||
+                    d.ServiceType == typeof(ApplicationDbContext))
                 .ToList();
 
             foreach (var descriptor in descriptorsToRemove)
@@ -45,7 +47,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlite(_connection);
-                options.EnableSensitiveDataLogging(); // Helpful for debugging tests
+                options.EnableSensitiveDataLogging();
             });
 
             // Replace the antiforgery service with a no-op implementation for testing
@@ -60,10 +62,14 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
         builder.UseEnvironment("Testing");
     }
 
-    /// <summary>
-    /// Ensures the database is initialized. Call this before running tests.
-    /// </summary>
-    public void EnsureDatabaseCreated()
+    protected override HttpClient CreateClient(WebApplicationFactoryClientOptions options)
+    {
+        // Ensure database is initialized before creating client
+        EnsureDatabaseCreated();
+        return base.CreateClient(options);
+    }
+
+    private void EnsureDatabaseCreated()
     {
         if (_databaseInitialized)
             return;
@@ -82,10 +88,6 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             {
                 // Ensure database schema is created
                 db.Database.EnsureCreated();
-
-                // Optionally seed test data
-                SeedTestData(db);
-
                 logger.LogInformation("Test database initialized successfully with SQLite");
                 _databaseInitialized = true;
             }
@@ -103,23 +105,6 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
         var scope = Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         return db;
-    }
-
-    private void SeedTestData(ApplicationDbContext context)
-    {
-        // Optionally add common test data here that all tests can use
-        // For example:
-        // context.Causes.Add(new Cause
-        // {
-        //     Title = "Common Test Cause",
-        //     Slug = "common-test-cause",
-        //     Description = "A cause available in all tests",
-        //     GoalAmount = 1000,
-        //     RaisedAmount = 500,
-        //     StartDate = DateTime.Now,
-        //     IsPublished = true
-        // });
-        // context.SaveChanges();
     }
 
     // CRITICAL: Properly dispose of the SQLite connection

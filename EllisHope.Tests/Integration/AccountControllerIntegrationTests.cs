@@ -16,7 +16,6 @@ public class AccountControllerIntegrationTests : IClassFixture<CustomWebApplicat
     public AccountControllerIntegrationTests(CustomWebApplicationFactory factory)
     {
         _factory = factory;
-        _factory.EnsureDatabaseCreated(); // Initialize database before running tests
         _client = factory.CreateClient(new WebApplicationFactoryClientOptions
         {
             AllowAutoRedirect = false
