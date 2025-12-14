@@ -9,9 +9,32 @@
         <a asp-action="Upload" class="btn btn-primary me-2">
             <i class="bi bi-upload"></i> Upload Image
         </a>
-        <a asp-action="UnsplashSearch" class="btn btn-outline-primary">
+        <a asp-action="UnsplashSearch" class="btn btn-outline-primary me-2">
             <i class="bi bi-images"></i> Browse Unsplash
         </a>
+        <div class="btn-group">
+            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                <i class="bi bi-tools"></i> Maintenance
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#unusedMediaModal">
+                        <i class="bi bi-trash"></i> Find Unused Media
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#duplicatesModal">
+                        <i class="bi bi-files"></i> Find Duplicates
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a class="dropdown-item" asp-area="Admin" asp-controller="MediaMigration" asp-action="Index">
+                        <i class="bi bi-arrow-left-right"></i> Migration Tool
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 
@@ -261,3 +284,208 @@
         }
     </div>
 </div>
+
+<!-- Unused Media Modal -->
+<div class="modal fade" id="unusedMediaModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-trash"></i> Unused Media Files</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted">Loading unused media...</p>
+                <div id="unusedMediaContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Duplicates Modal -->
+<div class="modal fade" id="duplicatesModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-files"></i> Duplicate Images</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted">Loading duplicates...</p>
+                <div id="duplicatesContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-warning" id="removeDuplicatesBtn" style="display:none;">
+                    <i class="bi bi-trash"></i> Remove All Duplicates
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Load unused media when modal opens
+        $('#unusedMediaModal').on('show.bs.modal', function () {
+            fetch('/Admin/Media/GetUnusedMedia')
+                .then(response => response.json())
+                .then(data => {
+                    const content = document.getElementById('unusedMediaContent');
+                    if (data.length === 0) {
+                        content.innerHTML = '<div class="alert alert-success"><i class="bi bi-check-circle"></i> No unused media found! All images are in use.</div>';
+                    } else {
+                        let html = `
+                            <div class="alert alert-warning">
+                                <i class="bi bi-exclamation-triangle"></i>
+                                Found <strong>${data.length}</strong> unused images. These can be safely deleted.
+                            </div>
+                            <div class="row g-3">
+                        `;
+                        
+                        data.forEach(media => {
+                            html += `
+                                <div class="col-md-2">
+                                    <div class="card">
+                                        <img src="${media.filePath}" alt="${media.fileName}" class="card-img-top" style="height: 120px; object-fit: cover;">
+                                        <div class="card-body p-2">
+                                            <p class="small mb-1 text-truncate" title="${media.fileName}">${media.fileName}</p>
+                                            <small class="text-muted">${(media.fileSize / 1024).toFixed(0)} KB</small>
+                                        </div>
+                                        <div class="card-footer p-2">
+                                            <button class="btn btn-sm btn-danger w-100" onclick="deleteUnused(${media.id})">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        
+                        html += `</div>
+                            <div class="mt-3">
+                                <button class="btn btn-danger" onclick="deleteAllUnused()">
+                                    <i class="bi bi-trash"></i> Delete All Unused (${data.length})
+                                </button>
+                            </div>
+                        `;
+                        content.innerHTML = html;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('unusedMediaContent').innerHTML = 
+                        '<div class="alert alert-danger">Error loading unused media</div>';
+                });
+        });
+
+        // Load duplicates when modal opens
+        $('#duplicatesModal').on('show.bs.modal', function () {
+            fetch('/Admin/Media/GetDuplicates')
+                .then(response => response.json())
+                .then(data => {
+                    const content = document.getElementById('duplicatesContent');
+                    const removeBtn = document.getElementById('removeDuplicatesBtn');
+                    
+                    if (data.length === 0) {
+                        content.innerHTML = '<div class="alert alert-success"><i class="bi bi-check-circle"></i> No duplicates found!</div>';
+                        removeBtn.style.display = 'none';
+                    } else {
+                        let html = `
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i>
+                                Found <strong>${data.length}</strong> sets of duplicate images.
+                                The oldest image in each set will be kept, others will be deleted.
+                            </div>
+                        `;
+                        
+                        data.forEach(group => {
+                            html += `
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <strong>Duplicate Set</strong> - ${group.length} images (Hash: ${group[0].fileHash?.substring(0, 16)}...)
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row g-2">
+                            `;
+                            
+                            group.forEach((media, index) => {
+                                const isOldest = index === 0;
+                                html += `
+                                    <div class="col-md-2">
+                                        <div class="card ${isOldest ? 'border-success' : 'border-danger'}">
+                                            <img src="${media.filePath}" class="card-img-top" style="height: 100px; object-fit: cover;">
+                                            <div class="card-body p-2">
+                                                <p class="small mb-0 text-truncate">${media.fileName}</p>
+                                                <small class="text-muted">${new Date(media.uploadedDate).toLocaleDateString()}</small>
+                                                ${isOldest ? '<span class="badge bg-success w-100 mt-1">Keep</span>' : '<span class="badge bg-danger w-100 mt-1">Delete</span>'}
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                            
+                            html += `
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        
+                        content.innerHTML = html;
+                        removeBtn.style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('duplicatesContent').innerHTML = 
+                        '<div class="alert alert-danger">Error loading duplicates</div>';
+                });
+        });
+
+        // Remove all duplicates
+        document.getElementById('removeDuplicatesBtn')?.addEventListener('click', function() {
+            if (confirm('Are you sure you want to remove all duplicate images? The oldest image in each set will be kept.')) {
+                fetch('/Admin/Media/RemoveDuplicates', { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(`Removed ${data.removed} duplicate images`);
+                        location.reload();
+                    })
+                    .catch(error => alert('Error removing duplicates'));
+            }
+        });
+
+        // Delete single unused image
+        function deleteUnused(id) {
+            if (confirm('Delete this image?')) {
+                fetch(`/Admin/Media/Delete/${id}`, { 
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({ force: 'false' })
+                })
+                .then(() => {
+                    alert('Image deleted');
+                    $('#unusedMediaModal').modal('hide');
+                    location.reload();
+                })
+                .catch(error => alert('Error deleting image'));
+            }
+        }
+
+        // Delete all unused images
+        function deleteAllUnused() {
+            if (confirm('Are you sure you want to delete ALL unused images? This cannot be undone.')) {
+                fetch('/Admin/Media/DeleteAllUnused', { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(`Deleted ${data.deleted} unused images`);
+                        location.reload();
+                    })
+                    .catch(error => alert('Error deleting images'));
+            }
+        }
+    </script>
+}

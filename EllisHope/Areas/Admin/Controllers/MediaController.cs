@@ -267,4 +267,120 @@ public class MediaController : Controller
             m.Source
         }));
     }
+
+    // GET: Admin/Media/GetUnusedMedia
+    [HttpGet]
+    public async Task<IActionResult> GetUnusedMedia()
+    {
+        var allMedia = await _mediaService.GetAllMediaAsync();
+        var unused = new List<object>();
+
+        foreach (var media in allMedia)
+        {
+            if (!await _mediaService.IsMediaInUseAsync(media.Id))
+            {
+                unused.Add(new
+                {
+                    media.Id,
+                    media.FileName,
+                    media.FilePath,
+                    media.FileSize,
+                    media.UploadedDate
+                });
+            }
+        }
+
+        return Json(unused);
+    }
+
+    // GET: Admin/Media/GetDuplicates
+    [HttpGet]
+    public async Task<IActionResult> GetDuplicates()
+    {
+        var allMedia = await _mediaService.GetAllMediaAsync();
+        
+        // Group by FileHash
+        var duplicateGroups = allMedia
+            .Where(m => !string.IsNullOrEmpty(m.FileHash))
+            .GroupBy(m => m.FileHash)
+            .Where(g => g.Count() > 1)
+            .Select(g => g.OrderBy(m => m.UploadedDate).Select(m => new
+            {
+                m.Id,
+                m.FileName,
+                m.FilePath,
+                m.FileHash,
+                m.UploadedDate
+            }).ToList())
+            .ToList();
+
+        return Json(duplicateGroups);
+    }
+
+    // POST: Admin/Media/RemoveDuplicates
+    [HttpPost]
+    public async Task<IActionResult> RemoveDuplicates()
+    {
+        try
+        {
+            var allMedia = await _mediaService.GetAllMediaAsync();
+            var removed = 0;
+
+            var duplicateGroups = allMedia
+                .Where(m => !string.IsNullOrEmpty(m.FileHash))
+                .GroupBy(m => m.FileHash)
+                .Where(g => g.Count() > 1);
+
+            foreach (var group in duplicateGroups)
+            {
+                // Keep oldest, delete rest
+                var toKeep = group.OrderBy(m => m.UploadedDate).First();
+                var toDelete = group.Where(m => m.Id != toKeep.Id);
+
+                foreach (var duplicate in toDelete)
+                {
+                    if (await _mediaService.DeleteMediaAsync(duplicate.Id, force: true))
+                    {
+                        removed++;
+                    }
+                }
+            }
+
+            return Json(new { removed });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error removing duplicates");
+            return Json(new { error = ex.Message });
+        }
+    }
+
+    // POST: Admin/Media/DeleteAllUnused
+    [HttpPost]
+    public async Task<IActionResult> DeleteAllUnused()
+    {
+        try
+        {
+            var allMedia = await _mediaService.GetAllMediaAsync();
+            var deleted = 0;
+
+            foreach (var media in allMedia)
+            {
+                if (!await _mediaService.IsMediaInUseAsync(media.Id))
+                {
+                    if (await _mediaService.DeleteMediaAsync(media.Id, force: false))
+                    {
+                        deleted++;
+                    }
+                }
+            }
+
+            return Json(new { deleted });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting unused media");
+            return Json(new { error = ex.Message });
+        }
+    }
 }
