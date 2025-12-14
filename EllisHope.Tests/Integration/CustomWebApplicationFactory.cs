@@ -15,35 +15,26 @@ namespace EllisHope.Tests.Integration;
 /// Custom WebApplicationFactory for integration testing
 /// Uses SQLite in-memory database for reliable and fast testing
 /// </summary>
-public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IDisposable
+public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
     private SqliteConnection? _connection;
+    private bool _databaseInitialized;
+    private readonly object _lock = new object();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureServices(services =>
         {
-            // Remove ALL existing DbContext-related registrations
-            var dbContextDescriptor = services.SingleOrDefault(
-                d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
-
-            if (dbContextDescriptor != null)
-                services.Remove(dbContextDescriptor);
-
-            var dbContextOptionsDescriptor = services.Where(d => d.ServiceType == typeof(DbContextOptions))
+            // Remove existing DbContext and DbContextOptions registrations
+            var descriptorsToRemove = services
+                .Where(d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>) ||
+                           d.ServiceType == typeof(ApplicationDbContext))
                 .ToList();
 
-            foreach (var descriptor in dbContextOptionsDescriptor)
+            foreach (var descriptor in descriptorsToRemove)
             {
                 services.Remove(descriptor);
             }
-
-            // Remove ApplicationDbContext itself
-            var appDbContextDescriptor = services.SingleOrDefault(
-                d => d.ServiceType == typeof(ApplicationDbContext));
-
-            if (appDbContextDescriptor != null)
-                services.Remove(appDbContextDescriptor);
 
             // Create and open SQLite in-memory connection
             // IMPORTANT: Connection must stay open for in-memory database to persist
@@ -57,29 +48,6 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IDisp
                 options.EnableSensitiveDataLogging(); // Helpful for debugging tests
             });
 
-            // Build service provider and ensure database is created with schema
-            var sp = services.BuildServiceProvider();
-            using var scope = sp.CreateScope();
-            var scopedServices = scope.ServiceProvider;
-            var db = scopedServices.GetRequiredService<ApplicationDbContext>();
-            var logger = scopedServices.GetRequiredService<ILogger<CustomWebApplicationFactory>>();
-
-            try
-            {
-                // Ensure database schema is created
-                db.Database.EnsureCreated();
-
-                // Optionally seed test data
-                SeedTestData(db);
-
-                logger.LogInformation("Test database initialized successfully");
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "An error occurred creating the test database");
-                throw;
-            }
-
             // Replace the antiforgery service with a no-op implementation for testing
             var antiforgeryDescriptor = services.FirstOrDefault(d => d.ServiceType == typeof(IAntiforgery));
             if (antiforgeryDescriptor != null)
@@ -92,11 +60,48 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IDisp
         builder.UseEnvironment("Testing");
     }
 
+    /// <summary>
+    /// Ensures the database is initialized. Call this before running tests.
+    /// </summary>
+    public void EnsureDatabaseCreated()
+    {
+        if (_databaseInitialized)
+            return;
+
+        lock (_lock)
+        {
+            if (_databaseInitialized)
+                return;
+
+            using var scope = Services.CreateScope();
+            var scopedServices = scope.ServiceProvider;
+            var db = scopedServices.GetRequiredService<ApplicationDbContext>();
+            var logger = scopedServices.GetRequiredService<ILogger<CustomWebApplicationFactory>>();
+
+            try
+            {
+                // Ensure database schema is created
+                db.Database.EnsureCreated();
+
+                // Optionally seed test data
+                SeedTestData(db);
+
+                logger.LogInformation("Test database initialized successfully with SQLite");
+                _databaseInitialized = true;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "An error occurred creating the test database");
+                throw;
+            }
+        }
+    }
+
     public ApplicationDbContext GetDbContext()
     {
+        EnsureDatabaseCreated();
         var scope = Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
         return db;
     }
 
