@@ -166,10 +166,10 @@
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="avatar-circle me-2">
-                                            @user.FullName.Substring(0, 1)
+                                            @(string.IsNullOrWhiteSpace(user.FullName) ? "?" : user.FullName.Substring(0, 1).ToUpper())
                                         </div>
                                         <div>
-                                            <strong>@user.FullName</strong>
+                                            <strong>@(string.IsNullOrWhiteSpace(user.FullName) ? user.Email : user.FullName)</strong>
                                             @if (!user.IsActive)
                                             {
                                                 <span class="badge bg-secondary ms-1">Inactive</span>

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using EllisHope.Areas.Admin.Models;
+using EllisHope.Models.Domain;
 
 namespace EllisHope.Areas.Admin.Controllers;
 
@@ -9,13 +10,13 @@ namespace EllisHope.Areas.Admin.Controllers;
 [AllowAnonymous]
 public class AccountController : Controller
 {
-    private readonly SignInManager<IdentityUser> _signInManager;
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<AccountController> _logger;
 
     public AccountController(
-        SignInManager<IdentityUser> signInManager,
-        UserManager<IdentityUser> userManager,
+        SignInManager<ApplicationUser> signInManager,
+        UserManager<ApplicationUser> userManager,
         ILogger<AccountController> logger)
     {
         _signInManager = signInManager;
@@ -38,6 +39,14 @@ public class AccountController : Controller
 
         if (ModelState.IsValid)
         {
+            // Update last login date before sign in attempt
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user != null)
+            {
+                user.LastLoginDate = DateTime.UtcNow;
+                await _userManager.UpdateAsync(user);
+            }
+
             var result = await _signInManager.PasswordSignInAsync(
                 model.Email,
                 model.Password,
@@ -49,7 +58,6 @@ public class AccountController : Controller
                 _logger.LogInformation("User logged in.");
 
                 // Ensure user is in Admin role
-                var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user != null && await _userManager.IsInRoleAsync(user, "Admin"))
                 {
                     if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))

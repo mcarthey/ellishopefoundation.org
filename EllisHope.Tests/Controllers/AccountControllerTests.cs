@@ -1,5 +1,6 @@
 using EllisHope.Areas.Admin.Controllers;
 using EllisHope.Areas.Admin.Models;
+using EllisHope.Models.Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,23 +13,23 @@ namespace EllisHope.Tests.Controllers;
 
 public class AccountControllerTests
 {
-    private readonly Mock<SignInManager<IdentityUser>> _mockSignInManager;
-    private readonly Mock<UserManager<IdentityUser>> _mockUserManager;
+    private readonly Mock<SignInManager<ApplicationUser>> _mockSignInManager;
+    private readonly Mock<UserManager<ApplicationUser>> _mockUserManager;
     private readonly Mock<ILogger<AccountController>> _mockLogger;
     private readonly AccountController _controller;
 
     public AccountControllerTests()
     {
         // Setup UserManager mock
-        var userStoreMock = new Mock<IUserStore<IdentityUser>>();
-        _mockUserManager = new Mock<UserManager<IdentityUser>>(
+        var userStoreMock = new Mock<IUserStore<ApplicationUser>>();
+        _mockUserManager = new Mock<UserManager<ApplicationUser>>(
             userStoreMock.Object,
             null!, null!, null!, null!, null!, null!, null!, null!);
 
         // Setup SignInManager mock
         var contextAccessor = new Mock<IHttpContextAccessor>();
-        var claimsPrincipalFactory = new Mock<IUserClaimsPrincipalFactory<IdentityUser>>();
-        _mockSignInManager = new Mock<SignInManager<IdentityUser>>(
+        var claimsPrincipalFactory = new Mock<IUserClaimsPrincipalFactory<ApplicationUser>>();
+        _mockSignInManager = new Mock<SignInManager<ApplicationUser>>(
             _mockUserManager.Object,
             contextAccessor.Object,
             claimsPrincipalFactory.Object,
@@ -104,7 +105,19 @@ public class AccountControllerTests
             RememberMe = false
         };
 
-        var user = new IdentityUser { Email = "admin@test.com", UserName = "admin@test.com" };
+        var user = new ApplicationUser
+        {
+            Email = "admin@test.com",
+            UserName = "admin@test.com",
+            FirstName = "Admin",
+            LastName = "User"
+        };
+
+        _mockUserManager.Setup(u => u.FindByEmailAsync(model.Email))
+            .ReturnsAsync(user);
+
+        _mockUserManager.Setup(u => u.UpdateAsync(user))
+            .ReturnsAsync(IdentityResult.Success);
 
         _mockSignInManager.Setup(s => s.PasswordSignInAsync(
             model.Email,
@@ -112,9 +125,6 @@ public class AccountControllerTests
             model.RememberMe,
             true))
             .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Success);
-
-        _mockUserManager.Setup(u => u.FindByEmailAsync(model.Email))
-            .ReturnsAsync(user);
 
         _mockUserManager.Setup(u => u.IsInRoleAsync(user, "Admin"))
             .ReturnsAsync(true);
@@ -139,7 +149,13 @@ public class AccountControllerTests
             RememberMe = false
         };
 
-        var user = new IdentityUser { Email = "admin@test.com", UserName = "admin@test.com" };
+        var user = new ApplicationUser
+        {
+            Email = "admin@test.com",
+            UserName = "admin@test.com",
+            FirstName = "Admin",
+            LastName = "User"
+        };
         var returnUrl = "/admin/pages";
 
         // Setup URL helper
@@ -147,15 +163,18 @@ public class AccountControllerTests
         urlHelperMock.Setup(u => u.IsLocalUrl(returnUrl)).Returns(true);
         _controller.Url = urlHelperMock.Object;
 
+        _mockUserManager.Setup(u => u.FindByEmailAsync(model.Email))
+            .ReturnsAsync(user);
+
+        _mockUserManager.Setup(u => u.UpdateAsync(user))
+            .ReturnsAsync(IdentityResult.Success);
+
         _mockSignInManager.Setup(s => s.PasswordSignInAsync(
             model.Email,
             model.Password,
             model.RememberMe,
             true))
             .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Success);
-
-        _mockUserManager.Setup(u => u.FindByEmailAsync(model.Email))
-            .ReturnsAsync(user);
 
         _mockUserManager.Setup(u => u.IsInRoleAsync(user, "Admin"))
             .ReturnsAsync(true);
@@ -179,7 +198,19 @@ public class AccountControllerTests
             RememberMe = false
         };
 
-        var user = new IdentityUser { Email = "user@test.com", UserName = "user@test.com" };
+        var user = new ApplicationUser
+        {
+            Email = "user@test.com",
+            UserName = "user@test.com",
+            FirstName = "Regular",
+            LastName = "User"
+        };
+
+        _mockUserManager.Setup(u => u.FindByEmailAsync(model.Email))
+            .ReturnsAsync(user);
+
+        _mockUserManager.Setup(u => u.UpdateAsync(user))
+            .ReturnsAsync(IdentityResult.Success);
 
         _mockSignInManager.Setup(s => s.PasswordSignInAsync(
             model.Email,
@@ -187,9 +218,6 @@ public class AccountControllerTests
             model.RememberMe,
             true))
             .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Success);
-
-        _mockUserManager.Setup(u => u.FindByEmailAsync(model.Email))
-            .ReturnsAsync(user);
 
         _mockUserManager.Setup(u => u.IsInRoleAsync(user, "Admin"))
             .ReturnsAsync(false);
@@ -217,6 +245,20 @@ public class AccountControllerTests
             RememberMe = false
         };
 
+        var user = new ApplicationUser
+        {
+            Email = "locked@test.com",
+            UserName = "locked@test.com",
+            FirstName = "Locked",
+            LastName = "User"
+        };
+
+        _mockUserManager.Setup(u => u.FindByEmailAsync(model.Email))
+            .ReturnsAsync(user);
+
+        _mockUserManager.Setup(u => u.UpdateAsync(user))
+            .ReturnsAsync(IdentityResult.Success);
+
         _mockSignInManager.Setup(s => s.PasswordSignInAsync(
             model.Email,
             model.Password,
@@ -242,6 +284,20 @@ public class AccountControllerTests
             Password = "WrongPassword!",
             RememberMe = false
         };
+
+        var user = new ApplicationUser
+        {
+            Email = "wrong@test.com",
+            UserName = "wrong@test.com",
+            FirstName = "Wrong",
+            LastName = "User"
+        };
+
+        _mockUserManager.Setup(u => u.FindByEmailAsync(model.Email))
+            .ReturnsAsync(user);
+
+        _mockUserManager.Setup(u => u.UpdateAsync(user))
+            .ReturnsAsync(IdentityResult.Success);
 
         _mockSignInManager.Setup(s => s.PasswordSignInAsync(
             model.Email,

@@ -41,7 +41,14 @@ public class ApplicationUser : IdentityUser
     public string? AdminNotes { get; set; }
     
     // Computed Properties
-    public string FullName => $"{FirstName} {LastName}".Trim();
+    public string FullName
+    {
+        get
+        {
+            var fullName = $"{FirstName} {LastName}".Trim();
+            return string.IsNullOrWhiteSpace(fullName) ? Email ?? "Unknown User" : fullName;
+        }
+    }
     public int? Age
     {
         get
