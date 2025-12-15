@@ -63,6 +63,77 @@
                         <div class="quote-btn d-lg-inline-block d-none">
                             <a href="/contact" class="ht-btn bs-btn">Donate Now</a>
                         </div>
+                        
+                        <!-- Account Menu -->
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <div class="account-menu ms-3 d-lg-inline-block d-none">
+                                <div class="account-avatar" id="publicAccountMenuToggle">
+                                    @{
+                                        var initial = User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "?";
+                                    }
+                                    <i class="bi bi-person-circle"></i>
+                                </div>
+                                <div class="account-dropdown" id="publicAccountDropdown">
+                                    <div class="account-dropdown-header">
+                                        <div class="fw-bold">@User.Identity?.Name</div>
+                                        <small class="text-muted">
+                                            @if (User.IsInRole("Admin"))
+                                            {
+                                                <span class="badge bg-danger">Admin</span>
+                                            }
+                                            else if (User.IsInRole("BoardMember"))
+                                            {
+                                                <span class="badge bg-primary">Board Member</span>
+                                            }
+                                            else if (User.IsInRole("Sponsor"))
+                                            {
+                                                <span class="badge bg-success">Sponsor</span>
+                                            }
+                                            else if (User.IsInRole("Client"))
+                                            {
+                                                <span class="badge bg-info">Client</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Member</span>
+                                            }
+                                        </small>
+                                    </div>
+                                    @if (User.IsInRole("Admin") || User.IsInRole("BoardMember") || User.IsInRole("Editor"))
+                                    {
+                                        <a href="/Admin/Dashboard" class="account-dropdown-item">
+                                            <i class="bi bi-speedometer2"></i> Admin Dashboard
+                                        </a>
+                                        <div class="account-dropdown-divider"></div>
+                                    }
+                                    <a href="/Admin/Profile" class="account-dropdown-item">
+                                        <i class="bi bi-person-circle"></i> My Profile
+                                    </a>
+                                    <a href="/Admin/Profile/Edit" class="account-dropdown-item">
+                                        <i class="bi bi-pencil-square"></i> Edit Profile
+                                    </a>
+                                    <a href="/Admin/Profile/ChangePassword" class="account-dropdown-item">
+                                        <i class="bi bi-key"></i> Change Password
+                                    </a>
+                                    <div class="account-dropdown-divider"></div>
+                                    <form action="/Admin/Account/Logout" method="post" class="m-0">
+                                        <button type="submit" class="account-dropdown-item border-0 bg-transparent text-start w-100">
+                                            <i class="bi bi-box-arrow-right"></i> Sign Out
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="account-menu ms-3 d-lg-inline-block d-none">
+                                <a href="/Admin/Account/Login" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-box-arrow-in-right"></i> Sign In
+                                </a>
+                            </div>
+                        }
+                        
                         <div class="hamburger-menu d-lg-none d-inline-flex">
                             <div class="open-sidebar">
                                 <div class="bar-wrap">
@@ -95,6 +166,49 @@
         <div class="mobile-menu-wrapper d-lg-none d-inline-block">
             <div class="mobile-menu"></div>
         </div>
+        
+        <!-- Mobile Account Menu -->
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <div class="offset-widget mb-30">
+                <div class="info-widget">
+                    <h4 class="offset-title mb-20">
+                        <i class="bi bi-person-circle"></i> @User.Identity?.Name
+                    </h4>
+                    <div class="mobile-account-links">
+                        @if (User.IsInRole("Admin") || User.IsInRole("BoardMember") || User.IsInRole("Editor"))
+                        {
+                            <a href="/Admin/Dashboard" class="d-block py-2">
+                                <i class="bi bi-speedometer2"></i> Admin Dashboard
+                            </a>
+                        }
+                        <a href="/Admin/Profile" class="d-block py-2">
+                            <i class="bi bi-person-circle"></i> My Profile
+                        </a>
+                        <a href="/Admin/Profile/Edit" class="d-block py-2">
+                            <i class="bi bi-pencil-square"></i> Edit Profile
+                        </a>
+                        <a href="/Admin/Profile/ChangePassword" class="d-block py-2">
+                            <i class="bi bi-key"></i> Change Password
+                        </a>
+                        <form action="/Admin/Account/Logout" method="post" class="mt-2">
+                            <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+                                <i class="bi bi-box-arrow-right"></i> Sign Out
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="login-btn text-center mb-30">
+                <a class="ht-btn style-5" href="/Admin/Account/Login">
+                    <i class="bi bi-box-arrow-in-right"></i> Sign In
+                </a>
+            </div>
+        }
+        
         <div class="offset-widget mb-40">
             <div class="info-widget">
                 <h4 class="offset-title mb-20">About Us</h4>
@@ -126,3 +240,103 @@
     </div>
 </div>
 <!-- side-bar end -->
+
+<style>
+    .account-menu {
+        position: relative;
+    }
+
+    .account-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.5rem;
+        cursor: pointer;
+        border: 2px solid #e0e0e0;
+        transition: all 0.2s;
+    }
+
+    .account-avatar:hover {
+        transform: scale(1.05);
+        border-color: #c53040;
+    }
+
+    .account-dropdown {
+        position: absolute;
+        right: 0;
+        top: 100%;
+        margin-top: 0.5rem;
+        min-width: 280px;
+        background: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        display: none;
+        z-index: 1000;
+    }
+
+    .account-dropdown.show {
+        display: block;
+    }
+
+    .account-dropdown-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .account-dropdown-item {
+        display: block;
+        padding: 0.75rem 1.5rem;
+        color: #333;
+        text-decoration: none;
+        transition: background 0.2s;
+    }
+
+    .account-dropdown-item:hover {
+        background: #f8f9fa;
+        color: #c53040;
+    }
+
+    .account-dropdown-item i {
+        width: 20px;
+        margin-right: 0.5rem;
+    }
+
+    .account-dropdown-divider {
+        height: 1px;
+        background: #e0e0e0;
+        margin: 0.5rem 0;
+    }
+
+    .mobile-account-links a {
+        color: #333;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .mobile-account-links a:hover {
+        color: #c53040;
+    }
+</style>
+
+<script>
+    // Account dropdown toggle for public site
+    document.getElementById('publicAccountMenuToggle')?.addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.getElementById('publicAccountDropdown').classList.toggle('show');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        var dropdown = document.getElementById('publicAccountDropdown');
+        var toggle = document.getElementById('publicAccountMenuToggle');
+        if (dropdown && !dropdown.contains(e.target) && toggle && !toggle.contains(e.target)) {
+            dropdown.classList.remove('show');
+        }
+    });
+</script>

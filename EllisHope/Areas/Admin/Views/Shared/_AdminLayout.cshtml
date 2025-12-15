@@ -47,6 +47,77 @@
         .stat-card {
             border-left: 4px solid var(--admin-primary);
         }
+
+        .account-menu {
+            position: relative;
+        }
+
+        .account-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border: 2px solid #e0e0e0;
+            transition: all 0.2s;
+        }
+
+        .account-avatar:hover {
+            transform: scale(1.05);
+            border-color: var(--admin-primary);
+        }
+
+        .account-dropdown {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            margin-top: 0.5rem;
+            min-width: 280px;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            display: none;
+            z-index: 1000;
+        }
+
+        .account-dropdown.show {
+            display: block;
+        }
+
+        .account-dropdown-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e0e0e6;
+        }
+
+        .account-dropdown-item {
+            display: block;
+            padding: 0.75rem 1.5rem;
+            color: #333;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .account-dropdown-item:hover {
+            background: #f8f9fa;
+            color: var(--admin-primary);
+        }
+
+        .account-dropdown-item i {
+            width: 20px;
+            margin-right: 0.5rem;
+        }
+
+        .account-dropdown-divider {
+            height: 1px;
+            background: #e0e0e0;
+            margin: 0.5rem 0;
+        }
     </style>
     @await RenderSectionAsync("Styles", required: false)
 </head>
@@ -98,13 +169,6 @@
                                 <i class="bi bi-image"></i> Media Library
                             </a>
                         </li>
-                        <li class="nav-item mt-3">
-                            <form asp-area="Admin" asp-controller="Account" asp-action="Logout" method="post">
-                                <button type="submit" class="nav-link border-0 bg-transparent text-start w-100">
-                                    <i class="bi bi-box-arrow-right"></i> Logout
-                                </button>
-                            </form>
-                        </li>
                     </ul>
                 </nav>
 
@@ -112,9 +176,63 @@
                 <main class="col-md-10 ms-sm-auto">
                     <div class="admin-header d-flex justify-content-between align-items-center">
                         <h2>@ViewData["Title"]</h2>
-                        <a href="/" target="_blank" class="btn btn-outline-secondary btn-sm">
-                            <i class="bi bi-box-arrow-up-right"></i> View Site
-                        </a>
+                        <div class="d-flex align-items-center gap-3">
+                            <a href="/" target="_blank" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-box-arrow-up-right"></i> View Site
+                            </a>
+                            
+                            <!-- Account Menu -->
+                            <div class="account-menu">
+                                <div class="account-avatar" id="accountMenuToggle">
+                                    @{
+                                        var initial = User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "?";
+                                    }
+                                    @initial
+                                </div>
+                                <div class="account-dropdown" id="accountDropdown">
+                                    <div class="account-dropdown-header">
+                                        <div class="fw-bold">@User.Identity?.Name</div>
+                                        <small class="text-muted">
+                                            @if (User.IsInRole("Admin"))
+                                            {
+                                                <span class="badge bg-danger">Admin</span>
+                                            }
+                                            else if (User.IsInRole("BoardMember"))
+                                            {
+                                                <span class="badge bg-primary">Board Member</span>
+                                            }
+                                            else if (User.IsInRole("Sponsor"))
+                                            {
+                                                <span class="badge bg-success">Sponsor</span>
+                                            }
+                                            else if (User.IsInRole("Client"))
+                                            {
+                                                <span class="badge bg-info">Client</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Member</span>
+                                            }
+                                        </small>
+                                    </div>
+                                    <a asp-area="Admin" asp-controller="Profile" asp-action="Index" class="account-dropdown-item">
+                                        <i class="bi bi-person-circle"></i> My Profile
+                                    </a>
+                                    <a asp-area="Admin" asp-controller="Profile" asp-action="Edit" class="account-dropdown-item">
+                                        <i class="bi bi-pencil-square"></i> Edit Profile
+                                    </a>
+                                    <a asp-area="Admin" asp-controller="Profile" asp-action="ChangePassword" class="account-dropdown-item">
+                                        <i class="bi bi-key"></i> Change Password
+                                    </a>
+                                    <div class="account-dropdown-divider"></div>
+                                    <form asp-area="Admin" asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                                        <button type="submit" class="account-dropdown-item border-0 bg-transparent text-start w-100">
+                                            <i class="bi bi-box-arrow-right"></i> Sign Out
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="admin-content">
                         @RenderBody()
@@ -132,6 +250,22 @@
 
     <script src="~/assets/js/jquery-3.5.1.min.js"></script>
     <script src="~/assets/js/bootstrap.min.js"></script>
+    <script>
+        // Account dropdown toggle
+        document.getElementById('accountMenuToggle')?.addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.getElementById('accountDropdown').classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            var dropdown = document.getElementById('accountDropdown');
+            var toggle = document.getElementById('accountMenuToggle');
+            if (dropdown && !dropdown.contains(e.target) && !toggle.contains(e.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
