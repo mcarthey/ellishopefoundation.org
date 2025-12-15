@@ -1,0 +1,127 @@
+@model EllisHope.Areas.Admin.Models.UserDeleteViewModel
+@{
+    ViewData["Title"] = "Delete User";
+}
+
+<div class="row">
+    <div class="col-lg-6 mx-auto">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-exclamation-triangle-fill"></i> Delete User - Confirmation Required
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger" role="alert">
+                    <h5 class="alert-heading">
+                        <i class="bi bi-exclamation-circle"></i> Warning!
+                    </h5>
+                    <p class="mb-0">You are about to permanently delete this user. This action <strong>cannot be undone</strong>.</p>
+                </div>
+
+                <h5 class="mb-3">User Information:</h5>
+                <dl class="row">
+                    <dt class="col-sm-4">Full Name:</dt>
+                    <dd class="col-sm-8"><strong>@Model.FullName</strong></dd>
+
+                    <dt class="col-sm-4">Email:</dt>
+                    <dd class="col-sm-8">@Model.Email</dd>
+
+                    <dt class="col-sm-4">Role:</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge bg-@GetRoleBadgeColor(Model.UserRole)">@Model.UserRole</span>
+                    </dd>
+
+                    @if (Model.HasSponsoredClients)
+                    {
+                        <dt class="col-sm-4">Sponsored Clients:</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-warning text-dark">@Model.SponsoredClientsCount clients</span>
+                        </dd>
+                    }
+                </dl>
+
+                @if (Model.HasSponsoredClients)
+                {
+                    <div class="alert alert-warning" role="alert">
+                        <h6 class="alert-heading">
+                            <i class="bi bi-exclamation-triangle"></i> Cannot Delete!
+                        </h6>
+                        <p class="mb-0">
+                            This user sponsors <strong>@Model.SponsoredClientsCount client(s)</strong>. 
+                            Please reassign these clients to another sponsor before deleting this user.
+                        </p>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                            <i class="bi bi-pencil"></i> Go to Edit to Reassign Clients
+                        </a>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to Users List
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info" role="alert">
+                        <h6 class="alert-heading">What will be deleted:</h6>
+                        <ul class="mb-0">
+                            <li>User account and login credentials</li>
+                            <li>Profile information</li>
+                            <li>Role assignments</li>
+                            <li>All associated data</li>
+                        </ul>
+                    </div>
+
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" id="confirmDelete" required />
+                            <label class="form-check-label" for="confirmDelete">
+                                I understand that this action is permanent and cannot be undone
+                            </label>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger btn-lg" id="deleteButton" disabled>
+                                <i class="bi bi-trash-fill"></i> Yes, Permanently Delete This User
+                            </button>
+                            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> No, Take Me Back
+                            </a>
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to Users List
+                            </a>
+                        </div>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    private string GetRoleBadgeColor(EllisHope.Models.Domain.UserRole role)
+    {
+        return role switch
+        {
+            EllisHope.Models.Domain.UserRole.Admin => "danger",
+            EllisHope.Models.Domain.UserRole.BoardMember => "primary",
+            EllisHope.Models.Domain.UserRole.Sponsor => "success",
+            EllisHope.Models.Domain.UserRole.Client => "info",
+            EllisHope.Models.Domain.UserRole.Member => "secondary",
+            _ => "secondary"
+        };
+    }
+}
+
+@section Scripts {
+    <script>
+        // Enable delete button only when confirmation is checked
+        document.getElementById('confirmDelete')?.addEventListener('change', function() {
+            document.getElementById('deleteButton').disabled = !this.checked;
+        });
+    </script>
+}

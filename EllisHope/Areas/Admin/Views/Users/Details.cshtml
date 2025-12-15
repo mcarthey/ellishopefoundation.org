@@ -1,0 +1,423 @@
+@model EllisHope.Areas.Admin.Models.UserDetailsViewModel
+@{
+    ViewData["Title"] = $"{Model.FullName} - User Details";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2>
+                    <i class="bi bi-person-circle"></i> @Model.FullName
+                </h2>
+                <p class="text-muted mb-0">
+                    <span class="badge bg-@GetRoleBadgeColor(Model.UserRole) me-1">@Model.UserRole</span>
+                    <span class="badge bg-@GetStatusBadgeColor(Model.Status)">@Model.Status</span>
+                    @if (!Model.IsActive)
+                    {
+                        <span class="badge bg-secondary">Inactive</span>
+                    }
+                </p>
+            </div>
+            <div class="btn-group">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                    <i class="bi bi-pencil"></i> Edit
+                </a>
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                    <i class="bi bi-trash"></i> Delete
+                </a>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle"></i> @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="row">
+    <!-- Left Column -->
+    <div class="col-lg-8">
+        <!-- Basic Information -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-person"></i> Basic Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <dl class="row">
+                            <dt class="col-sm-4">Full Name:</dt>
+                            <dd class="col-sm-8">@Model.FullName</dd>
+
+                            <dt class="col-sm-4">Email:</dt>
+                            <dd class="col-sm-8"><a href="mailto:@Model.Email">@Model.Email</a></dd>
+
+                            <dt class="col-sm-4">Phone:</dt>
+                            <dd class="col-sm-8">
+                                @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+                                {
+                                    <a href="tel:@Model.PhoneNumber">@Model.PhoneNumber</a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                            </dd>
+
+                            <dt class="col-sm-4">Date of Birth:</dt>
+                            <dd class="col-sm-8">
+                                @if (Model.DateOfBirth.HasValue)
+                                {
+                                    <span>@Model.DateOfBirth.Value.ToString("MMMM dd, yyyy")</span>
+                                    @if (Model.Age.HasValue)
+                                    {
+                                        <span class="text-muted">(@Model.Age years old)</span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-6">
+                        <dl class="row">
+                            <dt class="col-sm-4">Role:</dt>
+                            <dd class="col-sm-8">
+                                <span class="badge bg-@GetRoleBadgeColor(Model.UserRole)">@Model.UserRole</span>
+                            </dd>
+
+                            <dt class="col-sm-4">Status:</dt>
+                            <dd class="col-sm-8">
+                                <span class="badge bg-@GetStatusBadgeColor(Model.Status)">@Model.Status</span>
+                            </dd>
+
+                            <dt class="col-sm-4">Active:</dt>
+                            <dd class="col-sm-8">
+                                @if (Model.IsActive)
+                                {
+                                    <span class="text-success"><i class="bi bi-check-circle"></i> Yes</span>
+                                }
+                                else
+                                {
+                                    <span class="text-danger"><i class="bi bi-x-circle"></i> No</span>
+                                }
+                            </dd>
+
+                            <dt class="col-sm-4">Identity Roles:</dt>
+                            <dd class="col-sm-8">
+                                @if (Model.Roles.Any())
+                                {
+                                    foreach (var role in Model.Roles)
+                                    {
+                                        <span class="badge bg-secondary me-1">@role</span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="text-muted">None</span>
+                                }
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-geo-alt"></i> Contact Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <dl class="row">
+                            <dt class="col-sm-4">Address:</dt>
+                            <dd class="col-sm-8">
+                                @if (!string.IsNullOrEmpty(Model.FullAddress))
+                                {
+                                    @Model.FullAddress
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-6">
+                        <dl class="row">
+                            <dt class="col-sm-5">Emergency Contact:</dt>
+                            <dd class="col-sm-7">
+                                @if (!string.IsNullOrEmpty(Model.EmergencyContactName))
+                                {
+                                    <strong>@Model.EmergencyContactName</strong>
+                                    @if (!string.IsNullOrEmpty(Model.EmergencyContactPhone))
+                                    {
+                                        <br /><a href="tel:@Model.EmergencyContactPhone">@Model.EmergencyContactPhone</a>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sponsor/Client Relationship -->
+        @if (Model.UserRole == EllisHope.Models.Domain.UserRole.Client || Model.UserRole == EllisHope.Models.Domain.UserRole.Sponsor)
+        {
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-people"></i> Sponsor/Client Relationships
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(Model.SponsorId))
+                    {
+                        <div class="alert alert-info">
+                            <strong><i class="bi bi-person-heart"></i> Sponsored By:</strong> @Model.SponsorName
+                        </div>
+                    }
+
+                    @if (Model.SponsoredClients.Any())
+                    {
+                        <h6 class="mb-3">Sponsored Clients (@Model.SponsoredClients.Count())</h6>
+                        <div class="list-group">
+                            @foreach (var client in Model.SponsoredClients)
+                            {
+                                <a asp-action="Details" asp-route-id="@client.Id" class="list-group-item list-group-item-action">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>@client.FullName</strong>
+                                            <br /><small class="text-muted">@client.Email</small>
+                                        </div>
+                                        <div>
+                                            <span class="badge bg-@GetStatusBadgeColor(client.Status)">@client.Status</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            }
+                        </div>
+                    }
+                    else if (Model.UserRole == EllisHope.Models.Domain.UserRole.Sponsor)
+                    {
+                        <p class="text-muted mb-0">No sponsored clients assigned yet.</p>
+                    }
+                </div>
+            </div>
+        }
+
+        <!-- Membership Information -->
+        @if (Model.MonthlyFee.HasValue || Model.MembershipStartDate.HasValue)
+        {
+            <div class="card mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="bi bi-credit-card"></i> Membership Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Monthly Fee:</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.MonthlyFee.HasValue)
+                            {
+                                <span class="fs-5 text-success">@Model.MonthlyFee.Value.ToString("C")</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">—</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4">Start Date:</dt>
+                        <dd class="col-sm-8">
+                            @(Model.MembershipStartDate?.ToString("MMMM dd, yyyy") ?? "—")
+                        </dd>
+
+                        <dt class="col-sm-4">End Date:</dt>
+                        <dd class="col-sm-8">
+                            @(Model.MembershipEndDate?.ToString("MMMM dd, yyyy") ?? "—")
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        }
+
+        <!-- Admin Notes -->
+        @if (!string.IsNullOrEmpty(Model.AdminNotes))
+        {
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-sticky"></i> Admin Notes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0 text-muted" style="white-space: pre-wrap;">@Model.AdminNotes</p>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Right Column -->
+    <div class="col-lg-4">
+        <!-- Account Timeline -->
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h6 class="mb-0">
+                    <i class="bi bi-clock-history"></i> Account Timeline
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-marker bg-primary"></div>
+                        <div class="timeline-content">
+                            <strong>Joined</strong>
+                            <br /><small class="text-muted">@Model.JoinedDate.ToString("MMMM dd, yyyy")</small>
+                        </div>
+                    </div>
+                    @if (Model.LastLoginDate.HasValue)
+                    {
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-success"></div>
+                            <div class="timeline-content">
+                                <strong>Last Login</strong>
+                                <br /><small class="text-muted">@Model.LastLoginDate.Value.ToString("MMMM dd, yyyy HH:mm")</small>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-warning"></div>
+                            <div class="timeline-content">
+                                <strong>Never Logged In</strong>
+                                <br /><small class="text-muted">User has not logged in yet</small>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card">
+            <div class="card-header bg-light">
+                <h6 class="mb-0">
+                    <i class="bi bi-lightning"></i> Quick Actions
+                </h6>
+            </div>
+            <div class="list-group list-group-flush">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="list-group-item list-group-item-action">
+                    <i class="bi bi-pencil"></i> Edit User Profile
+                </a>
+                <a href="#" class="list-group-item list-group-item-action disabled">
+                    <i class="bi bi-key"></i> Reset Password
+                </a>
+                <a href="#" class="list-group-item list-group-item-action disabled">
+                    <i class="bi bi-envelope"></i> Send Email
+                </a>
+                @if (Model.UserRole == EllisHope.Models.Domain.UserRole.Client)
+                {
+                    <a href="#" class="list-group-item list-group-item-action disabled">
+                        <i class="bi bi-file-earmark-text"></i> View Programs
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action disabled">
+                        <i class="bi bi-graph-up"></i> View Progress
+                    </a>
+                }
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="list-group-item list-group-item-action text-danger">
+                    <i class="bi bi-trash"></i> Delete User
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    private string GetRoleBadgeColor(EllisHope.Models.Domain.UserRole role)
+    {
+        return role switch
+        {
+            EllisHope.Models.Domain.UserRole.Admin => "danger",
+            EllisHope.Models.Domain.UserRole.BoardMember => "primary",
+            EllisHope.Models.Domain.UserRole.Sponsor => "success",
+            EllisHope.Models.Domain.UserRole.Client => "info",
+            EllisHope.Models.Domain.UserRole.Member => "secondary",
+            _ => "secondary"
+        };
+    }
+
+    private string GetStatusBadgeColor(EllisHope.Models.Domain.MembershipStatus status)
+    {
+        return status switch
+        {
+            EllisHope.Models.Domain.MembershipStatus.Active => "success",
+            EllisHope.Models.Domain.MembershipStatus.Pending => "warning",
+            EllisHope.Models.Domain.MembershipStatus.Inactive => "secondary",
+            EllisHope.Models.Domain.MembershipStatus.Expired => "danger",
+            EllisHope.Models.Domain.MembershipStatus.Cancelled => "dark",
+            _ => "secondary"
+        };
+    }
+}
+
+@section Styles {
+    <style>
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        .timeline-item:not(:last-child):after {
+            content: '';
+            position: absolute;
+            left: -22px;
+            top: 8px;
+            height: calc(100% + 4px);
+            width: 2px;
+            background-color: #dee2e6;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: -26px;
+            top: 0;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+        }
+
+        .timeline-content {
+            padding-left: 10px;
+        }
+    </style>
+}
