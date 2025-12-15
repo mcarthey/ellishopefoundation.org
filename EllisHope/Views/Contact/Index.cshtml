@@ -1,6 +1,8 @@
-﻿@{
+﻿@inject IConfiguration Configuration
+@{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var foundation = Configuration.GetSection("Foundation");
 }
 
 <main>
@@ -36,12 +38,13 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="info-box2 d-xl-flex">
                         <div class="icon">
-                            <i class="bi bi-headphones"></i>
+                            <i class="bi bi-geo-alt"></i>
                         </div>
                         <div class="info-content">
                             <h3 class="info-title">Office Address</h3>
                             <p>
-                                2118 Thornridge Cir. Syracuse, Connecticut 35624, Thailand
+                                @foundation["Address"]<br>
+                                @foundation["City"], @foundation["State"] @foundation["ZipCode"]
                             </p>
                         </div>
                     </div>
@@ -49,27 +52,23 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="info-box2 d-xl-flex border-styles">
                         <div class="icon">
-                            <i class="bi bi-headphones"></i>
+                            <i class="bi bi-envelope"></i>
                         </div>
                         <div class="info-content">
                             <h3 class="info-title">Email Address</h3>
-                            <p>chambers@example.com</p>
-                            <p>tanya.hill@example.com</p>
+                            <p><a href="mailto:@foundation["Email"]">@foundation["Email"]</a></p>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
                     <div class="info-box2 d-xl-flex">
                         <div class="icon">
-                            <i class="bi bi-headphones"></i>
+                            <i class="bi bi-telephone"></i>
                         </div>
                         <div class="info-content">
                             <h3 class="info-title">Phone Number</h3>
                             <p>
-                                <a href="#">(406) 555-0120</a>
-                            </p>
-                            <p>
-                                <a href="#">(406) 555-0120</a>
+                                <a href="tel:@foundation["Phone"]">@foundation["Phone"]</a>
                             </p>
                         </div>
                     </div>
@@ -84,7 +83,7 @@
             <div class="row gx-lg-0 align-items-center">
                 <div class="col-lg-6">
                     <div class="contact-map">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d14586.166638731369!2d90.38652459999999!3d23.94127905!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sbd!4v1693217501589!5m2!1sen!2sbd"
+                        <iframe src="@foundation["MapEmbedUrl"]"
                                 width="600" height="450" style="border: 0;" allowfullscreen="" loading="lazy"
                                 referrerpolicy="no-referrer-when-downgrade">
                         </iframe>
@@ -95,20 +94,20 @@
                         <div class="title mb-30">
                             <h2 class="contact-title">Send Message.</h2>
                             <p>
-                                Your email address will not be published. required fields
+                                Your email address will not be published. Required fields
                                 are marked *
                             </p>
                         </div>
                         <form class="contact-form form-4" action="#">
                             <div class="input-wrapper">
-                                <input type="text" placeholder="Name">
+                                <input type="text" placeholder="Name" required>
                             </div>
                             <div class="input-wrapper">
-                                <input type="email" placeholder="Email">
+                                <input type="email" placeholder="Email" required>
                             </div>
                             <div class="col-12">
                                 <div class="input-wrapper message">
-                                    <textarea name="message" placeholder="Your Message"></textarea>
+                                    <textarea name="message" placeholder="Your Message" required></textarea>
                                 </div>
                             </div>
                             <div class="col-12">

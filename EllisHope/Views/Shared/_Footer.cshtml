@@ -1,4 +1,9 @@
-﻿<footer class="footer-two pt-30">
+﻿@inject IConfiguration Configuration
+@{
+    var foundation = Configuration.GetSection("Foundation");
+}
+
+<footer class="footer-two pt-30">
     <img class="shape-2" src="~/assets/img/shape/shape-12.png" alt="shape">
     <img class="shape-3" src="~/assets/img/shape/shape-80.png" alt="shape">
     <div class="container fot-border-2 pt-95">
@@ -12,16 +17,16 @@
                     </div>
                     <ul>
                         <li>
-                            <a href="mailto:infocharity816@gmail.com">infocharity816@gmail.com</a>
+                            <a href="mailto:@foundation["Email"]">@foundation["Email"]</a>
                         </li>
                         <li>
-                            <a href="#">+1 123 456 7890</a>
+                            <a href="tel:@foundation["Phone"]">@foundation["Phone"]</a>
                         </li>
                     </ul>
                     <div class="social-links">
-                        <a href="#"><i class="bi bi-facebook"></i></a>
-                        <a href="#"><i class="bi bi-twitter"></i></a>
-                        <a href="#"><i class="bi bi-instagram"></i></a>
+                        <a href="@foundation["SocialMedia:Facebook"]" target="_blank" rel="noopener"><i class="bi bi-facebook"></i></a>
+                        <a href="@foundation["SocialMedia:Twitter"]" target="_blank" rel="noopener"><i class="bi bi-twitter"></i></a>
+                        <a href="@foundation["SocialMedia:Instagram"]" target="_blank" rel="noopener"><i class="bi bi-instagram"></i></a>
                     </div>
                 </div>
             </div>
@@ -30,31 +35,31 @@
                     <h4 class="widget-title">Company</h4>
                     <ul>
                         <li><a href="/about">About us</a></li>
-                        <li><a href="/contact">Carrer</a></li>
-                        <li><a href="/blog/grid">Blogs</a></li>
-                        <li><a href="/about">Testimonial</a></li>
-                        <li><a href="/contact">Contact us</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                        <li><a href="/blog/classic">Blog</a></li>
+                        <li><a href="/team/v1">Our Team</a></li>
+                        <li><a href="/causes/list">Causes</a></li>
                     </ul>
                 </div>
             </div>
             <div class="col-xl-3 col-lg-3 col-md-6 d-flex justify-content-lg-center">
                 <div class="footer-widget mb-30">
-                    <h4 class="widget-title">Services</h4>
+                    <h4 class="widget-title">Get Involved</h4>
                     <ul>
-                        <li><a href="/about">Donation onlines</a></li>
-                        <li><a href="/contact">Donor centers</a></li>
-                        <li><a href="/blog/grid">Volunteering</a></li>
+                        <li><a href="/contact">Donate</a></li>
+                        <li><a href="/event/list">Events</a></li>
+                        <li><a href="/team/v1">Volunteer</a></li>
                     </ul>
                 </div>
             </div>
             <div class="col-xl-3 col-lg-3 col-md-6 d-flex justify-content-lg-end">
                 <div class="footer-widget mb-30">
-                    <h4 class="widget-title">Donations</h4>
+                    <h4 class="widget-title">Resources</h4>
                     <ul>
-                        <li><a href="/about">Donor wall</a></li>
-                        <li><a href="/contact">Donation confirmation</a></li>
-                        <li><a href="/blog/grid">Donation history</a></li>
-                        <li><a href="/about">Donations details</a></li>
+                        <li><a href="/faq">FAQ</a></li>
+                        <li><a href="/services">Services</a></li>
+                        <li><a href="/blog/classic">News</a></li>
+                        <li><a href="/contact">Contact</a></li>
                     </ul>
                 </div>
             </div>
@@ -65,14 +70,14 @@
             <div class="row align-items-center">
                 <div class="col-xl-6 col-lg-6">
                     <div class="copyright-text text-lg-start text-center mb-lg-0 mb-md-4">
-                        © Copyright 2025
-                        <a href="https://themeforest.net/user/creativegigs/portfolio">Kuki</a>. All Rights Reserved.
+                        © Copyright @DateTime.Now.Year
+                        <a href="/home/">@foundation["Name"]</a>. All Rights Reserved.
                     </div>
                 </div>
                 <div class="col-xl-6 col-lg-6 text-xl-end text-center">
                     <ul class="footer-menu">
-                        <li><a href="#">Privacy policy.</a></li>
-                        <li><a href="#">Contact us.</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="/contact">Contact Us</a></li>
                     </ul>
                 </div>
             </div>

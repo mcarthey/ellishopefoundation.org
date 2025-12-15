@@ -1,4 +1,9 @@
-﻿<header class="theme-main-menu theme-menu-two">
+﻿@inject IConfiguration Configuration
+@{
+    var foundation = Configuration.GetSection("Foundation");
+}
+
+<header class="theme-main-menu theme-menu-two">
     <div class="main-header-area pt-25 pb-15">
         <div class="container-fluid">
             <div class="row align-items-center justify-content-between">
@@ -94,9 +99,7 @@
             <div class="info-widget">
                 <h4 class="offset-title mb-20">About Us</h4>
                 <p class="mb-30">
-                    But I must explain to you how all this mistaken idea of denouncing pleasure and
-                    praising pain was born and will give you a complete account of the system and
-                    expound the actual teachings of the great explore
+                    @foundation["Description"]
                 </p>
             </div>
         </div>
@@ -105,20 +108,20 @@
                 <h4 class="offset-title mb-20">Contact Info</h4>
                 <p>
                     <i class="fal fa-address-book"></i>
-                    23/A, Miranda City Likaoli Prikano, Dope
+                    @foundation["Address"], @foundation["City"], @foundation["State"] @foundation["ZipCode"]
                 </p>
                 <p>
                     <i class="fal fa-phone"></i>
-                    +0989 7876 9865 9
+                    @foundation["Phone"]
                 </p>
                 <p>
                     <i class="fal fa-envelope-open"></i>
-                    info@example.com
+                    @foundation["Email"]
                 </p>
             </div>
         </div>
         <div class="login-btn text-center">
-            <a class="ht-btn style-5" href="#">Login</a>
+            <a class="ht-btn style-5" href="/contact">Contact Us</a>
         </div>
     </div>
 </div>
