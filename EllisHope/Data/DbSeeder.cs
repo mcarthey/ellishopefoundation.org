@@ -8,11 +8,11 @@ public static class DbSeeder
     public static async Task SeedAsync(IServiceProvider serviceProvider)
     {
         var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-        var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+        var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
         var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
 
-        // Create roles
-        string[] roleNames = { "Admin", "Editor", "User" };
+        // Create roles - Updated to match new UserRole enum
+        string[] roleNames = { "Admin", "BoardMember", "Sponsor", "Client", "Member", "Editor" };
         foreach (var roleName in roleNames)
         {
             if (!await roleManager.RoleExistsAsync(roleName))
@@ -27,11 +27,17 @@ public static class DbSeeder
 
         if (adminUser == null)
         {
-            adminUser = new IdentityUser
+            adminUser = new ApplicationUser
             {
                 UserName = adminEmail,
                 Email = adminEmail,
-                EmailConfirmed = true
+                EmailConfirmed = true,
+                FirstName = "System",
+                LastName = "Administrator",
+                UserRole = UserRole.Admin,
+                Status = MembershipStatus.Active,
+                IsActive = true,
+                JoinedDate = DateTime.UtcNow
             };
 
             var result = await userManager.CreateAsync(adminUser, "Admin@123456");

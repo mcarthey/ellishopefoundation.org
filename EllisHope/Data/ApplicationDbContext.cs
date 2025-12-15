@@ -4,7 +4,7 @@ using EllisHope.Models.Domain;
 
 namespace EllisHope.Data;
 
-public class ApplicationDbContext : IdentityDbContext
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -27,6 +27,26 @@ public class ApplicationDbContext : IdentityDbContext
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        // Configure ApplicationUser self-referencing relationship (Sponsor -> Clients)
+        builder.Entity<ApplicationUser>()
+            .HasOne(u => u.Sponsor)
+            .WithMany(u => u.SponsoredClients)
+            .HasForeignKey(u => u.SponsorId)
+            .OnDelete(DeleteBehavior.Restrict); // Prevent cascade delete
+
+        builder.Entity<ApplicationUser>()
+            .Property(u => u.MonthlyFee)
+            .HasPrecision(18, 2);
+
+        builder.Entity<ApplicationUser>()
+            .HasIndex(u => u.UserRole);
+
+        builder.Entity<ApplicationUser>()
+            .HasIndex(u => u.Status);
+
+        builder.Entity<ApplicationUser>()
+            .HasIndex(u => u.IsActive);
 
         // Configure composite key for BlogPostCategories
         builder.Entity<BlogPostCategory>()

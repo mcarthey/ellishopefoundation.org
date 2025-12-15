@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using EllisHope.Data;
 using EllisHope.Services;
 using EllisHope.Models;
+using EllisHope.Models.Domain;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,8 +17,8 @@ if (!builder.Environment.IsEnvironment("Testing"))
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 }
 
-// Add Identity
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+// Add Identity with ApplicationUser
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     // Password settings
     options.Password.RequireDigit = true;
@@ -73,6 +74,7 @@ builder.Services.AddScoped<IMediaService, MediaService>();
 builder.Services.AddScoped<IMediaMigrationService, MediaMigrationService>();
 builder.Services.AddScoped<IPageService, PageService>();
 builder.Services.AddScoped<IPageTemplateService, PageTemplateService>();
+builder.Services.AddScoped<IUserManagementService, UserManagementService>();
 
 var app = builder.Build();
 
