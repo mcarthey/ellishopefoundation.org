@@ -71,14 +71,31 @@
                                         </div>
                                     </div>
                                     <div class="card-body">
-                                        <p class="card-text small text-muted mb-3">@image.Description</p>
+                                        <p class="card-text small text-muted mb-2">@image.Description</p>
+                                        
+                                        <!-- Size Requirements -->
+                                        <div class="alert alert-light border mb-3 py-2 px-2">
+                                            <small class="d-block fw-bold mb-1">
+                                                <i class="bi bi-rulers"></i> Size Requirements:
+                                            </small>
+                                            <ul class="mb-0 small ps-3">
+                                                <li><strong>Recommended:</strong> @image.Requirements.DisplayText</li>
+                                                <li><strong>Aspect Ratio:</strong> @image.Requirements.AspectRatio (@image.Requirements.Orientation)</li>
+                                                @if (image.Requirements.MinWidth.HasValue)
+                                                {
+                                                    <li><strong>Min:</strong> @(image.Requirements.MinWidth)×@(image.Requirements.MinHeight)px</li>
+                                                }
+                                                <li><strong>Max File Size:</strong> @((image.Requirements.MaxFileSizeBytes / 1024 / 1024))MB</li>
+                                            </ul>
+                                        </div>
                                         
                                         <!-- Current Image Preview -->
                                         <div class="mb-3">
                                             <img src="@image.EffectiveImagePath" 
                                                  alt="@image.Label" 
                                                  class="img-fluid rounded mb-2" 
-                                                 style="max-height: 200px; width: 100%; object-fit: cover;" />
+                                                 style="max-height: 200px; width: 100%; object-fit: cover;"
+                                                 id="preview-@image.Key" />
                                             <small class="text-muted d-block">
                                                 @if (image.IsManagedImage)
                                                 {
@@ -86,7 +103,7 @@
                                                 }
                                                 else if (!string.IsNullOrEmpty(image.CurrentTemplatePath))
                                                 {
-                                                    <i class="bi bi-exclamation-triangle text-warning"></i> <text>Using template default: </text><code class="small">@image.CurrentTemplatePath</code>
+                                                    <i class="bi bi-exclamation-triangle text-warning"></i> <text>Using template default</text>
                                                 }
                                                 else
                                                 {
@@ -96,21 +113,33 @@
                                         </div>
 
                                         <!-- Image Selection Form -->
-                                        <form asp-action="UpdateImage" method="post">
+                                        <form asp-action="UpdateImage" method="post" onsubmit="return validateImageSelection('@image.Key')">
                                             <input type="hidden" name="pageId" value="@pageId" />
                                             <input type="hidden" name="imageKey" value="@image.Key" />
                                             
                                             <div class="mb-2">
-                                                <label class="form-label small fw-bold">Change to:</label>
-                                                <select name="mediaId" class="form-select form-select-sm" required>
-                                                    <option value="">-- Select Image from Media Library --</option>
+                                                <label class="form-label small fw-bold">Select Image:</label>
+                                                <select name="mediaId" 
+                                                        class="form-select form-select-sm image-select" 
+                                                        id="select-@image.Key"
+                                                        data-requirements='@System.Text.Json.JsonSerializer.Serialize(image.Requirements)'
+                                                        onchange="previewImageFromSelect(this, '@image.Key')"
+                                                        required>
+                                                    <option value="">-- Choose from Media Library --</option>
                                                     @foreach (var media in availableMedia.Where(m => m.MimeType.StartsWith("image/")))
                                                     {
-                                                        <option value="@media.Id" selected="@(media.Id == image.CurrentMediaId)">
-                                                            @media.FileName @(!string.IsNullOrEmpty(media.Title) ? $"- {media.Title}" : "")
+                                                        var sizeInfo = $"{media.Width}×{media.Height}px, {(media.FileSize / 1024 / 1024):F2}MB";
+                                                        <option value="@media.Id" 
+                                                                data-width="@media.Width"
+                                                                data-height="@media.Height"
+                                                                data-filesize="@media.FileSize"
+                                                                data-path="@media.FilePath"
+                                                                selected="@(media.Id == image.CurrentMediaId)">
+                                                            @media.FileName - [@sizeInfo]
                                                         </option>
                                                     }
                                                 </select>
+                                                <div id="warning-@image.Key" class="mt-1"></div>
                                             </div>
                                             
                                             <div class="d-flex gap-2">
@@ -123,7 +152,7 @@
                                                             class="btn btn-sm btn-outline-warning" 
                                                             onclick="removeImage('@pageId', '@image.Key', '@image.Label')"
                                                             title="Revert to template default">
-                                                        <i class="bi bi-arrow-counterclockwise"></i> Revert
+                                                        <i class="bi bi-arrow-counterclockwise"></i>
                                                     </button>
                                                 }
                                             </div>
@@ -263,7 +292,7 @@
                     <li>Content you've customized</li>
                     <li>Images stored in <code>/wwwroot/uploads/media/</code></li>
                     <li><strong>Managed</strong> in Media Library</li>
-                    <li>Can be reverted to template default by clicking "Revert"</li>
+                    <li>Can be reverted to template default by clicking "Revert"
                 </ul>
                 
                 <h6 class="mt-3">Tips</h6>
@@ -307,5 +336,117 @@
                 document.getElementById('removeImageForm').submit();
             }
         }
+
+        // Image validation and preview
+        function previewImageFromSelect(selectElement, imageKey) {
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            const imagePath = selectedOption.dataset.path;
+            const warningDiv = document.getElementById(`warning-${imageKey}`);
+            const previewImg = document.getElementById(`preview-${imageKey}`);
+            
+            if (!imagePath) {
+                warningDiv.innerHTML = '';
+                return;
+            }
+            
+            // Update preview
+            previewImg.src = imagePath;
+            
+            // Get requirements
+            const requirementsJson = selectElement.dataset.requirements;
+            if (!requirementsJson) return;
+            
+            const requirements = JSON.parse(requirementsJson);
+            const width = parseInt(selectedOption.dataset.width) || 0;
+            const height = parseInt(selectedOption.dataset.height) || 0;
+            const fileSize = parseInt(selectedOption.dataset.filesize) || 0;
+            
+            // Validate
+            const warnings = [];
+            const errors = [];
+            
+            // File size check
+            if (fileSize > requirements.MaxFileSizeBytes) {
+                errors.push(`File too large: ${(fileSize/1024/1024).toFixed(2)}MB (max: ${(requirements.MaxFileSizeBytes/1024/1024)}MB)`);
+            }
+            
+            // Dimension checks
+            if (requirements.MinWidth && width < requirements.MinWidth) {
+                errors.push(`Width too small: ${width}px (min: ${requirements.MinWidth}px)`);
+            }
+            if (requirements.MaxWidth && width > requirements.MaxWidth) {
+                warnings.push(`Width very large: ${width}px (recommended max: ${requirements.MaxWidth}px)`);
+            }
+            if (requirements.MinHeight && height < requirements.MinHeight) {
+                errors.push(`Height too small: ${height}px (min: ${requirements.MinHeight}px)`);
+            }
+            if (requirements.MaxHeight && height > requirements.MaxHeight) {
+                warnings.push(`Height very large: ${height}px (recommended max: ${requirements.MaxHeight}px)`);
+            }
+            
+            // Aspect ratio check (within 10% tolerance)
+            if (width > 0 && height > 0) {
+                const actualRatio = width / height;
+                const expectedRatio = parseFloat(requirements.AspectRatioDecimal);
+                
+                if (expectedRatio && Math.abs(actualRatio - expectedRatio) > expectedRatio * 0.15) {
+                    warnings.push(`Aspect ratio mismatch: ${width}×${height} = ${actualRatio.toFixed(2)}:1 (expected ${requirements.AspectRatio})`);
+                }
+            }
+            
+            // Orientation check
+            if (requirements.Orientation === 'Landscape' && width < height) {
+                warnings.push(`Portrait image selected but landscape expected`);
+            } else if (requirements.Orientation === 'Portrait' && width > height) {
+                warnings.push(`Landscape image selected but portrait expected`);
+            } else if (requirements.Orientation === 'Square' && width !== height) {
+                warnings.push(`Non-square image selected but square expected`);
+            }
+            
+            // Display warnings/errors
+            if (errors.length > 0) {
+                warningDiv.innerHTML = `
+                    <div class="alert alert-danger alert-sm py-1 px-2 mb-0">
+                        <small><i class="bi bi-exclamation-circle"></i> <strong>Image Issues:</strong></small>
+                        <ul class="mb-0 small ps-3">
+                            ${errors.map(e => `<li>${e}</li>`).join('')}
+                        </ul>
+                    </div>`;
+            } else if (warnings.length > 0) {
+                warningDiv.innerHTML = `
+                    <div class="alert alert-warning alert-sm py-1 px-2 mb-0">
+                        <small><i class="bi bi-exclamation-triangle"></i> <strong>Warnings:</strong></small>
+                        <ul class="mb-0 small ps-3">
+                            ${warnings.map(w => `<li>${w}</li>`).join('')}
+                        </ul>
+                    </div>`;
+            } else {
+                warningDiv.innerHTML = `
+                    <div class="alert alert-success alert-sm py-1 px-2 mb-0">
+                        <small><i class="bi bi-check-circle"></i> Image meets requirements (${width}×${height}px)</small>
+                    </div>`;
+            }
+        }
+
+        function validateImageSelection(imageKey) {
+            const warningDiv = document.getElementById(`warning-${imageKey}`);
+            const hasErrors = warningDiv.querySelector('.alert-danger');
+            
+            if (hasErrors) {
+                return confirm('The selected image has size issues. Do you want to use it anyway?\n\nFor best results, please upload an image that meets the requirements.');
+            }
+            
+            return true;
+        }
+
+        // Initialize validation on page load for pre-selected images
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.image-select').forEach(select => {
+                if (select.value) {
+                    const imageKey = select.id.replace('select-', '');
+                    previewImageFromSelect(select, imageKey);
+                }
+            });
+        });
     </script>
 }

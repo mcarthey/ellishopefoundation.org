@@ -45,21 +45,57 @@ public class PageTemplateService : IPageTemplateService
                 new() { 
                     Key = "HeroBanner", 
                     Label = "Hero Banner Image", 
-                    Description = "Main banner image at top of home page (recommended: 1800x600px)",
+                    Description = "Main banner image at top of home page",
+                    Requirements = new ImageRequirements
+                    {
+                        RecommendedWidth = 1800,
+                        RecommendedHeight = 600,
+                        MinWidth = 1200,
+                        MinHeight = 400,
+                        MaxWidth = 2400,
+                        MaxHeight = 800,
+                        AspectRatio = "3:1",
+                        Orientation = "Landscape",
+                        MaxFileSizeBytes = 5 * 1024 * 1024 // 5MB
+                    },
                     CurrentTemplatePath = "/assets/img/hero/hero-img-6-unsplash.png",
                     FallbackPath = "/assets/img/hero/hero-img-6-unsplash.png"
                 },
                 new() { 
                     Key = "AboutImage", 
                     Label = "About Section Image", 
-                    Description = "Image for the 'About Ellis Hope' section (recommended: 600x800px)",
+                    Description = "Image for the 'About Ellis Hope' section",
+                    Requirements = new ImageRequirements
+                    {
+                        RecommendedWidth = 663,
+                        RecommendedHeight = 839,
+                        MinWidth = 500,
+                        MinHeight = 600,
+                        MaxWidth = 1000,
+                        MaxHeight = 1200,
+                        AspectRatio = "2:3",
+                        Orientation = "Portrait",
+                        MaxFileSizeBytes = 3 * 1024 * 1024 // 3MB
+                    },
                     CurrentTemplatePath = "/assets/img/media/about-foundation-663x839.jpg",
                     FallbackPath = "/assets/img/media/about-foundation-663x839.jpg"
                 },
                 new() { 
                     Key = "CTABackground", 
                     Label = "Call-to-Action Background", 
-                    Description = "Background image for the 'Get Involved' section (recommended: 1800x600px)",
+                    Description = "Background image for the 'Get Involved' section",
+                    Requirements = new ImageRequirements
+                    {
+                        RecommendedWidth = 1800,
+                        RecommendedHeight = 855,
+                        MinWidth = 1200,
+                        MinHeight = 500,
+                        MaxWidth = 2400,
+                        MaxHeight = 1200,
+                        AspectRatio = "16:9",
+                        Orientation = "Landscape",
+                        MaxFileSizeBytes = 5 * 1024 * 1024 // 5MB
+                    },
                     CurrentTemplatePath = "/assets/img/bg/make-difference-1800x855.jpg",
                     FallbackPath = "/assets/img/bg/make-difference-1800x855.jpg"
                 }
@@ -120,6 +156,18 @@ public class PageTemplateService : IPageTemplateService
                     Key = "HeaderBanner", 
                     Label = "Page Header Banner", 
                     Description = "Banner image at top of About page",
+                    Requirements = new ImageRequirements
+                    {
+                        RecommendedWidth = 1800,
+                        RecommendedHeight = 540,
+                        MinWidth = 1200,
+                        MinHeight = 360,
+                        MaxWidth = 2400,
+                        MaxHeight = 720,
+                        AspectRatio = "10:3",
+                        Orientation = "Landscape",
+                        MaxFileSizeBytes = 4 * 1024 * 1024
+                    },
                     CurrentTemplatePath = "/assets/img/page-title/about-us-1800x540.jpg",
                     FallbackPath = "/assets/img/page-title/about-us-1800x540.jpg"
                 },
@@ -127,6 +175,18 @@ public class PageTemplateService : IPageTemplateService
                     Key = "MissionImage", 
                     Label = "Mission Section Image", 
                     Description = "Image accompanying mission statement",
+                    Requirements = new ImageRequirements
+                    {
+                        RecommendedWidth = 587,
+                        RecommendedHeight = 695,
+                        MinWidth = 400,
+                        MinHeight = 500,
+                        MaxWidth = 800,
+                        MaxHeight = 1000,
+                        AspectRatio = "4:5",
+                        Orientation = "Portrait",
+                        MaxFileSizeBytes = 3 * 1024 * 1024
+                    },
                     CurrentTemplatePath = "/assets/img/media/gift-empowerment-587x695.jpg",
                     FallbackPath = "/assets/img/media/gift-empowerment-587x695.jpg"
                 },
@@ -134,6 +194,18 @@ public class PageTemplateService : IPageTemplateService
                     Key = "TeamPhoto", 
                     Label = "Team Photo", 
                     Description = "Group photo of team/volunteers",
+                    Requirements = new ImageRequirements
+                    {
+                        RecommendedWidth = 800,
+                        RecommendedHeight = 600,
+                        MinWidth = 600,
+                        MinHeight = 400,
+                        MaxWidth = 1200,
+                        MaxHeight = 900,
+                        AspectRatio = "4:3",
+                        Orientation = "Landscape",
+                        MaxFileSizeBytes = 3 * 1024 * 1024
+                    },
                     CurrentTemplatePath = "/assets/img/media/media-10.jpg",
                     FallbackPath = "/assets/img/media/media-10.jpg"
                 }
