@@ -110,22 +110,22 @@ public class PagesControllerIntegrationTests : IClassFixture<CustomWebApplicatio
 
     #endregion
 
-    #region UpdateSection Action Integration Tests
+    #region UpdateContent Action Integration Tests
 
     [Fact]
-    public async Task UpdateSection_WithoutAuthentication_RedirectsToLogin()
+    public async Task UpdateContent_WithoutAuthentication_RedirectsToLogin()
     {
         // Arrange
         var formData = new FormUrlEncodedContent(new[]
         {
-            new KeyValuePair<string, string>("PageId", "1"),
-            new KeyValuePair<string, string>("SectionKey", "WelcomeText"),
-            new KeyValuePair<string, string>("Content", "Hello World"),
-            new KeyValuePair<string, string>("ContentType", "Text")
+            new KeyValuePair<string, string>("pageId", "1"),
+            new KeyValuePair<string, string>("sectionKey", "WelcomeText"),
+            new KeyValuePair<string, string>("content", "Hello World"),
+            new KeyValuePair<string, string>("contentType", "Text")
         });
 
         // Act
-        var response = await _client.PostAsync("/Admin/Pages/UpdateSection", formData);
+        var response = await _client.PostAsync("/Admin/Pages/UpdateContent", formData);
 
         // Assert
         Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
@@ -133,7 +133,7 @@ public class PagesControllerIntegrationTests : IClassFixture<CustomWebApplicatio
     }
 
     [Fact]
-    public async Task UpdateSection_WithInvalidModel_RedirectsToEditWithError()
+    public async Task UpdateContent_WithInvalidModel_RedirectsToEditWithError()
     {
         // Arrange
         var client = _factory.CreateClientWithAuth();
@@ -141,12 +141,12 @@ public class PagesControllerIntegrationTests : IClassFixture<CustomWebApplicatio
         // Missing required fields
         var formData = new FormUrlEncodedContent(new[]
         {
-            new KeyValuePair<string, string>("PageId", "1")
-            // Missing SectionKey and ContentType
+            new KeyValuePair<string, string>("pageId", "1")
+            // Missing sectionKey
         });
 
         // Act
-        var response = await client.PostAsync("/Admin/Pages/UpdateSection", formData);
+        var response = await client.PostAsync("/Admin/Pages/UpdateContent", formData);
 
         // Assert
         Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
@@ -159,21 +159,21 @@ public class PagesControllerIntegrationTests : IClassFixture<CustomWebApplicatio
     }
 
     [Fact]
-    public async Task UpdateSection_WithValidData_RedirectsToEdit()
+    public async Task UpdateContent_WithValidData_RedirectsToEdit()
     {
         // Arrange
         var client = _factory.CreateClientWithAuth();
         
         var formData = new FormUrlEncodedContent(new[]
         {
-            new KeyValuePair<string, string>("PageId", "1"),
-            new KeyValuePair<string, string>("SectionKey", "TestSection"),
-            new KeyValuePair<string, string>("Content", "Test Content"),
-            new KeyValuePair<string, string>("ContentType", "Text")
+            new KeyValuePair<string, string>("pageId", "1"),
+            new KeyValuePair<string, string>("sectionKey", "TestSection"),
+            new KeyValuePair<string, string>("content", "Test Content"),
+            new KeyValuePair<string, string>("contentType", "Text")
         });
 
         // Act
-        var response = await client.PostAsync("/Admin/Pages/UpdateSection", formData);
+        var response = await client.PostAsync("/Admin/Pages/UpdateContent", formData);
 
         // Assert
         Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
@@ -195,10 +195,9 @@ public class PagesControllerIntegrationTests : IClassFixture<CustomWebApplicatio
         // Arrange
         var formData = new FormUrlEncodedContent(new[]
         {
-            new KeyValuePair<string, string>("PageId", "1"),
-            new KeyValuePair<string, string>("ImageKey", "HeroImage"),
-            new KeyValuePair<string, string>("MediaId", "1"),
-            new KeyValuePair<string, string>("DisplayOrder", "0")
+            new KeyValuePair<string, string>("pageId", "1"),
+            new KeyValuePair<string, string>("imageKey", "HeroImage"),
+            new KeyValuePair<string, string>("mediaId", "1")
         });
 
         // Act
@@ -218,8 +217,8 @@ public class PagesControllerIntegrationTests : IClassFixture<CustomWebApplicatio
         // Missing required fields
         var formData = new FormUrlEncodedContent(new[]
         {
-            new KeyValuePair<string, string>("PageId", "1")
-            // Missing ImageKey and MediaId
+            new KeyValuePair<string, string>("pageId", "1")
+            // Missing imageKey and mediaId
         });
 
         // Act
@@ -243,10 +242,9 @@ public class PagesControllerIntegrationTests : IClassFixture<CustomWebApplicatio
         
         var formData = new FormUrlEncodedContent(new[]
         {
-            new KeyValuePair<string, string>("PageId", "1"),
-            new KeyValuePair<string, string>("ImageKey", "TestImage"),
-            new KeyValuePair<string, string>("MediaId", "1"),
-            new KeyValuePair<string, string>("DisplayOrder", "0")
+            new KeyValuePair<string, string>("pageId", "1"),
+            new KeyValuePair<string, string>("imageKey", "TestImage"),
+            new KeyValuePair<string, string>("mediaId", "1")
         });
 
         // Act
@@ -308,44 +306,6 @@ public class PagesControllerIntegrationTests : IClassFixture<CustomWebApplicatio
 
     #endregion
 
-    #region MediaPicker Action Integration Tests
-
-    [Fact]
-    public async Task MediaPicker_WithoutAuthentication_RedirectsToLogin()
-    {
-        // Act
-        var response = await _client.GetAsync("/Admin/Pages/MediaPicker?pageId=1&imageKey=HeroImage");
-
-        // Assert
-        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-        Assert.Contains("/Admin/Account/Login", response.Headers.Location?.ToString());
-    }
-
-    [Fact]
-    public async Task MediaPicker_WithAuthentication_ReturnsView()
-    {
-        // Arrange
-        var client = _factory.CreateClientWithAuth();
-
-        // Act
-        var response = await client.GetAsync("/Admin/Pages/MediaPicker?pageId=1&imageKey=HeroImage");
-
-        // Assert
-        // May return Redirect if auth isn't set up, or OK if it is
-        Assert.True(
-            response.StatusCode == HttpStatusCode.OK ||
-            response.StatusCode == HttpStatusCode.Redirect,
-            $"Expected OK or Redirect, got {response.StatusCode}");
-        
-        if (response.StatusCode == HttpStatusCode.OK)
-        {
-            var content = await response.Content.ReadAsStringAsync();
-            Assert.Contains("Media Picker", content);
-        }
-    }
-
-    #endregion
-
     #region Authorization Tests
 
     [Fact]
@@ -355,8 +315,7 @@ public class PagesControllerIntegrationTests : IClassFixture<CustomWebApplicatio
         var endpoints = new[]
         {
             "/Admin/Pages",
-            "/Admin/Pages/Edit/1",
-            "/Admin/Pages/MediaPicker?pageId=1&imageKey=Test"
+            "/Admin/Pages/Edit/1"
         };
 
         foreach (var endpoint in endpoints)
@@ -388,15 +347,15 @@ public class PagesControllerIntegrationTests : IClassFixture<CustomWebApplicatio
             $"Expected OK or Redirect, got {indexResponse.StatusCode}");
 
         // Act 2: Update a section (assuming page ID 1 exists or will be created)
-        var updateSectionData = new FormUrlEncodedContent(new[]
+        var updateContentData = new FormUrlEncodedContent(new[]
         {
-            new KeyValuePair<string, string>("PageId", "1"),
-            new KeyValuePair<string, string>("SectionKey", "IntegrationTest"),
-            new KeyValuePair<string, string>("Content", "Integration Test Content"),
-            new KeyValuePair<string, string>("ContentType", "Text")
+            new KeyValuePair<string, string>("pageId", "1"),
+            new KeyValuePair<string, string>("sectionKey", "IntegrationTest"),
+            new KeyValuePair<string, string>("content", "Integration Test Content"),
+            new KeyValuePair<string, string>("contentType", "Text")
         });
 
-        var updateResponse = await client.PostAsync("/Admin/Pages/UpdateSection", updateSectionData);
+        var updateResponse = await client.PostAsync("/Admin/Pages/UpdateContent", updateContentData);
         
         // Assert
         Assert.Equal(HttpStatusCode.Redirect, updateResponse.StatusCode);
@@ -416,10 +375,9 @@ public class PagesControllerIntegrationTests : IClassFixture<CustomWebApplicatio
         // Act 1: Update image
         var updateImageData = new FormUrlEncodedContent(new[]
         {
-            new KeyValuePair<string, string>("PageId", "1"),
-            new KeyValuePair<string, string>("ImageKey", "IntegrationTestImage"),
-            new KeyValuePair<string, string>("MediaId", "1"),
-            new KeyValuePair<string, string>("DisplayOrder", "0")
+            new KeyValuePair<string, string>("pageId", "1"),
+            new KeyValuePair<string, string>("imageKey", "IntegrationTestImage"),
+            new KeyValuePair<string, string>("mediaId", "1")
         });
 
         var updateResponse = await client.PostAsync("/Admin/Pages/UpdateImage", updateImageData);
