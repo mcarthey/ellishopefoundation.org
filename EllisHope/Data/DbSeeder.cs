@@ -50,6 +50,55 @@ public static class DbSeeder
                 Console.WriteLine("IMPORTANT: Change this password after first login!");
             }
         }
+        else
+        {
+            // Update existing admin user if needed
+            bool needsUpdate = false;
+            
+            if (adminUser.UserRole != UserRole.Admin)
+            {
+                adminUser.UserRole = UserRole.Admin;
+                needsUpdate = true;
+            }
+            
+            if (adminUser.Status != MembershipStatus.Active)
+            {
+                adminUser.Status = MembershipStatus.Active;
+                needsUpdate = true;
+            }
+            
+            if (!adminUser.IsActive)
+            {
+                adminUser.IsActive = true;
+                needsUpdate = true;
+            }
+            
+            // Ensure name fields are set
+            if (string.IsNullOrEmpty(adminUser.FirstName))
+            {
+                adminUser.FirstName = "System";
+                needsUpdate = true;
+            }
+            
+            if (string.IsNullOrEmpty(adminUser.LastName))
+            {
+                adminUser.LastName = "Administrator";
+                needsUpdate = true;
+            }
+            
+            if (needsUpdate)
+            {
+                await userManager.UpdateAsync(adminUser);
+                Console.WriteLine($"Admin user updated: {adminEmail}");
+            }
+            
+            // Ensure admin is in Admin role
+            if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
+            {
+                await userManager.AddToRoleAsync(adminUser, "Admin");
+                Console.WriteLine($"Added Admin role to: {adminEmail}");
+            }
+        }
 
         // Seed default blog categories
         if (!context.BlogCategories.Any())
