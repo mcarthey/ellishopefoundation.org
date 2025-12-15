@@ -11,17 +11,20 @@ namespace EllisHope.Areas.Admin.Controllers;
 public class PagesController : Controller
 {
     private readonly IPageService _pageService;
+    private readonly IPageTemplateService _templateService;
     private readonly IMediaService _mediaService;
     private readonly IConfiguration _configuration;
     private readonly ILogger<PagesController> _logger;
 
     public PagesController(
         IPageService pageService,
+        IPageTemplateService templateService,
         IMediaService mediaService,
         IConfiguration configuration,
         ILogger<PagesController> logger)
     {
         _pageService = pageService;
+        _templateService = templateService;
         _mediaService = mediaService;
         _configuration = configuration;
         _logger = logger;
@@ -59,77 +62,67 @@ public class PagesController : Controller
             return NotFound();
         }
 
-        var viewModel = new PageEditViewModel
+        // Get the template for this page type
+        var template = _templateService.GetPageTemplate(page.PageName);
+        
+        // Populate current values from database
+        foreach (var img in template.Images)
         {
-            Id = page.Id,
-            PageName = page.PageName,
-            Title = page.Title,
-            MetaDescription = page.MetaDescription,
-            IsPublished = page.IsPublished,
-            ContentSections = page.ContentSections
-                .Select(ContentSectionViewModel.FromContentSection)
-                .ToList(),
-            PageImages = page.PageImages
-                .Select(PageImageViewModel.FromPageImage)
-                .ToList()
-        };
+            var currentImg = page.PageImages.FirstOrDefault(pi => pi.ImageKey == img.Key);
+            if (currentImg != null)
+            {
+                img.CurrentImagePath = currentImg.Media?.FilePath;
+                img.CurrentMediaId = currentImg.MediaId;
+            }
+        }
 
-        // Get available media for selection
+        foreach (var content in template.ContentAreas)
+        {
+            var currentContent = page.ContentSections.FirstOrDefault(cs => cs.SectionKey == content.Key);
+            if (currentContent != null)
+            {
+                content.CurrentContent = currentContent.Content;
+            }
+        }
+
+        ViewBag.PageId = page.Id;
+        ViewBag.PageName = page.PageName;
+        ViewBag.PageTemplate = template;
         ViewBag.AvailableMedia = await _mediaService.GetAllMediaAsync();
 
-        return View(viewModel);
+        return View(template);
     }
 
     // POST: Admin/Pages/UpdateSection
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> UpdateSection(QuickEditSectionViewModel model)
+    public async Task<IActionResult> UpdateContent(int pageId, string sectionKey, string content, string contentType = "RichText")
     {
-        if (!ModelState.IsValid)
-        {
-            TempData["ErrorMessage"] = "Invalid section data";
-            return RedirectToAction(nameof(Edit), new { id = model.PageId });
-        }
-
         try
         {
-            await _pageService.UpdateContentSectionAsync(
-                model.PageId,
-                model.SectionKey,
-                model.Content ?? string.Empty,
-                model.ContentType);
-
-            TempData["SuccessMessage"] = $"Section '{model.SectionKey}' updated successfully!";
+            await _pageService.UpdateContentSectionAsync(pageId, sectionKey, content ?? string.Empty, contentType);
+            
+            TempData["SuccessMessage"] = "Content updated successfully!";
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error updating content section");
-            TempData["ErrorMessage"] = $"Error updating section: {ex.Message}";
+            TempData["ErrorMessage"] = $"Error updating content: {ex.Message}";
         }
 
-        return RedirectToAction(nameof(Edit), new { id = model.PageId });
+        return RedirectToAction(nameof(Edit), new { id = pageId });
     }
 
     // POST: Admin/Pages/UpdateImage
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> UpdateImage(QuickEditImageViewModel model)
+    public async Task<IActionResult> UpdateImage(int pageId, string imageKey, int mediaId)
     {
-        if (!ModelState.IsValid)
-        {
-            TempData["ErrorMessage"] = "Invalid image data";
-            return RedirectToAction(nameof(Edit), new { id = model.PageId });
-        }
-
         try
         {
-            await _pageService.SetPageImageAsync(
-                model.PageId,
-                model.ImageKey,
-                model.MediaId,
-                model.DisplayOrder);
-
-            TempData["SuccessMessage"] = $"Image '{model.ImageKey}' updated successfully!";
+            await _pageService.SetPageImageAsync(pageId, imageKey, mediaId, 0);
+            
+            TempData["SuccessMessage"] = "Image updated successfully!";
         }
         catch (Exception ex)
         {
@@ -137,7 +130,7 @@ public class PagesController : Controller
             TempData["ErrorMessage"] = $"Error updating image: {ex.Message}";
         }
 
-        return RedirectToAction(nameof(Edit), new { id = model.PageId });
+        return RedirectToAction(nameof(Edit), new { id = pageId });
     }
 
     // POST: Admin/Pages/RemoveImage
@@ -148,7 +141,7 @@ public class PagesController : Controller
         try
         {
             await _pageService.RemovePageImageAsync(pageId, imageKey);
-            TempData["SuccessMessage"] = $"Image '{imageKey}' removed successfully!";
+            TempData["SuccessMessage"] = "Image removed successfully!";
         }
         catch (Exception ex)
         {
@@ -157,27 +150,6 @@ public class PagesController : Controller
         }
 
         return RedirectToAction(nameof(Edit), new { id = pageId });
-    }
-
-    // GET: Admin/Pages/MediaPicker
-    public async Task<IActionResult> MediaPicker(int pageId, string imageKey)
-    {
-        var media = await _mediaService.GetAllMediaAsync();
-        var page = await _pageService.GetPageByIdAsync(pageId);
-        var currentImage = await _pageService.GetPageImageAsync(pageId, imageKey);
-
-        var viewModel = new QuickEditImageViewModel
-        {
-            PageId = pageId,
-            PageName = page?.PageName ?? "Unknown",
-            ImageKey = imageKey,
-            CurrentMediaId = currentImage?.MediaId,
-            CurrentMediaPath = currentImage?.Media?.FilePath,
-            DisplayOrder = currentImage?.DisplayOrder ?? 0
-        };
-
-        ViewBag.AvailableMedia = media;
-        return View(viewModel);
     }
 
     // Helper methods
