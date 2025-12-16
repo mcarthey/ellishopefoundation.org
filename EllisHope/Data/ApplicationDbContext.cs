@@ -23,6 +23,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<BlogPostCategory> BlogPostCategories { get; set; }
     public DbSet<Event> Events { get; set; }
     public DbSet<Cause> Causes { get; set; }
+    
+    // Application System tables
+    public DbSet<ClientApplication> ClientApplications { get; set; }
+    public DbSet<ApplicationVote> ApplicationVotes { get; set; }
+    public DbSet<ApplicationComment> ApplicationComments { get; set; }
+    public DbSet<ApplicationNotification> ApplicationNotifications { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -108,5 +114,133 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
         builder.Entity<Cause>()
             .HasIndex(c => c.IsPublished);
+
+        #region Client Application Configuration
+        
+        // ClientApplication relationships
+        builder.Entity<ClientApplication>()
+            .HasOne(ca => ca.Applicant)
+            .WithMany()
+            .HasForeignKey(ca => ca.ApplicantId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.Entity<ClientApplication>()
+            .HasOne(ca => ca.AssignedSponsor)
+            .WithMany()
+            .HasForeignKey(ca => ca.AssignedSponsorId)
+            .OnDelete(DeleteBehavior.SetNull);
+        
+        builder.Entity<ClientApplication>()
+            .HasOne(ca => ca.DecisionMadeBy)
+            .WithMany()
+            .HasForeignKey(ca => ca.DecisionMadeById)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.Entity<ClientApplication>()
+            .HasOne(ca => ca.LastModifiedBy)
+            .WithMany()
+            .HasForeignKey(ca => ca.LastModifiedById)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        // Decimal precision
+        builder.Entity<ClientApplication>()
+            .Property(ca => ca.EstimatedMonthlyCost)
+            .HasPrecision(10, 2);
+        
+        builder.Entity<ClientApplication>()
+            .Property(ca => ca.ApprovedMonthlyAmount)
+            .HasPrecision(10, 2);
+        
+        // Indexes for performance
+        builder.Entity<ClientApplication>()
+            .HasIndex(ca => ca.ApplicantId);
+        
+        builder.Entity<ClientApplication>()
+            .HasIndex(ca => ca.Status);
+        
+        builder.Entity<ClientApplication>()
+            .HasIndex(ca => ca.SubmittedDate);
+        
+        builder.Entity<ClientApplication>()
+            .HasIndex(ca => new { ca.Status, ca.SubmittedDate });
+        
+        #endregion
+        
+        #region ApplicationVote Configuration
+        
+        builder.Entity<ApplicationVote>()
+            .HasOne(av => av.Application)
+            .WithMany(ca => ca.Votes)
+            .HasForeignKey(av => av.ApplicationId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.Entity<ApplicationVote>()
+            .HasOne(av => av.Voter)
+            .WithMany()
+            .HasForeignKey(av => av.VoterId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        // Ensure one vote per board member per application
+        builder.Entity<ApplicationVote>()
+            .HasIndex(av => new { av.ApplicationId, av.VoterId })
+            .IsUnique();
+        
+        builder.Entity<ApplicationVote>()
+            .HasIndex(av => av.VotedDate);
+        
+        #endregion
+        
+        #region ApplicationComment Configuration
+        
+        builder.Entity<ApplicationComment>()
+            .HasOne(ac => ac.Application)
+            .WithMany(ca => ca.Comments)
+            .HasForeignKey(ac => ac.ApplicationId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.Entity<ApplicationComment>()
+            .HasOne(ac => ac.Author)
+            .WithMany()
+            .HasForeignKey(ac => ac.AuthorId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.Entity<ApplicationComment>()
+            .HasOne(ac => ac.ParentComment)
+            .WithMany(ac => ac.Replies)
+            .HasForeignKey(ac => ac.ParentCommentId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.Entity<ApplicationComment>()
+            .HasIndex(ac => ac.CreatedDate);
+        
+        builder.Entity<ApplicationComment>()
+            .HasIndex(ac => ac.IsPrivate);
+        
+        #endregion
+        
+        #region ApplicationNotification Configuration
+        
+        builder.Entity<ApplicationNotification>()
+            .HasOne(an => an.Recipient)
+            .WithMany()
+            .HasForeignKey(an => an.RecipientId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.Entity<ApplicationNotification>()
+            .HasOne(an => an.Application)
+            .WithMany()
+            .HasForeignKey(an => an.ApplicationId)
+            .OnDelete(DeleteBehavior.SetNull);
+        
+        builder.Entity<ApplicationNotification>()
+            .HasIndex(an => new { an.RecipientId, an.IsRead });
+        
+        builder.Entity<ApplicationNotification>()
+            .HasIndex(an => an.CreatedDate);
+        
+        builder.Entity<ApplicationNotification>()
+            .HasIndex(an => an.Type);
+        
+        #endregion
     }
 }
