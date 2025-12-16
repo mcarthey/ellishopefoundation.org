@@ -186,15 +186,13 @@ public class AccountControllerIntegrationTests : IClassFixture<CustomWebApplicat
     #region Authorization Flow Integration Tests
 
     [Fact]
-    public async Task ProtectedResource_WithoutAuth_RedirectsToLogin()
+    public async Task ProtectedResource_WithoutAuth_ReturnsUnauthorized()
     {
         // Act
         var response = await _client.GetAsync("/Admin/Pages");
 
         // Assert
-        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-        Assert.Contains("/Admin/Account/Login", response.Headers.Location?.ToString());
-        Assert.Contains("ReturnUrl", response.Headers.Location?.Query);
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
@@ -202,11 +200,10 @@ public class AccountControllerIntegrationTests : IClassFixture<CustomWebApplicat
     {
         // Act 1: Try to access protected resource
         var protectedResponse = await _client.GetAsync("/Admin/Pages");
-        Assert.Equal(HttpStatusCode.Redirect, protectedResponse.StatusCode);
-        Assert.Contains("/Admin/Account/Login", protectedResponse.Headers.Location?.ToString());
+        Assert.Equal(HttpStatusCode.Unauthorized, protectedResponse.StatusCode);
 
-        // Act 2: Navigate to login page
-        var loginPageResponse = await _client.GetAsync(protectedResponse.Headers.Location);
+        // Act 2: Navigate to login page (still works without auth)
+        var loginPageResponse = await _client.GetAsync("/Admin/Account/Login");
         Assert.Equal(HttpStatusCode.OK, loginPageResponse.StatusCode);
 
         // Act 3: Attempt login with invalid credentials

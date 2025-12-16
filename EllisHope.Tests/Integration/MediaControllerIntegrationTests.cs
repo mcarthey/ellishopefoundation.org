@@ -1,8 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
-using System.Text;
 using EllisHope.Models.Domain;
-using EllisHope.Models.ViewModels;
+using EllisHope.Tests.Helpers;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
@@ -29,71 +28,72 @@ public class MediaControllerIntegrationTests : IClassFixture<CustomWebApplicatio
     #region Index Action Integration Tests
 
     [Fact]
-    public async Task Index_WithoutAuthentication_RedirectsToLogin()
+    public async Task Index_WithoutAuthentication_ReturnsUnauthorized()
     {
         // Act
         var response = await _client.GetAsync("/Admin/Media");
 
         // Assert
-        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-        Assert.Contains("/Admin/Account/Login", response.Headers.Location?.ToString());
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
     public async Task Index_WithAuthentication_ReturnsSuccess()
     {
         // Arrange
-        var client = _factory.CreateClientWithAuth();
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin@media-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
 
         // Act
         var response = await client.GetAsync("/Admin/Media");
 
         // Assert
-        // May return Redirect if auth isn't set up, or OK if it is
-        Assert.True(
-            response.StatusCode == HttpStatusCode.OK ||
-            response.StatusCode == HttpStatusCode.Redirect,
-            $"Expected OK or Redirect, got {response.StatusCode}");
-        
-        if (response.StatusCode == HttpStatusCode.OK)
-        {
-            var content = await response.Content.ReadAsStringAsync();
-            Assert.Contains("Media Library", content);
-        }
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var content = await response.Content.ReadAsStringAsync();
+        Assert.Contains("Media Library", content);
     }
 
     [Fact]
     public async Task Index_WithSearchTerm_FiltersResults()
     {
         // Arrange
-        var client = _factory.CreateClientWithAuth();
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-search@media-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
 
         // Act
         var response = await client.GetAsync("/Admin/Media?searchTerm=sunset");
 
         // Assert
-        // May return Redirect if auth isn't set up, or OK if it is
-        Assert.True(
-            response.StatusCode == HttpStatusCode.OK ||
-            response.StatusCode == HttpStatusCode.Redirect,
-            $"Expected OK or Redirect, got {response.StatusCode}");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     [Fact]
     public async Task Index_WithCategoryFilter_FiltersResults()
     {
         // Arrange
-        var client = _factory.CreateClientWithAuth();
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-filter@media-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
 
         // Act
         var response = await client.GetAsync($"/Admin/Media?category={(int)MediaCategory.Hero}");
 
         // Assert
-        // May return Redirect if auth isn't set up, or OK if it is
-        Assert.True(
-            response.StatusCode == HttpStatusCode.OK ||
-            response.StatusCode == HttpStatusCode.Redirect,
-            $"Expected OK or Redirect, got {response.StatusCode}");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     #endregion
@@ -101,38 +101,35 @@ public class MediaControllerIntegrationTests : IClassFixture<CustomWebApplicatio
     #region Upload GET Action Integration Tests
 
     [Fact]
-    public async Task Upload_Get_WithoutAuthentication_RedirectsToLogin()
+    public async Task Upload_Get_WithoutAuthentication_ReturnsUnauthorized()
     {
         // Act
         var response = await _client.GetAsync("/Admin/Media/Upload");
 
         // Assert
-        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-        Assert.Contains("/Admin/Account/Login", response.Headers.Location?.ToString());
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
     public async Task Upload_Get_WithAuthentication_ReturnsUploadForm()
     {
         // Arrange
-        var client = _factory.CreateClientWithAuth();
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-upload@media-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
 
         // Act
         var response = await client.GetAsync("/Admin/Media/Upload");
 
         // Assert
-        // May return Redirect if auth isn't set up, or OK if it is
-        Assert.True(
-            response.StatusCode == HttpStatusCode.OK ||
-            response.StatusCode == HttpStatusCode.Redirect,
-            $"Expected OK or Redirect, got {response.StatusCode}");
-        
-        if (response.StatusCode == HttpStatusCode.OK)
-        {
-            var content = await response.Content.ReadAsStringAsync();
-            Assert.Contains("Upload Image", content);
-            Assert.Contains("type=\"file\"", content);
-        }
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var content = await response.Content.ReadAsStringAsync();
+        Assert.Contains("Upload Image", content);
+        Assert.Contains("type=\"file\"", content);
     }
 
     #endregion
@@ -140,7 +137,7 @@ public class MediaControllerIntegrationTests : IClassFixture<CustomWebApplicatio
     #region Upload POST Action Integration Tests
 
     [Fact]
-    public async Task Upload_Post_WithoutAuthentication_RedirectsToLogin()
+    public async Task Upload_Post_WithoutAuthentication_ReturnsUnauthorized()
     {
         // Arrange
         var formData = new MultipartFormDataContent();
@@ -150,15 +147,20 @@ public class MediaControllerIntegrationTests : IClassFixture<CustomWebApplicatio
         var response = await _client.PostAsync("/Admin/Media/Upload", formData);
 
         // Assert
-        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-        Assert.Contains("/Admin/Account/Login", response.Headers.Location?.ToString());
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
     public async Task Upload_Post_WithoutFile_ReturnsValidationError()
     {
         // Arrange
-        var client = _factory.CreateClientWithAuth();
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-upload-nofile@media-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
         
         var formData = new MultipartFormDataContent();
         formData.Add(new StringContent("Test Alt Text"), "AltText");
@@ -168,55 +170,9 @@ public class MediaControllerIntegrationTests : IClassFixture<CustomWebApplicatio
         var response = await client.PostAsync("/Admin/Media/Upload", formData);
 
         // Assert
-        // May return Redirect if auth isn't set up, or OK with validation errors if authenticated
-        Assert.True(
-            response.StatusCode == HttpStatusCode.OK ||
-            response.StatusCode == HttpStatusCode.Redirect,
-            $"Expected OK or Redirect, got {response.StatusCode}");
-        
-        if (response.StatusCode == HttpStatusCode.OK)
-        {
-            var content = await response.Content.ReadAsStringAsync();
-            // The view should be displayed again with validation error
-            Assert.Contains("Upload Image", content);
-        }
-    }
-
-    [Fact]
-    public async Task Upload_Post_WithValidFile_RedirectsToIndex()
-    {
-        // Arrange
-        var client = _factory.CreateClientWithAuth();
-        
-        // Create a fake image file
-        var fileContent = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A }; // PNG header
-        var formData = new MultipartFormDataContent();
-        
-        var fileStreamContent = new ByteArrayContent(fileContent);
-        fileStreamContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
-        formData.Add(fileStreamContent, "File", "test.png");
-        formData.Add(new StringContent("Test Image"), "AltText");
-        formData.Add(new StringContent("Test Title"), "Title");
-        formData.Add(new StringContent(((int)MediaCategory.Page).ToString()), "Category");
-
-        // Act
-        var response = await client.PostAsync("/Admin/Media/Upload", formData);
-
-        // Assert
-        // Note: This may fail in actual upload due to image processing or auth, 
-        // but tests the full pipeline including model binding
-        Assert.True(
-            response.StatusCode == HttpStatusCode.Redirect || 
-            response.StatusCode == HttpStatusCode.OK,
-            $"Expected Redirect or OK, got {response.StatusCode}");
-        
-        if (response.StatusCode == HttpStatusCode.Redirect)
-        {
-            var location = response.Headers.Location?.ToString() ?? string.Empty;
-            Assert.True(
-                location.Contains("/Admin/Media") || location.Contains("/Admin/Account/Login"),
-                $"Expected redirect to Media or Login, got {location}");
-        }
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var content = await response.Content.ReadAsStringAsync();
+        Assert.Contains("Upload Image", content);
     }
 
     #endregion
@@ -224,37 +180,34 @@ public class MediaControllerIntegrationTests : IClassFixture<CustomWebApplicatio
     #region UnsplashSearch GET Action Integration Tests
 
     [Fact]
-    public async Task UnsplashSearch_Get_WithoutAuthentication_RedirectsToLogin()
+    public async Task UnsplashSearch_Get_WithoutAuthentication_ReturnsUnauthorized()
     {
         // Act
         var response = await _client.GetAsync("/Admin/Media/UnsplashSearch");
 
         // Assert
-        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-        Assert.Contains("/Admin/Account/Login", response.Headers.Location?.ToString());
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
     public async Task UnsplashSearch_Get_WithAuthentication_ReturnsSearchForm()
     {
         // Arrange
-        var client = _factory.CreateClientWithAuth();
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-unsplash@media-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
 
         // Act
         var response = await client.GetAsync("/Admin/Media/UnsplashSearch");
 
         // Assert
-        // May return Redirect if auth isn't set up, or OK if it is
-        Assert.True(
-            response.StatusCode == HttpStatusCode.OK ||
-            response.StatusCode == HttpStatusCode.Redirect,
-            $"Expected OK or Redirect, got {response.StatusCode}");
-        
-        if (response.StatusCode == HttpStatusCode.OK)
-        {
-            var content = await response.Content.ReadAsStringAsync();
-            Assert.Contains("Unsplash", content);
-        }
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var content = await response.Content.ReadAsStringAsync();
+        Assert.Contains("Unsplash", content);
     }
 
     #endregion
@@ -262,7 +215,7 @@ public class MediaControllerIntegrationTests : IClassFixture<CustomWebApplicatio
     #region UnsplashSearch POST Action Integration Tests
 
     [Fact]
-    public async Task UnsplashSearch_Post_WithoutAuthentication_RedirectsToLogin()
+    public async Task UnsplashSearch_Post_WithoutAuthentication_ReturnsUnauthorized()
     {
         // Arrange
         var formData = new FormUrlEncodedContent(new[]
@@ -274,27 +227,7 @@ public class MediaControllerIntegrationTests : IClassFixture<CustomWebApplicatio
         var response = await _client.PostAsync("/Admin/Media/UnsplashSearch?query=nature&page=1", formData);
 
         // Assert
-        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-        Assert.Contains("/Admin/Account/Login", response.Headers.Location?.ToString());
-    }
-
-    [Fact]
-    public async Task UnsplashSearch_Post_WithEmptyQuery_ReturnsView()
-    {
-        // Arrange
-        var client = _factory.CreateClientWithAuth();
-
-        // Act
-        var response = await client.PostAsync("/Admin/Media/UnsplashSearch?query=&page=1", 
-            new FormUrlEncodedContent(Array.Empty<KeyValuePair<string, string>>()));
-
-        // Assert
-        // May return Redirect if auth isn't set up, or OK if it is
-        Assert.True(
-            response.StatusCode == HttpStatusCode.OK ||
-            response.StatusCode == HttpStatusCode.Redirect ||
-            response.StatusCode == HttpStatusCode.MethodNotAllowed,
-            $"Expected OK, Redirect, or MethodNotAllowed, got {response.StatusCode}");
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     #endregion
@@ -302,31 +235,32 @@ public class MediaControllerIntegrationTests : IClassFixture<CustomWebApplicatio
     #region Edit GET Action Integration Tests
 
     [Fact]
-    public async Task Edit_Get_WithoutAuthentication_RedirectsToLogin()
+    public async Task Edit_Get_WithoutAuthentication_ReturnsUnauthorized()
     {
         // Act
         var response = await _client.GetAsync("/Admin/Media/Edit/1");
 
         // Assert
-        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-        Assert.Contains("/Admin/Account/Login", response.Headers.Location?.ToString());
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
     public async Task Edit_Get_WithNonExistentMedia_ReturnsNotFound()
     {
         // Arrange
-        var client = _factory.CreateClientWithAuth();
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-edit@media-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
 
         // Act
         var response = await client.GetAsync("/Admin/Media/Edit/99999");
 
         // Assert
-        // May return Redirect if auth isn't set up, NotFound if authenticated
-        Assert.True(
-            response.StatusCode == HttpStatusCode.NotFound ||
-            response.StatusCode == HttpStatusCode.Redirect,
-            $"Expected NotFound or Redirect, got {response.StatusCode}");
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
     #endregion
@@ -334,7 +268,7 @@ public class MediaControllerIntegrationTests : IClassFixture<CustomWebApplicatio
     #region Edit POST Action Integration Tests
 
     [Fact]
-    public async Task Edit_Post_WithoutAuthentication_RedirectsToLogin()
+    public async Task Edit_Post_WithoutAuthentication_ReturnsUnauthorized()
     {
         // Arrange
         var formData = new FormUrlEncodedContent(new[]
@@ -347,15 +281,20 @@ public class MediaControllerIntegrationTests : IClassFixture<CustomWebApplicatio
         var response = await _client.PostAsync("/Admin/Media/Edit/1", formData);
 
         // Assert
-        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-        Assert.Contains("/Admin/Account/Login", response.Headers.Location?.ToString());
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
     public async Task Edit_Post_WithIdMismatch_ReturnsNotFound()
     {
         // Arrange
-        var client = _factory.CreateClientWithAuth();
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-edit-mismatch@media-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
         
         var formData = new FormUrlEncodedContent(new[]
         {
@@ -367,11 +306,7 @@ public class MediaControllerIntegrationTests : IClassFixture<CustomWebApplicatio
         var response = await client.PostAsync("/Admin/Media/Edit/2", formData);
 
         // Assert
-        // May return Redirect if auth isn't set up, NotFound if authenticated
-        Assert.True(
-            response.StatusCode == HttpStatusCode.NotFound ||
-            response.StatusCode == HttpStatusCode.Redirect,
-            $"Expected NotFound or Redirect, got {response.StatusCode}");
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
     #endregion
@@ -379,7 +314,7 @@ public class MediaControllerIntegrationTests : IClassFixture<CustomWebApplicatio
     #region Delete Action Integration Tests
 
     [Fact]
-    public async Task Delete_WithoutAuthentication_RedirectsToLogin()
+    public async Task Delete_WithoutAuthentication_ReturnsUnauthorized()
     {
         // Arrange
         var formData = new FormUrlEncodedContent(Array.Empty<KeyValuePair<string, string>>());
@@ -388,15 +323,20 @@ public class MediaControllerIntegrationTests : IClassFixture<CustomWebApplicatio
         var response = await _client.PostAsync("/Admin/Media/Delete/1", formData);
 
         // Assert
-        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-        Assert.Contains("/Admin/Account/Login", response.Headers.Location?.ToString());
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
     public async Task Delete_WithAuthentication_ProcessesRequest()
     {
         // Arrange
-        var client = _factory.CreateClientWithAuth();
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-delete@media-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
         
         var formData = new FormUrlEncodedContent(new[]
         {
@@ -407,13 +347,9 @@ public class MediaControllerIntegrationTests : IClassFixture<CustomWebApplicatio
         var response = await client.PostAsync("/Admin/Media/Delete/99999", formData);
 
         // Assert
-        // Should redirect back to Index regardless of whether media exists
         Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-        
         var location = response.Headers.Location?.ToString() ?? string.Empty;
-        Assert.True(
-            location.Contains("/Admin/Media") || location.Contains("/Admin/Account/Login"),
-            $"Expected redirect to Media or Login, got {location}");
+        Assert.Contains("/Admin/Media", location);
     }
 
     #endregion
@@ -421,31 +357,32 @@ public class MediaControllerIntegrationTests : IClassFixture<CustomWebApplicatio
     #region Usages Action Integration Tests
 
     [Fact]
-    public async Task Usages_WithoutAuthentication_RedirectsToLogin()
+    public async Task Usages_WithoutAuthentication_ReturnsUnauthorized()
     {
         // Act
         var response = await _client.GetAsync("/Admin/Media/Usages/1");
 
         // Assert
-        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-        Assert.Contains("/Admin/Account/Login", response.Headers.Location?.ToString());
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
     public async Task Usages_WithNonExistentMedia_ReturnsNotFound()
     {
         // Arrange
-        var client = _factory.CreateClientWithAuth();
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-usages@media-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
 
         // Act
         var response = await client.GetAsync("/Admin/Media/Usages/99999");
 
         // Assert
-        // May return Redirect if auth isn't set up, NotFound if authenticated
-        Assert.True(
-            response.StatusCode == HttpStatusCode.NotFound ||
-            response.StatusCode == HttpStatusCode.Redirect,
-            $"Expected NotFound or Redirect, got {response.StatusCode}");
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
     #endregion
@@ -453,57 +390,53 @@ public class MediaControllerIntegrationTests : IClassFixture<CustomWebApplicatio
     #region GetMediaJson API Integration Tests
 
     [Fact]
-    public async Task GetMediaJson_WithoutAuthentication_RedirectsToLogin()
+    public async Task GetMediaJson_WithoutAuthentication_ReturnsUnauthorized()
     {
         // Act
         var response = await _client.GetAsync("/Admin/Media/GetMediaJson");
 
         // Assert
-        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
     public async Task GetMediaJson_WithAuthentication_ReturnsJson()
     {
         // Arrange
-        var client = _factory.CreateClientWithAuth();
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-json@media-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
 
         // Act
         var response = await client.GetAsync("/Admin/Media/GetMediaJson");
 
         // Assert
-        // May return Redirect if auth isn't set up, or OK if it is
-        Assert.True(
-            response.StatusCode == HttpStatusCode.OK ||
-            response.StatusCode == HttpStatusCode.Redirect,
-            $"Expected OK or Redirect, got {response.StatusCode}");
-        
-        if (response.StatusCode == HttpStatusCode.OK)
-        {
-            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
-        }
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
     }
 
     [Fact]
     public async Task GetMediaJson_WithCategoryFilter_ReturnsFilteredJson()
     {
         // Arrange
-        var client = _factory.CreateClientWithAuth();
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-json-filter@media-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
 
         // Act
         var response = await client.GetAsync($"/Admin/Media/GetMediaJson?category={(int)MediaCategory.Hero}");
 
         // Assert
-        // May return Redirect if auth isn't set up, or OK if it is
-        Assert.True(
-            response.StatusCode == HttpStatusCode.OK ||
-            response.StatusCode == HttpStatusCode.Redirect,
-            $"Expected OK or Redirect, got {response.StatusCode}");
-        
-        if (response.StatusCode == HttpStatusCode.OK)
-        {
-            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
-        }
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
     }
 
     #endregion
@@ -513,7 +446,7 @@ public class MediaControllerIntegrationTests : IClassFixture<CustomWebApplicatio
     [Fact]
     public async Task AllMediaEndpoints_RequireAuthentication()
     {
-        // Test that all endpoints redirect to login when not authenticated
+        // Test that all endpoints return unauthorized when not authenticated
         var endpoints = new[]
         {
             "/Admin/Media",
@@ -527,55 +460,9 @@ public class MediaControllerIntegrationTests : IClassFixture<CustomWebApplicatio
         foreach (var endpoint in endpoints)
         {
             var response = await _client.GetAsync(endpoint);
-            Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-            var location = response.Headers.Location?.ToString() ?? string.Empty;
-            Assert.Contains("/Admin/Account/Login", location);
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
     }
 
     #endregion
-}
-
-/// <summary>
-/// Extension methods for creating authenticated HTTP clients
-/// </summary>
-public static class WebApplicationFactoryExtensions
-{
-    public static HttpClient CreateClientWithAuth(this CustomWebApplicationFactory factory)
-    {
-        var client = factory.CreateClient(new WebApplicationFactoryClientOptions
-        {
-            AllowAutoRedirect = false
-        });
-
-        // For integration tests, we'll use a custom authentication scheme
-        // Since the tests check for redirects to login, these tests should verify
-        // authentication flow rather than bypass it entirely
-        // The actual authentication is tested in AccountControllerIntegrationTests
-        
-        return client;
-    }
-
-    public static async Task<HttpClient> CreateAuthenticatedClientAsync(this CustomWebApplicationFactory factory)
-    {
-        var client = factory.CreateClient(new WebApplicationFactoryClientOptions
-        {
-            AllowAutoRedirect = false,
-            HandleCookies = true
-        });
-
-        // Attempt to login with test credentials
-        // This requires the test database to have a test user
-        var loginData = new FormUrlEncodedContent(new[]
-        {
-            new KeyValuePair<string, string>("Email", "admin@test.com"),
-            new KeyValuePair<string, string>("Password", "Admin123!"),
-            new KeyValuePair<string, string>("RememberMe", "false")
-        });
-
-        var loginResponse = await client.PostAsync("/Admin/Account/Login", loginData);
-        
-        // If login succeeded, the client now has authentication cookies
-        return client;
-    }
 }

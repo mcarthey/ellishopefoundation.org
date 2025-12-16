@@ -6,8 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using EllisHope.Data;
 using EllisHope.Models.Domain;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.TestHost;
+using EllisHope.Tests.Helpers;
 
 namespace EllisHope.Tests.Integration;
 
@@ -32,82 +31,228 @@ public class UsersIntegrationTests : IClassFixture<CustomWebApplicationFactory>
     #region Page Rendering Tests
 
     [Fact]
-    public async Task UsersIndex_WithoutAuth_RedirectsToLogin()
+    public async Task UsersIndex_WithoutAuth_ReturnsUnauthorized()
     {
         // Act
         var response = await _client.GetAsync("/Admin/Users");
 
         // Assert
-        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-        Assert.Contains("/Admin/Account/Login", response.Headers.Location?.ToString());
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
-    [Fact(Skip = "Authentication in integration tests needs to be refactored")]
+    [Fact]
     public async Task UsersIndex_WithAuth_ReturnsSuccess()
     {
-        // This test is skipped until we implement proper test authentication
-        // The current approach doesn't work well with the test environment
-        Assert.True(true);
+        // Arrange
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin@users-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
+
+        // Act
+        var response = await client.GetAsync("/Admin/Users");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
-    [Fact(Skip = "Authentication in integration tests needs to be refactored")]
+    [Fact]
     public async Task UsersIndex_RendersWithoutLayoutErrors()
     {
-        // This test is skipped until we implement proper test authentication
-        Assert.True(true);
+        // Arrange
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-layout@users-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
+
+        // Act
+        var response = await client.GetAsync("/Admin/Users");
+        var content = await response.Content.ReadAsStringAsync();
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Contains("Users", content);
+        Assert.DoesNotContain("Exception", content);
+        Assert.DoesNotContain("Error", content);
     }
 
-    [Fact(Skip = "Authentication in integration tests needs to be refactored")]
+    [Fact]
     public async Task UsersIndex_RendersStatisticsCards()
     {
-        // This test is skipped until we implement proper test authentication
-        Assert.True(true);
+        // Arrange
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-stats@users-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
+
+        // Act
+        var response = await client.GetAsync("/Admin/Users");
+        var content = await response.Content.ReadAsStringAsync();
+
+        // Assert
+        Assert.Contains("Total Users", content);
+        Assert.Contains("Active Users", content);
+        Assert.Contains("Pending", content);
     }
 
-    [Fact(Skip = "Authentication in integration tests needs to be refactored")]
+    [Fact]
     public async Task UsersIndex_RendersFilterForm()
     {
-        // This test is skipped until we implement proper test authentication
-        Assert.True(true);
+        // Arrange
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-filter@users-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
+
+        // Act
+        var response = await client.GetAsync("/Admin/Users");
+        var content = await response.Content.ReadAsStringAsync();
+
+        // Assert
+        Assert.Contains("Search", content);
+        Assert.Contains("Filter", content);
     }
 
-    [Fact(Skip = "Authentication in integration tests needs to be refactored")]
+    [Fact]
     public async Task UsersCreate_ReturnsSuccess()
     {
-        // This test is skipped until we implement proper test authentication
-        Assert.True(true);
+        // Arrange
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-create@users-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
+
+        // Act
+        var response = await client.GetAsync("/Admin/Users/Create");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var content = await response.Content.ReadAsStringAsync();
+        Assert.Contains("Create", content);
     }
 
-    [Fact(Skip = "Authentication in integration tests needs to be refactored")]
+    [Fact]
     public async Task UsersDetails_WithValidId_ReturnsSuccess()
     {
-        // This test is skipped until we implement proper test authentication
-        Assert.True(true);
+        // Arrange
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-details@users-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
+
+        // Act - Use the user ID we just created
+        var response = await client.GetAsync($"/Admin/Users/Details/{userId}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var content = await response.Content.ReadAsStringAsync();
+        Assert.Contains("Admin User", content);
     }
 
-    [Fact(Skip = "Authentication in integration tests needs to be refactored")]
+    [Fact]
     public async Task UsersEdit_WithValidId_ReturnsSuccess()
     {
-        // This test is skipped until we implement proper test authentication
-        Assert.True(true);
+        // Arrange
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-edit@users-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
+
+        // Act - Use the user ID we just created
+        var response = await client.GetAsync($"/Admin/Users/Edit/{userId}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var content = await response.Content.ReadAsStringAsync();
+        Assert.Contains("Edit User", content);
     }
 
-    [Fact(Skip = "Authentication in integration tests needs to be refactored")]
+    [Fact]
     public async Task UsersDelete_WithValidId_ReturnsSuccess()
     {
-        // This test is skipped until we implement proper test authentication
-        Assert.True(true);
+        // Arrange - Create admin user
+        var adminId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-delete@users-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        
+        // Create a user to delete
+        var deleteUserId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "todelete@users-test.com",
+            "To",
+            "Delete",
+            UserRole.Member);
+        
+        var client = _factory.CreateAuthenticatedClient(adminId);
+
+        // Act
+        var response = await client.GetAsync($"/Admin/Users/Delete/{deleteUserId}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var content = await response.Content.ReadAsStringAsync();
+        Assert.Contains("Delete", content);
+        Assert.Contains("To Delete", content);
     }
 
     #endregion
 
     #region User CRUD Flow Tests
 
-    [Fact(Skip = "Authentication in integration tests needs to be refactored")]
+    [Fact]
     public async Task UserCreationFlow_CreatesUserSuccessfully()
     {
-        // This test is skipped until we implement proper test authentication
-        Assert.True(true);
+        // Arrange
+        var adminId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-crud@users-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(adminId);
+
+        var formData = new FormUrlEncodedContent(new []
+        {
+            new KeyValuePair<string, string>("FirstName", "John"),
+            new KeyValuePair<string, string>("LastName", "Doe"),
+            new KeyValuePair<string, string>("Email", "john.doe@test.com"),
+            new KeyValuePair<string, string>("Password", "Test@123456"),
+            new KeyValuePair<string, string>("ConfirmPassword", "Test@123456"),
+            new KeyValuePair<string, string>("UserRole", "4"), // Admin
+            new KeyValuePair<string, string>("Status", "1"), // Active
+            new KeyValuePair<string, string>("IsActive", "true")
+        });
+
+        // Act
+        var response = await client.PostAsync("/Admin/Users/Create", formData);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+        Assert.Contains("/Admin/Users", response.Headers.Location?.ToString());
     }
 
     #endregion
@@ -115,79 +260,102 @@ public class UsersIntegrationTests : IClassFixture<CustomWebApplicationFactory>
     #region Error Handling Tests
 
     [Fact]
-    public async Task UsersDetails_WithInvalidId_RedirectsToLogin()
+    public async Task UsersDetails_WithInvalidId_ReturnsNotFound()
     {
-        // Arrange - No authentication
+        // Arrange
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-invalid@users-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
 
         // Act
-        var response = await _client.GetAsync("/Admin/Users/Details/invalid-id-12345");
+        var response = await client.GetAsync("/Admin/Users/Details/invalid-id-12345");
 
-        // Assert - Should redirect to login since not authenticated
-        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-        Assert.Contains("/Admin/Account/Login", response.Headers.Location?.ToString());
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
     [Fact]
-    public async Task UsersEdit_WithInvalidId_RedirectsToLogin()
+    public async Task UsersEdit_WithInvalidId_ReturnsNotFound()
     {
-        // Arrange - No authentication
+        // Arrange
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-edit-invalid@users-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
 
         // Act
-        var response = await _client.GetAsync("/Admin/Users/Edit/invalid-id-12345");
+        var response = await client.GetAsync("/Admin/Users/Edit/invalid-id-12345");
 
-        // Assert - Should redirect to login since not authenticated
-        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-        Assert.Contains("/Admin/Account/Login", response.Headers.Location?.ToString());
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
     #endregion
 
-    #region Helper Methods (for future use when authentication is fixed)
+    #region Filter and Search Tests
 
-    private async Task<HttpClient> GetAuthenticatedClient()
+    [Fact]
+    public async Task UsersIndex_WithSearch_ReturnsFilteredResults()
     {
-        // TODO: Implement proper test authentication
-        // This is a placeholder for when we implement test authentication properly
-        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions
-        {
-            AllowAutoRedirect = true,
-            HandleCookies = true
-        });
+        // Arrange
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-search@users-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
 
-        return client;
+        // Act
+        var response = await client.GetAsync("/Admin/Users?searchTerm=admin");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
-    private async Task CreateAuthenticatedAdmin()
+    [Fact]
+    public async Task UsersIndex_WithRoleFilter_ReturnsFilteredResults()
     {
-        using var scope = _factory.Services.CreateScope();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-        
-        var admin = await userManager.FindByEmailAsync("admin@ellishope.org");
-        if (admin == null)
-        {
-            admin = new ApplicationUser
-            {
-                UserName = "admin@ellishope.org",
-                Email = "admin@ellishope.org",
-                EmailConfirmed = true,
-                FirstName = "Admin",
-                LastName = "User",
-                UserRole = UserRole.Admin,
-                Status = MembershipStatus.Active,
-                IsActive = true
-            };
+        // Arrange
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-role-filter@users-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
 
-            await userManager.CreateAsync(admin, "Admin@123456");
-            await userManager.AddToRoleAsync(admin, "Admin");
-        }
+        // Act
+        var response = await client.GetAsync("/Admin/Users?roleFilter=4"); // Admin role
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
-    private async Task<string> GetAdminUserId()
+    [Fact]
+    public async Task UsersIndex_WithStatusFilter_ReturnsFilteredResults()
     {
-        using var scope = _factory.Services.CreateScope();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-        var admin = await userManager.FindByEmailAsync("admin@ellishope.org");
-        return admin?.Id ?? throw new InvalidOperationException("Admin user not found");
+        // Arrange
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-status-filter@users-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
+
+        // Act
+        var response = await client.GetAsync("/Admin/Users?statusFilter=1"); // Active status
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     #endregion

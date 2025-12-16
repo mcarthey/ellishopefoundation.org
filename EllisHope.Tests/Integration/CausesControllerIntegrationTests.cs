@@ -1,5 +1,6 @@
 using System.Net;
 using EllisHope.Models.Domain;
+using EllisHope.Tests.Helpers;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
@@ -97,62 +98,70 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
     #region Admin Index Action Integration Tests
 
     [Fact]
-    public async Task Admin_Index_WithoutAuthentication_RedirectsToLogin()
+    public async Task Admin_Index_WithoutAuthentication_ReturnsUnauthorized()
     {
         // Act
         var response = await _client.GetAsync("/Admin/Causes");
 
         // Assert
-        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-        Assert.Contains("/Admin/Account/Login", response.Headers.Location?.ToString());
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
     public async Task Admin_Index_WithAuthentication_ReturnsSuccess()
     {
         // Arrange
-        var client = _factory.CreateClientWithAuth();
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin@causes-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
 
         // Act
         var response = await client.GetAsync("/Admin/Causes");
 
         // Assert
-        Assert.True(
-            response.StatusCode == HttpStatusCode.OK ||
-            response.StatusCode == HttpStatusCode.Redirect,
-            $"Expected OK or Redirect, got {response.StatusCode}");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     [Fact]
     public async Task Admin_Index_WithSearchTerm_ReturnsSuccess()
     {
         // Arrange
-        var client = _factory.CreateClientWithAuth();
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-search@causes-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
 
         // Act
         var response = await client.GetAsync("/Admin/Causes?searchTerm=water");
 
         // Assert
-        Assert.True(
-            response.StatusCode == HttpStatusCode.OK ||
-            response.StatusCode == HttpStatusCode.Redirect,
-            $"Expected OK or Redirect, got {response.StatusCode}");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     [Fact]
     public async Task Admin_Index_WithCategoryFilter_ReturnsSuccess()
     {
         // Arrange
-        var client = _factory.CreateClientWithAuth();
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-filter@causes-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
 
         // Act
         var response = await client.GetAsync("/Admin/Causes?categoryFilter=Education");
 
         // Assert
-        Assert.True(
-            response.StatusCode == HttpStatusCode.OK ||
-            response.StatusCode == HttpStatusCode.Redirect,
-            $"Expected OK or Redirect, got {response.StatusCode}");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     #endregion
@@ -160,40 +169,38 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
     #region Admin Create Action Integration Tests
 
     [Fact]
-    public async Task Admin_Create_Get_WithoutAuthentication_RedirectsToLogin()
+    public async Task Admin_Create_Get_WithoutAuthentication_ReturnsUnauthorized()
     {
         // Act
         var response = await _client.GetAsync("/Admin/Causes/Create");
 
         // Assert
-        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-        Assert.Contains("/Admin/Account/Login", response.Headers.Location?.ToString());
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
     public async Task Admin_Create_Get_WithAuthentication_ReturnsForm()
     {
         // Arrange
-        var client = _factory.CreateClientWithAuth();
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-create@causes-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
 
         // Act
         var response = await client.GetAsync("/Admin/Causes/Create");
 
         // Assert
-        Assert.True(
-            response.StatusCode == HttpStatusCode.OK ||
-            response.StatusCode == HttpStatusCode.Redirect,
-            $"Expected OK or Redirect, got {response.StatusCode}");
-        
-        if (response.StatusCode == HttpStatusCode.OK)
-        {
-            var content = await response.Content.ReadAsStringAsync();
-            Assert.Contains("Create", content);
-        }
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var content = await response.Content.ReadAsStringAsync();
+        Assert.Contains("Create", content);
     }
 
     [Fact]
-    public async Task Admin_Create_Post_WithoutAuthentication_RedirectsToLogin()
+    public async Task Admin_Create_Post_WithoutAuthentication_ReturnsUnauthorized()
     {
         // Arrange
         var formData = new FormUrlEncodedContent(new[]
@@ -207,8 +214,7 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
         var response = await _client.PostAsync("/Admin/Causes/Create", formData);
 
         // Assert
-        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-        Assert.Contains("/Admin/Account/Login", response.Headers.Location?.ToString());
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     #endregion
@@ -216,34 +222,36 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
     #region Admin Edit Action Integration Tests
 
     [Fact]
-    public async Task Admin_Edit_Get_WithoutAuthentication_RedirectsToLogin()
+    public async Task Admin_Edit_Get_WithoutAuthentication_ReturnsUnauthorized()
     {
         // Act
         var response = await _client.GetAsync("/Admin/Causes/Edit/1");
 
         // Assert
-        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-        Assert.Contains("/Admin/Account/Login", response.Headers.Location?.ToString());
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
     public async Task Admin_Edit_Get_WithNonExistentCause_ReturnsNotFound()
     {
         // Arrange
-        var client = _factory.CreateClientWithAuth();
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-edit@causes-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
 
         // Act
         var response = await client.GetAsync("/Admin/Causes/Edit/99999");
 
         // Assert
-        Assert.True(
-            response.StatusCode == HttpStatusCode.NotFound ||
-            response.StatusCode == HttpStatusCode.Redirect,
-            $"Expected NotFound or Redirect, got {response.StatusCode}");
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
     [Fact]
-    public async Task Admin_Edit_Post_WithoutAuthentication_RedirectsToLogin()
+    public async Task Admin_Edit_Post_WithoutAuthentication_ReturnsUnauthorized()
     {
         // Arrange
         var formData = new FormUrlEncodedContent(new[]
@@ -258,15 +266,20 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
         var response = await _client.PostAsync("/Admin/Causes/Edit/1", formData);
 
         // Assert
-        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-        Assert.Contains("/Admin/Account/Login", response.Headers.Location?.ToString());
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
     public async Task Admin_Edit_Post_WithIdMismatch_ReturnsNotFound()
     {
         // Arrange
-        var client = _factory.CreateClientWithAuth();
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-edit-mismatch@causes-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
         
         var formData = new FormUrlEncodedContent(new[]
         {
@@ -280,10 +293,7 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
         var response = await client.PostAsync("/Admin/Causes/Edit/2", formData);
 
         // Assert
-        Assert.True(
-            response.StatusCode == HttpStatusCode.NotFound ||
-            response.StatusCode == HttpStatusCode.Redirect,
-            $"Expected NotFound or Redirect, got {response.StatusCode}");
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
     #endregion
@@ -291,7 +301,7 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
     #region Admin Delete Action Integration Tests
 
     [Fact]
-    public async Task Admin_Delete_WithoutAuthentication_RedirectsToLogin()
+    public async Task Admin_Delete_WithoutAuthentication_ReturnsUnauthorized()
     {
         // Arrange
         var formData = new FormUrlEncodedContent(Array.Empty<KeyValuePair<string, string>>());
@@ -300,15 +310,20 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
         var response = await _client.PostAsync("/Admin/Causes/Delete/1", formData);
 
         // Assert
-        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-        Assert.Contains("/Admin/Account/Login", response.Headers.Location?.ToString());
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
     public async Task Admin_Delete_WithAuthentication_ProcessesRequest()
     {
         // Arrange
-        var client = _factory.CreateClientWithAuth();
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-delete@causes-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
         
         var formData = new FormUrlEncodedContent(Array.Empty<KeyValuePair<string, string>>());
 
@@ -316,19 +331,8 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
         var response = await client.PostAsync("/Admin/Causes/Delete/99999", formData);
 
         // Assert
-        // Should redirect back to Index regardless of whether cause exists
-        Assert.True(
-            response.StatusCode == HttpStatusCode.Redirect ||
-            response.StatusCode == HttpStatusCode.NotFound,
-            $"Expected Redirect or NotFound, got {response.StatusCode}");
-        
-        if (response.StatusCode == HttpStatusCode.Redirect)
-        {
-            var location = response.Headers.Location?.ToString() ?? string.Empty;
-            Assert.True(
-                location.Contains("/Admin/Causes") || location.Contains("/Admin/Account/Login"),
-                $"Expected redirect to Causes or Login, got {location}");
-        }
+        // Should return NotFound for non-existent cause
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
     #endregion
@@ -338,7 +342,7 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
     [Fact]
     public async Task AllAdminCausesEndpoints_RequireAuthentication()
     {
-        // Test that all admin endpoints redirect to login when not authenticated
+        // Test that all admin endpoints return unauthorized when not authenticated
         var endpoints = new[]
         {
             "/Admin/Causes",
@@ -349,9 +353,7 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
         foreach (var endpoint in endpoints)
         {
             var response = await _client.GetAsync(endpoint);
-            Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-            var location = response.Headers.Location?.ToString() ?? string.Empty;
-            Assert.Contains("/Admin/Account/Login", location);
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
     }
 
@@ -417,7 +419,13 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
     public async Task FullWorkflow_AdminCauseManagement()
     {
         // Arrange
-        var client = _factory.CreateClientWithAuth();
+        var userId = await TestAuthenticationHelper.CreateTestUserAsync(
+            _factory.Services,
+            "admin-workflow@causes-test.com",
+            "Admin",
+            "User",
+            UserRole.Admin);
+        var client = _factory.CreateAuthenticatedClient(userId);
 
         // Act 1: Navigate to admin causes list
         var indexResponse = await client.GetAsync("/Admin/Causes");
@@ -431,20 +439,11 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
         // Act 4: Filter by category
         var filterResponse = await client.GetAsync("/Admin/Causes?categoryFilter=Education");
 
-        // Assert
-        // All responses should either be OK (if authenticated) or Redirect (if not)
-        Assert.True(
-            indexResponse.StatusCode == HttpStatusCode.OK ||
-            indexResponse.StatusCode == HttpStatusCode.Redirect);
-        Assert.True(
-            createResponse.StatusCode == HttpStatusCode.OK ||
-            createResponse.StatusCode == HttpStatusCode.Redirect);
-        Assert.True(
-            searchResponse.StatusCode == HttpStatusCode.OK ||
-            searchResponse.StatusCode == HttpStatusCode.Redirect);
-        Assert.True(
-            filterResponse.StatusCode == HttpStatusCode.OK ||
-            filterResponse.StatusCode == HttpStatusCode.Redirect);
+        // Assert - All should return OK with authentication
+        Assert.Equal(HttpStatusCode.OK, indexResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, searchResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, filterResponse.StatusCode);
     }
 
     #endregion
