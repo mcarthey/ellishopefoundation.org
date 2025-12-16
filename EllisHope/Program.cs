@@ -76,6 +76,8 @@ builder.Services.AddScoped<IPageService, PageService>();
 builder.Services.AddScoped<IPageTemplateService, PageTemplateService>();
 builder.Services.AddScoped<IUserManagementService, UserManagementService>();
 builder.Services.AddScoped<IClientApplicationService, ClientApplicationService>();
+builder.Services.AddScoped<IDocumentService, DocumentService>();
+builder.Services.AddScoped<IPdfService, PdfService>();
 
 var app = builder.Build();
 
