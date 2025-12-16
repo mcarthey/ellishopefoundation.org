@@ -698,11 +698,13 @@ public class ClientApplicationService : IClientApplicationService
 
     public async Task<IEnumerable<ApplicationNotification>> GetUnreadNotificationsAsync(string userId)
     {
-        return await _context.ApplicationNotifications
+        var notifications = await _context.ApplicationNotifications
             .Include(n => n.Application)
-            .Where(n => n.RecipientId == userId && !n.IsRead && !n.IsExpired)
-            .OrderByDescending(n => n.CreatedDate)
+            .Where(n => n.RecipientId == userId && !n.IsRead)
             .ToListAsync();
+        
+        // Filter expired notifications in memory (computed property can't be translated to SQL)
+        return notifications.Where(n => !n.IsExpired).OrderByDescending(n => n.CreatedDate);
     }
 
     public async Task MarkNotificationAsReadAsync(int notificationId, string userId)
@@ -735,8 +737,12 @@ public class ClientApplicationService : IClientApplicationService
 
     public async Task<int> GetUnreadNotificationCountAsync(string userId)
     {
-        return await _context.ApplicationNotifications
-            .CountAsync(n => n.RecipientId == userId && !n.IsRead && !n.IsExpired);
+        var notifications = await _context.ApplicationNotifications
+            .Where(n => n.RecipientId == userId && !n.IsRead)
+            .ToListAsync();
+        
+        // Filter expired in memory
+        return notifications.Count(n => !n.IsExpired);
     }
 
     #endregion
@@ -1032,6 +1038,15 @@ public class ClientApplicationService : IClientApplicationService
 
         var total = applications.Count;
         var approved = applications.Count(a => a.Status == ApplicationStatus.Approved || a.Status == ApplicationStatus.Active);
+        
+        // Calculate average review days
+        var applicationsWithDates = applications
+            .Where(a => a.SubmittedDate.HasValue && a.DecisionDate.HasValue)
+            .ToList();
+        
+        var averageReviewDays = applicationsWithDates.Any() 
+            ? applicationsWithDates.Average(a => (a.DecisionDate!.Value - a.SubmittedDate!.Value).TotalDays)
+            : 0;
 
         return new ApplicationStatistics
         {
@@ -1043,9 +1058,7 @@ public class ClientApplicationService : IClientApplicationService
             Active = applications.Count(a => a.Status == ApplicationStatus.Active),
             Completed = applications.Count(a => a.Status == ApplicationStatus.Completed),
             ApprovalRate = total > 0 ? (decimal)approved / total * 100 : 0,
-            AverageReviewDays = applications
-                .Where(a => a.SubmittedDate.HasValue && a.DecisionDate.HasValue)
-                .Average(a => (a.DecisionDate!.Value - a.SubmittedDate!.Value).TotalDays)
+            AverageReviewDays = averageReviewDays
         };
     }
 
