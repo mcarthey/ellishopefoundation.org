@@ -75,6 +75,7 @@ builder.Services.AddScoped<IMediaMigrationService, MediaMigrationService>();
 builder.Services.AddScoped<IPageService, PageService>();
 builder.Services.AddScoped<IPageTemplateService, PageTemplateService>();
 builder.Services.AddScoped<IUserManagementService, UserManagementService>();
+builder.Services.AddScoped<IClientApplicationService, ClientApplicationService>();
 
 var app = builder.Build();
 
