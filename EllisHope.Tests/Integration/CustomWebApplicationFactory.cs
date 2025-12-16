@@ -1,5 +1,6 @@
 using EllisHope.Data;
 using EllisHope.Models.Domain;
+using EllisHope.Tests.Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Data.Sqlite;
+using Microsoft.AspNetCore.Authentication;
 using System.Threading.Tasks;
 
 namespace EllisHope.Tests.Integration;
@@ -52,6 +54,14 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 options.UseSqlite(_connection);
                 options.EnableSensitiveDataLogging();
             });
+
+            // Add test authentication scheme
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = TestAuthenticationHelper.TestScheme;
+                options.DefaultChallengeScheme = TestAuthenticationHelper.TestScheme;
+            })
+            .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(TestAuthenticationHelper.TestScheme, options => { });
 
             // Replace the antiforgery service with a no-op implementation for testing
             var antiforgeryDescriptor = services.FirstOrDefault(d => d.ServiceType == typeof(IAntiforgery));
@@ -107,6 +117,22 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
         var scope = Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         return db;
+    }
+
+    /// <summary>
+    /// Creates an authenticated HTTP client for testing
+    /// </summary>
+    public HttpClient CreateAuthenticatedClient(string userId)
+    {
+        var client = CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false
+        });
+        
+        // Add test authentication header
+        client.DefaultRequestHeaders.Add("X-Test-User-Id", userId);
+        
+        return client;
     }
 
     // CRITICAL: Properly dispose of the SQLite connection

@@ -1,0 +1,181 @@
+@model MemberDashboardViewModel
+@{
+    ViewData["Title"] = "Member Dashboard";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h2>
+            <i class="bi bi-person-circle text-secondary"></i> Member Dashboard
+        </h2>
+        <p class="text-muted">Welcome back, @Model.MemberName</p>
+    </div>
+</div>
+
+<!-- Welcome Banner -->
+<div class="card bg-primary text-white mb-4">
+    <div class="card-body">
+        <h3>Welcome to Ellis Hope Foundation!</h3>
+        <p class="mb-0">
+            As a member, you have access to community resources, events, and volunteer opportunities. 
+            We're glad to have you as part of our community!
+        </p>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card bg-success text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-0">Membership Status</h6>
+                        <h3 class="mb-0">@Model.Status</h3>
+                    </div>
+                    <i class="bi bi-check-circle fs-1"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-info text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-0">Member Since</h6>
+                        <h3 class="mb-0">@Model.JoinedDate.ToString("MMM yyyy")</h3>
+                    </div>
+                    <i class="bi bi-calendar-check fs-1"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-warning text-dark h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-0">Last Login</h6>
+                        <h3 class="mb-0">
+                            @if (Model.LastLoginDate.HasValue)
+                            {
+                                var days = (DateTime.UtcNow - Model.LastLoginDate.Value).Days;
+                                if (days == 0)
+                                {
+                                    <span>Today</span>
+                                }
+                                else
+                                {
+                                    @days
+                                    <span class="fs-6">days ago</span>
+                                }
+                            }
+                            else
+                            {
+                                <span>First Visit!</span>
+                            }
+                        </h3>
+                    </div>
+                    <i class="bi bi-clock-history fs-1"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-calendar-event fs-1 text-primary"></i>
+                <h5 class="mt-3">Upcoming Events</h5>
+                <p class="text-muted">View and register for upcoming foundation events</p>
+                <a asp-action="Events" class="btn btn-primary">
+                    <i class="bi bi-arrow-right"></i> View Events
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-hand-thumbs-up fs-1 text-success"></i>
+                <h5 class="mt-3">Volunteer Opportunities</h5>
+                <p class="text-muted">Find ways to give back to the community</p>
+                <a asp-action="Volunteer" class="btn btn-success">
+                    <i class="bi bi-arrow-right"></i> Volunteer
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-person-circle fs-1 text-info"></i>
+                <h5 class="mt-3">My Profile</h5>
+                <p class="text-muted">View and update your profile information</p>
+                <a asp-action="MyProfile" class="btn btn-info">
+                    <i class="bi bi-arrow-right"></i> Go to Profile
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Community Features -->
+<div class="card mb-4">
+    <div class="card-header bg-light">
+        <h5 class="mb-0">
+            <i class="bi bi-people"></i> Community Features
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <h6><i class="bi bi-newspaper text-primary"></i> Latest from the Blog</h6>
+                <p class="text-muted">
+                    Stay updated with our latest stories, health tips, and community news.
+                </p>
+                <a asp-controller="Blog" asp-action="classic" asp-area="" class="btn btn-outline-primary btn-sm">
+                    Visit Blog
+                </a>
+            </div>
+            <div class="col-md-6 mb-3">
+                <h6><i class="bi bi-heart text-danger"></i> Support Our Causes</h6>
+                <p class="text-muted">
+                    Learn about the causes we support and how you can make a difference.
+                </p>
+                <a asp-controller="Causes" asp-action="list" asp-area="" class="btn btn-outline-danger btn-sm">
+                    View Causes
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Get Involved -->
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">
+            <i class="bi bi-megaphone"></i> Get More Involved
+        </h5>
+    </div>
+    <div class="card-body">
+        <p>
+            As a member, you're part of a community dedicated to health, fitness, and hope. Here are some ways to get more involved:
+        </p>
+        <ul>
+            <li>Attend our community events and workshops</li>
+            <li>Volunteer at foundation activities</li>
+            <li>Share your fitness journey and inspire others</li>
+            <li>Support our causes through donations or sponsorships</li>
+            <li>Refer friends and family to join our community</li>
+        </ul>
+        <a asp-controller="Contact" asp-action="Index" asp-area="" class="btn btn-primary">
+            <i class="bi bi-envelope"></i> Contact Us to Learn More
+        </a>
+    </div>
+</div>

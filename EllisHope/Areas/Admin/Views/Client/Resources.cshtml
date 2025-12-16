@@ -1,0 +1,199 @@
+@{
+    ViewData["Title"] = "Resources";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2>
+                    <i class="bi bi-book"></i> Resources
+                </h2>
+                <p class="text-muted">Helpful guides and materials for your journey</p>
+            </div>
+            <a asp-action="Dashboard" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Resource Categories -->
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-heart-pulse"></i> Fitness Guides
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <i class="bi bi-file-pdf text-danger"></i> 
+                        <a href="#">Getting Started with Fitness</a>
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-file-pdf text-danger"></i> 
+                        <a href="#">Beginner Workout Plans</a>
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-file-pdf text-danger"></i> 
+                        <a href="#">Strength Training Basics</a>
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-file-pdf text-danger"></i> 
+                        <a href="#">Cardio Exercise Guide</a>
+                    </li>
+                </ul>
+                <p class="text-muted mb-0">
+                    <small>More resources coming soon!</small>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-apple"></i> Nutrition Resources
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <i class="bi bi-file-pdf text-danger"></i> 
+                        <a href="#">Healthy Eating Basics</a>
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-file-pdf text-danger"></i> 
+                        <a href="#">Meal Planning Guide</a>
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-file-pdf text-danger"></i> 
+                        <a href="#">Nutrition for Active Lifestyles</a>
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-file-pdf text-danger"></i> 
+                        <a href="#">Healthy Recipe Collection</a>
+                    </li>
+                </ul>
+                <p class="text-muted mb-0">
+                    <small>More resources coming soon!</small>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-brain"></i> Wellness Resources
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <i class="bi bi-file-pdf text-danger"></i> 
+                        <a href="#">Mental Health and Fitness</a>
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-file-pdf text-danger"></i> 
+                        <a href="#">Stress Management Techniques</a>
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-file-pdf text-danger"></i> 
+                        <a href="#">Sleep and Recovery</a>
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-file-pdf text-danger"></i> 
+                        <a href="#">Goal Setting Workbook</a>
+                    </li>
+                </ul>
+                <p class="text-muted mb-0">
+                    <small>More resources coming soon!</small>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">
+                    <i class="bi bi-play-circle"></i> Video Tutorials
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <i class="bi bi-youtube text-danger"></i> 
+                        <a href="#">Proper Exercise Form</a>
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-youtube text-danger"></i> 
+                        <a href="#">At-Home Workouts</a>
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-youtube text-danger"></i> 
+                        <a href="#">Stretching and Flexibility</a>
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-youtube text-danger"></i> 
+                        <a href="#">Nutrition Basics</a>
+                    </li>
+                </ul>
+                <p class="text-muted mb-0">
+                    <small>More videos coming soon!</small>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- External Links -->
+<div class="card">
+    <div class="card-header bg-secondary text-white">
+        <h5 class="mb-0">
+            <i class="bi bi-link-45deg"></i> Helpful Links
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <h6>Foundation Resources</h6>
+                <ul class="list-unstyled">
+                    <li><a asp-controller="Home" asp-action="Index" asp-area="">Home</a></li>
+                    <li><a asp-controller="About" asp-action="Index" asp-area="">About Us</a></li>
+                    <li><a asp-controller="Event" asp-action="list" asp-area="">Events</a></li>
+                    <li><a asp-controller="Blog" asp-action="classic" asp-area="">Blog</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4 mb-3">
+                <h6>Get Help</h6>
+                <ul class="list-unstyled">
+                    <li><a asp-controller="Faq" asp-action="Index" asp-area="">FAQ</a></li>
+                    <li><a asp-controller="Contact" asp-action="Index" asp-area="">Contact Us</a></li>
+                    <li><a href="mailto:support@ellishope.org">Email Support</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4 mb-3">
+                <h6>External Resources</h6>
+                <ul class="list-unstyled">
+                    <li><a href="https://www.cdc.gov/physicalactivity/basics/index.htm" target="_blank">CDC Physical Activity Basics</a></li>
+                    <li><a href="https://www.myplate.gov/" target="_blank">MyPlate Nutrition Guide</a></li>
+                    <li><a href="https://www.choosemyplate.gov/" target="_blank">ChooseMyPlate.gov</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Note about Coming Soon -->
+<div class="alert alert-info mt-4">
+    <i class="bi bi-info-circle"></i> 
+    <strong>Note:</strong> This resource library is being populated with helpful materials. Check back regularly for new content!
+</div>

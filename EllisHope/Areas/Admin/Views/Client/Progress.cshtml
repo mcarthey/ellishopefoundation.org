@@ -1,0 +1,153 @@
+@model ClientProgressViewModel
+@{
+    ViewData["Title"] = "My Progress";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2>
+                    <i class="bi bi-graph-up-arrow"></i> My Progress
+                </h2>
+                <p class="text-muted">Track your journey with Ellis Hope Foundation</p>
+            </div>
+            <a asp-action="Dashboard" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Milestone Timeline -->
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">
+            <i class="bi bi-flag"></i> Milestones
+        </h5>
+    </div>
+    <div class="card-body">
+        @if (Model.Milestones.Any())
+        {
+            <div class="timeline">
+                @foreach (var milestone in Model.Milestones)
+                {
+                    <div class="timeline-item @(milestone.IsCompleted ? "completed" : "")">
+                        <div class="timeline-marker">
+                            <i class="bi @(milestone.IsCompleted ? "bi-check-circle-fill" : "bi-circle")"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h5>@milestone.Title</h5>
+                            @if (!string.IsNullOrEmpty(milestone.Description))
+                            {
+                                <p class="text-muted">@milestone.Description</p>
+                            }
+                            @if (milestone.Date.HasValue)
+                            {
+                                <small class="text-muted">
+                                    <i class="bi bi-calendar"></i> @milestone.Date.Value.ToString("MMMM dd, yyyy")
+                                </small>
+                            }
+                            else if (milestone.IsCompleted)
+                            {
+                                <small class="text-muted">Completed</small>
+                            }
+                            else
+                            {
+                                <small class="text-muted">Not yet completed</small>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> No milestones to display yet. Keep working toward your goals!
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Future Enhancement Notes -->
+<div class="card mt-4">
+    <div class="card-header bg-info text-white">
+        <h5 class="mb-0">
+            <i class="bi bi-lightbulb"></i> Coming Soon
+        </h5>
+    </div>
+    <div class="card-body">
+        <ul>
+            <li>Detailed fitness tracking</li>
+            <li>Nutrition logs</li>
+            <li>Progress photos</li>
+            <li>Achievement badges</li>
+            <li>Personal goals and targets</li>
+        </ul>
+        <p class="mb-0 text-muted">
+            <small>These features are being developed to help you track your health and fitness journey more effectively.</small>
+        </p>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 3rem;
+            padding-bottom: 2rem;
+        }
+
+        .timeline-item:not(:last-child)::before {
+            content: '';
+            position: absolute;
+            left: 0.6rem;
+            top: 2rem;
+            width: 2px;
+            height: 100%;
+            background: #dee2e6;
+        }
+
+        .timeline-item.completed:not(:last-child)::before {
+            background: #28a745;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+        }
+
+        .timeline-marker i {
+            font-size: 1.5rem;
+            color: #dee2e6;
+        }
+
+        .timeline-item.completed .timeline-marker i {
+            color: #28a745;
+        }
+
+        .timeline-content {
+            background: #f8f9fa;
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+
+        .timeline-content h5 {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+}

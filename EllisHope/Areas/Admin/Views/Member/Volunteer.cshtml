@@ -1,0 +1,176 @@
+@{
+    ViewData["Title"] = "Volunteer";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2>
+                    <i class="bi bi-hand-thumbs-up"></i> Volunteer Opportunities
+                </h2>
+                <p class="text-muted">Make a difference in our community</p>
+            </div>
+            <a asp-action="Dashboard" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Volunteer Opportunities -->
+<div class="row mb-4">
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-calendar-event"></i> Event Support
+                </h5>
+            </div>
+            <div class="card-body">
+                <p>
+                    Help make our community events successful by volunteering at:
+                </p>
+                <ul>
+                    <li>Health and fitness workshops</li>
+                    <li>Community fitness challenges</li>
+                    <li>Fundraising events</li>
+                    <li>Outreach programs</li>
+                </ul>
+                <a asp-controller="Contact" asp-action="Index" asp-area="" class="btn btn-primary">
+                    Sign Up to Help
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-people"></i> Mentorship
+                </h5>
+            </div>
+            <div class="card-body">
+                <p>
+                    Share your fitness journey and inspire others:
+                </p>
+                <ul>
+                    <li>Peer support groups</li>
+                    <li>Success story sharing</li>
+                    <li>New member welcome committee</li>
+                    <li>Online community moderation</li>
+                </ul>
+                <a asp-controller="Contact" asp-action="Index" asp-area="" class="btn btn-success">
+                    Become a Mentor
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-megaphone"></i> Outreach
+                </h5>
+            </div>
+            <div class="card-body">
+                <p>
+                    Help spread the word about our mission:
+                </p>
+                <ul>
+                    <li>Social media ambassadors</li>
+                    <li>Community presentations</li>
+                    <li>Partner organization liaison</li>
+                    <li>Newsletter contributors</li>
+                </ul>
+                <a asp-controller="Contact" asp-action="Index" asp-area="" class="btn btn-info">
+                    Get Involved
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">
+                    <i class="bi bi-gear"></i> Administrative Support
+                </h5>
+            </div>
+            <div class="card-body">
+                <p>
+                    Help keep our foundation running smoothly:
+                </p>
+                <ul>
+                    <li>Office assistance</li>
+                    <li>Data entry and organization</li>
+                    <li>Donation coordination</li>
+                    <li>Event planning support</li>
+                </ul>
+                <a asp-controller="Contact" asp-action="Index" asp-area="" class="btn btn-warning">
+                    Offer Your Skills
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Why Volunteer -->
+<div class="card mb-4">
+    <div class="card-header bg-light">
+        <h5 class="mb-0">
+            <i class="bi bi-heart"></i> Why Volunteer?
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <h6 class="text-primary">Make an Impact</h6>
+                <p>Your time and skills directly help individuals transform their lives through health and fitness.</p>
+            </div>
+            <div class="col-md-4">
+                <h6 class="text-success">Build Community</h6>
+                <p>Connect with like-minded individuals who share your passion for helping others.</p>
+            </div>
+            <div class="col-md-4">
+                <h6 class="text-info">Personal Growth</h6>
+                <p>Develop new skills, gain experience, and find fulfillment in giving back.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Get Started -->
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">
+            <i class="bi bi-play-circle"></i> Ready to Get Started?
+        </h5>
+    </div>
+    <div class="card-body">
+        <p>
+            We're always looking for dedicated volunteers who want to make a difference. Here's how to get started:
+        </p>
+        <ol>
+            <li>Review the volunteer opportunities above</li>
+            <li>Contact us to express your interest</li>
+            <li>Complete a brief volunteer orientation</li>
+            <li>Start making a difference!</li>
+        </ol>
+        <div class="d-flex gap-2">
+            <a asp-controller="Contact" asp-action="Index" asp-area="" class="btn btn-primary">
+                <i class="bi bi-envelope"></i> Contact Us
+            </a>
+            <a asp-controller="Team" asp-action="v1" asp-area="" class="btn btn-outline-primary">
+                <i class="bi bi-people"></i> Meet Our Volunteers
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Note -->
+<div class="alert alert-info mt-4">
+    <i class="bi bi-info-circle"></i> 
+    <strong>Note:</strong> A dedicated volunteer management system is being developed to better track volunteer hours, 
+    opportunities, and recognition. Check back soon for enhanced features!
+</div>

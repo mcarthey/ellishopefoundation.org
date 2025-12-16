@@ -107,6 +107,27 @@
                                         </a>
                                         <div class="account-dropdown-divider"></div>
                                     }
+                                    @if (User.IsInRole("Sponsor"))
+                                    {
+                                        <a href="/Admin/Sponsor/Dashboard" class="account-dropdown-item">
+                                            <i class="bi bi-heart-fill"></i> Sponsor Portal
+                                        </a>
+                                        <div class="account-dropdown-divider"></div>
+                                    }
+                                    @if (User.IsInRole("Client"))
+                                    {
+                                        <a href="/Admin/Client/Dashboard" class="account-dropdown-item">
+                                            <i class="bi bi-person-badge"></i> Client Portal
+                                        </a>
+                                        <div class="account-dropdown-divider"></div>
+                                    }
+                                    @if (User.IsInRole("Member"))
+                                    {
+                                        <a href="/Admin/Member/Dashboard" class="account-dropdown-item">
+                                            <i class="bi bi-person-circle"></i> Member Portal
+                                        </a>
+                                        <div class="account-dropdown-divider"></div>
+                                    }
                                     <a href="/Admin/Profile" class="account-dropdown-item">
                                         <i class="bi bi-person-circle"></i> My Profile
                                     </a>
@@ -180,6 +201,24 @@
                         {
                             <a href="/Admin/Dashboard" class="d-block py-2">
                                 <i class="bi bi-speedometer2"></i> Admin Dashboard
+                            </a>
+                        }
+                        @if (User.IsInRole("Sponsor"))
+                        {
+                            <a href="/Admin/Sponsor/Dashboard" class="d-block py-2">
+                                <i class="bi bi-heart-fill"></i> Sponsor Portal
+                            </a>
+                        }
+                        @if (User.IsInRole("Client"))
+                        {
+                            <a href="/Admin/Client/Dashboard" class="d-block py-2">
+                                <i class="bi bi-person-badge"></i> Client Portal
+                            </a>
+                        }
+                        @if (User.IsInRole("Member"))
+                        {
+                            <a href="/Admin/Member/Dashboard" class="d-block py-2">
+                                <i class="bi bi-person-circle"></i> Member Portal
                             </a>
                         }
                         <a href="/Admin/Profile" class="d-block py-2">
