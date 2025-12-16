@@ -1,0 +1,79 @@
+coverage:
+  precision: 2
+  round: down
+  range: "70...100"
+  
+  status:
+    project:
+      default:
+        target: 70%
+        threshold: 5%
+        base: auto
+        
+    patch:
+      default:
+        target: 80%
+        threshold: 5%
+
+# Ignore files that shouldn't be included in coverage
+ignore:
+  # Razor Views (HTML markup, not testable code)
+  - "**/*.cshtml"
+  - "**/*.razor"
+  
+  # Auto-generated files
+  - "**/*.g.cs"
+  - "**/*.Designer.cs"
+  - "**/AssemblyInfo.cs"
+  - "**/GlobalUsings.g.cs"
+  - "**/.NETCoreApp,Version=*.AssemblyAttributes.cs"
+  
+  # Entity Framework Migrations (auto-generated)
+  - "**/Migrations/**"
+  - "**/*ModelSnapshot.cs"
+  
+  # Build output
+  - "**/obj/**"
+  - "**/bin/**"
+  
+  # Static files
+  - "**/wwwroot/**"
+  - "**/assets/**"
+  
+  # Startup/Configuration (tested via integration)
+  - "**/Program.cs"
+  
+  # Test projects themselves
+  - "**/*.Tests/**"
+  - "**/TestResults/**"
+
+# Comment on pull requests
+comment:
+  layout: "reach, diff, flags, files"
+  behavior: default
+  require_changes: false
+  require_base: no
+  require_head: yes
+
+# Coverage flags for different areas
+flags:
+  unittests:
+    paths:
+      - EllisHope.Tests/Unit/
+    carryforward: true
+    
+  integrationtests:
+    paths:
+      - EllisHope.Tests/Integration/
+    carryforward: true
+    
+  services:
+    paths:
+      - EllisHope/Services/
+    carryforward: true
+    
+  controllers:
+    paths:
+      - EllisHope/Controllers/
+      - EllisHope/Areas/**/Controllers/
+    carryforward: true
