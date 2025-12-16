@@ -1,0 +1,454 @@
+@model EllisHope.Areas.Admin.Models.ApplicationCreateViewModel
+
+@{
+    ViewData["Title"] = "Apply for Support";
+    var currentStep = Model.CurrentStep;
+}
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <!-- Progress Indicator -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="progress" style="height: 30px;">
+                        <div class="progress-bar bg-primary" role="progressbar" 
+                             style="width: @((currentStep / 6.0 * 100))%;" 
+                             aria-valuenow="@currentStep" aria-valuemin="0" aria-valuemax="6">
+                            Step @currentStep of 6
+                        </div>
+                    </div>
+                    <div class="row mt-3 text-center">
+                        <div class="col">
+                            <small class="@(currentStep >= 1 ? "text-primary fw-bold" : "text-muted")">
+                                <i class="bi bi-person@(currentStep >= 1 ? "-check" : "")"></i><br/>Personal
+                            </small>
+                        </div>
+                        <div class="col">
+                            <small class="@(currentStep >= 2 ? "text-primary fw-bold" : "text-muted")">
+                                <i class="bi bi-cash@(currentStep >= 2 ? "-stack" : "")"></i><br/>Funding
+                            </small>
+                        </div>
+                        <div class="col">
+                            <small class="@(currentStep >= 3 ? "text-primary fw-bold" : "text-muted")">
+                                <i class="bi bi-heart@(currentStep >= 3 ? "-fill" : "")"></i><br/>Motivation
+                            </small>
+                        </div>
+                        <div class="col">
+                            <small class="@(currentStep >= 4 ? "text-primary fw-bold" : "text-muted")">
+                                <i class="bi bi-activity"></i><br/>Health
+                            </small>
+                        </div>
+                        <div class="col">
+                            <small class="@(currentStep >= 5 ? "text-primary fw-bold" : "text-muted")">
+                                <i class="bi bi-check2-square"></i><br/>Agreement
+                            </small>
+                        </div>
+                        <div class="col">
+                            <small class="@(currentStep >= 6 ? "text-primary fw-bold" : "text-muted")">
+                                <i class="bi bi-pen"></i><br/>Signature
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Application Form -->
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        @if (currentStep == 1) { <text>Step 1: Personal Information</text> }
+                        @if (currentStep == 2) { <text>Step 2: Program Interest & Funding</text> }
+                        @if (currentStep == 3) { <text>Step 3: Motivation & Commitment</text> }
+                        @if (currentStep == 4) { <text>Step 4: Health & Fitness</text> }
+                        @if (currentStep == 5) { <text>Step 5: Program Requirements</text> }
+                        @if (currentStep == 6) { <text>Step 6: Review & Sign</text> }
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post">
+                        <input type="hidden" asp-for="CurrentStep" />
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        @* Step 1: Personal Information *@
+                        @if (currentStep == 1)
+                        {
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="FirstName" class="form-label required"></label>
+                                    <input asp-for="FirstName" class="form-control" />
+                                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="LastName" class="form-label required"></label>
+                                    <input asp-for="LastName" class="form-control" />
+                                    <span asp-validation-for="LastName" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Address" class="form-label"></label>
+                                <input asp-for="Address" class="form-control" />
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="City" class="form-label"></label>
+                                    <input asp-for="City" class="form-control" />
+                                    <span asp-validation-for="City" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label asp-for="State" class="form-label"></label>
+                                    <input asp-for="State" class="form-control" maxlength="2" />
+                                    <span asp-validation-for="State" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label asp-for="ZipCode" class="form-label"></label>
+                                    <input asp-for="ZipCode" class="form-control" />
+                                    <span asp-validation-for="ZipCode" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="PhoneNumber" class="form-label required"></label>
+                                    <input asp-for="PhoneNumber" class="form-control" type="tel" />
+                                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Email" class="form-label required"></label>
+                                    <input asp-for="Email" class="form-control" type="email" />
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Occupation" class="form-label"></label>
+                                    <input asp-for="Occupation" class="form-control" />
+                                    <span asp-validation-for="Occupation" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="DateOfBirth" class="form-label"></label>
+                                    <input asp-for="DateOfBirth" class="form-control" type="date" />
+                                    <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="EmergencyContactName" class="form-label"></label>
+                                    <input asp-for="EmergencyContactName" class="form-control" />
+                                    <span asp-validation-for="EmergencyContactName" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="EmergencyContactPhone" class="form-label"></label>
+                                    <input asp-for="EmergencyContactPhone" class="form-control" type="tel" />
+                                    <span asp-validation-for="EmergencyContactPhone" class="text-danger"></span>
+                                </div>
+                            </div>
+                        }
+
+                        @* Step 2: Program Interest & Funding *@
+                        @if (currentStep == 2)
+                        {
+                            <div class="mb-4">
+                                <label class="form-label required">Types of Funding/Support Requested</label>
+                                <small class="text-muted d-block mb-2">Select all that apply</small>
+                                
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="FundingTypesRequested" value="GymMembership" 
+                                           @(Model.FundingTypesRequested.Contains(EllisHope.Models.Domain.FundingType.GymMembership) ? "checked" : "") />
+                                    <label class="form-check-label">Gym Membership</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="FundingTypesRequested" value="PersonalTraining" 
+                                           @(Model.FundingTypesRequested.Contains(EllisHope.Models.Domain.FundingType.PersonalTraining) ? "checked" : "") />
+                                    <label class="form-check-label">Personal Training</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="FundingTypesRequested" value="NutritionistConsultation" 
+                                           @(Model.FundingTypesRequested.Contains(EllisHope.Models.Domain.FundingType.NutritionistConsultation) ? "checked" : "") />
+                                    <label class="form-check-label">Nutritionist Consultation</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="FundingTypesRequested" value="FitnessEquipment" 
+                                           @(Model.FundingTypesRequested.Contains(EllisHope.Models.Domain.FundingType.FitnessEquipment) ? "checked" : "") />
+                                    <label class="form-check-label">Fitness Equipment</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="FundingTypesRequested" value="FitnessApparel" 
+                                           @(Model.FundingTypesRequested.Contains(EllisHope.Models.Domain.FundingType.FitnessApparel) ? "checked" : "") />
+                                    <label class="form-check-label">Fitness Apparel</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="FundingTypesRequested" value="NutritionSupplements" 
+                                           @(Model.FundingTypesRequested.Contains(EllisHope.Models.Domain.FundingType.NutritionSupplements) ? "checked" : "") />
+                                    <label class="form-check-label">Nutrition Supplements</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="FundingTypesRequested" value="GroupClasses" 
+                                           @(Model.FundingTypesRequested.Contains(EllisHope.Models.Domain.FundingType.GroupClasses) ? "checked" : "") />
+                                    <label class="form-check-label">Group Classes</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="FundingTypesRequested" value="OnlinePrograms" 
+                                           @(Model.FundingTypesRequested.Contains(EllisHope.Models.Domain.FundingType.OnlinePrograms) ? "checked" : "") />
+                                    <label class="form-check-label">Online Programs</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="FundingTypesRequested" value="Other" 
+                                           @(Model.FundingTypesRequested.Contains(EllisHope.Models.Domain.FundingType.Other) ? "checked" : "") />
+                                    <label class="form-check-label">Other</label>
+                                </div>
+
+                                <span asp-validation-for="FundingTypesRequested" class="text-danger"></span>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="EstimatedMonthlyCost" class="form-label"></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input asp-for="EstimatedMonthlyCost" class="form-control" type="number" step="0.01" />
+                                    </div>
+                                    <span asp-validation-for="EstimatedMonthlyCost" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="ProgramDurationMonths" class="form-label"></label>
+                                    <input asp-for="ProgramDurationMonths" class="form-control" type="number" min="1" max="24" />
+                                    <span asp-validation-for="ProgramDurationMonths" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="FundingDetails" class="form-label"></label>
+                                <textarea asp-for="FundingDetails" class="form-control" rows="4" 
+                                          placeholder="Please provide specific details about your funding needs..."></textarea>
+                                <span asp-validation-for="FundingDetails" class="text-danger"></span>
+                            </div>
+                        }
+
+                        @* Step 3: Motivation & Commitment *@
+                        @if (currentStep == 3)
+                        {
+                            <div class="mb-4">
+                                <label asp-for="PersonalStatement" class="form-label required"></label>
+                                <small class="text-muted d-block mb-2">Minimum 50 characters</small>
+                                <textarea asp-for="PersonalStatement" class="form-control" rows="6" 
+                                          placeholder="Tell us about yourself, why you want to be part of this program, and how you could benefit from it..."></textarea>
+                                <span asp-validation-for="PersonalStatement" class="text-danger"></span>
+                                <small class="text-muted">@(Model.PersonalStatement?.Length ?? 0) characters</small>
+                            </div>
+
+                            <div class="mb-4">
+                                <label asp-for="ExpectedBenefits" class="form-label required"></label>
+                                <small class="text-muted d-block mb-2">Minimum 50 characters</small>
+                                <textarea asp-for="ExpectedBenefits" class="form-control" rows="5" 
+                                          placeholder="How will this program benefit you?"></textarea>
+                                <span asp-validation-for="ExpectedBenefits" class="text-danger"></span>
+                                <small class="text-muted">@(Model.ExpectedBenefits?.Length ?? 0) characters</small>
+                            </div>
+
+                            <div class="mb-4">
+                                <label asp-for="CommitmentStatement" class="form-label required"></label>
+                                <small class="text-muted d-block mb-2">Minimum 50 characters - Consider your schedule and travel requirements</small>
+                                <textarea asp-for="CommitmentStatement" class="form-control" rows="5" 
+                                          placeholder="Are you willing and able to devote the time and energy necessary? List any concerns..."></textarea>
+                                <span asp-validation-for="CommitmentStatement" class="text-danger"></span>
+                                <small class="text-muted">@(Model.CommitmentStatement?.Length ?? 0) characters</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="ConcernsObstacles" class="form-label"></label>
+                                <textarea asp-for="ConcernsObstacles" class="form-control" rows="4" 
+                                          placeholder="List any concerns or obstacles that might affect your participation..."></textarea>
+                                <span asp-validation-for="ConcernsObstacles" class="text-danger"></span>
+                            </div>
+                        }
+
+                        @* Step 4: Health & Fitness *@
+                        @if (currentStep == 4)
+                        {
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i> This information helps us customize the program to your needs. All health information is kept confidential.
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="MedicalConditions" class="form-label"></label>
+                                <textarea asp-for="MedicalConditions" class="form-control" rows="4" 
+                                          placeholder="Describe any pre-existing medical conditions you may have..."></textarea>
+                                <span asp-validation-for="MedicalConditions" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="CurrentMedications" class="form-label"></label>
+                                <textarea asp-for="CurrentMedications" class="form-control" rows="3" 
+                                          placeholder="List any medications you are currently taking..."></textarea>
+                                <span asp-validation-for="CurrentMedications" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="LastPhysicalExamDate" class="form-label"></label>
+                                <input asp-for="LastPhysicalExamDate" class="form-control" type="date" />
+                                <span asp-validation-for="LastPhysicalExamDate" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="CurrentFitnessLevel" class="form-label"></label>
+                                <select asp-for="CurrentFitnessLevel" class="form-select" asp-items="Html.GetEnumSelectList<EllisHope.Models.Domain.FitnessLevel>()">
+                                    <option value="">Select your current fitness level...</option>
+                                </select>
+                                <span asp-validation-for="CurrentFitnessLevel" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="FitnessGoals" class="form-label"></label>
+                                <textarea asp-for="FitnessGoals" class="form-control" rows="4" 
+                                          placeholder="What are your specific fitness goals?"></textarea>
+                                <span asp-validation-for="FitnessGoals" class="text-danger"></span>
+                            </div>
+                        }
+
+                        @* Step 5: Program Requirements *@
+                        @if (currentStep == 5)
+                        {
+                            <div class="alert alert-warning">
+                                <i class="bi bi-exclamation-triangle"></i> Please carefully review and acknowledge the following program requirements.
+                            </div>
+
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Program Commitments</h5>
+                                    
+                                    <div class="form-check mb-3">
+                                        <input asp-for="AgreesToNutritionist" class="form-check-input" type="checkbox" />
+                                        <label asp-for="AgreesToNutritionist" class="form-check-label"></label>
+                                    </div>
+
+                                    <div class="form-check mb-3">
+                                        <input asp-for="AgreesToPersonalTrainer" class="form-check-input" type="checkbox" />
+                                        <label asp-for="AgreesToPersonalTrainer" class="form-check-label"></label>
+                                    </div>
+
+                                    <div class="form-check mb-3">
+                                        <input asp-for="AgreesToWeeklyCheckIns" class="form-check-input" type="checkbox" />
+                                        <label asp-for="AgreesToWeeklyCheckIns" class="form-check-label"></label>
+                                    </div>
+
+                                    <div class="form-check mb-3">
+                                        <input asp-for="AgreesToProgressReports" class="form-check-input" type="checkbox" />
+                                        <label asp-for="AgreesToProgressReports" class="form-check-label"></label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input asp-for="UnderstandsCommitment" class="form-check-input" type="checkbox" />
+                                        <label asp-for="UnderstandsCommitment" class="form-check-label fw-bold text-danger"></label>
+                                        <span asp-validation-for="UnderstandsCommitment" class="text-danger d-block"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        @* Step 6: Review & Sign *@
+                        @if (currentStep == 6)
+                        {
+                            <div class="alert alert-success">
+                                <i class="bi bi-check-circle"></i> Almost done! Please review your information and sign below.
+                            </div>
+
+                            <div class="card mb-4">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">Application Summary</h5>
+                                </div>
+                                <div class="card-body">
+                                    <h6>Personal Information</h6>
+                                    <p><strong>Name:</strong> @Model.FirstName @Model.LastName<br/>
+                                       <strong>Email:</strong> @Model.Email<br/>
+                                       <strong>Phone:</strong> @Model.PhoneNumber</p>
+
+                                    <h6 class="mt-3">Funding Request</h6>
+                                    <p><strong>Types:</strong> @string.Join(", ", Model.FundingTypesRequested)<br/>
+                                       @if (Model.EstimatedMonthlyCost.HasValue)
+                                       {
+                                           <text><strong>Estimated Cost:</strong> $@Model.EstimatedMonthlyCost.Value.ToString("N2")/month</text>
+                                       }</p>
+
+                                    <h6 class="mt-3">Commitment</h6>
+                                    <p>@(Model.UnderstandsCommitment ? "?" : "?") Understands 12-month commitment<br/>
+                                       @(Model.AgreesToWeeklyCheckIns ? "?" : "?") Weekly check-ins<br/>
+                                       @(Model.AgreesToProgressReports ? "?" : "?") Monthly progress reports</p>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label asp-for="Signature" class="form-label required"></label>
+                                <small class="text-muted d-block mb-2">Type your full name as your digital signature</small>
+                                <input asp-for="Signature" class="form-control" placeholder="Your Full Name" />
+                                <span asp-validation-for="Signature" class="text-danger"></span>
+                            </div>
+
+                            <div class="alert alert-info">
+                                <i class="bi bi-shield-check"></i> By signing this application, you certify that all information provided is accurate and complete.
+                            </div>
+                        }
+
+                        @* Navigation Buttons *@
+                        <div class="d-flex justify-content-between mt-4">
+                            <div>
+                                @if (currentStep > 1)
+                                {
+                                    <button type="submit" name="CurrentStep" value="@(currentStep - 1)" class="btn btn-secondary">
+                                        <i class="bi bi-arrow-left"></i> Previous
+                                    </button>
+                                }
+                            </div>
+                            <div>
+                                <button type="submit" name="SaveAsDraft" value="true" class="btn btn-outline-secondary">
+                                    <i class="bi bi-save"></i> Save as Draft
+                                </button>
+                                
+                                @if (currentStep < 6)
+                                {
+                                    <button type="submit" name="CurrentStep" value="@(currentStep + 1)" class="btn btn-primary">
+                                        Next <i class="bi bi-arrow-right"></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="bi bi-check-circle"></i> Submit Application
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        // Character counter for textareas
+        document.querySelectorAll('textarea').forEach(textarea => {
+            textarea.addEventListener('input', function() {
+                const counter = this.parentElement.querySelector('small.text-muted');
+                if (counter && counter.textContent.includes('characters')) {
+                    counter.textContent = `${this.value.length} characters`;
+                }
+            });
+        });
+    </script>
+}
+
+<style>
+    .required::after {
+        content: " *";
+        color: red;
+    }
+</style>

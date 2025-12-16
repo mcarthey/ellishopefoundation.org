@@ -1,0 +1,464 @@
+@model EllisHope.Areas.Admin.Models.ApplicationDetailsViewModel
+
+@{
+    ViewData["Title"] = $"Application #{Model.Application.Id} - Review";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">Applications</a></li>
+                    <li class="breadcrumb-item active">Application #@Model.Application.Id</li>
+                </ol>
+            </nav>
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>
+                    <i class="bi bi-file-earmark-text"></i> Application #@Model.Application.Id
+                    <span class="badge @GetStatusBadgeClass(Model.Application.Status) ms-2">@Model.Application.Status</span>
+                </h2>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                        <i class="bi bi-download"></i> Download
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" asp-action="DownloadPdf" asp-route-id="@Model.Application.Id">
+                            <i class="bi bi-file-pdf"></i> Application PDF
+                        </a></li>
+                        <li><a class="dropdown-item" asp-action="DownloadPdf" asp-route-id="@Model.Application.Id" asp-route-includeVotes="true">
+                            <i class="bi bi-file-pdf"></i> Application with Votes
+                        </a></li>
+                        @if (Model.Application.Status == EllisHope.Models.Domain.ApplicationStatus.Approved)
+                        {
+                            <li><a class="dropdown-item" asp-action="DownloadApprovalLetter" asp-route-id="@Model.Application.Id">
+                                <i class="bi bi-file-pdf"></i> Approval Letter
+                            </a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            <i class="bi bi-check-circle"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Personal Information -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-person"></i> Personal Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Name:</strong> @Model.Application.FullName</p>
+                            <p><strong>Email:</strong> <a href="mailto:@Model.Application.Email">@Model.Application.Email</a></p>
+                            <p><strong>Phone:</strong> <a href="tel:@Model.Application.PhoneNumber">@Model.Application.PhoneNumber</a></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Address:</strong> @Model.Application.FullAddress</p>
+                            @if (!string.IsNullOrEmpty(Model.Application.Occupation))
+                            {
+                                <p><strong>Occupation:</strong> @Model.Application.Occupation</p>
+                            }
+                            @if (Model.Application.DateOfBirth.HasValue)
+                            {
+                                <p><strong>Date of Birth:</strong> @Model.Application.DateOfBirth.Value.ToString("MMMM dd, yyyy")</p>
+                            }
+                        </div>
+                    </div>
+                    
+                    @if (!string.IsNullOrEmpty(Model.Application.EmergencyContactName))
+                    {
+                        <hr/>
+                        <h6>Emergency Contact</h6>
+                        <p><strong>@Model.Application.EmergencyContactName</strong> - @Model.Application.EmergencyContactPhone</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Funding Request -->
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-cash-stack"></i> Funding Request</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Types of Support Requested:</strong></p>
+                    <ul>
+                        @foreach (var type in Model.Application.FundingTypesList)
+                        {
+                            <li>@type</li>
+                        }
+                    </ul>
+                    
+                    @if (Model.Application.EstimatedMonthlyCost.HasValue)
+                    {
+                        <p><strong>Estimated Monthly Cost:</strong> $@Model.Application.EstimatedMonthlyCost.Value.ToString("N2")</p>
+                    }
+                    
+                    <p><strong>Program Duration:</strong> @Model.Application.ProgramDurationMonths months</p>
+                    
+                    @if (!string.IsNullOrEmpty(Model.Application.FundingDetails))
+                    {
+                        <hr/>
+                        <p><strong>Details:</strong></p>
+                        <p class="text-muted">@Model.Application.FundingDetails</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Personal Statement -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="bi bi-heart"></i> Motivation & Commitment</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Personal Statement</h6>
+                    <p class="border-start border-primary border-3 ps-3">@Model.Application.PersonalStatement</p>
+                    
+                    <h6 class="mt-4">Expected Benefits</h6>
+                    <p class="border-start border-success border-3 ps-3">@Model.Application.ExpectedBenefits</p>
+                    
+                    <h6 class="mt-4">Commitment Statement</h6>
+                    <p class="border-start border-warning border-3 ps-3">@Model.Application.CommitmentStatement</p>
+                    
+                    @if (!string.IsNullOrEmpty(Model.Application.ConcernsObstacles))
+                    {
+                        <h6 class="mt-4">Concerns/Obstacles</h6>
+                        <p class="text-muted">@Model.Application.ConcernsObstacles</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Health & Fitness -->
+            <div class="card mb-4">
+                <div class="card-header bg-warning">
+                    <h5 class="mb-0"><i class="bi bi-activity"></i> Health & Fitness</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Current Fitness Level:</strong> @Model.Application.CurrentFitnessLevel</p>
+                            @if (Model.Application.LastPhysicalExamDate.HasValue)
+                            {
+                                <p><strong>Last Physical Exam:</strong> @Model.Application.LastPhysicalExamDate.Value.ToString("MMMM dd, yyyy")</p>
+                            }
+                        </div>
+                        <div class="col-md-6">
+                            @if (!string.IsNullOrEmpty(Model.Application.FitnessGoals))
+                            {
+                                <p><strong>Fitness Goals:</strong> @Model.Application.FitnessGoals</p>
+                            }
+                        </div>
+                    </div>
+                    
+                    @if (!string.IsNullOrEmpty(Model.Application.MedicalConditions))
+                    {
+                        <hr/>
+                        <h6 class="text-danger">Medical Conditions</h6>
+                        <p>@Model.Application.MedicalConditions</p>
+                    }
+                    
+                    @if (!string.IsNullOrEmpty(Model.Application.CurrentMedications))
+                    {
+                        <h6 class="text-primary">Current Medications</h6>
+                        <p>@Model.Application.CurrentMedications</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Program Requirements -->
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="bi bi-check2-square"></i> Program Requirements</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" disabled @(Model.Application.AgreesToNutritionist ? "checked" : "")>
+                        <label class="form-check-label">Agrees to work with nutritionist</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" disabled @(Model.Application.AgreesToPersonalTrainer ? "checked" : "")>
+                        <label class="form-check-label">Agrees to work with personal trainer</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" disabled @(Model.Application.AgreesToWeeklyCheckIns ? "checked" : "")>
+                        <label class="form-check-label">Agrees to weekly check-ins</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" disabled @(Model.Application.AgreesToProgressReports ? "checked" : "")>
+                        <label class="form-check-label">Agrees to monthly progress reports</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" disabled @(Model.Application.UnderstandsCommitment ? "checked" : "")>
+                        <label class="form-check-label fw-bold">Understands 12-month commitment</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Signature -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-pen"></i> Signature</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Signed by:</strong> @Model.Application.Signature</p>
+                    @if (Model.Application.SignedDate.HasValue)
+                    {
+                        <p><strong>Date:</strong> @Model.Application.SignedDate.Value.ToString("MMMM dd, yyyy")</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Comments/Discussion -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-chat-dots"></i> Discussion</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Comments.Any())
+                    {
+                        @foreach (var comment in Model.Comments.OrderBy(c => c.CreatedDate))
+                        {
+                            <div class="card mb-2 @(comment.IsPrivate ? "border-warning" : "")">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <strong>@comment.Author?.FullName</strong>
+                                        <small class="text-muted">@comment.CreatedDate.ToString("MMM dd, yyyy h:mm tt")</small>
+                                    </div>
+                                    <p class="mb-1 mt-2">@comment.Content</p>
+                                    @if (comment.IsPrivate)
+                                    {
+                                        <span class="badge bg-warning">Private (Board Only)</span>
+                                    }
+                                    @if (comment.IsInformationRequest)
+                                    {
+                                        <span class="badge bg-info">Information Request</span>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">No comments yet.</p>
+                    }
+                    
+                    <form asp-action="Comment" method="post" class="mt-3">
+                        <input type="hidden" name="ApplicationId" value="@Model.Application.Id" />
+                        <div class="mb-2">
+                            <textarea name="Content" class="form-control" rows="3" placeholder="Add a comment..." required></textarea>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="IsPrivate" id="isPrivate" checked>
+                                <label class="form-check-label" for="isPrivate">
+                                    Private (Board members only)
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-send"></i> Post Comment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Voting Panel -->
+            @if (Model.CanUserVote && !Model.HasUserVoted)
+            {
+                <div class="card mb-4 border-primary">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-hand-thumbs-up"></i> Cast Your Vote</h5>
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="Vote" method="post">
+                            <input type="hidden" name="ApplicationId" value="@Model.Application.Id" />
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Decision</label>
+                                <select name="Decision" class="form-select" required>
+                                    <option value="">Select your vote...</option>
+                                    <option value="Approve">? Approve</option>
+                                    <option value="Reject">? Reject</option>
+                                    <option value="NeedsMoreInfo">? Needs More Info</option>
+                                    <option value="Abstain">Abstain</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Reasoning (Required)</label>
+                                <textarea name="Reasoning" class="form-control" rows="4" required 
+                                          placeholder="Explain your decision (minimum 20 characters)..."></textarea>
+                                <small class="text-muted">This helps inform the final decision.</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Confidence Level</label>
+                                <select name="ConfidenceLevel" class="form-select" required>
+                                    <option value="">Select confidence...</option>
+                                    <option value="1">1 - Very Low</option>
+                                    <option value="2">2 - Low</option>
+                                    <option value="3">3 - Medium</option>
+                                    <option value="4">4 - High</option>
+                                    <option value="5">5 - Very High</option>
+                                </select>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-check-circle"></i> Submit Vote
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+
+            <!-- Voting Summary -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-bar-chart"></i> Voting Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Progress</span>
+                            <span>@Model.VotingSummary.TotalVotesCast / @Model.VotingSummary.VotesRequired</span>
+                        </div>
+                        <div class="progress" style="height: 25px;">
+                            <div class="progress-bar bg-success" style="width: @((Model.VotingSummary.ApprovalVotes / (double)Model.VotingSummary.VotesRequired * 100))%">
+                                Approve: @Model.VotingSummary.ApprovalVotes
+                            </div>
+                            <div class="progress-bar bg-danger" style="width: @((Model.VotingSummary.RejectionVotes / (double)Model.VotingSummary.VotesRequired * 100))%">
+                                Reject: @Model.VotingSummary.RejectionVotes
+                            </div>
+                        </div>
+                    </div>
+                    
+                    @if (Model.VotingSummary.HasSufficientVotes)
+                    {
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle"></i> Quorum reached! All required votes received.
+                        </div>
+                    }
+                    
+                    @if (Model.VotingSummary.PendingVoters.Any())
+                    {
+                        <h6 class="mt-3">Pending Votes:</h6>
+                        <ul class="list-unstyled">
+                            @foreach (var voter in Model.VotingSummary.PendingVoters)
+                            {
+                                <li><i class="bi bi-hourglass-split text-warning"></i> @voter</li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+
+            <!-- Individual Votes (Admin Only) -->
+            @if (Model.Votes.Any())
+            {
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-list-check"></i> Board Votes</h5>
+                    </div>
+                    <div class="card-body">
+                        @foreach (var vote in Model.Votes.OrderByDescending(v => v.VotedDate))
+                        {
+                            <div class="card mb-2">
+                                <div class="card-body p-2">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <strong>@vote.Voter?.FullName</strong>
+                                        <span class="badge @(vote.Decision == EllisHope.Models.Domain.VoteDecision.Approve ? "bg-success" : vote.Decision == EllisHope.Models.Domain.VoteDecision.Reject ? "bg-danger" : "bg-warning")">
+                                            @vote.Decision
+                                        </span>
+                                    </div>
+                                    <small class="text-muted">@vote.VotedDate.ToString("MMM dd, yyyy")</small>
+                                    <p class="mb-1 mt-2 small">@vote.Reasoning</p>
+                                    <small class="text-muted">Confidence: @vote.ConfidenceLevel/5</small>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- Admin Actions -->
+            @if (Model.CanApproveReject)
+            {
+                <div class="card mb-4 border-danger">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="mb-0"><i class="bi bi-gear"></i> Admin Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.Application.Status == EllisHope.Models.Domain.ApplicationStatus.Submitted)
+                        {
+                            <form asp-action="StartReview" method="post" class="mb-2">
+                                <input type="hidden" name="id" value="@Model.Application.Id" />
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="bi bi-play-circle"></i> Start Review Process
+                                </button>
+                            </form>
+                        }
+                        
+                        @if (Model.VotingSummary.HasSufficientVotes)
+                        {
+                            <a asp-action="Approve" asp-route-id="@Model.Application.Id" class="btn btn-success w-100 mb-2">
+                                <i class="bi bi-check-circle"></i> Approve Application
+                            </a>
+                            
+                            <a asp-action="Reject" asp-route-id="@Model.Application.Id" class="btn btn-danger w-100 mb-2">
+                                <i class="bi bi-x-circle"></i> Reject Application
+                            </a>
+                        }
+                        
+                        <a asp-action="RequestInfo" asp-route-id="@Model.Application.Id" class="btn btn-warning w-100">
+                            <i class="bi bi-question-circle"></i> Request More Information
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Auto-refresh voting summary every 30 seconds
+        setTimeout(function() {
+            location.reload();
+        }, 30000);
+    </script>
+}
+
+@functions {
+    string GetStatusBadgeClass(EllisHope.Models.Domain.ApplicationStatus status)
+    {
+        return status switch
+        {
+            EllisHope.Models.Domain.ApplicationStatus.Draft => "bg-secondary",
+            EllisHope.Models.Domain.ApplicationStatus.Submitted => "bg-info",
+            EllisHope.Models.Domain.ApplicationStatus.UnderReview => "bg-primary",
+            EllisHope.Models.Domain.ApplicationStatus.InDiscussion => "bg-warning",
+            EllisHope.Models.Domain.ApplicationStatus.NeedsInformation => "bg-warning",
+            EllisHope.Models.Domain.ApplicationStatus.Approved => "bg-success",
+            EllisHope.Models.Domain.ApplicationStatus.Rejected => "bg-danger",
+            EllisHope.Models.Domain.ApplicationStatus.Active => "bg-success",
+            EllisHope.Models.Domain.ApplicationStatus.Completed => "bg-dark",
+            _ => "bg-secondary"
+        };
+    }
+}
