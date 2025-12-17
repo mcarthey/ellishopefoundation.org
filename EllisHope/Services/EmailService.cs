@@ -1,6 +1,8 @@
 using Microsoft.Extensions.Options;
 using System.Net;
 using System.Net.Mail;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 
 namespace EllisHope.Services;
 
@@ -25,6 +27,14 @@ public class EmailService : IEmailService
             using var client = new SmtpClient(_settings.SmtpHost, _settings.SmtpPort);
             client.Credentials = new NetworkCredential(_settings.SmtpUsername, _settings.SmtpPassword);
             client.EnableSsl = _settings.EnableSsl;
+
+            // Only for development - bypass SSL certificate validation
+            // REMOVE THIS IN PRODUCTION!
+            if (_settings.SmtpHost == "mail.ellishopefoundation.org")
+            {
+                ServicePointManager.ServerCertificateValidationCallback = 
+                    (sender, certificate, chain, sslPolicyErrors) => true;
+            }
 
             var mailMessage = new MailMessage
             {
