@@ -271,7 +271,7 @@ public class MyApplicationsControllerTests
             .ReturnsAsync((Succeeded: true, Errors: Array.Empty<string>()));
 
         // Act
-        var result = await _controller.Edit(1, model);
+        var result = await _controller.Edit(1, model, null);
 
         // Assert
         var redirectResult = Assert.IsType<RedirectToActionResult>(result);

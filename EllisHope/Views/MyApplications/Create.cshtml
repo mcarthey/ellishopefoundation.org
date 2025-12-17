@@ -5,7 +5,17 @@
     var currentStep = Model.CurrentStep;
 }
 
-<div class="container my-5">
+<style>
+    .create-container {
+        padding-top: 6rem;
+    }
+    .required::after {
+        content: " *";
+        color: red;
+    }
+</style>
+
+<div class="container my-5 create-container">
     <div class="row">
         <div class="col-lg-10 mx-auto">
             <!-- Progress Indicator -->
@@ -399,7 +409,7 @@
                             <div>
                                 @if (currentStep > 1)
                                 {
-                                    <button type="submit" name="CurrentStep" value="@(currentStep - 1)" class="btn btn-secondary">
+                                    <button type="submit" name="PreviousStep" value="true" class="btn btn-secondary">
                                         <i class="bi bi-arrow-left"></i> Previous
                                     </button>
                                 }
@@ -411,13 +421,13 @@
                                 
                                 @if (currentStep < 6)
                                 {
-                                    <button type="submit" name="CurrentStep" value="@(currentStep + 1)" class="btn btn-primary">
+                                    <button type="submit" name="NextStep" value="true" class="btn btn-primary">
                                         Next <i class="bi bi-arrow-right"></i>
                                     </button>
                                 }
                                 else
                                 {
-                                    <button type="submit" class="btn btn-success">
+                                    <button type="submit" name="SubmitApplication" value="true" class="btn btn-success">
                                         <i class="bi bi-check-circle"></i> Submit Application
                                     </button>
                                 }
@@ -445,10 +455,3 @@
         });
     </script>
 }
-
-<style>
-    .required::after {
-        content: " *";
-        color: red;
-    }
-</style>

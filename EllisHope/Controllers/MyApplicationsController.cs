@@ -111,43 +111,54 @@ public class MyApplicationsController : Controller
             return Unauthorized();
         }
 
-        // Validate current step
-        if (!ValidateStep(model, model.CurrentStep))
+        // Check which button was clicked
+        bool isNextButton = Request.Form.ContainsKey("NextStep");
+        bool isPreviousButton = Request.Form.ContainsKey("PreviousStep");
+        bool isSaveDraft = Request.Form.ContainsKey("SaveAsDraft");
+
+        // Handle save as draft
+        if (isSaveDraft)
         {
+            var draftApplication = MapToApplication(model, currentUser);
+            draftApplication.Status = ApplicationStatus.Draft;
+
+            var (succeeded, errors, application) = await _applicationService.CreateApplicationAsync(draftApplication);
+
+            if (succeeded)
+            {
+                TempData["SuccessMessage"] = "Application saved as draft.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            foreach (var error in errors)
+            {
+                ModelState.AddModelError(string.Empty, error);
+            }
+
             return View(model);
         }
 
-        // If not final step or saving draft, just move to next step
-        if (model.CurrentStep < 6 || model.SaveAsDraft)
+        // Handle previous button (go back without validation)
+        if (isPreviousButton && model.CurrentStep > 1)
         {
-            if (model.SaveAsDraft)
+            model.CurrentStep--;
+            return View(model);
+        }
+
+        // Handle next button (validate current step before moving forward)
+        if (isNextButton && model.CurrentStep < 6)
+        {
+            if (!ValidateStep(model, model.CurrentStep))
             {
-                // Save as draft
-                var draftApplication = MapToApplication(model, currentUser);
-                draftApplication.Status = ApplicationStatus.Draft;
-
-                var (succeeded, errors, application) = await _applicationService.CreateApplicationAsync(draftApplication);
-
-                if (succeeded)
-                {
-                    TempData["SuccessMessage"] = "Application saved as draft.";
-                    return RedirectToAction(nameof(Index));
-                }
-
-                foreach (var error in errors)
-                {
-                    ModelState.AddModelError(string.Empty, error);
-                }
-
                 return View(model);
             }
-
+            
             model.CurrentStep++;
             return View(model);
         }
 
         // Final step - validate all and submit
-        if (!ModelState.IsValid)
+        if (!ValidateStep(model, model.CurrentStep))
         {
             return View(model);
         }
@@ -212,7 +223,7 @@ public class MyApplicationsController : Controller
     // POST: MyApplications/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, ApplicationEditViewModel model)
+    public async Task<IActionResult> Edit(int id, ApplicationEditViewModel model, string? action)
     {
         if (id != model.Id)
         {
@@ -237,21 +248,31 @@ public class MyApplicationsController : Controller
             return RedirectToAction(nameof(Details), new { id });
         }
 
-        // Validate current step
-        if (!ValidateStep(model, model.CurrentStep))
+        // Check which button was clicked
+        bool isNextButton = Request.Form.ContainsKey("NextStep");
+        bool isPreviousButton = Request.Form.ContainsKey("PreviousStep");
+
+        // Navigate between steps without validation (except on final submit)
+        if (isPreviousButton && model.CurrentStep > 1)
         {
+            model.CurrentStep--;
             return View(model);
         }
 
-        // If not final step, just move to next step
-        if (model.CurrentStep < 6)
+        if (isNextButton && model.CurrentStep < 6)
         {
+            // Validate current step before moving forward
+            if (!ValidateStep(model, model.CurrentStep))
+            {
+                return View(model);
+            }
+            
             model.CurrentStep++;
             return View(model);
         }
 
         // Final step - validate all and update
-        if (!ModelState.IsValid)
+        if (!ValidateStep(model, model.CurrentStep))
         {
             return View(model);
         }
