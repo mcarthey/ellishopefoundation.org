@@ -93,7 +93,12 @@
                     <label asp-for="Password" class="form-label">
                         <i class="bi bi-key"></i> Password
                     </label>
-                    <input asp-for="Password" class="form-control" placeholder="Enter your password" />
+                    <div class="input-group">
+                        <input asp-for="Password" class="form-control" type="password" id="password" placeholder="Enter your password" />
+                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                            <i class="bi bi-eye" id="togglePasswordIcon"></i>
+                        </button>
+                    </div>
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
 
@@ -119,6 +124,23 @@
 
     <script src="~/assets/js/jquery-3.5.1.min.js"></script>
     <script src="~/assets/js/bootstrap.min.js"></script>
+    <script>
+        // Password visibility toggle
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const password = document.getElementById('password');
+            const icon = document.getElementById('togglePasswordIcon');
+            
+            if (password.type === 'password') {
+                password.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                password.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        });
+    </script>
     @section Scripts {
         @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     }
