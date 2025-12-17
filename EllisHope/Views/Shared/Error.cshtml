@@ -15,12 +15,13 @@
     <link rel="stylesheet" href="~/assets/fonts/bootstrap-icons.css" />
     <style>
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #c53040 0%, #000 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            padding: 1rem;
         }
 
         .error-container {
@@ -35,20 +36,29 @@
             font-size: 8rem;
             margin-bottom: 1rem;
             opacity: 0.9;
+            animation: bounce 2s infinite;
+        }
+
+        @@keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
         }
 
         .error-card {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.98);
             border-radius: 1rem;
             padding: 3rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
             color: #333;
         }
 
         .error-code {
             font-size: 6rem;
             font-weight: bold;
-            color: #667eea;
+            background: linear-gradient(135deg, #c53040, #000);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin: 0;
             line-height: 1;
         }
@@ -66,7 +76,7 @@
         }
 
         .btn-home {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #c53040, #000);
             border: none;
             color: white;
             padding: 1rem 2rem;
@@ -80,7 +90,26 @@
 
         .btn-home:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 20px rgba(197, 48, 64, 0.4);
+            color: white;
+        }
+
+        .btn-report {
+            background: #fff;
+            border: 2px solid #c53040;
+            color: #c53040;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+            margin: 0.5rem;
+            cursor: pointer;
+        }
+
+        .btn-report:hover {
+            background: #c53040;
             color: white;
         }
 
@@ -90,9 +119,19 @@
             color: #999;
         }
 
+        .support-text a {
+            color: #c53040;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .support-text a:hover {
+            text-decoration: underline;
+        }
+
         .dev-details {
-            background: #f8f9fa;
-            border-left: 4px solid #dc3545;
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
             padding: 1rem;
             margin-top: 2rem;
             text-align: left;
@@ -104,6 +143,29 @@
             padding: 0.2rem 0.5rem;
             border-radius: 0.25rem;
             font-size: 0.9rem;
+            color: #d63384;
+        }
+
+        .helpful-tips {
+            background: #e7f3ff;
+            border-left: 4px solid #0d6efd;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: left;
+            border-radius: 0.5rem;
+        }
+
+        .helpful-tips h5 {
+            color: #0d6efd;
+            margin-bottom: 1rem;
+        }
+
+        .helpful-tips ul {
+            margin-bottom: 0;
+        }
+
+        .helpful-tips li {
+            margin-bottom: 0.5rem;
         }
     </style>
 </head>
@@ -116,39 +178,58 @@
             <h1 class="error-code">Oops!</h1>
             <h2 class="error-title">Something went wrong</h2>
             <p class="error-message">
-                We're sorry, but something unexpected happened. Our team has been notified and we're working to fix it.
+                We're sorry, but something unexpected happened. Don't worry - your data is safe!
             </p>
+
+            <div class="helpful-tips">
+                <h5><i class="bi bi-lightbulb"></i> What you can do:</h5>
+                <ul>
+                    <li><strong>Try again</strong> - Click the button below to go back and try again</li>
+                    <li><strong>Refresh the page</strong> - Sometimes a simple refresh helps</li>
+                    <li><strong>Start fresh</strong> - Return to the homepage and navigate to what you need</li>
+                    <li><strong>Report this issue</strong> - Help us fix it by letting us know what happened</li>
+                </ul>
+            </div>
             
-            <div>
+            <div class="mt-4">
+                <a href="javascript:history.back()" class="btn-home">
+                    <i class="bi bi-arrow-left"></i> Go Back & Try Again
+                </a>
                 <a href="/" class="btn-home">
                     <i class="bi bi-house-fill"></i> Go to Homepage
                 </a>
-                <a href="javascript:history.back()" class="btn-home">
-                    <i class="bi bi-arrow-left"></i> Go Back
+            </div>
+
+            <div class="mt-3">
+                <a href="mailto:admin@ellishope.org?subject=Website Error Report&body=I encountered an error on the website.%0D%0A%0D%0APage I was trying to access: @Context.Request.Path%0D%0ARequest ID: @Model.RequestId%0D%0A%0D%0AWhat I was trying to do:%0D%0A%0D%0ASteps to reproduce:%0D%0A1. %0D%0A2. %0D%0A3. %0D%0A" 
+                   class="btn-report">
+                    <i class="bi bi-envelope"></i> Report This Issue
                 </a>
             </div>
 
             @if (Model.ShowRequestId)
             {
                 <div class="dev-details">
-                    <h5 class="text-danger">
-                        <i class="bi bi-bug"></i> Development Mode
+                    <h5 class="text-warning">
+                        <i class="bi bi-code-slash"></i> Development Mode
                     </h5>
                     <p>
-                        <strong>Request ID:</strong> <code>@Model.RequestId</code>
+                        <strong>Request ID:</strong> <code>@Model.RequestId</code><br/>
+                        <strong>Path:</strong> <code>@Context.Request.Path</code><br/>
+                        <strong>Method:</strong> <code>@Context.Request.Method</code>
                     </p>
                     <p class="mb-0">
                         <small class="text-muted">
-                            This detailed information is only shown in development mode. 
-                            In production, users will see a friendly error message without technical details.
+                            <i class="bi bi-info-circle"></i> This detailed information is only shown in development mode. 
+                            In production, users see a friendly error message without technical details.
                         </small>
                     </p>
                 </div>
             }
 
             <p class="support-text">
-                If you continue to experience issues, please contact us at 
-                <a href="mailto:support@ellishope.org">support@ellishope.org</a>
+                <i class="bi bi-question-circle"></i> Need help? Contact us at 
+                <a href="mailto:admin@ellishope.org">admin@ellishope.org</a>
             </p>
         </div>
     </div>

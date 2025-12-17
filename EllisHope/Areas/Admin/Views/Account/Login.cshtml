@@ -1,6 +1,6 @@
 @model LoginViewModel
 @{
-    ViewData["Title"] = "Admin Login";
+    ViewData["Title"] = "Sign In";
     Layout = null;
 }
 
@@ -63,16 +63,36 @@
             border-color: #c53040;
             box-shadow: 0 0 0 0.2rem rgba(197, 48, 64, 0.25);
         }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .divider span {
+            padding: 0 1rem;
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
     </style>
 </head>
 <body>
     <div class="login-card">
         <div class="login-header">
             <h2 class="mb-2">
-                <i class="bi bi-shield-lock"></i>
+                <i class="bi bi-person-circle"></i>
             </h2>
             <h4>Ellis Hope Foundation</h4>
-            <p class="mb-0">Admin Portal</p>
+            <p class="mb-0">Welcome! Please sign in to continue</p>
         </div>
 
         <div class="login-body">
@@ -85,7 +105,7 @@
                     <label asp-for="Email" class="form-label">
                         <i class="bi bi-envelope"></i> Email Address
                     </label>
-                    <input asp-for="Email" class="form-control" placeholder="admin@ellishope.org" />
+                    <input asp-for="Email" class="form-control" placeholder="your-email@example.com" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
 
@@ -113,6 +133,14 @@
                     <i class="bi bi-box-arrow-in-right"></i> Sign In
                 </button>
             </form>
+
+            <div class="divider">
+                <span>Don't have an account?</span>
+            </div>
+
+            <a asp-action="Register" class="btn btn-outline-primary w-100">
+                <i class="bi bi-person-plus"></i> Create Account
+            </a>
 
             <div class="text-center mt-4">
                 <a href="/" class="text-muted small">

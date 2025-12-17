@@ -1,6 +1,7 @@
 using EllisHope.Areas.Admin.Controllers;
 using EllisHope.Areas.Admin.Models;
 using EllisHope.Models.Domain;
+using EllisHope.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,7 @@ public class AccountControllerTests
 {
     private readonly Mock<SignInManager<ApplicationUser>> _mockSignInManager;
     private readonly Mock<UserManager<ApplicationUser>> _mockUserManager;
+    private readonly Mock<IEmailService> _mockEmailService;
     private readonly Mock<ILogger<AccountController>> _mockLogger;
     private readonly AccountController _controller;
 
@@ -35,11 +37,13 @@ public class AccountControllerTests
             claimsPrincipalFactory.Object,
             null!, null!, null!, null!);
 
+        _mockEmailService = new Mock<IEmailService>();
         _mockLogger = new Mock<ILogger<AccountController>>();
 
         _controller = new AccountController(
             _mockSignInManager.Object,
             _mockUserManager.Object,
+            _mockEmailService.Object,
             _mockLogger.Object);
 
         // Setup TempData

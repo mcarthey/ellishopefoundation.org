@@ -28,22 +28,8 @@ public class MemberController : Controller
     // GET: Admin/Member/Dashboard
     public async Task<IActionResult> Dashboard()
     {
-        var currentUser = await _userManager.GetUserAsync(User);
-        if (currentUser == null)
-        {
-            return NotFound();
-        }
-
-        var viewModel = new MemberDashboardViewModel
-        {
-            MemberName = currentUser.FullName,
-            MemberEmail = currentUser.Email ?? string.Empty,
-            Status = currentUser.Status,
-            JoinedDate = currentUser.JoinedDate,
-            LastLoginDate = currentUser.LastLoginDate
-        };
-
-        return View(viewModel);
+        // Members should go directly to the application portal
+        return RedirectToAction("Index", "MyApplications", new { area = "" });
     }
 
     // GET: Admin/Member/Events
