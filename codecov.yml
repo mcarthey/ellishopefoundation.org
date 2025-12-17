@@ -20,11 +20,25 @@ coverage:
         base: auto
 
 comment:
-  layout: "header, diff, files, footer"
+  layout: "header, diff, flags, files, footer"
   behavior: default
   require_changes: false
   require_base: false
   require_head: true
+
+flags:
+  unit:
+    paths:
+      - EllisHope.Tests/Unit/
+  integration:
+    paths:
+      - EllisHope.Tests/Integration/
+  e2e:
+    paths:
+      - EllisHope.Tests/E2E/
+  controllers:
+    paths:
+      - EllisHope.Tests/Controllers/
 
 ignore:
   - "EllisHope/Migrations/**"
@@ -35,3 +49,5 @@ ignore:
   - "**/*.Designer.cs"
   - "**/Program.cs"
   - "**/Startup.cs"
+  - "**/test-results/**"
+  - "**/playwright-report/**"

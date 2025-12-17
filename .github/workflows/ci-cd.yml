@@ -1,0 +1,118 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+      
+    - name: Run Unit & Integration Tests
+      run: dotnet test --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" --filter "TestCategory!=E2E"
+      
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: '**/TestResults/*.trx'
+        
+    - name: Upload Code Coverage
+      uses: codecov/codecov-action@v4
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: '**/coverage.cobertura.xml'
+        fail_ci_if_error: false
+        verbose: true
+
+  e2e-tests:
+    name: E2E Tests (Playwright)
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+      
+    - name: Install Playwright Browsers
+      run: |
+        dotnet tool install --global Microsoft.Playwright.CLI || true
+        playwright install --with-deps
+        
+    - name: Start Application
+      run: |
+        dotnet run --project EllisHope --configuration Release &
+        sleep 15
+      env:
+        ASPNETCORE_ENVIRONMENT: Development
+        ASPNETCORE_URLS: https://localhost:7042
+        
+    - name: Run Playwright E2E Tests
+      run: dotnet test EllisHope.Tests --configuration Release --filter "TestCategory=E2E" --logger "trx;LogFileName=e2e-results.trx"
+      
+    - name: Upload E2E Test Results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: e2e-test-results
+        path: |
+          **/TestResults/*.trx
+          **/test-results/
+          
+    - name: Upload Playwright Artifacts (Screenshots/Videos)
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: playwright-artifacts
+        path: |
+          **/test-results/
+          **/screenshots/
+          **/videos/
+        retention-days: 7
+
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [build-and-test, e2e-tests]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Deploy
+      run: echo "Deploy step - configure your deployment here"
+      # Add your deployment steps here (Azure, AWS, etc.)
