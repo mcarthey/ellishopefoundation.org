@@ -97,6 +97,7 @@
                         <input type="hidden" asp-for="Status" />
                         
                         @* Hidden fields to preserve data from ALL steps *@
+                        @* Only include if not on current step AND data exists *@
                         @if (currentStep != 1)
                         {
                             <input type="hidden" asp-for="FirstName" />
@@ -113,7 +114,7 @@
                             <input type="hidden" asp-for="EmergencyContactPhone" />
                         }
                         
-                        @if (currentStep != 2)
+                        @if (currentStep != 2 && Model.FundingTypesRequested.Any())
                         {
                             @foreach (var fundingType in Model.FundingTypesRequested)
                             {
@@ -124,7 +125,8 @@
                             <input type="hidden" asp-for="FundingDetails" />
                         }
                         
-                        @if (currentStep != 3)
+                        @* Only include Step 3 if PersonalStatement exists *@
+                        @if (currentStep != 3 && !string.IsNullOrEmpty(Model.PersonalStatement))
                         {
                             <input type="hidden" asp-for="PersonalStatement" />
                             <input type="hidden" asp-for="ExpectedBenefits" />
@@ -132,7 +134,8 @@
                             <input type="hidden" asp-for="ConcernsObstacles" />
                         }
                         
-                        @if (currentStep != 4)
+                        @* Only include Step 4 if any health data exists *@
+                        @if (currentStep != 4 && (!string.IsNullOrEmpty(Model.MedicalConditions) || !string.IsNullOrEmpty(Model.FitnessGoals)))
                         {
                             <input type="hidden" asp-for="MedicalConditions" />
                             <input type="hidden" asp-for="CurrentMedications" />
@@ -141,7 +144,8 @@
                             <input type="hidden" asp-for="CurrentFitnessLevel" />
                         }
                         
-                        @if (currentStep != 5)
+                        @* Only include Step 5 if any agreements exist *@
+                        @if (currentStep != 5 && Model.UnderstandsCommitment)
                         {
                             <input type="hidden" asp-for="AgreesToNutritionist" />
                             <input type="hidden" asp-for="AgreesToPersonalTrainer" />
@@ -150,7 +154,8 @@
                             <input type="hidden" asp-for="UnderstandsCommitment" />
                         }
                         
-                        @if (currentStep != 6)
+                        @* Only include Step 6 if signature exists *@
+                        @if (currentStep != 6 && !string.IsNullOrEmpty(Model.Signature))
                         {
                             <input type="hidden" asp-for="Signature" />
                         }

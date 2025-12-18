@@ -256,21 +256,30 @@ public class MyApplicationsController : Controller
         // Handle Save & Exit - save all data
         if (isSaveAndExit)
         {
-            // Update application with ALL data from the model
-            // (Hidden fields ensure we have data from all steps)
-            UpdateApplicationFromModel(application, model);
-
-            var (succeeded, errors) = await _applicationService.UpdateApplicationAsync(application);
-
-            if (succeeded)
+            try
             {
-                TempData["SuccessMessage"] = "Draft saved successfully.";
-                return RedirectToAction(nameof(Index));
+                // Update application with ALL data from the model
+                // (Hidden fields ensure we have data from completed steps)
+                UpdateApplicationFromModel(application, model);
+
+                var (succeeded, errors) = await _applicationService.UpdateApplicationAsync(application);
+
+                if (succeeded)
+                {
+                    TempData["SuccessMessage"] = "Draft saved successfully.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                foreach (var error in errors)
+                {
+                    ModelState.AddModelError(string.Empty, error);
+                }
             }
-
-            foreach (var error in errors)
+            catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, error);
+                _logger.LogError(ex, "Error saving draft application {ApplicationId}", id);
+                ModelState.AddModelError(string.Empty, 
+                    "Unable to save your draft at this time. Please try again or contact support if the problem persists.");
             }
 
             return View(model);
@@ -301,20 +310,29 @@ public class MyApplicationsController : Controller
             return View(model);
         }
 
-        // Update application
-        UpdateApplicationFromModel(application, model);
-
-        var (updateSucceeded, updateErrors) = await _applicationService.UpdateApplicationAsync(application);
-
-        if (updateSucceeded)
+        try
         {
-            TempData["SuccessMessage"] = "Application updated successfully.";
-            return RedirectToAction(nameof(Details), new { id });
+            // Update application
+            UpdateApplicationFromModel(application, model);
+
+            var (updateSucceeded, updateErrors) = await _applicationService.UpdateApplicationAsync(application);
+
+            if (updateSucceeded)
+            {
+                TempData["SuccessMessage"] = "Application updated successfully.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+
+            foreach (var error in updateErrors)
+            {
+                ModelState.AddModelError(string.Empty, error);
+            }
         }
-
-        foreach (var error in updateErrors)
+        catch (Exception ex)
         {
-            ModelState.AddModelError(string.Empty, error);
+            _logger.LogError(ex, "Error updating application {ApplicationId}", id);
+            ModelState.AddModelError(string.Empty, 
+                "Unable to save your application at this time. Please try again or contact support if the problem persists.");
         }
 
         return View(model);
