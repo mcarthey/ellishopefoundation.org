@@ -192,7 +192,7 @@ public class AccountControllerTests
     }
 
     [Fact]
-    public async Task Login_Post_ValidCredentials_NotAdminUser_SignsOutAndReturnsError()
+    public async Task Login_Post_ValidCredentials_NotAdminUser_RedirectsToMyApplications()
     {
         // Arrange
         var model = new LoginViewModel
@@ -223,19 +223,27 @@ public class AccountControllerTests
             true))
             .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Success);
 
+        // User is not in any admin roles
         _mockUserManager.Setup(u => u.IsInRoleAsync(user, "Admin"))
             .ReturnsAsync(false);
-
-        _mockSignInManager.Setup(s => s.SignOutAsync())
-            .Returns(Task.CompletedTask);
+        _mockUserManager.Setup(u => u.IsInRoleAsync(user, "BoardMember"))
+            .ReturnsAsync(false);
+        _mockUserManager.Setup(u => u.IsInRoleAsync(user, "Editor"))
+            .ReturnsAsync(false);
+        _mockUserManager.Setup(u => u.IsInRoleAsync(user, "Sponsor"))
+            .ReturnsAsync(false);
+        _mockUserManager.Setup(u => u.IsInRoleAsync(user, "Client"))
+            .ReturnsAsync(false);
+        _mockUserManager.Setup(u => u.IsInRoleAsync(user, "Member"))
+            .ReturnsAsync(false);
 
         // Act
         var result = await _controller.Login(model, null);
 
-        // Assert
-        var viewResult = Assert.IsType<ViewResult>(result);
-        Assert.False(_controller.ModelState.IsValid);
-        _mockSignInManager.Verify(s => s.SignOutAsync(), Times.Once);
+        // Assert - Should redirect to MyApplications (default for users without specific roles)
+        var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+        Assert.Equal("Index", redirectResult.ActionName);
+        Assert.Equal("MyApplications", redirectResult.ControllerName);
     }
 
     [Fact]

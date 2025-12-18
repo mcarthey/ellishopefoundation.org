@@ -102,6 +102,10 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 // Ensure database schema is created
                 db.Database.EnsureCreated();
                 logger.LogInformation("Test database initialized successfully with SQLite");
+                
+                // Seed minimal required data for tests
+                SeedMinimalTestDataAsync(scopedServices).GetAwaiter().GetResult();
+                
                 _databaseInitialized = true;
             }
             catch (Exception ex)
@@ -109,6 +113,24 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 logger.LogError(ex, "An error occurred creating the test database");
                 throw;
             }
+        }
+    }
+
+    /// <summary>
+    /// Seeds minimal required data that all tests need
+    /// Individual tests can add more specific data using TestDataSeeder
+    /// </summary>
+    private async Task SeedMinimalTestDataAsync(IServiceProvider services)
+    {
+        var seeder = new TestDataSeeder(services);
+        try
+        {
+            await seeder.SeedMemberPortalDataAsync();
+        }
+        finally
+        {
+            // Don't dispose here - let tests manage their own cleanup
+            // seeder.Dispose();
         }
     }
 

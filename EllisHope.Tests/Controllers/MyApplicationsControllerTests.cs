@@ -41,9 +41,17 @@ public class MyApplicationsControllerTests
             _mockUserManager.Object,
             _mockLogger.Object);
 
+        // Setup HttpContext with Request.Form
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.ContentType = "application/x-www-form-urlencoded";
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = httpContext
+        };
+
         // Setup TempData
         _controller.TempData = new TempDataDictionary(
-            new DefaultHttpContext(),
+            httpContext,
             Mock.Of<ITempDataProvider>());
 
         // Setup test user
@@ -302,11 +310,25 @@ public class MyApplicationsControllerTests
         var model = new ApplicationCreateViewModel
         {
             CurrentStep = 1,
-            SaveAsDraft = true,
             FirstName = "Test",
             LastName = "User",
             Email = "test@test.com",
             PhoneNumber = "555-1234"
+        };
+
+        // Simulate the SaveAsDraft button being clicked
+        var formCollection = new FormCollection(new Dictionary<string, Microsoft.Extensions.Primitives.StringValues>
+        {
+            { "SaveAsDraft", "true" }
+        });
+        
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.ContentType = "application/x-www-form-urlencoded";
+        httpContext.Request.Form = formCollection;
+        
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = httpContext
         };
 
         _mockApplicationService.Setup(s => s.CreateApplicationAsync(It.IsAny<ClientApplication>()))

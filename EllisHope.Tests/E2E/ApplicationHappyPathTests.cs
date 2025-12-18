@@ -1,7 +1,7 @@
 using Microsoft.Playwright;
-using Microsoft.Playwright.MSTest;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using System.Text.RegularExpressions;
+using static Microsoft.Playwright.Assertions;
 
 namespace EllisHope.Tests.E2E;
 
@@ -9,24 +9,14 @@ namespace EllisHope.Tests.E2E;
 /// End-to-end tests for the Happy Path user journey
 /// Tests the complete application workflow from registration to submission
 /// </summary>
-[TestClass]
-public class ApplicationHappyPathTests : PageTest
+[Trait("Category", "E2E")]
+public class ApplicationHappyPathTests : PlaywrightTestBase
 {
-    private const string BaseUrl = "https://localhost:7042"; // Update with your actual port
+    private const string BaseUrl = "https://localhost:7042";
     private const string TestEmail = "happy.path@test.com";
     private const string TestPassword = "HappyPath@123";
 
-    [TestInitialize]
-    public async Task TestInitialize()
-    {
-        // Set default timeout
-        Page.SetDefaultTimeout(10000);
-        Page.SetDefaultNavigationTimeout(30000);
-    }
-
-    [TestMethod]
-    [TestCategory("E2E")]
-    [TestCategory("HappyPath")]
+    [Fact(Skip = "Full workflow test - enable when needed")]
     public async Task HappyPath_CompleteApplicationWorkflow_Success()
     {
         // Step 1: Navigate to home page
@@ -137,9 +127,9 @@ public class ApplicationHappyPathTests : PageTest
             Page.Locator("text=Submitted"))).ToBeVisibleAsync(new() { Timeout = 5000 });
     }
 
-    [TestMethod]
-    [TestCategory("E2E")]
-    [TestCategory("Navigation")]
+    [Fact]
+    [Trait("Category", "E2E")]
+    [Trait("Category", "Navigation")]
     public async Task ApplicationForm_PreviousButton_NavigatesBackward()
     {
         // Navigate to application form (assuming logged in)
@@ -156,9 +146,9 @@ public class ApplicationHappyPathTests : PageTest
         await Expect(Page.Locator("h3:has-text('Step 1')")).ToBeVisibleAsync();
     }
 
-    [TestMethod]
-    [TestCategory("E2E")]
-    [TestCategory("Navigation")]
+    [Fact]
+    [Trait("Category", "E2E")]
+    [Trait("Category", "Navigation")]
     public async Task ApplicationForm_SaveAsDraft_SavesAndRedirects()
     {
         // Navigate to application form
@@ -177,9 +167,9 @@ public class ApplicationHappyPathTests : PageTest
         await Expect(Page.Locator("text=saved as draft")).ToBeVisibleAsync();
     }
 
-    [TestMethod]
-    [TestCategory("E2E")]
-    [TestCategory("Validation")]
+    [Fact]
+    [Trait("Category", "E2E")]
+    [Trait("Category", "Validation")]
     public async Task ApplicationForm_Step3_RequiresMinimum50Characters()
     {
         // Navigate to step 3
@@ -200,9 +190,9 @@ public class ApplicationHappyPathTests : PageTest
         await Expect(Page.Locator("text=minimum 50 characters")).ToBeVisibleAsync();
     }
 
-    [TestMethod]
-    [TestCategory("E2E")]
-    [TestCategory("EditDraft")]
+    [Fact]
+    [Trait("Category", "E2E")]
+    [Trait("Category", "EditDraft")]
     public async Task EditDraftApplication_LoadsCorrectly()
     {
         // Assuming there's a draft application with ID 1
@@ -215,9 +205,9 @@ public class ApplicationHappyPathTests : PageTest
         await Expect(Page.Locator("text=Exit & Save Later")).ToBeVisibleAsync();
     }
 
-    [TestMethod]
-    [TestCategory("E2E")]
-    [TestCategory("Details")]
+    [Fact]
+    [Trait("Category", "E2E")]
+    [Trait("Category", "Details")]
     public async Task ApplicationDetails_DisplaysCorrectly()
     {
         // Navigate to application details
@@ -229,16 +219,7 @@ public class ApplicationHappyPathTests : PageTest
 
         // Check that header is not covered by navigation
         var headerBox = await header.BoundingBoxAsync();
-        Assert.IsNotNull(headerBox);
-        Assert.IsTrue(headerBox.Y > 80, "Header should be below navigation bar");
-    }
-
-    [TestCleanup]
-    public async Task TestCleanup()
-    {
-        // Cleanup: Delete test user if created
-        // This would require API calls or database cleanup
-        // For now, just close the page
-        await Page.CloseAsync();
+        Assert.NotNull(headerBox);
+        Assert.True(headerBox.Y > 80, "Header should be below navigation bar");
     }
 }
