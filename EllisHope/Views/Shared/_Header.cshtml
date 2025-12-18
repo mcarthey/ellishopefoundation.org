@@ -138,7 +138,8 @@
                                         <i class="bi bi-key"></i> Change Password
                                     </a>
                                     <div class="account-dropdown-divider"></div>
-                                    <form action="/Admin/Account/Logout" method="post" class="m-0">
+                                    <form action="/Admin/Account/Logout" method="post" class="m-0" asp-antiforgery="true">
+                                        @Html.AntiForgeryToken()
                                         <button type="submit" class="account-dropdown-item border-0 bg-transparent text-start w-100">
                                             <i class="bi bi-box-arrow-right"></i> Sign Out
                                         </button>
@@ -230,7 +231,8 @@
                         <a href="/Admin/Profile/ChangePassword" class="d-block py-2">
                             <i class="bi bi-key"></i> Change Password
                         </a>
-                        <form action="/Admin/Account/Logout" method="post" class="mt-2">
+                        <form action="/Admin/Account/Logout" method="post" class="mt-2" asp-antiforgery="true">
+                            @Html.AntiForgeryToken()
                             <button type="submit" class="btn btn-outline-danger btn-sm w-100">
                                 <i class="bi bi-box-arrow-right"></i> Sign Out
                             </button>
