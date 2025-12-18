@@ -87,37 +87,50 @@
 
 <!-- Quick Actions -->
 <div class="row">
-    <div class="col-md-4 mb-4">
+    <div class="col-md-3 mb-4">
+        <div class="card h-100 border-primary">
+            <div class="card-body text-center">
+                <i class="bi bi-file-earmark-text fs-1 text-primary"></i>
+                <h5 class="mt-3">My Applications</h5>
+                <p class="text-muted">Apply for support or continue a draft application</p>
+                <a asp-controller="MyApplications" asp-action="Index" asp-area="" class="btn btn-primary" target="_blank">
+                    <i class="bi bi-box-arrow-up-right"></i> View Applications
+                </a>
+                <small class="d-block mt-2 text-muted">Opens in new window</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
         <div class="card h-100">
             <div class="card-body text-center">
                 <i class="bi bi-calendar-event fs-1 text-primary"></i>
                 <h5 class="mt-3">Upcoming Events</h5>
                 <p class="text-muted">View and register for upcoming foundation events</p>
-                <a asp-action="Events" class="btn btn-primary">
+                <a asp-action="Events" class="btn btn-outline-primary">
                     <i class="bi bi-arrow-right"></i> View Events
                 </a>
             </div>
         </div>
     </div>
-    <div class="col-md-4 mb-4">
+    <div class="col-md-3 mb-4">
         <div class="card h-100">
             <div class="card-body text-center">
                 <i class="bi bi-hand-thumbs-up fs-1 text-success"></i>
                 <h5 class="mt-3">Volunteer Opportunities</h5>
                 <p class="text-muted">Find ways to give back to the community</p>
-                <a asp-action="Volunteer" class="btn btn-success">
+                <a asp-action="Volunteer" class="btn btn-outline-success">
                     <i class="bi bi-arrow-right"></i> Volunteer
                 </a>
             </div>
         </div>
     </div>
-    <div class="col-md-4 mb-4">
+    <div class="col-md-3 mb-4">
         <div class="card h-100">
             <div class="card-body text-center">
                 <i class="bi bi-person-circle fs-1 text-info"></i>
                 <h5 class="mt-3">My Profile</h5>
                 <p class="text-muted">View and update your profile information</p>
-                <a asp-action="MyProfile" class="btn btn-info">
+                <a asp-action="MyProfile" class="btn btn-outline-info">
                     <i class="bi bi-arrow-right"></i> Go to Profile
                 </a>
             </div>

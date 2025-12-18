@@ -27,9 +27,9 @@
                     </h2>
                 </div>
                 <div>
-                    <a asp-action="Index" class="btn btn-outline-secondary">
-                        <i class="bi bi-x-circle"></i> Exit & Save Later
-                    </a>
+                    <button type="submit" form="editForm" name="SaveAndExit" value="true" class="btn btn-outline-secondary">
+                        <i class="bi bi-save"></i> Save & Exit
+                    </button>
                 </div>
             </div>
 
@@ -91,10 +91,70 @@
                     </h3>
                 </div>
                 <div class="card-body">
-                    <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+                    <form asp-action="Edit" asp-route-id="@Model.Id" method="post" id="editForm">
                         <input type="hidden" asp-for="Id" />
                         <input type="hidden" asp-for="CurrentStep" />
                         <input type="hidden" asp-for="Status" />
+                        
+                        @* Hidden fields to preserve data from ALL steps *@
+                        @if (currentStep != 1)
+                        {
+                            <input type="hidden" asp-for="FirstName" />
+                            <input type="hidden" asp-for="LastName" />
+                            <input type="hidden" asp-for="PhoneNumber" />
+                            <input type="hidden" asp-for="Email" />
+                            <input type="hidden" asp-for="Address" />
+                            <input type="hidden" asp-for="City" />
+                            <input type="hidden" asp-for="State" />
+                            <input type="hidden" asp-for="ZipCode" />
+                            <input type="hidden" asp-for="Occupation" />
+                            <input type="hidden" asp-for="DateOfBirth" />
+                            <input type="hidden" asp-for="EmergencyContactName" />
+                            <input type="hidden" asp-for="EmergencyContactPhone" />
+                        }
+                        
+                        @if (currentStep != 2)
+                        {
+                            @foreach (var fundingType in Model.FundingTypesRequested)
+                            {
+                                <input type="hidden" name="FundingTypesRequested" value="@fundingType" />
+                            }
+                            <input type="hidden" asp-for="EstimatedMonthlyCost" />
+                            <input type="hidden" asp-for="ProgramDurationMonths" />
+                            <input type="hidden" asp-for="FundingDetails" />
+                        }
+                        
+                        @if (currentStep != 3)
+                        {
+                            <input type="hidden" asp-for="PersonalStatement" />
+                            <input type="hidden" asp-for="ExpectedBenefits" />
+                            <input type="hidden" asp-for="CommitmentStatement" />
+                            <input type="hidden" asp-for="ConcernsObstacles" />
+                        }
+                        
+                        @if (currentStep != 4)
+                        {
+                            <input type="hidden" asp-for="MedicalConditions" />
+                            <input type="hidden" asp-for="CurrentMedications" />
+                            <input type="hidden" asp-for="LastPhysicalExamDate" />
+                            <input type="hidden" asp-for="FitnessGoals" />
+                            <input type="hidden" asp-for="CurrentFitnessLevel" />
+                        }
+                        
+                        @if (currentStep != 5)
+                        {
+                            <input type="hidden" asp-for="AgreesToNutritionist" />
+                            <input type="hidden" asp-for="AgreesToPersonalTrainer" />
+                            <input type="hidden" asp-for="AgreesToWeeklyCheckIns" />
+                            <input type="hidden" asp-for="AgreesToProgressReports" />
+                            <input type="hidden" asp-for="UnderstandsCommitment" />
+                        }
+                        
+                        @if (currentStep != 6)
+                        {
+                            <input type="hidden" asp-for="Signature" />
+                        }
+                        
                         <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
                         @* Step 1: Personal Information *@

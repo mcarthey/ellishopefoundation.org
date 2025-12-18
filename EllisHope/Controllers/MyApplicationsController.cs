@@ -251,6 +251,30 @@ public class MyApplicationsController : Controller
         // Check which button was clicked
         bool isNextButton = Request.Form.ContainsKey("NextStep");
         bool isPreviousButton = Request.Form.ContainsKey("PreviousStep");
+        bool isSaveAndExit = Request.Form.ContainsKey("SaveAndExit");
+
+        // Handle Save & Exit - save all data
+        if (isSaveAndExit)
+        {
+            // Update application with ALL data from the model
+            // (Hidden fields ensure we have data from all steps)
+            UpdateApplicationFromModel(application, model);
+
+            var (succeeded, errors) = await _applicationService.UpdateApplicationAsync(application);
+
+            if (succeeded)
+            {
+                TempData["SuccessMessage"] = "Draft saved successfully.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            foreach (var error in errors)
+            {
+                ModelState.AddModelError(string.Empty, error);
+            }
+
+            return View(model);
+        }
 
         // Navigate between steps without validation (except on final submit)
         if (isPreviousButton && model.CurrentStep > 1)
@@ -280,15 +304,15 @@ public class MyApplicationsController : Controller
         // Update application
         UpdateApplicationFromModel(application, model);
 
-        var (succeeded, errors) = await _applicationService.UpdateApplicationAsync(application);
+        var (updateSucceeded, updateErrors) = await _applicationService.UpdateApplicationAsync(application);
 
-        if (succeeded)
+        if (updateSucceeded)
         {
             TempData["SuccessMessage"] = "Application updated successfully.";
             return RedirectToAction(nameof(Details), new { id });
         }
 
-        foreach (var error in errors)
+        foreach (var error in updateErrors)
         {
             ModelState.AddModelError(string.Empty, error);
         }
@@ -493,6 +517,63 @@ public class MyApplicationsController : Controller
         application.AgreesToProgressReports = model.AgreesToProgressReports;
         application.UnderstandsCommitment = model.UnderstandsCommitment;
         application.Signature = model.Signature;
+    }
+
+    private void UpdateApplicationFromModelPartial(ClientApplication application, ApplicationEditViewModel model)
+    {
+        // Only update fields from the current step to avoid overwriting data
+        switch (model.CurrentStep)
+        {
+            case 1: // Personal Information
+                if (!string.IsNullOrEmpty(model.FirstName)) application.FirstName = model.FirstName;
+                if (!string.IsNullOrEmpty(model.LastName)) application.LastName = model.LastName;
+                if (!string.IsNullOrEmpty(model.PhoneNumber)) application.PhoneNumber = model.PhoneNumber;
+                if (!string.IsNullOrEmpty(model.Email)) application.Email = model.Email;
+                application.Address = model.Address; // Optional fields - always update
+                application.City = model.City;
+                application.State = model.State;
+                application.ZipCode = model.ZipCode;
+                application.Occupation = model.Occupation;
+                application.DateOfBirth = model.DateOfBirth;
+                application.EmergencyContactName = model.EmergencyContactName;
+                application.EmergencyContactPhone = model.EmergencyContactPhone;
+                break;
+
+            case 2: // Program Interest & Funding
+                if (model.FundingTypesRequested.Any())
+                    application.FundingTypesRequested = string.Join(",", model.FundingTypesRequested);
+                application.EstimatedMonthlyCost = model.EstimatedMonthlyCost;
+                application.ProgramDurationMonths = model.ProgramDurationMonths;
+                application.FundingDetails = model.FundingDetails;
+                break;
+
+            case 3: // Motivation & Commitment
+                application.PersonalStatement = model.PersonalStatement;
+                application.ExpectedBenefits = model.ExpectedBenefits;
+                application.CommitmentStatement = model.CommitmentStatement;
+                application.ConcernsObstacles = model.ConcernsObstacles;
+                break;
+
+            case 4: // Health & Fitness
+                application.MedicalConditions = model.MedicalConditions;
+                application.CurrentMedications = model.CurrentMedications;
+                application.LastPhysicalExamDate = model.LastPhysicalExamDate;
+                application.FitnessGoals = model.FitnessGoals;
+                application.CurrentFitnessLevel = model.CurrentFitnessLevel;
+                break;
+
+            case 5: // Program Requirements
+                application.AgreesToNutritionist = model.AgreesToNutritionist;
+                application.AgreesToPersonalTrainer = model.AgreesToPersonalTrainer;
+                application.AgreesToWeeklyCheckIns = model.AgreesToWeeklyCheckIns;
+                application.AgreesToProgressReports = model.AgreesToProgressReports;
+                application.UnderstandsCommitment = model.UnderstandsCommitment;
+                break;
+
+            case 6: // Review & Sign
+                application.Signature = model.Signature;
+                break;
+        }
     }
 
     #endregion
