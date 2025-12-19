@@ -510,6 +510,32 @@ public class ClientApplicationServiceTests : IDisposable
         Assert.Equal(ApplicationStatus.NeedsInformation, application?.Status);
     }
 
+    [Fact]
+    public async Task RequestAdditionalInformationAsync_AddsPublicComment()
+    {
+        // Arrange
+        await _service.StartReviewProcessAsync(1);
+        var requestDetails = "Please clarify your commitment statement.";
+
+        // Act
+        var (succeeded, errors) = await _service.RequestAdditionalInformationAsync(
+            1,
+            "admin1",
+            requestDetails);
+
+        // Assert
+        Assert.True(succeeded);
+        Assert.Empty(errors);
+
+        var comments = await _service.GetApplicationCommentsAsync(1, includePrivate: false);
+        var requestComment = comments.FirstOrDefault(c => c.IsInformationRequest);
+
+        Assert.NotNull(requestComment);
+        Assert.False(requestComment.IsPrivate);
+        Assert.Equal(requestDetails, requestComment.Content);
+        Assert.Equal("admin1", requestComment.AuthorId);
+    }
+
     #endregion
 
     #region Statistics Tests

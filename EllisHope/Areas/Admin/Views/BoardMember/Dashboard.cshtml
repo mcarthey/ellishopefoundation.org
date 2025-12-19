@@ -1,0 +1,97 @@
+@model EllisHope.Areas.Admin.Models.BoardMemberDashboardViewModel
+
+@{
+    ViewData["Title"] = "Board Member Dashboard";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-briefcase-fill"></i> Board Member Dashboard</h2>
+            <p class="text-muted">Welcome, @Model.MemberName</p>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-danger">
+                <div class="card-body">
+                    <h5 class="card-title">Applications Needing Your Vote</h5>
+                    <h2 class="mb-0">@Model.PendingVotes</h2>
+                    @if (Model.PendingVotes > 0)
+                    {
+                        <a asp-area="Admin" asp-controller="Applications" asp-action="NeedingReview" class="btn btn-light btn-sm mt-2">
+                            <i class="bi bi-arrow-right"></i> Review Now
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h5 class="card-title">Total Applications Under Review</h5>
+                    <h2 class="mb-0">@Model.ApplicationsUnderReview</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Total Votes You've Cast</h5>
+                    <h2 class="mb-0">@Model.TotalVotesCast</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Your Participation Rate</h5>
+                    <h2 class="mb-0">@Model.ParticipationRate.ToString("F1")%</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Average Review Time</h5>
+                    <h2 class="mb-0">@Model.AverageReviewDays.ToString("F1") <small>days</small></h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Overall Approval Rate</h5>
+                    <h2 class="mb-0">@Model.ApprovalRate.ToString("F1")%</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <a asp-area="Admin" asp-controller="Applications" asp-action="Index" class="btn btn-primary">
+                        <i class="bi bi-file-earmark-text"></i> View All Applications
+                    </a>
+                    <a asp-area="Admin" asp-controller="Applications" asp-action="NeedingReview" class="btn btn-warning">
+                        <i class="bi bi-hand-thumbs-up"></i> View Applications to Vote On
+                    </a>
+                    <a asp-area="Admin" asp-controller="Profile" asp-action="Index" class="btn btn-secondary">
+                        <i class="bi bi-person-circle"></i> My Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

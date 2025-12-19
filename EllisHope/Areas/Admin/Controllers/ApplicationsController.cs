@@ -146,7 +146,7 @@ public class ApplicationsController : Controller
                           application.Status == ApplicationStatus.InDiscussion),
             HasUserVoted = userVote != null,
             UserVote = userVote,
-            CanApproveReject = User.IsInRole("Admin") && votingSummary.HasSufficientVotes,
+            CanApproveReject = User.IsInRole("Admin"),
             CanEdit = application.Status == ApplicationStatus.Draft,
             VoteForm = new VoteFormViewModel { ApplicationId = id },
             CommentForm = new CommentFormViewModel { ApplicationId = id }

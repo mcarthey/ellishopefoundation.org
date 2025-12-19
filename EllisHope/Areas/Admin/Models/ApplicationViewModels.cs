@@ -52,16 +52,16 @@ public class ApplicationSummaryViewModel
     // Display helpers
     public string StatusBadgeClass => Status switch
     {
-        ApplicationStatus.Draft => "badge-secondary",
-        ApplicationStatus.Submitted => "badge-info",
-        ApplicationStatus.UnderReview => "badge-primary",
-        ApplicationStatus.InDiscussion => "badge-warning",
-        ApplicationStatus.NeedsInformation => "badge-warning",
-        ApplicationStatus.Approved => "badge-success",
-        ApplicationStatus.Rejected => "badge-danger",
-        ApplicationStatus.Active => "badge-success",
-        ApplicationStatus.Completed => "badge-dark",
-        _ => "badge-secondary"
+        ApplicationStatus.Draft => "bg-secondary",
+        ApplicationStatus.Submitted => "bg-info text-dark",
+        ApplicationStatus.UnderReview => "bg-primary",
+        ApplicationStatus.InDiscussion => "bg-warning text-dark",
+        ApplicationStatus.NeedsInformation => "bg-warning text-dark",
+        ApplicationStatus.Approved => "bg-success",
+        ApplicationStatus.Rejected => "bg-danger",
+        ApplicationStatus.Active => "bg-success",
+        ApplicationStatus.Completed => "bg-dark",
+        _ => "bg-secondary"
     };
 }
 

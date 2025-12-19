@@ -100,10 +100,17 @@
                                             }
                                         </small>
                                     </div>
-                                    @if (User.IsInRole("Admin") || User.IsInRole("BoardMember") || User.IsInRole("Editor"))
+                                    @if (User.IsInRole("Admin"))
                                     {
                                         <a href="/Admin/Dashboard" class="account-dropdown-item">
                                             <i class="bi bi-speedometer2"></i> Admin Dashboard
+                                        </a>
+                                        <div class="account-dropdown-divider"></div>
+                                    }
+                                    @if (User.IsInRole("BoardMember"))
+                                    {
+                                        <a href="/Admin/BoardMember/Dashboard" class="account-dropdown-item">
+                                            <i class="bi bi-briefcase-fill"></i> Board Portal
                                         </a>
                                         <div class="account-dropdown-divider"></div>
                                     }
@@ -198,10 +205,16 @@
                         <i class="bi bi-person-circle"></i> @User.Identity?.Name
                     </h4>
                     <div class="mobile-account-links">
-                        @if (User.IsInRole("Admin") || User.IsInRole("BoardMember") || User.IsInRole("Editor"))
+                        @if (User.IsInRole("Admin"))
                         {
                             <a href="/Admin/Dashboard" class="d-block py-2">
                                 <i class="bi bi-speedometer2"></i> Admin Dashboard
+                            </a>
+                        }
+                        @if (User.IsInRole("BoardMember"))
+                        {
+                            <a href="/Admin/BoardMember/Dashboard" class="d-block py-2">
+                                <i class="bi bi-briefcase-fill"></i> Board Portal
                             </a>
                         }
                         @if (User.IsInRole("Sponsor"))

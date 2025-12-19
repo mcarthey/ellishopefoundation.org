@@ -154,14 +154,51 @@
                     </div>
 
                     <ul class="nav flex-column">
-                        @* Admin/Board Member Navigation *@
-                        @if (User.IsInRole("Admin") || User.IsInRole("BoardMember") || User.IsInRole("Editor"))
+                        @* Role-specific dashboard links *@
+                        @if (User.IsInRole("Admin") || User.IsInRole("Editor"))
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
                                     <i class="bi bi-speedometer2"></i> Dashboard
                                 </a>
                             </li>
+                        }
+                        @if (User.IsInRole("BoardMember"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Admin" asp-controller="BoardMember" asp-action="Dashboard">
+                                    <i class="bi bi-briefcase-fill"></i> Dashboard
+                                </a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Sponsor"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Admin" asp-controller="Sponsor" asp-action="Dashboard">
+                                    <i class="bi bi-heart-fill"></i> Dashboard
+                                </a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Client"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Admin" asp-controller="Client" asp-action="Dashboard">
+                                    <i class="bi bi-person-badge"></i> Dashboard
+                                </a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Member"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Admin" asp-controller="Member" asp-action="Dashboard">
+                                    <i class="bi bi-speedometer2"></i> Dashboard
+                                </a>
+                            </li>
+                        }
+
+                        @* Admin/Board Member/Editor common navigation *@
+                        @if (User.IsInRole("Admin") || User.IsInRole("BoardMember") || User.IsInRole("Editor"))
+                        {
                             @if (User.IsInRole("Admin"))
                             {
                                 <li class="nav-item">
@@ -171,50 +208,43 @@
                                 </li>
                             }
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="Admin" asp-controller="Pages" asp-action="Index">
-                                    <i class="bi bi-file-earmark-text"></i> Pages
+                                <a class="nav-link" asp-area="Admin" asp-controller="Applications" asp-action="Index">
+                                    <i class="bi bi-file-earmark-text"></i> Applications
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="Admin" asp-controller="Blog" asp-action="Index">
-                                    <i class="bi bi-newspaper"></i> Blog Posts
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="Admin" asp-controller="Events" asp-action="Index">
-                                    <i class="bi bi-calendar-event"></i> Events
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="Admin" asp-controller="Causes" asp-action="Index">
-                                    <i class="bi bi-heart"></i> Causes
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="Admin" asp-controller="Media" asp-action="Index">
-                                    <i class="bi bi-image"></i> Media Library
-                                </a>
-                            </li>
-                        }
-
-                        @* Sponsor Portal Navigation *@
-                        @if (User.IsInRole("Sponsor"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="Admin" asp-controller="Sponsor" asp-action="Dashboard">
-                                    <i class="bi bi-speedometer2"></i> Dashboard
-                                </a>
-                            </li>
+                            @if (User.IsInRole("Admin") || User.IsInRole("Editor"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="Admin" asp-controller="Pages" asp-action="Index">
+                                        <i class="bi bi-file-earmark-text"></i> Pages
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="Admin" asp-controller="Blog" asp-action="Index">
+                                        <i class="bi bi-newspaper"></i> Blog Posts
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="Admin" asp-controller="Events" asp-action="Index">
+                                        <i class="bi bi-calendar-event"></i> Events
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="Admin" asp-controller="Causes" asp-action="Index">
+                                        <i class="bi bi-heart"></i> Causes
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="Admin" asp-controller="Media" asp-action="Index">
+                                        <i class="bi bi-image"></i> Media Library
+                                    </a>
+                                </li>
+                            }
                         }
 
                         @* Client Portal Navigation *@
                         @if (User.IsInRole("Client"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="Admin" asp-controller="Client" asp-action="Dashboard">
-                                    <i class="bi bi-speedometer2"></i> Dashboard
-                                </a>
-                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="Admin" asp-controller="Client" asp-action="Progress">
                                     <i class="bi bi-graph-up-arrow"></i> My Progress
@@ -230,11 +260,6 @@
                         @* Member Portal Navigation *@
                         @if (User.IsInRole("Member"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="Admin" asp-controller="Member" asp-action="Dashboard">
-                                    <i class="bi bi-speedometer2"></i> Dashboard
-                                </a>
-                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="MyApplications" asp-action="Index" target="_blank">
                                     <i class="bi bi-box-arrow-up-right"></i> My Applications
@@ -316,6 +341,14 @@
                                     <a asp-area="Admin" asp-controller="Profile" asp-action="ChangePassword" class="account-dropdown-item">
                                         <i class="bi bi-key"></i> Change Password
                                     </a>
+                                    @* Quick access to Applications for Admin/BoardMember/Editor *@
+                                    @if (User.IsInRole("Admin") || User.IsInRole("BoardMember") || User.IsInRole("Editor"))
+                                    {
+                                        <div class="account-dropdown-divider"></div>
+                                        <a asp-area="Admin" asp-controller="Applications" asp-action="Index" class="account-dropdown-item">
+                                            <i class="bi bi-file-earmark-text"></i> Applications
+                                        </a>
+                                    }
                                     <div class="account-dropdown-divider"></div>
                                     <form asp-area="Admin" asp-controller="Account" asp-action="Logout" method="post" class="m-0" asp-antiforgery="true">
                                         @Html.AntiForgeryToken()
