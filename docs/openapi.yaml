@@ -1,0 +1,324 @@
+openapi: 3.0.3
+info:
+  title: Ellis Hope Foundation - Admin & Public Endpoints
+  version: "1.0.0"
+  description: |
+    A concise OpenAPI-style specification for the Ellis Hope Foundation web app.
+    This spec focuses on the most important Razor endpoints (HTML + form POSTs) used by the admin UI and public site.
+servers:
+  - url: https://localhost
+    description: Local development server (use the address printed by `dotnet run`)
+security:
+  - cookieAuth: []
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: .AspNetCore.Identity.Application
+  schemas:
+    VoteForm:
+      type: object
+      properties:
+        ApplicationId:
+          type: integer
+          example: 123
+        Decision:
+          type: string
+          enum: [Approve, Reject, Abstain]
+          example: Approve
+        Reasoning:
+          type: string
+          example: "Candidate demonstrated strong commitment to fitness and community participation."
+        ConfidenceLevel:
+          type: integer
+          minimum: 1
+          maximum: 5
+          example: 4
+    CommentForm:
+      type: object
+      properties:
+        ApplicationId:
+          type: integer
+          example: 123
+        Content:
+          type: string
+          example: "Please provide clarification on the medical clearance document."
+        IsPrivate:
+          type: boolean
+          example: true
+    ApproveApplication:
+      type: object
+      properties:
+        ApplicationId: { type: integer, example: 123 }
+        ApprovedMonthlyAmount: { type: number, example: 150 }
+        SponsorId: { type: string, example: "sponsor-abc" }
+        DecisionMessage: { type: string, example: "Approved — congrats!" }
+    RejectApplication:
+      type: object
+      properties:
+        ApplicationId: { type: integer, example: 123 }
+        RejectionReason: { type: string, example: "Does not meet income criteria at this time." }
+    RequestInfo:
+      type: object
+      properties:
+        ApplicationId: { type: integer, example: 123 }
+        RequestDetails: { type: string, example: "Please upload a copy of your medical clearance." }
+    MyApplicationForm:
+      type: object
+      properties:
+        Step: { type: integer, example: 1 }
+        Data: { type: object }
+    ContactForm:
+      type: object
+      properties:
+        Name: { type: string, example: "Jane Doe" }
+        Email: { type: string, example: "jane@example.org" }
+        Message: { type: string, example: "I would like to learn more about sponsorship options." }
+  responses:
+    Redirect302:
+      description: Redirect (typical for form POSTs that succeed)
+    Html200:
+      description: HTML response (Razor view)
+
+paths:
+  /Admin/Applications:
+    get:
+      summary: List applications
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string }
+        - name: searchTerm
+          in: query
+          schema: { type: string }
+      responses:
+        '200': { $ref: '#/components/responses/Html200' }
+      security:
+        - cookieAuth: []
+  /Admin/Applications/NeedingReview:
+    get:
+      summary: List applications needing the current user's review
+      responses:
+        '200': { $ref: '#/components/responses/Html200' }
+      security:
+        - cookieAuth: []
+  /Admin/Applications/Details/{id}:
+    get:
+      summary: Application details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { $ref: '#/components/responses/Html200' }
+        '404': { description: "Not found" }
+      security:
+        - cookieAuth: []
+  /Admin/Applications/Review/{id}:
+    get:
+      summary: Review alias (same as Details)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { $ref: '#/components/responses/Html200' }
+      security:
+        - cookieAuth: []
+  /Admin/Applications/Vote:
+    post:
+      summary: Cast a board vote
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VoteForm'
+            example:
+              ApplicationId: 123
+              Decision: Approve
+              Reasoning: "Strong candidate"
+              ConfidenceLevel: 4
+      responses:
+        '302': { $ref: '#/components/responses/Redirect302' }
+        '400': { description: "Validation error" }
+      security:
+        - cookieAuth: []
+  /Admin/Applications/Comment:
+    post:
+      summary: Add a comment
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CommentForm'
+            example:
+              ApplicationId: 123
+              Content: "Please clarify the dates listed."
+              IsPrivate: true
+      responses:
+        '302': { $ref: '#/components/responses/Redirect302' }
+      security:
+        - cookieAuth: []
+  /Admin/Applications/Approve/{id}:
+    get:
+      summary: Show approve form
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { $ref: '#/components/responses/Html200' }
+      security:
+        - cookieAuth: []
+  /Admin/Applications/Approve:
+    post:
+      summary: Approve application
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ApproveApplication'
+            example:
+              ApplicationId: 123
+              ApprovedMonthlyAmount: 150
+              SponsorId: sponsor-abc
+              DecisionMessage: "Approved — congratulations!"
+      responses:
+        '302': { $ref: '#/components/responses/Redirect302' }
+      security:
+        - cookieAuth: []
+  /Admin/Applications/Reject/{id}:
+    get:
+      summary: Show rejection form
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { $ref: '#/components/responses/Html200' }
+      security:
+        - cookieAuth: []
+  /Admin/Applications/Reject:
+    post:
+      summary: Reject an application
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RejectApplication'
+            example:
+              ApplicationId: 123
+              RejectionReason: "Does not meet criteria"
+      responses:
+        '302': { $ref: '#/components/responses/Redirect302' }
+      security:
+        - cookieAuth: []
+  /Admin/Applications/RequestInfo/{id}:
+    get:
+      summary: Show request information form
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { $ref: '#/components/responses/Html200' }
+      security:
+        - cookieAuth: []
+  /Admin/Applications/RequestInfo:
+    post:
+      summary: Request info from applicant
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestInfo'
+            example:
+              ApplicationId: 123
+              RequestDetails: "Please upload medical clearance."
+      responses:
+        '302': { $ref: '#/components/responses/Redirect302' }
+      security:
+        - cookieAuth: []
+  /Admin/Applications/StartReview/{id}:
+    post:
+      summary: Start the review workflow
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '302': { $ref: '#/components/responses/Redirect302' }
+      security:
+        - cookieAuth: []
+  /Admin/Applications/Statistics:
+    get:
+      summary: Application statistics
+      responses:
+        '200': { $ref: '#/components/responses/Html200' }
+      security:
+        - cookieAuth: []
+  /MyApplications/Create:
+    post:
+      summary: Submit application step or final submit (multi-step wizard)
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MyApplicationForm'
+            example:
+              Step: 6
+              Data:
+                ApplicantName: "Jane Doe"
+                Goals: "Improve fitness"
+      responses:
+        '302': { $ref: '#/components/responses/Redirect302' }
+  /MyApplications/UploadDocument:
+    post:
+      summary: Upload supporting document (multipart)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                applicationId:
+                  type: integer
+                  example: 123
+                documentType:
+                  type: string
+                  example: medicalclearance
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '302': { $ref: '#/components/responses/Redirect302' }
+  /Contact:
+    post:
+      summary: Submit contact form
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ContactForm'
+            example:
+              Name: "Jane Doe"
+              Email: "jane@example.org"
+              Message: "I'd like more info"
+      responses:
+        '302': { $ref: '#/components/responses/Redirect302' }
+

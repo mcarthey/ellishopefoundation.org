@@ -1,0 +1,1019 @@
+openapi: 3.0.3
+info:
+  title: Ellis Hope Generated API
+  version: 1.0.0
+  description: Generated from source by scripts/generate-openapi.csx
+paths:
+  /Admin/Account/Login:
+    get:
+      summary: Login
+      responses:
+        200:
+          description: OK
+    post:
+      summary: Login
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Account/Logout:
+    post:
+      summary: Logout
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Account/Register:
+    get:
+      summary: Register
+      responses:
+        200:
+          description: OK
+    post:
+      summary: Register
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Account/AccessDenied:
+    get:
+      summary: AccessDenied
+      responses:
+        200:
+          description: OK
+  /Admin/Account/Lockout:
+    get:
+      summary: Lockout
+      responses:
+        200:
+          description: OK
+  /Admin/Applications:
+    get:
+      summary: Index
+  /Admin/Applications/Index:
+    get:
+      summary: Index
+      responses:
+        200:
+          description: OK
+  /Admin/Applications/NeedingReview:
+    get:
+      summary: NeedingReview
+      responses:
+        200:
+          description: OK
+  /Admin/Applications/Details/{id}:
+    get:
+      summary: Details
+      responses:
+        200:
+          description: OK
+  /Admin/Applications/Review/{id}:
+    get:
+      summary: Review
+      responses:
+        200:
+          description: OK
+  /Admin/Applications/Vote:
+    post:
+      summary: Vote
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Applications/Comment:
+    post:
+      summary: Comment
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Applications/Approve/{id}:
+    get:
+      summary: Approve
+      responses:
+        200:
+          description: OK
+  /Admin/Applications/Approve:
+    post:
+      summary: Approve
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Applications/Reject/{id}:
+    get:
+      summary: Reject
+      responses:
+        200:
+          description: OK
+  /Admin/Applications/Reject:
+    post:
+      summary: Reject
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Applications/RequestInfo/{id}:
+    get:
+      summary: RequestInfo
+      responses:
+        200:
+          description: OK
+  /Admin/Applications/RequestInfo:
+    post:
+      summary: RequestInfo
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Applications/StartReview/{id}:
+    post:
+      summary: StartReview
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Applications/Statistics:
+    get:
+      summary: Statistics
+      responses:
+        200:
+          description: OK
+  /Admin/Blog:
+    get:
+      summary: Index
+  /Admin/Blog/Index:
+    get:
+      summary: Index
+      responses:
+        200:
+          description: OK
+  /Admin/Blog/Create:
+    post:
+      summary: Create
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Blog/Edit/{id}:
+    get:
+      summary: Edit
+      responses:
+        200:
+          description: OK
+    post:
+      summary: Edit
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Blog/Delete/{id}:
+    post:
+      summary: Delete
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/BoardMember/Dashboard:
+    get:
+      summary: Dashboard
+      responses:
+        200:
+          description: OK
+  /Admin/Causes:
+    get:
+      summary: Index
+  /Admin/Causes/Index:
+    get:
+      summary: Index
+      responses:
+        200:
+          description: OK
+  /Admin/Causes/Create:
+    post:
+      summary: Create
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Causes/Edit/{id}:
+    get:
+      summary: Edit
+      responses:
+        200:
+          description: OK
+    post:
+      summary: Edit
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Causes/Delete/{id}:
+    post:
+      summary: Delete
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Client/Dashboard:
+    get:
+      summary: Dashboard
+      responses:
+        200:
+          description: OK
+  /Admin/Client/Progress:
+    get:
+      summary: Progress
+      responses:
+        200:
+          description: OK
+  /Admin/Client/Resources:
+    get:
+      summary: Resources
+      responses:
+        200:
+          description: OK
+  /Admin/Client/MyProfile:
+    get:
+      summary: MyProfile
+      responses:
+        200:
+          description: OK
+  /Admin/Dashboard:
+    get:
+      summary: Index
+  /Admin/Dashboard/Index:
+    get:
+      summary: Index
+      responses:
+        200:
+          description: OK
+  /Admin/Events:
+    get:
+      summary: Index
+  /Admin/Events/Index:
+    get:
+      summary: Index
+      responses:
+        200:
+          description: OK
+  /Admin/Events/Create:
+    post:
+      summary: Create
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Events/Edit/{id}:
+    get:
+      summary: Edit
+      responses:
+        200:
+          description: OK
+    post:
+      summary: Edit
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Events/Delete/{id}:
+    post:
+      summary: Delete
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Media:
+    get:
+      summary: Index
+  /Admin/Media/Index:
+    get:
+      summary: Index
+      responses:
+        200:
+          description: OK
+  /Admin/Media/Upload:
+    get:
+      summary: Upload
+      responses:
+        200:
+          description: OK
+    post:
+      summary: Upload
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Media/UnsplashSearch:
+    get:
+      summary: UnsplashSearch
+      responses:
+        200:
+          description: OK
+    post:
+      summary: UnsplashSearch
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Media/ImportFromUnsplash:
+    post:
+      summary: ImportFromUnsplash
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Media/Edit/{id}:
+    get:
+      summary: Edit
+      responses:
+        200:
+          description: OK
+    post:
+      summary: Edit
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Media/Delete/{id}:
+    post:
+      summary: Delete
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Media/Usages/{id}:
+    get:
+      summary: Usages
+      responses:
+        200:
+          description: OK
+  /Admin/Media/GetMediaJson:
+    get:
+      summary: GetMediaJson
+      responses:
+        200:
+          description: OK
+  /Admin/Media/GetUnusedMedia:
+    get:
+      summary: GetUnusedMedia
+      responses:
+        200:
+          description: OK
+  /Admin/Media/GetDuplicates:
+    get:
+      summary: GetDuplicates
+      responses:
+        200:
+          description: OK
+  /Admin/Media/RemoveDuplicates:
+    post:
+      summary: RemoveDuplicates
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Media/DeleteAllUnused:
+    post:
+      summary: DeleteAllUnused
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/MediaMigration:
+    get:
+      summary: Index
+  /Admin/MediaMigration/Index:
+    get:
+      summary: Index
+      responses:
+        200:
+          description: OK
+  /Admin/MediaMigration/BrokenReferences:
+    get:
+      summary: BrokenReferences
+      responses:
+        200:
+          description: OK
+  /Admin/MediaMigration/Migrate:
+    post:
+      summary: Migrate
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/MediaMigration/RemoveDuplicates:
+    post:
+      summary: RemoveDuplicates
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Member/Dashboard:
+    get:
+      summary: Dashboard
+      responses:
+        200:
+          description: OK
+  /Admin/Member/Events:
+    get:
+      summary: Events
+      responses:
+        200:
+          description: OK
+  /Admin/Member/Volunteer:
+    get:
+      summary: Volunteer
+      responses:
+        200:
+          description: OK
+  /Admin/Member/MyProfile:
+    get:
+      summary: MyProfile
+      responses:
+        200:
+          description: OK
+  /Admin/Pages:
+    get:
+      summary: Index
+  /Admin/Pages/Index:
+    get:
+      summary: Index
+      responses:
+        200:
+          description: OK
+  /Admin/Pages/Edit/{id}:
+    get:
+      summary: Edit
+      responses:
+        200:
+          description: OK
+  /Admin/Pages/UpdateContent:
+    post:
+      summary: UpdateContent
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Pages/UpdateImage:
+    post:
+      summary: UpdateImage
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Pages/RemoveImage:
+    post:
+      summary: RemoveImage
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Profile:
+    get:
+      summary: Index
+  /Admin/Profile/Index:
+    get:
+      summary: Index
+      responses:
+        200:
+          description: OK
+  /Admin/Profile/Edit:
+    get:
+      summary: Edit
+      responses:
+        200:
+          description: OK
+    post:
+      summary: Edit
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Profile/ChangePassword:
+    get:
+      summary: ChangePassword
+      responses:
+        200:
+          description: OK
+    post:
+      summary: ChangePassword
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Sponsor/Dashboard:
+    get:
+      summary: Dashboard
+      responses:
+        200:
+          description: OK
+  /Admin/Sponsor/ClientDetails:
+    get:
+      summary: ClientDetails
+      responses:
+        200:
+          description: OK
+  /Admin/Sponsor/MyProfile:
+    get:
+      summary: MyProfile
+      responses:
+        200:
+          description: OK
+  /Admin/Users:
+    get:
+      summary: Index
+  /Admin/Users/Index:
+    get:
+      summary: Index
+      responses:
+        200:
+          description: OK
+  /Admin/Users/Details:
+    get:
+      summary: Details
+      responses:
+        200:
+          description: OK
+  /Admin/Users/Create:
+    post:
+      summary: Create
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Users/Edit:
+    get:
+      summary: Edit
+      responses:
+        200:
+          description: OK
+    post:
+      summary: Edit
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Admin/Users/Delete:
+    delete:
+      summary: Delete
+      responses:
+        200:
+          description: OK
+  /Admin/Users/DeleteConfirmed:
+    post:
+      summary: DeleteConfirmed
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /About:
+    get:
+      summary: Index
+  /About/Index:
+    get:
+      summary: Index
+      responses:
+        200:
+          description: OK
+  /Blog/classic:
+    get:
+      summary: classic
+      responses:
+        200:
+          description: OK
+  /Blog/details:
+    get:
+      summary: details
+      responses:
+        200:
+          description: OK
+  /Blog/grid:
+    get:
+      summary: grid
+      responses:
+        200:
+          description: OK
+  /Causes/list:
+    get:
+      summary: list
+      responses:
+        200:
+          description: OK
+  /Causes/details:
+    get:
+      summary: details
+      responses:
+        200:
+          description: OK
+  /Causes/grid:
+    get:
+      summary: grid
+      responses:
+        200:
+          description: OK
+  /Contact:
+    get:
+      summary: Index
+  /Contact/Index:
+    get:
+      summary: Index
+      responses:
+        200:
+          description: OK
+  /Contact/v2:
+    get:
+      summary: v2
+      responses:
+        200:
+          description: OK
+  /Error:
+    get:
+      summary: Index
+  /Error/Index:
+    get:
+      summary: Index
+      responses:
+        200:
+          description: OK
+  /Event/list:
+    get:
+      summary: list
+      responses:
+        200:
+          description: OK
+  /Event/details:
+    get:
+      summary: details
+      responses:
+        200:
+          description: OK
+  /Event/grid:
+    get:
+      summary: grid
+      responses:
+        200:
+          description: OK
+  /Faq:
+    get:
+      summary: Index
+  /Faq/Index:
+    get:
+      summary: Index
+      responses:
+        200:
+          description: OK
+  /Home:
+    get:
+      summary: Index
+  /Home/Index:
+    get:
+      summary: Index
+      responses:
+        200:
+          description: OK
+  /Home/Index2:
+    get:
+      summary: Index2
+      responses:
+        200:
+          description: OK
+  /Home/Index3:
+    get:
+      summary: Index3
+      responses:
+        200:
+          description: OK
+  /Home/Index4:
+    get:
+      summary: Index4
+      responses:
+        200:
+          description: OK
+  /Home/Index5:
+    get:
+      summary: Index5
+      responses:
+        200:
+          description: OK
+  /Home/Index6:
+    get:
+      summary: Index6
+      responses:
+        200:
+          description: OK
+  /Home/Index7:
+    get:
+      summary: Index7
+      responses:
+        200:
+          description: OK
+  /Home/Index8:
+    get:
+      summary: Index8
+      responses:
+        200:
+          description: OK
+  /MyApplications:
+    get:
+      summary: Index
+  /MyApplications/Index:
+    get:
+      summary: Index
+      responses:
+        200:
+          description: OK
+  /MyApplications/Details/{id}:
+    get:
+      summary: Details
+      responses:
+        200:
+          description: OK
+  /MyApplications/Create:
+    post:
+      summary: Create
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /MyApplications/Edit/{id}:
+    get:
+      summary: Edit
+      responses:
+        200:
+          description: OK
+    post:
+      summary: Edit
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /MyApplications/Withdraw/{id}:
+    post:
+      summary: Withdraw
+      responses:
+        200:
+          description: OK
+        302:
+          description: Redirect
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+  /Services:
+    get:
+      summary: Index
+  /Services/Index:
+    get:
+      summary: Index
+      responses:
+        200:
+          description: OK
+  /Services/v2:
+    get:
+      summary: v2
+      responses:
+        200:
+          description: OK
+  /Team/details:
+    get:
+      summary: details
+      responses:
+        200:
+          description: OK
+  /Team/v1:
+    get:
+      summary: v1
+      responses:
+        200:
+          description: OK
+  /Team/v2:
+    get:
+      summary: v2
+      responses:
+        200:
+          description: OK
