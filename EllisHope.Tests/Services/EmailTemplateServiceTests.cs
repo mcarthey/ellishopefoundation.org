@@ -24,7 +24,7 @@ public class EmailTemplateServiceTests
             LastName = "Doe",
             Email = "john.doe@example.com",
             EstimatedMonthlyCost = 500.00m,
-            FundingTypesRequested = "Gym Membership,Personal Training",
+            FundingTypesRequested = "GymMembership,PersonalTraining",
             ApprovedMonthlyAmount = 450.00m,
             DecisionMessage = "We are excited to support your fitness journey!"
         };
