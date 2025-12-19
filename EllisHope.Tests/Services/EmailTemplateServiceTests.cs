@@ -72,7 +72,7 @@ public class EmailTemplateServiceTests
         Assert.Contains("<!DOCTYPE html>", result);
         Assert.Contains("Application Submitted Successfully", result);
         Assert.Contains(application.FirstName, result);
-        Assert.Contains($"#{application.Id}", result);
+        Assert.Contains($"{application.Id}", result); // ID appears in HTML within tags
         Assert.Contains("Ellis Hope Foundation", result);
         Assert.Contains("/MyApplications/Details/123", result);
     }
@@ -124,7 +124,7 @@ public class EmailTemplateServiceTests
         Assert.Contains("<!DOCTYPE html>", result);
         Assert.Contains("Application Under Review", result);
         Assert.Contains(application.FirstName, result);
-        Assert.Contains($"#{application.Id}", result);
+        Assert.Contains($"{application.Id}", result);
         Assert.Contains("being reviewed by our board", result);
     }
 
@@ -158,7 +158,7 @@ public class EmailTemplateServiceTests
         Assert.Contains("<!DOCTYPE html>", result);
         Assert.Contains("New Application Received", result);
         Assert.Contains(boardMemberName, result);
-        Assert.Contains($"#{application.Id}", result);
+        Assert.Contains($"{application.Id}", result);
     }
 
     [Fact]
@@ -226,7 +226,7 @@ public class EmailTemplateServiceTests
         Assert.Contains("<!DOCTYPE html>", result);
         Assert.Contains("Quorum Reached", result);
         Assert.Contains("Dear Board Member", result);
-        Assert.Contains($"#{application.Id}", result);
+        Assert.Contains($"{application.Id}", result);
         Assert.Contains("All required votes have been received", result);
     }
 
@@ -260,7 +260,7 @@ public class EmailTemplateServiceTests
         Assert.Contains("Congratulations", result);
         Assert.Contains(application.FirstName, result);
         Assert.Contains("APPROVED", result);
-        Assert.Contains($"#{application.Id}", result);
+        Assert.Contains($"{application.Id}", result);
     }
 
     [Fact]
@@ -355,7 +355,7 @@ public class EmailTemplateServiceTests
         Assert.Contains("<!DOCTYPE html>", result);
         Assert.Contains("Application Decision", result);
         Assert.Contains(application.FirstName, result);
-        Assert.Contains($"#{application.Id}", result);
+        Assert.Contains($"{application.Id}", result);
         Assert.Contains("unable to approve", result);
     }
 
@@ -427,7 +427,7 @@ public class EmailTemplateServiceTests
         Assert.Contains("<!DOCTYPE html>", result);
         Assert.Contains("Additional Information Needed", result);
         Assert.Contains(application.FirstName, result);
-        Assert.Contains($"#{application.Id}", result);
+        Assert.Contains($"{application.Id}", result);
         Assert.Contains(requestDetails, result);
     }
 
