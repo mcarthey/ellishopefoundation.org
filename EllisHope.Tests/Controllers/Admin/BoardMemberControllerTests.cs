@@ -80,7 +80,7 @@ public class BoardMemberControllerTests
         {
             PendingVotes = 5,
             TotalVotesCast = 20,
-            ParticipationRate = 85.5m
+            ParticipationRate = 85.5
         };
 
         var appStats = new ApplicationStatistics
@@ -107,7 +107,7 @@ public class BoardMemberControllerTests
         Assert.Equal("Test User", model.MemberName);
         Assert.Equal(5, model.PendingVotes);
         Assert.Equal(20, model.TotalVotesCast);
-        Assert.Equal(85.5m, model.ParticipationRate);
+        Assert.Equal(85.5, model.ParticipationRate);
         Assert.Equal(10, model.ApplicationsUnderReview);
         Assert.Equal(7.5, model.AverageReviewDays);
         Assert.Equal(75.0m, model.ApprovalRate);
@@ -169,7 +169,7 @@ public class BoardMemberControllerTests
         {
             PendingVotes = 10,
             TotalVotesCast = 0,
-            ParticipationRate = 0m
+            ParticipationRate = 0
         };
 
         var appStats = new ApplicationStatistics();
@@ -187,7 +187,7 @@ public class BoardMemberControllerTests
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
         var model = Assert.IsType<BoardMemberDashboardViewModel>(viewResult.Model);
-        Assert.Equal(0m, model.ParticipationRate);
+        Assert.Equal(0, model.ParticipationRate);
         Assert.Equal(0, model.TotalVotesCast);
     }
 
@@ -201,7 +201,7 @@ public class BoardMemberControllerTests
         {
             PendingVotes = 50,
             TotalVotesCast = 500,
-            ParticipationRate = 98.5m
+            ParticipationRate = 98.5
         };
 
         var appStats = new ApplicationStatistics
@@ -226,6 +226,6 @@ public class BoardMemberControllerTests
         var model = Assert.IsType<BoardMemberDashboardViewModel>(viewResult.Model);
         Assert.Equal(50, model.PendingVotes);
         Assert.Equal(500, model.TotalVotesCast);
-        Assert.Equal(98.5m, model.ParticipationRate);
+        Assert.Equal(98.5, model.ParticipationRate);
     }
 }

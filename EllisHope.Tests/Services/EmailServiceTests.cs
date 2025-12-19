@@ -70,7 +70,7 @@ public class EmailServiceTests
 
         // Act & Assert
         var exception = await Record.ExceptionAsync(async () =>
-            await service.SendEmailAsync(null!, "Subject", "Body")
+            await service.SendEmailAsync((string)null!, "Subject", "Body")
         );
 
         // Should handle null gracefully (will fail internally but not throw)

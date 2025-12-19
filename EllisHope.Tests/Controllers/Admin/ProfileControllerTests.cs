@@ -88,7 +88,7 @@ public class ProfileControllerTests
             Email = "john@test.com",
             PhoneNumber = "555-1234",
             UserRole = UserRole.Client,
-            Status = UserStatus.Active,
+            Status = MembershipStatus.Active,
             JoinedDate = DateTime.UtcNow.AddDays(-30)
         };
 
