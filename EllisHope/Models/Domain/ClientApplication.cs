@@ -213,9 +213,8 @@ public class ClientApplication
     /// <summary>
     /// Digital signature (applicant's name)
     /// </summary>
-    [Required]
     [StringLength(200)]
-    public string Signature { get; set; } = string.Empty;
+    public string? Signature { get; set; }
     
     /// <summary>
     /// Date application was signed/submitted

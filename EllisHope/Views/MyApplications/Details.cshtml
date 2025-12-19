@@ -106,8 +106,97 @@
                     
                     <h6 class="mt-4">Your Commitment</h6>
                     <p class="border-start border-warning border-3 ps-3">@Model.Application.CommitmentStatement</p>
+                    
+                    @if (!string.IsNullOrEmpty(Model.Application.ConcernsObstacles))
+                    {
+                        <h6 class="mt-4">Concerns/Obstacles</h6>
+                        <p class="text-muted">@Model.Application.ConcernsObstacles</p>
+                    }
                 </div>
             </div>
+
+            <!-- Health & Fitness -->
+            <div class="card mb-4">
+                <div class="card-header bg-warning">
+                    <h5 class="mb-0"><i class="bi bi-activity"></i> Health & Fitness</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Current Fitness Level:</strong> @Model.Application.CurrentFitnessLevel</p>
+                            @if (Model.Application.LastPhysicalExamDate.HasValue)
+                            {
+                                <p><strong>Last Physical Exam:</strong> @Model.Application.LastPhysicalExamDate.Value.ToString("MMMM dd, yyyy")</p>
+                            }
+                        </div>
+                        <div class="col-md-6">
+                            @if (!string.IsNullOrEmpty(Model.Application.FitnessGoals))
+                            {
+                                <p><strong>Fitness Goals:</strong> @Model.Application.FitnessGoals</p>
+                            }
+                        </div>
+                    </div>
+                    
+                    @if (!string.IsNullOrEmpty(Model.Application.MedicalConditions))
+                    {
+                        <hr/>
+                        <h6 class="text-danger">Medical Conditions</h6>
+                        <p>@Model.Application.MedicalConditions</p>
+                    }
+                    
+                    @if (!string.IsNullOrEmpty(Model.Application.CurrentMedications))
+                    {
+                        <h6 class="text-primary">Current Medications</h6>
+                        <p>@Model.Application.CurrentMedications</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Program Requirements -->
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="bi bi-check2-square"></i> Program Requirements</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" disabled @(Model.Application.AgreesToNutritionist ? "checked" : "")>
+                        <label class="form-check-label">Agrees to work with nutritionist</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" disabled @(Model.Application.AgreesToPersonalTrainer ? "checked" : "")>
+                        <label class="form-check-label">Agrees to work with personal trainer</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" disabled @(Model.Application.AgreesToWeeklyCheckIns ? "checked" : "")>
+                        <label class="form-check-label">Agrees to weekly check-ins</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" disabled @(Model.Application.AgreesToProgressReports ? "checked" : "")>
+                        <label class="form-check-label">Agrees to monthly progress reports</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" disabled @(Model.Application.UnderstandsCommitment ? "checked" : "")>
+                        <label class="form-check-label fw-bold">Understands 12-month commitment</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Signature -->
+            @if (!string.IsNullOrEmpty(Model.Application.Signature))
+            {
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-pen"></i> Signature</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Signed by:</strong> @Model.Application.Signature</p>
+                        @if (Model.Application.SignedDate.HasValue)
+                        {
+                            <p><strong>Date:</strong> @Model.Application.SignedDate.Value.ToString("MMMM dd, yyyy")</p>
+                        }
+                    </div>
+                </div>
+            }
 
             <!-- Comments/Updates -->
             @if (Model.Comments.Any())

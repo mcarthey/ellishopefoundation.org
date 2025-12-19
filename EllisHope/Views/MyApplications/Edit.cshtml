@@ -13,6 +13,25 @@
         content: " *";
         color: red;
     }
+    
+    /* Progress step links */
+    .row a[href*="step="] {
+        transition: transform 0.2s;
+        cursor: pointer;
+    }
+    
+    .row a[href*="step="]:not([style*="pointer-events"]):hover {
+        transform: scale(1.1);
+    }
+    
+    .row a[style*="pointer-events: none"] {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+    
+    .row a[href*="step="] i {
+        font-size: 1.5rem;
+    }
 </style>
 
 <div class="container my-5 edit-container">
@@ -45,34 +64,88 @@
                     </div>
                     <div class="row mt-3 text-center">
                         <div class="col">
-                            <small class="@(currentStep >= 1 ? "text-primary fw-bold" : "text-muted")">
-                                <i class="bi bi-person@(currentStep >= 1 ? "-check" : "")"></i><br/>Personal
-                            </small>
+                            @{
+                                var step1Complete = !string.IsNullOrEmpty(Model.FirstName) && 
+                                                   !string.IsNullOrEmpty(Model.LastName) && 
+                                                   !string.IsNullOrEmpty(Model.Email) && 
+                                                   !string.IsNullOrEmpty(Model.PhoneNumber);
+                                var step1Class = currentStep == 1 ? "text-primary fw-bold" : 
+                                                step1Complete ? "text-success fw-bold" : "text-muted";
+                            }
+                            <a href="@Url.Action("Edit", new { id = Model.Id, step = 1 })" 
+                               class="btn btn-link p-0 text-decoration-none @step1Class"
+                               @(step1Complete || currentStep == 1 ? "" : "onclick='return false;' style='pointer-events: none;'")>
+                                <i class="bi bi-person@(step1Complete ? "-check-fill" : "")"></i><br/>
+                                <small>Personal</small>
+                            </a>
                         </div>
                         <div class="col">
-                            <small class="@(currentStep >= 2 ? "text-primary fw-bold" : "text-muted")">
-                                <i class="bi bi-cash@(currentStep >= 2 ? "-stack" : "")"></i><br/>Funding
-                            </small>
+                            @{
+                                var step2Complete = Model.FundingTypesRequested.Any();
+                                var step2Class = currentStep == 2 ? "text-primary fw-bold" : 
+                                                step2Complete ? "text-success fw-bold" : "text-muted";
+                            }
+                            <a href="@Url.Action("Edit", new { id = Model.Id, step = 2 })" 
+                               class="btn btn-link p-0 text-decoration-none @step2Class"
+                               @(step2Complete || currentStep <= 2 ? "" : "onclick='return false;' style='pointer-events: none;'")>
+                                <i class="bi bi-cash@(step2Complete ? "-coin" : "")"></i><br/>
+                                <small>Funding</small>
+                            </a>
                         </div>
                         <div class="col">
-                            <small class="@(currentStep >= 3 ? "text-primary fw-bold" : "text-muted")">
-                                <i class="bi bi-heart@(currentStep >= 3 ? "-fill" : "")"></i><br/>Motivation
-                            </small>
+                            @{
+                                var step3Complete = !string.IsNullOrEmpty(Model.PersonalStatement) && 
+                                                   !string.IsNullOrEmpty(Model.ExpectedBenefits) && 
+                                                   !string.IsNullOrEmpty(Model.CommitmentStatement);
+                                var step3Class = currentStep == 3 ? "text-primary fw-bold" : 
+                                                step3Complete ? "text-success fw-bold" : "text-muted";
+                            }
+                            <a href="@Url.Action("Edit", new { id = Model.Id, step = 3 })" 
+                               class="btn btn-link p-0 text-decoration-none @step3Class"
+                               @(step3Complete || currentStep <= 3 ? "" : "onclick='return false;' style='pointer-events: none;'")>
+                                <i class="bi bi-heart@(step3Complete ? "-fill" : "")"></i><br/>
+                                <small>Motivation</small>
+                            </a>
                         </div>
                         <div class="col">
-                            <small class="@(currentStep >= 4 ? "text-primary fw-bold" : "text-muted")">
-                                <i class="bi bi-activity"></i><br/>Health
-                            </small>
+                            @{
+                                var step4Complete = !string.IsNullOrEmpty(Model.FitnessGoals) || 
+                                                   !string.IsNullOrEmpty(Model.MedicalConditions);
+                                var step4Class = currentStep == 4 ? "text-primary fw-bold" : 
+                                                step4Complete ? "text-success fw-bold" : "text-muted";
+                            }
+                            <a href="@Url.Action("Edit", new { id = Model.Id, step = 4 })" 
+                               class="btn btn-link p-0 text-decoration-none @step4Class"
+                               @(step4Complete || currentStep <= 4 ? "" : "onclick='return false;' style='pointer-events: none;'")>
+                                <i class="bi bi-activity"></i><br/>
+                                <small>Health</small>
+                            </a>
                         </div>
                         <div class="col">
-                            <small class="@(currentStep >= 5 ? "text-primary fw-bold" : "text-muted")">
-                                <i class="bi bi-check2-square"></i><br/>Agreement
-                            </small>
+                            @{
+                                var step5Complete = Model.UnderstandsCommitment;
+                                var step5Class = currentStep == 5 ? "text-primary fw-bold" : 
+                                                step5Complete ? "text-success fw-bold" : "text-muted";
+                            }
+                            <a href="@Url.Action("Edit", new { id = Model.Id, step = 5 })" 
+                               class="btn btn-link p-0 text-decoration-none @step5Class"
+                               @(step5Complete || currentStep <= 5 ? "" : "onclick='return false;' style='pointer-events: none;'")>
+                                <i class="bi bi-check2@(step5Complete ? "-circle" : "-square")"></i><br/>
+                                <small>Agreement</small>
+                            </a>
                         </div>
                         <div class="col">
-                            <small class="@(currentStep >= 6 ? "text-primary fw-bold" : "text-muted")">
-                                <i class="bi bi-pen"></i><br/>Signature
-                            </small>
+                            @{
+                                var step6Complete = !string.IsNullOrEmpty(Model.Signature);
+                                var step6Class = currentStep == 6 ? "text-primary fw-bold" : 
+                                                step6Complete ? "text-success fw-bold" : "text-muted";
+                            }
+                            <a href="@Url.Action("Edit", new { id = Model.Id, step = 6 })" 
+                               class="btn btn-link p-0 text-decoration-none @step6Class"
+                               @(step6Complete || currentStep <= 6 ? "" : "onclick='return false;' style='pointer-events: none;'")>
+                                <i class="bi bi-pen@(step6Complete ? "-fill" : "")"></i><br/>
+                                <small>Signature</small>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -145,7 +218,11 @@
                         }
                         
                         @* Only include Step 5 if any agreements exist *@
-                        @if (currentStep != 5 && Model.UnderstandsCommitment)
+                        @if (currentStep != 5 && (Model.UnderstandsCommitment || 
+                                                   Model.AgreesToNutritionist || 
+                                                   Model.AgreesToPersonalTrainer || 
+                                                   Model.AgreesToWeeklyCheckIns || 
+                                                   Model.AgreesToProgressReports))
                         {
                             <input type="hidden" asp-for="AgreesToNutritionist" />
                             <input type="hidden" asp-for="AgreesToPersonalTrainer" />
@@ -470,9 +547,57 @@
                                        }</p>
 
                                     <h6 class="mt-3">Commitment</h6>
-                                    <p>@(Model.UnderstandsCommitment ? "?" : "?") Understands 12-month commitment<br/>
-                                       @(Model.AgreesToWeeklyCheckIns ? "?" : "?") Weekly check-ins<br/>
-                                       @(Model.AgreesToProgressReports ? "?" : "?") Monthly progress reports</p>
+                                    <p>
+                                        @if (Model.AgreesToNutritionist)
+                                        {
+                                            <i class="bi bi-check-circle-fill text-success"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-x-circle-fill text-danger"></i>
+                                        }
+                                        <text> Agrees to work with nutritionist</text><br/>
+                                        
+                                        @if (Model.AgreesToPersonalTrainer)
+                                        {
+                                            <i class="bi bi-check-circle-fill text-success"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-x-circle-fill text-danger"></i>
+                                        }
+                                        <text> Agrees to work with personal trainer</text><br/>
+                                        
+                                        @if (Model.AgreesToWeeklyCheckIns)
+                                        {
+                                            <i class="bi bi-check-circle-fill text-success"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-x-circle-fill text-danger"></i>
+                                        }
+                                        <text> Weekly check-ins</text><br/>
+                                        
+                                        @if (Model.AgreesToProgressReports)
+                                        {
+                                            <i class="bi bi-check-circle-fill text-success"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-x-circle-fill text-danger"></i>
+                                        }
+                                        <text> Monthly progress reports</text><br/>
+                                        
+                                        @if (Model.UnderstandsCommitment)
+                                        {
+                                            <i class="bi bi-check-circle-fill text-success"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-x-circle-fill text-danger"></i>
+                                        }
+                                        <text> Understands 12-month commitment</text>
+                                    </p>
                                 </div>
                             </div>
 
@@ -498,7 +623,8 @@
                                         <i class="bi bi-arrow-left-circle"></i> Back
                                     </button>
                                 }
-
+                            </div>
+                            <div>
                                 @if (currentStep < 6)
                                 {
                                     <button type="submit" name="NextStep" value="true" class="btn btn-primary">
@@ -507,8 +633,8 @@
                                 }
                                 else
                                 {
-                                    <button type="submit" name="SubmitApplication" value="true" class="btn btn-success">
-                                        <i class="bi bi-check-circle"></i> Save Changes
+                                    <button type="submit" name="SubmitApplication" value="true" class="btn btn-success btn-lg">
+                                        <i class="bi bi-send-check"></i> Submit Application
                                     </button>
                                 }
                             </div>
@@ -533,5 +659,25 @@
                 }
             });
         });
+        
+        // Disable client-side validation for "Save & Exit" and "Back" buttons
+        // This allows saving incomplete drafts and navigating without validation errors
+        const saveExitButton = document.querySelector('button[name="SaveAndExit"]');
+        const backButton = document.querySelector('button[name="Navigate"]');
+        
+        function disableValidation(e) {
+            const form = document.getElementById('editForm');
+            if (form) {
+                form.noValidate = true;
+            }
+        }
+        
+        if (saveExitButton) {
+            saveExitButton.addEventListener('click', disableValidation);
+        }
+        
+        if (backButton) {
+            backButton.addEventListener('click', disableValidation);
+        }
     </script>
 }

@@ -192,7 +192,7 @@ public class MyApplicationsControllerTests
             .ReturnsAsync(application);
 
         // Act
-        var result = await _controller.Edit(1);
+        var result = await _controller.Edit(1, null);
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -216,7 +216,7 @@ public class MyApplicationsControllerTests
             .ReturnsAsync(application);
 
         // Act
-        var result = await _controller.Edit(1);
+        var result = await _controller.Edit(1, null);
 
         // Assert
         var redirectResult = Assert.IsType<RedirectToActionResult>(result);
@@ -239,7 +239,7 @@ public class MyApplicationsControllerTests
             .ReturnsAsync(application);
 
         // Act
-        var result = await _controller.Edit(1);
+        var result = await _controller.Edit(1, null);
 
         // Assert
         Assert.IsType<ForbidResult>(result);
@@ -279,7 +279,7 @@ public class MyApplicationsControllerTests
             .ReturnsAsync((Succeeded: true, Errors: Array.Empty<string>()));
 
         // Act
-        var result = await _controller.Edit(1, model, null);
+        var result = await _controller.Edit(1, null);
 
         // Assert
         var redirectResult = Assert.IsType<RedirectToActionResult>(result);

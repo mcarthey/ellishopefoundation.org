@@ -4,6 +4,7 @@ using EllisHope.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EllisHope.Controllers;
 
@@ -113,7 +114,7 @@ public class MyApplicationsController : Controller
 
         // Check which button was clicked
         bool isNextButton = Request.Form.ContainsKey("NextStep");
-        bool isPreviousButton = Request.Form.ContainsKey("PreviousStep");
+        bool isPreviousButton = Request.Form.ContainsKey("PreviousStep") || Request.Form.ContainsKey("Navigate");
         bool isSaveDraft = Request.Form.ContainsKey("SaveAsDraft");
 
         // Handle save as draft
@@ -196,7 +197,7 @@ public class MyApplicationsController : Controller
     }
 
     // GET: MyApplications/Edit/5
-    public async Task<IActionResult> Edit(int id)
+    public async Task<IActionResult> Edit(int id, int? step)
     {
         var application = await _applicationService.GetApplicationByIdAsync(id, includeVotes: false, includeComments: false);
         if (application == null)
@@ -217,6 +218,13 @@ public class MyApplicationsController : Controller
         }
 
         var viewModel = MapFromApplication(application);
+        
+        // Set the current step from query string if provided
+        if (step.HasValue && step.Value >= 1 && step.Value <= 6)
+        {
+            viewModel.CurrentStep = step.Value;
+        }
+        
         return View(viewModel);
     }
 
@@ -250,30 +258,51 @@ public class MyApplicationsController : Controller
 
         // Check which button was clicked
         bool isNextButton = Request.Form.ContainsKey("NextStep");
-        bool isPreviousButton = Request.Form.ContainsKey("PreviousStep");
+        bool isPreviousButton = Request.Form.ContainsKey("PreviousStep") || Request.Form.ContainsKey("Navigate");
         bool isSaveAndExit = Request.Form.ContainsKey("SaveAndExit");
+        bool isSubmitApplication = Request.Form.ContainsKey("SubmitApplication");
 
-        // Handle Save & Exit - save all data
+        // Handle Save & Exit - NO validation, save whatever we have
         if (isSaveAndExit)
         {
             try
             {
-                // Update application with ALL data from the model
-                // (Hidden fields ensure we have data from completed steps)
+                // Update application with data from completed steps only
+                // NO validation - user is saving progress, not submitting
                 UpdateApplicationFromModel(application, model);
 
                 var (succeeded, errors) = await _applicationService.UpdateApplicationAsync(application);
 
                 if (succeeded)
                 {
-                    TempData["SuccessMessage"] = "Draft saved successfully.";
+                    TempData["SuccessMessage"] = "Draft saved successfully. You can continue editing later.";
                     return RedirectToAction(nameof(Index));
                 }
 
+                // Check if it's a database constraint error
+                var hasNullConstraintError = errors.Any(e => 
+                    e.Contains("NULL", StringComparison.OrdinalIgnoreCase) || 
+                    e.Contains("required", StringComparison.OrdinalIgnoreCase));
+                
+                if (hasNullConstraintError)
+                {
+                    TempData["WarningMessage"] = "Draft saved with incomplete data. Please fill all required fields before final submission.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // Other errors
                 foreach (var error in errors)
                 {
                     ModelState.AddModelError(string.Empty, error);
                 }
+            }
+            catch (DbUpdateException dbEx)
+            {
+                _logger.LogError(dbEx, "Database error saving draft application {ApplicationId}", id);
+                
+                // Even with DB errors, try to be forgiving for drafts
+                TempData["WarningMessage"] = "Draft partially saved. Some fields may need to be completed in previous steps.";
+                return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
@@ -285,13 +314,14 @@ public class MyApplicationsController : Controller
             return View(model);
         }
 
-        // Navigate between steps without validation (except on final submit)
+        // Navigate to previous step - NO validation
         if (isPreviousButton && model.CurrentStep > 1)
         {
             model.CurrentStep--;
             return View(model);
         }
 
+        // Navigate to next step - ONLY validate if moving forward
         if (isNextButton && model.CurrentStep < 6)
         {
             // Validate current step before moving forward
@@ -304,7 +334,100 @@ public class MyApplicationsController : Controller
             return View(model);
         }
 
-        // Final step - validate all and update
+        // Handle Submit Application - validate ALL steps and submit
+        if (isSubmitApplication)
+        {
+            // Validate all required fields before submission
+            bool allStepsValid = true;
+            var validationErrors = new List<string>();
+
+            // Validate Step 1
+            if (!ValidateStep(model, 1))
+            {
+                allStepsValid = false;
+                validationErrors.Add("Step 1 (Personal Information) has missing required fields.");
+            }
+
+            // Validate Step 2
+            if (!ValidateStep(model, 2))
+            {
+                allStepsValid = false;
+                validationErrors.Add("Step 2 (Funding) requires at least one funding type.");
+            }
+
+            // Validate Step 3
+            if (!ValidateStep(model, 3))
+            {
+                allStepsValid = false;
+                validationErrors.Add("Step 3 (Motivation) has missing required fields.");
+            }
+
+            // Step 4 is optional
+
+            // Validate Step 5
+            if (!ValidateStep(model, 5))
+            {
+                allStepsValid = false;
+                validationErrors.Add("Step 5 (Agreement) requires you to acknowledge the 12-month commitment.");
+            }
+
+            // Validate Step 6
+            if (!ValidateStep(model, 6))
+            {
+                allStepsValid = false;
+                validationErrors.Add("Step 6 (Signature) is required.");
+            }
+
+            if (!allStepsValid)
+            {
+                foreach (var error in validationErrors)
+                {
+                    ModelState.AddModelError(string.Empty, error);
+                }
+                return View(model);
+            }
+
+            try
+            {
+                // Update application with final data
+                UpdateApplicationFromModel(application, model);
+
+                var (updateSucceeded, updateErrors) = await _applicationService.UpdateApplicationAsync(application);
+
+                if (!updateSucceeded)
+                {
+                    foreach (var error in updateErrors)
+                    {
+                        ModelState.AddModelError(string.Empty, error);
+                    }
+                    return View(model);
+                }
+
+                // Submit the application
+                var (submitSucceeded, submitErrors) = await _applicationService.SubmitApplicationAsync(application.Id, currentUser.Id);
+
+                if (submitSucceeded)
+                {
+                    TempData["SuccessMessage"] = "Application submitted successfully! You will be notified when it is reviewed.";
+                    return RedirectToAction(nameof(Details), new { id });
+                }
+
+                foreach (var error in submitErrors)
+                {
+                    ModelState.AddModelError(string.Empty, error);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error submitting application {ApplicationId}", id);
+                ModelState.AddModelError(string.Empty, 
+                    "Unable to submit your application at this time. Please try again or contact support if the problem persists.");
+            }
+
+            return View(model);
+        }
+
+        // Final step - validate all and update (fallback for any other submission)
         if (!ValidateStep(model, model.CurrentStep))
         {
             return View(model);
