@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(if exist .cursorrules type .cursorrules)",
+      "Bash(if exist .githubcopilot-instructions.md type .githubcopilot-instructions.md)",
+      "Bash(ls:*)",
+      "Bash(git mv:*)"
+    ]
+  }
+}
