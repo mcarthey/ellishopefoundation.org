@@ -5,7 +5,9 @@ using EllisHope.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Security.Claims;
@@ -21,6 +23,7 @@ public class UsersControllerTests
     private readonly Mock<IUrlHelper> _mockUrlHelper;
     private readonly UsersController _controller;
     private readonly DefaultHttpContext _httpContext;
+    private readonly ApplicationUser _testAdmin;
 
     public UsersControllerTests()
     {
@@ -29,27 +32,32 @@ public class UsersControllerTests
         _mockLogger = new Mock<ILogger<UsersController>>();
         _mockUrlHelper = new Mock<IUrlHelper>();
 
-        // Use the test subclass
-        _controller = new TestUsersController(
+        // Create controller using standard constructor
+        _controller = new UsersController(
             _mockUserService.Object,
             _mockUserManager.Object,
-            _mockLogger.Object,
-            _mockUrlHelper.Object
+            _mockLogger.Object
         );
 
-        // Setup TempData and HttpContext with IUrlHelperFactory
+        // Setup HttpContext with real ServiceCollection for IUrlHelperFactory
         _httpContext = new DefaultHttpContext();
+
+        // Use real ServiceCollection instead of mocking IServiceProvider
+        var services = new ServiceCollection();
+        var urlHelperFactory = new Mock<IUrlHelperFactory>();
+        urlHelperFactory.Setup(f => f.GetUrlHelper(It.IsAny<ActionContext>())).Returns(_mockUrlHelper.Object);
+        services.AddSingleton<IUrlHelperFactory>(urlHelperFactory.Object);
+        services.AddSingleton<IUrlHelper>(_mockUrlHelper.Object);
+        var serviceProvider = services.BuildServiceProvider();
+
+        _httpContext.RequestServices = serviceProvider;
+
+        // Setup TempData
         var tempData = new TempDataDictionary(_httpContext, Mock.Of<ITempDataProvider>());
         _controller.TempData = tempData;
 
-        // Register IUrlHelperFactory in RequestServices
-        var serviceProvider = new Mock<IServiceProvider>();
-        var urlHelperFactory = new Mock<IUrlHelperFactory>();
-        urlHelperFactory.Setup(f => f.GetUrlHelper(It.IsAny<ActionContext>())).Returns(_mockUrlHelper.Object);
-        serviceProvider.Setup(sp => sp.GetService(typeof(IUrlHelperFactory))).Returns(urlHelperFactory.Object);
-        _httpContext.RequestServices = serviceProvider.Object;
+        // Setup ControllerContext
         _controller.ControllerContext = new ControllerContext { HttpContext = _httpContext };
-        _controller.Url = _mockUrlHelper.Object;
 
         // Create test admin user
         _testAdmin = new ApplicationUser
@@ -72,12 +80,6 @@ public class UsersControllerTests
         var identity = new ClaimsIdentity(claims, "TestAuth");
         var principal = new ClaimsPrincipal(identity);
         _httpContext.User = principal;
-        _controller.Url = _mockUrlHelper.Object;
-    }
-
-    private void EnsureUrlHelper()
-    {
-        _controller.Url = _mockUrlHelper.Object;
     }
 
     #region Index Action Tests
@@ -85,7 +87,6 @@ public class UsersControllerTests
     [Fact]
     public async Task Index_ReturnsViewWithAllUsers_WhenNoFilters()
     {
-        EnsureUrlHelper();
         // Arrange
         var users = new List<ApplicationUser>
         {
@@ -112,7 +113,6 @@ public class UsersControllerTests
     [Fact]
     public async Task Index_FiltersUsersByRole()
     {
-        EnsureUrlHelper();
         // Arrange
         var allUsers = new List<ApplicationUser>
         {
@@ -139,7 +139,6 @@ public class UsersControllerTests
     [Fact]
     public async Task Index_FiltersUsersByStatus()
     {
-        EnsureUrlHelper();
         // Arrange
         var allUsers = new List<ApplicationUser>
         {
@@ -165,7 +164,6 @@ public class UsersControllerTests
     [Fact]
     public async Task Index_SearchesUsersByTerm()
     {
-        EnsureUrlHelper();
         // Arrange
         var searchResults = new List<ApplicationUser>
         {
@@ -714,26 +712,3 @@ public class UsersControllerTests
     #endregion
 }
 
-public class TestUsersController : UsersController
-{
-    private readonly IUrlHelper _urlHelper;
-    public TestUsersController(
-        IUserManagementService userService,
-        UserManager<ApplicationUser> userManager,
-        ILogger<UsersController> logger,
-        IUrlHelper urlHelper)
-        : base(userService, userManager, logger)
-    {
-        _urlHelper = urlHelper;
-        Url = urlHelper;
-    }
-    public override ControllerContext ControllerContext
-    {
-        get => base.ControllerContext;
-        set
-        {
-            base.ControllerContext = value;
-            Url = _urlHelper;
-        }
-    }
-}
