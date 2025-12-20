@@ -83,7 +83,7 @@ jobs:
     - name: Start Application
       run: |
         cd EllisHope
-        nohup dotnet run --no-build --configuration Release --urls "https://localhost:7042" > ../app.log 2>&1 &
+        nohup dotnet run --no-build --configuration Release --urls "https://localhost:7049" > ../app.log 2>&1 &
         echo $! > ../app.pid
       env:
         ASPNETCORE_ENVIRONMENT: Development
@@ -92,7 +92,7 @@ jobs:
       run: |
         echo "Waiting for application to start..."
         for i in {1..30}; do
-          if curl -k -s https://localhost:7042 > /dev/null; then
+          if curl -k -s https://localhost:7049 > /dev/null; then
             echo "Application is running!"
             exit 0
           fi

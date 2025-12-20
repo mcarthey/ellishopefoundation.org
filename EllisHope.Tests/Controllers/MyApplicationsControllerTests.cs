@@ -278,8 +278,8 @@ public class MyApplicationsControllerTests
         _mockApplicationService.Setup(s => s.UpdateApplicationAsync(It.IsAny<ClientApplication>()))
             .ReturnsAsync((Succeeded: true, Errors: Array.Empty<string>()));
 
-        // Act
-        var result = await _controller.Edit(1, null);
+        // Act - call POST Edit with model to simulate final submit
+        var result = await _controller.Edit(1, model, null);
 
         // Assert
         var redirectResult = Assert.IsType<RedirectToActionResult>(result);

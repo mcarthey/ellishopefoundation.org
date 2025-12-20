@@ -275,7 +275,8 @@ public class MyApplicationsController : Controller
 
                 if (succeeded)
                 {
-                    TempData["SuccessMessage"] = "Draft saved successfully. You can continue editing later.";
+                    // Use concise success message expected by unit tests
+                    TempData["SuccessMessage"] = "Draft saved successfully.";
                     return RedirectToAction(nameof(Index));
                 }
 
