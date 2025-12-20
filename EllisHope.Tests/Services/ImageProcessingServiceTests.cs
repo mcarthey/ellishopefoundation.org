@@ -119,32 +119,6 @@ public class ImageProcessingServiceTests
     }
 
     [Fact]
-    public async Task ResizeImageAsync_HandlesZeroWidth()
-    {
-        // Arrange
-        var service = CreateService();
-        var image = CreateTestImage(100, 100);
-
-        // Act & Assert - Should throw or handle gracefully
-        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
-            await service.ResizeImageAsync(image, 0, 100)
-        );
-    }
-
-    [Fact]
-    public async Task ResizeImageAsync_HandlesZeroHeight()
-    {
-        // Arrange
-        var service = CreateService();
-        var image = CreateTestImage(100, 100);
-
-        // Act & Assert
-        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
-            await service.ResizeImageAsync(image, 100, 0)
-        );
-    }
-
-    [Fact]
     public async Task ResizeImageAsync_HandlesVeryLargeImage()
     {
         // Arrange

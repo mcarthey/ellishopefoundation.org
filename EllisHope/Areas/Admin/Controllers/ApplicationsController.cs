@@ -257,9 +257,9 @@ public class ApplicationsController : Controller
             return NotFound();
         }
 
-        var sponsors = await _userManager.Users
+        var sponsors = _userManager.Users
             .Where(u => u.UserRole == UserRole.Sponsor && u.IsActive)
-            .ToListAsync();
+            .ToList();
 
         var viewModel = new ApproveApplicationViewModel
         {
