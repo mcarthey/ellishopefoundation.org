@@ -18,25 +18,38 @@ public class UsersControllerTests
     private readonly Mock<IUserManagementService> _mockUserService;
     private readonly Mock<UserManager<ApplicationUser>> _mockUserManager;
     private readonly Mock<ILogger<UsersController>> _mockLogger;
+    private readonly Mock<IUrlHelper> _mockUrlHelper;
     private readonly UsersController _controller;
-    private readonly ApplicationUser _testAdmin;
+    private readonly DefaultHttpContext _httpContext;
 
     public UsersControllerTests()
     {
         _mockUserService = new Mock<IUserManagementService>();
         _mockUserManager = MockHelpers.MockUserManager<ApplicationUser>();
         _mockLogger = new Mock<ILogger<UsersController>>();
+        _mockUrlHelper = new Mock<IUrlHelper>();
 
-        _controller = new UsersController(
+        // Use the test subclass
+        _controller = new TestUsersController(
             _mockUserService.Object,
             _mockUserManager.Object,
-            _mockLogger.Object
+            _mockLogger.Object,
+            _mockUrlHelper.Object
         );
 
-        // Setup TempData
-        var httpContext = new DefaultHttpContext();
-        var tempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
+        // Setup TempData and HttpContext with IUrlHelperFactory
+        _httpContext = new DefaultHttpContext();
+        var tempData = new TempDataDictionary(_httpContext, Mock.Of<ITempDataProvider>());
         _controller.TempData = tempData;
+
+        // Register IUrlHelperFactory in RequestServices
+        var serviceProvider = new Mock<IServiceProvider>();
+        var urlHelperFactory = new Mock<IUrlHelperFactory>();
+        urlHelperFactory.Setup(f => f.GetUrlHelper(It.IsAny<ActionContext>())).Returns(_mockUrlHelper.Object);
+        serviceProvider.Setup(sp => sp.GetService(typeof(IUrlHelperFactory))).Returns(urlHelperFactory.Object);
+        _httpContext.RequestServices = serviceProvider.Object;
+        _controller.ControllerContext = new ControllerContext { HttpContext = _httpContext };
+        _controller.Url = _mockUrlHelper.Object;
 
         // Create test admin user
         _testAdmin = new ApplicationUser
@@ -58,15 +71,13 @@ public class UsersControllerTests
         };
         var identity = new ClaimsIdentity(claims, "TestAuth");
         var principal = new ClaimsPrincipal(identity);
+        _httpContext.User = principal;
+        _controller.Url = _mockUrlHelper.Object;
+    }
 
-        _controller.ControllerContext = new ControllerContext
-        {
-            HttpContext = new DefaultHttpContext
-            {
-                User = principal,
-                RequestServices = new Mock<IServiceProvider>().Object
-            }
-        };
+    private void EnsureUrlHelper()
+    {
+        _controller.Url = _mockUrlHelper.Object;
     }
 
     #region Index Action Tests
@@ -74,6 +85,7 @@ public class UsersControllerTests
     [Fact]
     public async Task Index_ReturnsViewWithAllUsers_WhenNoFilters()
     {
+        EnsureUrlHelper();
         // Arrange
         var users = new List<ApplicationUser>
         {
@@ -100,6 +112,7 @@ public class UsersControllerTests
     [Fact]
     public async Task Index_FiltersUsersByRole()
     {
+        EnsureUrlHelper();
         // Arrange
         var allUsers = new List<ApplicationUser>
         {
@@ -126,6 +139,7 @@ public class UsersControllerTests
     [Fact]
     public async Task Index_FiltersUsersByStatus()
     {
+        EnsureUrlHelper();
         // Arrange
         var allUsers = new List<ApplicationUser>
         {
@@ -151,6 +165,7 @@ public class UsersControllerTests
     [Fact]
     public async Task Index_SearchesUsersByTerm()
     {
+        EnsureUrlHelper();
         // Arrange
         var searchResults = new List<ApplicationUser>
         {
@@ -263,7 +278,7 @@ public class UsersControllerTests
         };
 
         _mockUserService.Setup(s => s.CreateUserAsync(It.IsAny<ApplicationUser>(), createModel.Password))
-            .ReturnsAsync((true, new List<string>()));
+            .ReturnsAsync((true, Array.Empty<string>()));
 
         // Act
         var result = await _controller.Create(createModel);
@@ -311,7 +326,7 @@ public class UsersControllerTests
         };
 
         _mockUserService.Setup(s => s.CreateUserAsync(It.IsAny<ApplicationUser>(), createModel.Password))
-            .ReturnsAsync((false, new List<string> { "Email already exists" }));
+            .ReturnsAsync((false, new[] { "Email already exists" }));
 
         // Act
         var result = await _controller.Create(createModel);
@@ -348,7 +363,7 @@ public class UsersControllerTests
         };
 
         _mockUserService.Setup(s => s.CreateUserAsync(It.Is<ApplicationUser>(u => u.UserRole == role), createModel.Password))
-            .ReturnsAsync((true, new List<string>()));
+            .ReturnsAsync((true, Array.Empty<string>()));
 
         var result = await _controller.Create(createModel);
 
@@ -444,7 +459,7 @@ public class UsersControllerTests
 
         _mockUserService.Setup(s => s.GetUserByIdAsync("user-1")).ReturnsAsync(user);
         _mockUserService.Setup(s => s.UpdateUserAsync(It.IsAny<ApplicationUser>()))
-            .ReturnsAsync((true, new List<string>()));
+            .ReturnsAsync((true, Array.Empty<string>()));
 
         // Act
         var result = await _controller.Edit("user-1", editModel);
@@ -502,9 +517,9 @@ public class UsersControllerTests
 
         _mockUserService.Setup(s => s.GetUserByIdAsync("user-1")).ReturnsAsync(user);
         _mockUserService.Setup(s => s.UpdateUserRoleAsync("user-1", UserRole.Sponsor))
-            .ReturnsAsync((true, new List<string>()));
+            .ReturnsAsync((true, Array.Empty<string>()));
         _mockUserService.Setup(s => s.UpdateUserAsync(It.IsAny<ApplicationUser>()))
-            .ReturnsAsync((true, new List<string>()));
+            .ReturnsAsync((true, Array.Empty<string>()));
 
         // Act
         var result = await _controller.Edit("user-1", editModel);
@@ -542,9 +557,9 @@ public class UsersControllerTests
 
         _mockUserService.Setup(s => s.GetUserByIdAsync("user-1")).ReturnsAsync(user);
         _mockUserService.Setup(s => s.AssignSponsorAsync("user-1", "sponsor-1"))
-            .Returns(Task.CompletedTask);
+            .Returns(Task.FromResult((true, Array.Empty<string>())));
         _mockUserService.Setup(s => s.UpdateUserAsync(It.IsAny<ApplicationUser>()))
-            .ReturnsAsync((true, new List<string>()));
+            .ReturnsAsync((true, Array.Empty<string>()));
 
         // Act
         var result = await _controller.Edit("user-1", editModel);
@@ -582,9 +597,9 @@ public class UsersControllerTests
 
         _mockUserService.Setup(s => s.GetUserByIdAsync("user-1")).ReturnsAsync(user);
         _mockUserService.Setup(s => s.RemoveSponsorAsync("user-1"))
-            .Returns(Task.CompletedTask);
+            .Returns(Task.FromResult((true, Array.Empty<string>())));
         _mockUserService.Setup(s => s.UpdateUserAsync(It.IsAny<ApplicationUser>()))
-            .ReturnsAsync((true, new List<string>()));
+            .ReturnsAsync((true, Array.Empty<string>()));
 
         // Act
         var result = await _controller.Edit("user-1", editModel);
@@ -653,7 +668,7 @@ public class UsersControllerTests
     {
         // Arrange
         _mockUserService.Setup(s => s.DeleteUserAsync("user-1"))
-            .ReturnsAsync((true, new List<string>()));
+            .ReturnsAsync((true, Array.Empty<string>()));
 
         // Act
         var result = await _controller.DeleteConfirmed("user-1");
@@ -669,7 +684,7 @@ public class UsersControllerTests
     {
         // Arrange
         _mockUserService.Setup(s => s.DeleteUserAsync("user-1"))
-            .ReturnsAsync((false, new List<string> { "Cannot delete user with active sponsored clients" }));
+            .ReturnsAsync((false, new[] { "Cannot delete user with active sponsored clients" }));
 
         // Act
         var result = await _controller.DeleteConfirmed("user-1");
@@ -686,7 +701,7 @@ public class UsersControllerTests
     {
         // Arrange
         _mockUserService.Setup(s => s.DeleteUserAsync("sponsor-1"))
-            .ReturnsAsync((false, new List<string> { "Cannot delete sponsor with active clients. Please reassign clients first." }));
+            .ReturnsAsync((false, new[] { "Cannot delete sponsor with active clients. Please reassign clients first." }));
 
         // Act
         var result = await _controller.DeleteConfirmed("sponsor-1");
@@ -697,4 +712,28 @@ public class UsersControllerTests
     }
 
     #endregion
+}
+
+public class TestUsersController : UsersController
+{
+    private readonly IUrlHelper _urlHelper;
+    public TestUsersController(
+        IUserManagementService userService,
+        UserManager<ApplicationUser> userManager,
+        ILogger<UsersController> logger,
+        IUrlHelper urlHelper)
+        : base(userService, userManager, logger)
+    {
+        _urlHelper = urlHelper;
+        Url = urlHelper;
+    }
+    public override ControllerContext ControllerContext
+    {
+        get => base.ControllerContext;
+        set
+        {
+            base.ControllerContext = value;
+            Url = _urlHelper;
+        }
+    }
 }

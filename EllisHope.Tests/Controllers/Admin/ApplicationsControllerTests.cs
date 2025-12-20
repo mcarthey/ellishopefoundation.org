@@ -18,7 +18,9 @@ public class ApplicationsControllerTests
     private readonly Mock<IClientApplicationService> _mockApplicationService;
     private readonly Mock<UserManager<ApplicationUser>> _mockUserManager;
     private readonly Mock<ILogger<ApplicationsController>> _mockLogger;
+    private readonly Mock<IUrlHelper> _mockUrlHelper;
     private readonly ApplicationsController _controller;
+    private readonly DefaultHttpContext _httpContext;
     private readonly ApplicationUser _testUser;
     private readonly ApplicationUser _testBoardMember;
     private readonly ApplicationUser _testAdmin;
@@ -28,17 +30,29 @@ public class ApplicationsControllerTests
         _mockApplicationService = new Mock<IClientApplicationService>();
         _mockUserManager = MockHelpers.MockUserManager<ApplicationUser>();
         _mockLogger = new Mock<ILogger<ApplicationsController>>();
+        _mockUrlHelper = new Mock<IUrlHelper>();
 
-        _controller = new ApplicationsController(
+        // Use the test subclass
+        _controller = new TestApplicationsController(
             _mockApplicationService.Object,
             _mockUserManager.Object,
-            _mockLogger.Object
+            _mockLogger.Object,
+            _mockUrlHelper.Object
         );
 
-        // Setup TempData
-        var httpContext = new DefaultHttpContext();
-        var tempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
+        // Setup TempData and HttpContext with IUrlHelperFactory
+        _httpContext = new DefaultHttpContext();
+        var tempData = new TempDataDictionary(_httpContext, Mock.Of<ITempDataProvider>());
         _controller.TempData = tempData;
+
+        // Register IUrlHelperFactory in RequestServices
+        var serviceProvider = new Mock<IServiceProvider>();
+        var urlHelperFactory = new Mock<IUrlHelperFactory>();
+        urlHelperFactory.Setup(f => f.GetUrlHelper(It.IsAny<ActionContext>())).Returns(_mockUrlHelper.Object);
+        serviceProvider.Setup(sp => sp.GetService(typeof(IUrlHelperFactory))).Returns(urlHelperFactory.Object);
+        _httpContext.RequestServices = serviceProvider.Object;
+        _controller.ControllerContext = new ControllerContext { HttpContext = _httpContext };
+        _controller.Url = _mockUrlHelper.Object;
 
         // Create test users with different roles
         _testUser = new ApplicationUser
@@ -85,15 +99,13 @@ public class ApplicationsControllerTests
         };
         var identity = new ClaimsIdentity(claims, "TestAuth");
         var principal = new ClaimsPrincipal(identity);
+        _httpContext.User = principal;
+        _controller.Url = _mockUrlHelper.Object;
+    }
 
-        _controller.ControllerContext = new ControllerContext
-        {
-            HttpContext = new DefaultHttpContext
-            {
-                User = principal,
-                RequestServices = new Mock<IServiceProvider>().Object
-            }
-        };
+    private void EnsureUrlHelper()
+    {
+        _controller.Url = _mockUrlHelper.Object;
     }
 
     #region Index Action Tests
@@ -101,6 +113,7 @@ public class ApplicationsControllerTests
     [Fact]
     public async Task Index_ReturnsViewWithApplications_WhenNoFilters()
     {
+        EnsureUrlHelper();
         // Arrange
         var applications = new List<ClientApplication>
         {
@@ -111,7 +124,7 @@ public class ApplicationsControllerTests
         var stats = new ApplicationStatistics { TotalApplications = 2, PendingReview = 1, UnderReview = 1 };
 
         _mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(_testBoardMember);
-        _mockApplicationService.Setup(s => s.GetAllApplicationsAsync(null, true, false)).ReturnsAsync(applications);
+        _mockApplicationService.Setup(s => s.GetAllApplicationsAsync(null, null, true, false)).ReturnsAsync(applications);
         _mockApplicationService.Setup(s => s.GetApplicationStatisticsAsync()).ReturnsAsync(stats);
         _mockApplicationService.Setup(s => s.GetApplicationsNeedingReviewAsync(_testBoardMember.Id)).ReturnsAsync(new List<ClientApplication>());
 
@@ -128,6 +141,7 @@ public class ApplicationsControllerTests
     [Fact]
     public async Task Index_FiltersApplicationsByStatus()
     {
+        EnsureUrlHelper();
         // Arrange
         var applications = new List<ClientApplication>
         {
@@ -137,7 +151,7 @@ public class ApplicationsControllerTests
         var stats = new ApplicationStatistics { TotalApplications = 1, UnderReview = 1 };
 
         _mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(_testBoardMember);
-        _mockApplicationService.Setup(s => s.GetAllApplicationsAsync(ApplicationStatus.UnderReview, true, false)).ReturnsAsync(applications);
+        _mockApplicationService.Setup(s => s.GetAllApplicationsAsync(ApplicationStatus.UnderReview, null, true, false)).ReturnsAsync(applications);
         _mockApplicationService.Setup(s => s.GetApplicationStatisticsAsync()).ReturnsAsync(stats);
         _mockApplicationService.Setup(s => s.GetApplicationsNeedingReviewAsync(_testBoardMember.Id)).ReturnsAsync(new List<ClientApplication>());
 
@@ -154,6 +168,7 @@ public class ApplicationsControllerTests
     [Fact]
     public async Task Index_ReturnsUnauthorized_WhenUserNotFound()
     {
+        EnsureUrlHelper();
         // Arrange
         _mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync((ApplicationUser?)null);
 
@@ -283,7 +298,7 @@ public class ApplicationsControllerTests
 
         _mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(_testBoardMember);
         _mockApplicationService.Setup(s => s.CastVoteAsync(1, _testBoardMember.Id, VoteDecision.Approve, voteModel.Reasoning, 4))
-            .ReturnsAsync((true, new List<string>()));
+            .ReturnsAsync((true, Array.Empty<string>()));
 
         // Act
         var result = await _controller.Vote(voteModel);
@@ -309,7 +324,7 @@ public class ApplicationsControllerTests
 
         _mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(_testBoardMember);
         _mockApplicationService.Setup(s => s.CastVoteAsync(1, _testBoardMember.Id, VoteDecision.Approve, voteModel.Reasoning, 4))
-            .ReturnsAsync((false, new List<string> { "You have already voted on this application." }));
+            .ReturnsAsync((false, new[] { "You have already voted on this application." }));
 
         // Act
         var result = await _controller.Vote(voteModel);
@@ -369,7 +384,7 @@ public class ApplicationsControllerTests
 
         _mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(_testBoardMember);
         _mockApplicationService.Setup(s => s.CastVoteAsync(1, _testBoardMember.Id, decision, It.IsAny<string>(), 3))
-            .ReturnsAsync((true, new List<string>()));
+            .ReturnsAsync((true, Array.Empty<string>()));
 
         var result = await _controller.Vote(voteModel);
 
@@ -396,7 +411,7 @@ public class ApplicationsControllerTests
 
         _mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(_testBoardMember);
         _mockApplicationService.Setup(s => s.AddCommentAsync(1, _testBoardMember.Id, commentModel.Content, true, false, null))
-            .ReturnsAsync((true, new List<string>(), newComment));
+            .ReturnsAsync((true, Array.Empty<string>(), newComment));
 
         // Act
         var result = await _controller.Comment(commentModel);
@@ -443,7 +458,7 @@ public class ApplicationsControllerTests
 
         _mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(_testBoardMember);
         _mockApplicationService.Setup(s => s.AddCommentAsync(1, _testBoardMember.Id, commentModel.Content, false, false, null))
-            .ReturnsAsync((true, new List<string>(), newComment));
+            .ReturnsAsync((true, Array.Empty<string>(), newComment));
 
         // Act
         var result = await _controller.Comment(commentModel);
@@ -513,7 +528,7 @@ public class ApplicationsControllerTests
 
         _mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(_testAdmin);
         _mockApplicationService.Setup(s => s.ApproveApplicationAsync(1, _testAdmin.Id, 150.00m, "sponsor-1", approveModel.DecisionMessage))
-            .ReturnsAsync((true, new List<string>()));
+            .ReturnsAsync((true, Array.Empty<string>()));
 
         // Act
         var result = await _controller.Approve(approveModel);
@@ -538,7 +553,7 @@ public class ApplicationsControllerTests
 
         _mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(_testAdmin);
         _mockApplicationService.Setup(s => s.ApproveApplicationAsync(1, _testAdmin.Id, 150.00m, null, null))
-            .ReturnsAsync((false, new List<string> { "Application is not in a valid state for approval." }));
+            .ReturnsAsync((false, new[] { "Application is not in a valid state for approval." }));
 
         // Act
         var result = await _controller.Approve(approveModel);
@@ -585,7 +600,7 @@ public class ApplicationsControllerTests
 
         _mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(_testAdmin);
         _mockApplicationService.Setup(s => s.RejectApplicationAsync(1, _testAdmin.Id, rejectModel.RejectionReason))
-            .ReturnsAsync((true, new List<string>()));
+            .ReturnsAsync((true, Array.Empty<string>()));
 
         // Act
         var result = await _controller.Reject(rejectModel);
@@ -610,7 +625,7 @@ public class ApplicationsControllerTests
 
         _mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(_testAdmin);
         _mockApplicationService.Setup(s => s.RejectApplicationAsync(1, _testAdmin.Id, rejectModel.RejectionReason))
-            .ReturnsAsync((false, new List<string> { "Application cannot be rejected in current state." }));
+            .ReturnsAsync((false, new[] { "Application cannot be rejected in current state." }));
 
         // Act
         var result = await _controller.Reject(rejectModel);
@@ -653,7 +668,7 @@ public class ApplicationsControllerTests
 
         _mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(_testBoardMember);
         _mockApplicationService.Setup(s => s.RequestAdditionalInformationAsync(1, _testBoardMember.Id, requestModel.RequestDetails))
-            .ReturnsAsync((true, new List<string>()));
+            .ReturnsAsync((true, Array.Empty<string>()));
 
         // Act
         var result = await _controller.RequestInfo(requestModel);
@@ -676,7 +691,7 @@ public class ApplicationsControllerTests
 
         _mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(_testBoardMember);
         _mockApplicationService.Setup(s => s.RequestAdditionalInformationAsync(1, _testBoardMember.Id, requestModel.RequestDetails))
-            .ReturnsAsync((false, new List<string> { "Application cannot accept information requests in current state." }));
+            .ReturnsAsync((false, new[] { "Application cannot accept information requests in current state." }));
 
         // Act
         var result = await _controller.RequestInfo(requestModel);
@@ -697,7 +712,7 @@ public class ApplicationsControllerTests
         SetupUserIdentity(_testAdmin, "Admin");
 
         _mockApplicationService.Setup(s => s.StartReviewProcessAsync(1))
-            .ReturnsAsync((true, new List<string>()));
+            .ReturnsAsync((true, Array.Empty<string>()));
 
         // Act
         var result = await _controller.StartReview(1);
@@ -716,7 +731,7 @@ public class ApplicationsControllerTests
         SetupUserIdentity(_testAdmin, "Admin");
 
         _mockApplicationService.Setup(s => s.StartReviewProcessAsync(1))
-            .ReturnsAsync((false, new List<string> { "Application must be in Submitted status to start review." }));
+            .ReturnsAsync((false, new[] { "Application must be in Submitted status to start review." }));
 
         // Act
         var result = await _controller.StartReview(1);
@@ -773,5 +788,29 @@ public static class MockHelpers
         mgr.Object.UserValidators.Add(new UserValidator<TUser>());
         mgr.Object.PasswordValidators.Add(new PasswordValidator<TUser>());
         return mgr;
+    }
+}
+
+public class TestApplicationsController : ApplicationsController
+{
+    private readonly IUrlHelper _urlHelper;
+    public TestApplicationsController(
+        IClientApplicationService applicationService,
+        UserManager<ApplicationUser> userManager,
+        ILogger<ApplicationsController> logger,
+        IUrlHelper urlHelper)
+        : base(applicationService, userManager, logger)
+    {
+        _urlHelper = urlHelper;
+        Url = urlHelper;
+    }
+    public override ControllerContext ControllerContext
+    {
+        get => base.ControllerContext;
+        set
+        {
+            base.ControllerContext = value;
+            Url = _urlHelper;
+        }
     }
 }
