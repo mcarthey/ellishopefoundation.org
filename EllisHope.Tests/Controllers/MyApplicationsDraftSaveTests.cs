@@ -378,7 +378,7 @@ public class MyApplicationsDraftSaveTests
         // Assert
         var redirectResult = Assert.IsType<RedirectToActionResult>(result);
         Assert.Equal(nameof(_controller.Index), redirectResult.ActionName);
-        Assert.Equal("Draft saved successfully. You can continue editing later.", _controller.TempData["SuccessMessage"]);
+        Assert.Equal("Draft saved successfully.", _controller.TempData["SuccessMessage"]);
     }
 
     #endregion
