@@ -5,7 +5,9 @@ using EllisHope.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Security.Claims;
@@ -32,27 +34,32 @@ public class ApplicationsControllerTests
         _mockLogger = new Mock<ILogger<ApplicationsController>>();
         _mockUrlHelper = new Mock<IUrlHelper>();
 
-        // Use the test subclass
-        _controller = new TestApplicationsController(
+        // Create controller using standard constructor
+        _controller = new ApplicationsController(
             _mockApplicationService.Object,
             _mockUserManager.Object,
-            _mockLogger.Object,
-            _mockUrlHelper.Object
+            _mockLogger.Object
         );
 
-        // Setup TempData and HttpContext with IUrlHelperFactory
+        // Setup HttpContext with real ServiceCollection for IUrlHelperFactory
         _httpContext = new DefaultHttpContext();
+
+        // Use real ServiceCollection instead of mocking IServiceProvider
+        var services = new ServiceCollection();
+        var urlHelperFactory = new Mock<IUrlHelperFactory>();
+        urlHelperFactory.Setup(f => f.GetUrlHelper(It.IsAny<ActionContext>())).Returns(_mockUrlHelper.Object);
+        services.AddSingleton<IUrlHelperFactory>(urlHelperFactory.Object);
+        services.AddSingleton<IUrlHelper>(_mockUrlHelper.Object);
+        var serviceProvider = services.BuildServiceProvider();
+
+        _httpContext.RequestServices = serviceProvider;
+
+        // Setup TempData
         var tempData = new TempDataDictionary(_httpContext, Mock.Of<ITempDataProvider>());
         _controller.TempData = tempData;
 
-        // Register IUrlHelperFactory in RequestServices
-        var serviceProvider = new Mock<IServiceProvider>();
-        var urlHelperFactory = new Mock<IUrlHelperFactory>();
-        urlHelperFactory.Setup(f => f.GetUrlHelper(It.IsAny<ActionContext>())).Returns(_mockUrlHelper.Object);
-        serviceProvider.Setup(sp => sp.GetService(typeof(IUrlHelperFactory))).Returns(urlHelperFactory.Object);
-        _httpContext.RequestServices = serviceProvider.Object;
+        // Setup ControllerContext
         _controller.ControllerContext = new ControllerContext { HttpContext = _httpContext };
-        _controller.Url = _mockUrlHelper.Object;
 
         // Create test users with different roles
         _testUser = new ApplicationUser
@@ -100,12 +107,6 @@ public class ApplicationsControllerTests
         var identity = new ClaimsIdentity(claims, "TestAuth");
         var principal = new ClaimsPrincipal(identity);
         _httpContext.User = principal;
-        _controller.Url = _mockUrlHelper.Object;
-    }
-
-    private void EnsureUrlHelper()
-    {
-        _controller.Url = _mockUrlHelper.Object;
     }
 
     #region Index Action Tests
@@ -113,7 +114,6 @@ public class ApplicationsControllerTests
     [Fact]
     public async Task Index_ReturnsViewWithApplications_WhenNoFilters()
     {
-        EnsureUrlHelper();
         // Arrange
         var applications = new List<ClientApplication>
         {
@@ -141,7 +141,6 @@ public class ApplicationsControllerTests
     [Fact]
     public async Task Index_FiltersApplicationsByStatus()
     {
-        EnsureUrlHelper();
         // Arrange
         var applications = new List<ClientApplication>
         {
@@ -168,7 +167,6 @@ public class ApplicationsControllerTests
     [Fact]
     public async Task Index_ReturnsUnauthorized_WhenUserNotFound()
     {
-        EnsureUrlHelper();
         // Arrange
         _mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync((ApplicationUser?)null);
 
@@ -791,26 +789,3 @@ public static class MockHelpers
     }
 }
 
-public class TestApplicationsController : ApplicationsController
-{
-    private readonly IUrlHelper _urlHelper;
-    public TestApplicationsController(
-        IClientApplicationService applicationService,
-        UserManager<ApplicationUser> userManager,
-        ILogger<ApplicationsController> logger,
-        IUrlHelper urlHelper)
-        : base(applicationService, userManager, logger)
-    {
-        _urlHelper = urlHelper;
-        Url = urlHelper;
-    }
-    public override ControllerContext ControllerContext
-    {
-        get => base.ControllerContext;
-        set
-        {
-            base.ControllerContext = value;
-            Url = _urlHelper;
-        }
-    }
-}
