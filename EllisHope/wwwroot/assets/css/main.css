@@ -19489,4 +19489,118 @@ ul.worklist li:last-child {
   display: block;
 }
 
+/* ================================
+   Admin Portal Styles
+   ================================ */
+/* CSS Variables */
+:root {
+  --admin-primary: #c53040;
+  --admin-dark: #000;
+  --admin-light: #f8f9fa;
+}
+
+/* Sidebar */
+.admin-sidebar {
+  min-height: 100vh;
+  background: var(--admin-dark);
+  color: white;
+}
+.admin-sidebar .nav-link {
+  color: rgba(255, 255, 255, 0.8);
+  padding: 0.75rem 1rem;
+  border-radius: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+.admin-sidebar .nav-link:hover, .admin-sidebar .nav-link.active {
+  background: var(--admin-primary);
+  color: white;
+}
+
+/* Header */
+.admin-header {
+  background: white;
+  border-bottom: 1px solid #dee2e6;
+  padding: 1rem;
+}
+
+/* Content Area */
+.admin-content {
+  padding: 2rem;
+  background: var(--admin-light);
+  min-height: calc(100vh - 76px);
+}
+
+/* Dashboard Stat Cards */
+.stat-card {
+  border-left: 4px solid var(--admin-primary);
+}
+
+/* Account Menu */
+.account-menu {
+  position: relative;
+}
+
+.account-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  border: 2px solid #e0e0e0;
+  transition: all 0.2s;
+}
+.account-avatar:hover {
+  transform: scale(1.05);
+  border-color: var(--admin-primary);
+}
+
+.account-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 0.5rem;
+  min-width: 280px;
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  display: none;
+  z-index: 1000;
+}
+.account-dropdown.show {
+  display: block;
+}
+
+.account-dropdown-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #e0e0e6;
+}
+
+.account-dropdown-item {
+  display: block;
+  padding: 0.75rem 1.5rem;
+  color: #333;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.account-dropdown-item:hover {
+  background: #f8f9fa;
+  color: var(--admin-primary);
+}
+.account-dropdown-item i {
+  width: 20px;
+  margin-right: 0.5rem;
+}
+
+.account-dropdown-divider {
+  height: 1px;
+  background: #e0e0e0;
+  margin: 0.5rem 0;
+}
+
 /*# sourceMappingURL=main.css.map */
