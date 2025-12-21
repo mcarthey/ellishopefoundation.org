@@ -139,22 +139,52 @@ public class MyApplicationsController : Controller
             return View(model);
         }
 
-        // Handle previous button (go back without validation)
+        // Handle previous button - auto-save as draft before navigating
         if (isPreviousButton && model.CurrentStep > 1)
         {
+            // Auto-save as draft to preserve data
+            var draftApplication = MapToApplication(model, currentUser);
+            draftApplication.Status = ApplicationStatus.Draft;
+
+            var (succeeded, errors, application) = await _applicationService.CreateApplicationAsync(draftApplication);
+
+            if (succeeded && application != null)
+            {
+                // Redirect to Edit mode with the saved draft
+                return RedirectToAction(nameof(Edit), new { id = application.Id, step = model.CurrentStep - 1 });
+            }
+
+            // If save failed, continue with navigation but warn user
+            _logger.LogWarning("Failed to auto-save draft when navigating back: {Errors}", string.Join(", ", errors));
             model.CurrentStep--;
             return View(model);
         }
 
-        // Handle next button (validate current step before moving forward)
+        // Handle next button - validate, auto-save as draft, then navigate
         if (isNextButton && model.CurrentStep < 6)
         {
             if (!ValidateStep(model, model.CurrentStep))
             {
                 return View(model);
             }
-            
-            model.CurrentStep++;
+
+            // Auto-save as draft to preserve data
+            var draftApplication = MapToApplication(model, currentUser);
+            draftApplication.Status = ApplicationStatus.Draft;
+
+            var (succeeded, errors, application) = await _applicationService.CreateApplicationAsync(draftApplication);
+
+            if (succeeded && application != null)
+            {
+                // Redirect to Edit mode with the saved draft
+                return RedirectToAction(nameof(Edit), new { id = application.Id, step = model.CurrentStep + 1 });
+            }
+
+            // If save failed, show errors
+            foreach (var error in errors)
+            {
+                ModelState.AddModelError(string.Empty, error);
+            }
             return View(model);
         }
 
@@ -315,14 +345,37 @@ public class MyApplicationsController : Controller
             return View(model);
         }
 
-        // Navigate to previous step - NO validation
+        // Navigate to previous step - save current data without validation
         if (isPreviousButton && model.CurrentStep > 1)
         {
-            model.CurrentStep--;
+            try
+            {
+                // Save current step's data before navigating away
+                UpdateApplicationFromModelPartial(application, model);
+                await _applicationService.UpdateApplicationAsync(application);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Error auto-saving step {Step} data when navigating back", model.CurrentStep);
+                // Continue anyway - don't block navigation
+            }
+
+            int newStep = model.CurrentStep - 1;
+            // Reload application data to ensure view has latest saved data
+            var refreshedApp = await _applicationService.GetApplicationByIdAsync(id, includeVotes: false, includeComments: false);
+            if (refreshedApp != null)
+            {
+                model = MapFromApplication(refreshedApp);
+                model.CurrentStep = newStep;
+            }
+            else
+            {
+                model.CurrentStep = newStep;
+            }
             return View(model);
         }
 
-        // Navigate to next step - ONLY validate if moving forward
+        // Navigate to next step - validate and save before moving forward
         if (isNextButton && model.CurrentStep < 6)
         {
             // Validate current step before moving forward
@@ -330,8 +383,41 @@ public class MyApplicationsController : Controller
             {
                 return View(model);
             }
-            
-            model.CurrentStep++;
+
+            try
+            {
+                // Save validated step's data before navigating to next step
+                UpdateApplicationFromModelPartial(application, model);
+                var (succeeded, errors) = await _applicationService.UpdateApplicationAsync(application);
+
+                if (!succeeded)
+                {
+                    foreach (var error in errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error);
+                    }
+                    return View(model);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error auto-saving step {Step} data", model.CurrentStep);
+                ModelState.AddModelError(string.Empty, "Error saving your data. Please try again.");
+                return View(model);
+            }
+
+            int newStep = model.CurrentStep + 1;
+            // Reload application data to ensure view has latest saved data
+            var refreshedApp = await _applicationService.GetApplicationByIdAsync(id, includeVotes: false, includeComments: false);
+            if (refreshedApp != null)
+            {
+                model = MapFromApplication(refreshedApp);
+                model.CurrentStep = newStep;
+            }
+            else
+            {
+                model.CurrentStep = newStep;
+            }
             return View(model);
         }
 
