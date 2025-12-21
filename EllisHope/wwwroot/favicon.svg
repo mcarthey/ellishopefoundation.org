@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 663 663">
+  <!-- Outer Circle -->
+  <circle cx="331.5" cy="331.5" r="312" fill="none" stroke="#4957a2" stroke-width="12"/>
+
+  <!-- Inner Circle -->
+  <circle cx="331.5" cy="331.5" r="286" fill="none" stroke="#4957a2" stroke-width="8"/>
+
+  <!-- Vertical Divider -->
+  <rect x="328" y="154" width="6" height="350" fill="#4957a2"/>
+
+  <!-- Letter E (left side) -->
+  <g fill="#c53040">
+    <!-- E top horizontal -->
+    <rect x="133" y="210" width="130" height="28"/>
+    <!-- E middle horizontal -->
+    <rect x="133" y="315" width="100" height="28"/>
+    <!-- E bottom horizontal -->
+    <rect x="133" y="420" width="130" height="28"/>
+    <!-- E vertical -->
+    <rect x="133" y="210" width="28" height="238"/>
+  </g>
+
+  <!-- Letter H (right side) -->
+  <g fill="#c53040">
+    <!-- H left vertical -->
+    <rect x="370" y="210" width="28" height="238"/>
+    <!-- H middle horizontal -->
+    <rect x="370" y="315" width="130" height="28"/>
+    <!-- H right vertical -->
+    <rect x="472" y="210" width="28" height="238"/>
+  </g>
+</svg>
