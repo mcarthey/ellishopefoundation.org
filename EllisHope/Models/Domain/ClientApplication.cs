@@ -324,7 +324,14 @@ public class ClientApplication
     #endregion
     
     #region Computed Properties
-    
+
+    /// <summary>
+    /// Whether the application is in a state where voting is applicable
+    /// </summary>
+    [NotMapped]
+    public bool IsInReviewableState => Status == ApplicationStatus.UnderReview
+                                    || Status == ApplicationStatus.InDiscussion;
+
     /// <summary>
     /// Full name of applicant
     /// </summary>
@@ -365,16 +372,18 @@ public class ClientApplication
     public int TotalVotesCast => Votes?.Count(v => v.Decision != VoteDecision.Abstain) ?? 0;
     
     /// <summary>
-    /// Whether application has enough votes for decision
+    /// Whether application has enough votes for decision.
+    /// Only returns true when in a reviewable state to avoid false positives for Draft applications.
     /// </summary>
     [NotMapped]
-    public bool HasSufficientVotes => TotalVotesCast >= VotesRequiredForApproval;
-    
+    public bool HasSufficientVotes => IsInReviewableState && TotalVotesCast >= VotesRequiredForApproval;
+
     /// <summary>
-    /// Whether application is approved based on votes
+    /// Whether application is approved based on votes.
+    /// Only returns true when in a reviewable state to avoid false positives.
     /// </summary>
     [NotMapped]
-    public bool IsApprovedByVotes => ApprovalVoteCount >= VotesRequiredForApproval;
+    public bool IsApprovedByVotes => IsInReviewableState && ApprovalVoteCount >= VotesRequiredForApproval;
     
     /// <summary>
     /// Whether any board member rejected

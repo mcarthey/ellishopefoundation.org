@@ -275,7 +275,17 @@ public class VotingSummary
     public int NeedsInfoVotes { get; set; }
     public int AbstainVotes { get; set; }
     public int VotesRequired { get; set; }
+    /// <summary>
+    /// Whether the application is in a reviewable state (UnderReview or InDiscussion)
+    /// </summary>
+    public bool IsInReviewableState { get; set; }
+    /// <summary>
+    /// Whether all required votes have been cast. Only true when in a reviewable state.
+    /// </summary>
     public bool HasSufficientVotes { get; set; }
+    /// <summary>
+    /// Whether the application has enough approval votes. Only true when in a reviewable state.
+    /// </summary>
     public bool IsApproved { get; set; }
     public bool HasAnyRejection { get; set; }
     public List<string> PendingVoters { get; set; } = new();

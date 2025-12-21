@@ -388,16 +388,21 @@ public class ClientApplicationService : IClientApplicationService
             .Select(bm => bm.FullName)
             .ToList();
 
+        var isInReviewableState = application.IsInReviewableState;
+        var allVotesReceived = votes.Count() >= application.VotesRequiredForApproval;
+        var approvalVoteCount = votes.Count(v => v.Decision == VoteDecision.Approve);
+
         return new VotingSummary
         {
             TotalVotesCast = votes.Count(v => v.Decision != VoteDecision.Abstain),
-            ApprovalVotes = votes.Count(v => v.Decision == VoteDecision.Approve),
+            ApprovalVotes = approvalVoteCount,
             RejectionVotes = votes.Count(v => v.Decision == VoteDecision.Reject),
             NeedsInfoVotes = votes.Count(v => v.Decision == VoteDecision.NeedsMoreInfo),
             AbstainVotes = votes.Count(v => v.Decision == VoteDecision.Abstain),
             VotesRequired = application.VotesRequiredForApproval,
-            HasSufficientVotes = votes.Count() >= application.VotesRequiredForApproval,
-            IsApproved = votes.Count(v => v.Decision == VoteDecision.Approve) >= application.VotesRequiredForApproval,
+            IsInReviewableState = isInReviewableState,
+            HasSufficientVotes = isInReviewableState && allVotesReceived,
+            IsApproved = isInReviewableState && approvalVoteCount >= application.VotesRequiredForApproval,
             HasAnyRejection = votes.Any(v => v.Decision == VoteDecision.Reject),
             PendingVoters = pendingVoters
         };

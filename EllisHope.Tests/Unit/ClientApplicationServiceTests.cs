@@ -349,6 +349,324 @@ public class ClientApplicationServiceTests : IDisposable
 
     #endregion
 
+    #region IsInReviewableState Tests
+
+    [Fact]
+    public void IsInReviewableState_Draft_ReturnsFalse()
+    {
+        // Arrange
+        var application = new ClientApplication { Status = ApplicationStatus.Draft };
+
+        // Act & Assert
+        Assert.False(application.IsInReviewableState);
+    }
+
+    [Fact]
+    public void IsInReviewableState_Submitted_ReturnsFalse()
+    {
+        // Arrange
+        var application = new ClientApplication { Status = ApplicationStatus.Submitted };
+
+        // Act & Assert
+        Assert.False(application.IsInReviewableState);
+    }
+
+    [Fact]
+    public void IsInReviewableState_UnderReview_ReturnsTrue()
+    {
+        // Arrange
+        var application = new ClientApplication { Status = ApplicationStatus.UnderReview };
+
+        // Act & Assert
+        Assert.True(application.IsInReviewableState);
+    }
+
+    [Fact]
+    public void IsInReviewableState_InDiscussion_ReturnsTrue()
+    {
+        // Arrange
+        var application = new ClientApplication { Status = ApplicationStatus.InDiscussion };
+
+        // Act & Assert
+        Assert.True(application.IsInReviewableState);
+    }
+
+    [Fact]
+    public void IsInReviewableState_Approved_ReturnsFalse()
+    {
+        // Arrange
+        var application = new ClientApplication { Status = ApplicationStatus.Approved };
+
+        // Act & Assert
+        Assert.False(application.IsInReviewableState);
+    }
+
+    [Fact]
+    public void IsInReviewableState_Rejected_ReturnsFalse()
+    {
+        // Arrange
+        var application = new ClientApplication { Status = ApplicationStatus.Rejected };
+
+        // Act & Assert
+        Assert.False(application.IsInReviewableState);
+    }
+
+    [Fact]
+    public void IsInReviewableState_Active_ReturnsFalse()
+    {
+        // Arrange
+        var application = new ClientApplication { Status = ApplicationStatus.Active };
+
+        // Act & Assert
+        Assert.False(application.IsInReviewableState);
+    }
+
+    [Fact]
+    public void IsInReviewableState_Completed_ReturnsFalse()
+    {
+        // Arrange
+        var application = new ClientApplication { Status = ApplicationStatus.Completed };
+
+        // Act & Assert
+        Assert.False(application.IsInReviewableState);
+    }
+
+    [Fact]
+    public void IsInReviewableState_Withdrawn_ReturnsFalse()
+    {
+        // Arrange
+        var application = new ClientApplication { Status = ApplicationStatus.Withdrawn };
+
+        // Act & Assert
+        Assert.False(application.IsInReviewableState);
+    }
+
+    [Fact]
+    public void IsInReviewableState_NeedsInformation_ReturnsFalse()
+    {
+        // Arrange
+        var application = new ClientApplication { Status = ApplicationStatus.NeedsInformation };
+
+        // Act & Assert
+        Assert.False(application.IsInReviewableState);
+    }
+
+    [Theory]
+    [InlineData(ApplicationStatus.Draft)]
+    [InlineData(ApplicationStatus.Submitted)]
+    [InlineData(ApplicationStatus.Approved)]
+    [InlineData(ApplicationStatus.Rejected)]
+    [InlineData(ApplicationStatus.NeedsInformation)]
+    public void HasSufficientVotes_NonReviewableState_ReturnsFalse(ApplicationStatus status)
+    {
+        // Arrange - even with VotesRequiredForApproval = 0, should return false
+        var application = new ClientApplication
+        {
+            Status = status,
+            VotesRequiredForApproval = 0
+        };
+
+        // Act & Assert
+        Assert.False(application.HasSufficientVotes);
+    }
+
+    [Fact]
+    public void HasSufficientVotes_DraftWithZeroVotesRequired_ReturnsFalse()
+    {
+        // Arrange - This is the specific bug case: Draft with VotesRequiredForApproval = 0
+        // Before fix: 0 >= 0 would return true
+        // After fix: IsInReviewableState check prevents this
+        var application = new ClientApplication
+        {
+            Status = ApplicationStatus.Draft,
+            VotesRequiredForApproval = 0
+        };
+
+        // Act & Assert
+        Assert.False(application.HasSufficientVotes);
+        Assert.False(application.IsApprovedByVotes);
+    }
+
+    [Fact]
+    public void HasSufficientVotes_UnderReviewWithEnoughVotes_ReturnsTrue()
+    {
+        // Arrange
+        var application = new ClientApplication
+        {
+            Status = ApplicationStatus.UnderReview,
+            VotesRequiredForApproval = 2,
+            Votes = new List<ApplicationVote>
+            {
+                new ApplicationVote { Decision = VoteDecision.Approve },
+                new ApplicationVote { Decision = VoteDecision.Approve }
+            }
+        };
+
+        // Act & Assert
+        Assert.True(application.HasSufficientVotes);
+    }
+
+    [Fact]
+    public void IsApprovedByVotes_NonReviewableState_ReturnsFalse()
+    {
+        // Arrange - even with enough approval votes, should return false if not reviewable
+        var application = new ClientApplication
+        {
+            Status = ApplicationStatus.Approved, // Already approved, not in review
+            VotesRequiredForApproval = 2,
+            Votes = new List<ApplicationVote>
+            {
+                new ApplicationVote { Decision = VoteDecision.Approve },
+                new ApplicationVote { Decision = VoteDecision.Approve }
+            }
+        };
+
+        // Act & Assert
+        Assert.False(application.IsApprovedByVotes);
+    }
+
+    #endregion
+
+    #region VotingSummary State Tests
+
+    [Fact]
+    public async Task GetVotingSummaryAsync_DraftApplication_HasSufficientVotesIsFalse()
+    {
+        // Arrange - Create a draft application
+        var draftApp = new ClientApplication
+        {
+            ApplicantId = "applicant1",
+            FirstName = "Draft",
+            LastName = "Test",
+            Email = "draft@test.com",
+            PhoneNumber = "555-0001",
+            FundingTypesRequested = "GymMembership",
+            PersonalStatement = "Test",
+            ExpectedBenefits = "Test",
+            CommitmentStatement = "Test",
+            Status = ApplicationStatus.Draft,
+            VotesRequiredForApproval = 0 // Default for draft
+        };
+        _context.ClientApplications.Add(draftApp);
+        await _context.SaveChangesAsync();
+
+        // Act
+        var summary = await _service.GetVotingSummaryAsync(draftApp.Id);
+
+        // Assert
+        Assert.False(summary.IsInReviewableState);
+        Assert.False(summary.HasSufficientVotes);
+        Assert.False(summary.IsApproved);
+    }
+
+    [Fact]
+    public async Task GetVotingSummaryAsync_SubmittedApplication_HasSufficientVotesIsFalse()
+    {
+        // Arrange - Application 1 is in Submitted status (from seed data)
+        // Note: The seeded application has VotesRequiredForApproval = 2
+
+        // Act
+        var summary = await _service.GetVotingSummaryAsync(1);
+
+        // Assert - Submitted is not a reviewable state
+        Assert.False(summary.IsInReviewableState);
+        Assert.False(summary.HasSufficientVotes);
+        Assert.False(summary.IsApproved);
+    }
+
+    [Fact]
+    public async Task GetVotingSummaryAsync_UnderReview_IsInReviewableStateIsTrue()
+    {
+        // Arrange
+        await _service.StartReviewProcessAsync(1);
+
+        // Act
+        var summary = await _service.GetVotingSummaryAsync(1);
+
+        // Assert
+        Assert.True(summary.IsInReviewableState);
+    }
+
+    [Fact]
+    public async Task GetVotingSummaryAsync_InDiscussion_IsInReviewableStateIsTrue()
+    {
+        // Arrange - Start review and cast a vote to move to InDiscussion
+        await _service.StartReviewProcessAsync(1);
+        await _service.CastVoteAsync(1, "board1", VoteDecision.Approve, "Good candidate", 4);
+
+        // Act
+        var summary = await _service.GetVotingSummaryAsync(1);
+
+        // Assert
+        Assert.True(summary.IsInReviewableState);
+    }
+
+    [Fact]
+    public async Task GetVotingSummaryAsync_ApprovedApplication_HasSufficientVotesIsFalse()
+    {
+        // Arrange - Go through the full workflow to approve
+        await _service.StartReviewProcessAsync(1);
+        await _service.CastVoteAsync(1, "board1", VoteDecision.Approve, "Good", 4);
+        await _service.CastVoteAsync(1, "board2", VoteDecision.Approve, "Great", 5);
+        await _service.ApproveApplicationAsync(1, "admin1", 150m, null, "Approved!");
+
+        // Act
+        var summary = await _service.GetVotingSummaryAsync(1);
+
+        // Assert - After approval, voting state should not indicate "sufficient votes"
+        Assert.False(summary.IsInReviewableState);
+        Assert.False(summary.HasSufficientVotes);
+        Assert.False(summary.IsApproved);
+    }
+
+    [Fact]
+    public async Task GetVotingSummaryAsync_RejectedApplication_HasSufficientVotesIsFalse()
+    {
+        // Arrange - Go through the full workflow to reject
+        await _service.StartReviewProcessAsync(1);
+        await _service.CastVoteAsync(1, "board1", VoteDecision.Reject, "No", 2);
+        await _service.CastVoteAsync(1, "board2", VoteDecision.Reject, "No", 1);
+        await _service.RejectApplicationAsync(1, "admin1", "Does not meet requirements");
+
+        // Act
+        var summary = await _service.GetVotingSummaryAsync(1);
+
+        // Assert - After rejection, voting state should not indicate "sufficient votes"
+        Assert.False(summary.IsInReviewableState);
+        Assert.False(summary.HasSufficientVotes);
+        Assert.False(summary.IsApproved);
+    }
+
+    [Fact]
+    public async Task GetVotingSummaryAsync_NeedsInformation_HasSufficientVotesIsFalse()
+    {
+        // Arrange
+        await _service.StartReviewProcessAsync(1);
+        await _service.RequestAdditionalInformationAsync(1, "board1", "Need more details");
+
+        // Act
+        var summary = await _service.GetVotingSummaryAsync(1);
+
+        // Assert
+        Assert.False(summary.IsInReviewableState);
+        Assert.False(summary.HasSufficientVotes);
+    }
+
+    [Fact]
+    public async Task GetVotingSummaryAsync_NonExistentApplication_ReturnsEmptySummary()
+    {
+        // Act
+        var summary = await _service.GetVotingSummaryAsync(99999);
+
+        // Assert
+        Assert.False(summary.IsInReviewableState);
+        Assert.False(summary.HasSufficientVotes);
+        Assert.False(summary.IsApproved);
+        Assert.Equal(0, summary.VotesRequired);
+    }
+
+    #endregion
+
     #region Comment Tests
 
     [Fact]
