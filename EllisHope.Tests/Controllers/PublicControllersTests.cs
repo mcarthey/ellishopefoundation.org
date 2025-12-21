@@ -127,57 +127,5 @@ public class PublicControllersTests
 
     #endregion
 
-    #region TeamController Tests
-
-    [Fact]
-    public void TeamController_Details_ReturnsView()
-    {
-        // Arrange
-        var controller = new TeamController();
-
-        // Act
-        var result = controller.details();
-
-        // Assert
-        var viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Null(viewResult.ViewName); // Default view
-    }
-
-    [Fact]
-    public void TeamController_V1_ReturnsView()
-    {
-        // Arrange
-        var controller = new TeamController();
-
-        // Act
-        var result = controller.v1();
-
-        // Assert
-        var viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Null(viewResult.ViewName); // Default view
-    }
-
-    [Fact]
-    public void TeamController_V2_ReturnsView()
-    {
-        // Arrange
-        var controller = new TeamController();
-
-        // Act
-        var result = controller.v2();
-
-        // Assert
-        var viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Null(viewResult.ViewName); // Default view
-    }
-
-    [Fact]
-    public void TeamController_CanInstantiate()
-    {
-        // Act & Assert
-        var controller = new TeamController();
-        Assert.NotNull(controller);
-    }
-
-    #endregion
+    // TeamController tests moved to TeamControllerTests.cs for comprehensive coverage
 }
