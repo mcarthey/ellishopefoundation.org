@@ -1,5 +1,8 @@
 using EllisHope.Controllers;
+using EllisHope.Data;
+using EllisHope.Models.Domain;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Xunit;
 
 namespace EllisHope.Tests.Controllers;
@@ -9,31 +12,7 @@ namespace EllisHope.Tests.Controllers;
 /// </summary>
 public class PublicControllersTests
 {
-    #region AboutController Tests
-
-    [Fact]
-    public void AboutController_Index_ReturnsView()
-    {
-        // Arrange
-        var controller = new AboutController();
-
-        // Act
-        var result = controller.Index();
-
-        // Assert
-        var viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Null(viewResult.ViewName); // Default view
-    }
-
-    [Fact]
-    public void AboutController_CanInstantiate()
-    {
-        // Act & Assert
-        var controller = new AboutController();
-        Assert.NotNull(controller);
-    }
-
-    #endregion
+    // AboutController tests moved to AboutControllerTests.cs for comprehensive coverage
 
     #region ErrorController Tests
 
