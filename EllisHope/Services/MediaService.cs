@@ -148,25 +148,23 @@ public class MediaService : IMediaService
         _context.MediaLibrary.Add(media);
         await _context.SaveChangesAsync();
 
-        // Generate thumbnails asynchronously
-        _ = Task.Run(async () =>
+        // Generate thumbnails synchronously to avoid DbContext concurrency issues
+        try
         {
-            try
-            {
-                var sizes = await GetDefaultThumbnailSizes(category);
-                var thumbnails = await _imageProcessing.GenerateThumbnailsAsync(media.FilePath, media.Id, sizes);
+            var sizes = await GetDefaultThumbnailSizes(category);
+            var thumbnails = await _imageProcessing.GenerateThumbnailsAsync(media.FilePath, media.Id, sizes);
 
-                if (thumbnails.Any())
-                {
-                    media.Thumbnails = JsonSerializer.Serialize(thumbnails);
-                    await _context.SaveChangesAsync();
-                }
-            }
-            catch (Exception ex)
+            if (thumbnails.Any())
             {
-                _logger.LogError(ex, "Error generating thumbnails for media {MediaId}", media.Id);
+                media.Thumbnails = JsonSerializer.Serialize(thumbnails);
+                await _context.SaveChangesAsync();
             }
-        });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error generating thumbnails for media {MediaId}", media.Id);
+            // Don't rethrow - thumbnail generation failure shouldn't fail the upload
+        }
 
         return media;
     }
@@ -218,25 +216,23 @@ public class MediaService : IMediaService
         _context.MediaLibrary.Add(media);
         await _context.SaveChangesAsync();
 
-        // Generate thumbnails asynchronously
-        _ = Task.Run(async () =>
+        // Generate thumbnails synchronously to avoid DbContext concurrency issues
+        try
         {
-            try
-            {
-                var sizes = await GetDefaultThumbnailSizes(category);
-                var thumbnails = await _imageProcessing.GenerateThumbnailsAsync(media.FilePath, media.Id, sizes);
+            var sizes = await GetDefaultThumbnailSizes(category);
+            var thumbnails = await _imageProcessing.GenerateThumbnailsAsync(media.FilePath, media.Id, sizes);
 
-                if (thumbnails.Any())
-                {
-                    media.Thumbnails = JsonSerializer.Serialize(thumbnails);
-                    await _context.SaveChangesAsync();
-                }
-            }
-            catch (Exception ex)
+            if (thumbnails.Any())
             {
-                _logger.LogError(ex, "Error generating thumbnails for Unsplash media {MediaId}", media.Id);
+                media.Thumbnails = JsonSerializer.Serialize(thumbnails);
+                await _context.SaveChangesAsync();
             }
-        });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error generating thumbnails for Unsplash media {MediaId}", media.Id);
+            // Don't rethrow - thumbnail generation failure shouldn't fail the import
+        }
 
         return media;
     }
