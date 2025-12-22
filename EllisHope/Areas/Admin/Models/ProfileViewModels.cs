@@ -79,6 +79,11 @@ public class EditProfileViewModel
     [Phone]
     [Display(Name = "Emergency Contact Phone")]
     public string? EmergencyContactPhone { get; set; }
+
+    [Display(Name = "Profile Photo")]
+    public IFormFile? ProfilePhoto { get; set; }
+
+    public string? CurrentProfilePictureUrl { get; set; }
 }
 
 public class ChangePasswordViewModel

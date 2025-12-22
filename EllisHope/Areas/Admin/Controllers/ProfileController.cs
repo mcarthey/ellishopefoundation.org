@@ -1,5 +1,6 @@
 using EllisHope.Areas.Admin.Models;
 using EllisHope.Models.Domain;
+using EllisHope.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,15 +13,18 @@ public class ProfileController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly IMediaService _mediaService;
     private readonly ILogger<ProfileController> _logger;
 
     public ProfileController(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
+        IMediaService mediaService,
         ILogger<ProfileController> logger)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _mediaService = mediaService;
         _logger = logger;
     }
 
@@ -82,7 +86,8 @@ public class ProfileController : Controller
             State = user.State,
             ZipCode = user.ZipCode,
             EmergencyContactName = user.EmergencyContactName,
-            EmergencyContactPhone = user.EmergencyContactPhone
+            EmergencyContactPhone = user.EmergencyContactPhone,
+            CurrentProfilePictureUrl = user.ProfilePictureUrl
         };
 
         return View(model);
@@ -93,15 +98,43 @@ public class ProfileController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(EditProfileViewModel model)
     {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        // Always repopulate current profile picture URL for potential re-render
+        model.CurrentProfilePictureUrl = user.ProfilePictureUrl;
+
         if (!ModelState.IsValid)
         {
             return View(model);
         }
 
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null)
+        // Handle profile photo upload
+        if (model.ProfilePhoto != null && model.ProfilePhoto.Length > 0)
         {
-            return NotFound();
+            try
+            {
+                var altText = $"{model.FirstName} {model.LastName} profile photo";
+                var media = await _mediaService.UploadLocalImageAsync(
+                    model.ProfilePhoto,
+                    altText,
+                    $"{model.FirstName} {model.LastName}",
+                    MediaCategory.Team,
+                    "profile,team",
+                    User.Identity?.Name);
+
+                user.ProfilePictureUrl = media.FilePath;
+                _logger.LogInformation("User {UserId} uploaded a new profile photo: {FilePath}", user.Id, media.FilePath);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error uploading profile photo for user {UserId}", user.Id);
+                ModelState.AddModelError("ProfilePhoto", $"Error uploading photo: {ex.Message}");
+                return View(model);
+            }
         }
 
         // Update user properties
@@ -152,7 +185,7 @@ public class ProfileController : Controller
 
         _logger.LogInformation("User {UserId} updated their profile", user.Id);
         TempData["SuccessMessage"] = "Your profile has been updated successfully!";
-        
+
         return RedirectToAction(nameof(Index));
     }
 

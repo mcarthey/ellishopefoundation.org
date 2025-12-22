@@ -1,6 +1,7 @@
 using EllisHope.Areas.Admin.Controllers;
 using EllisHope.Areas.Admin.Models;
 using EllisHope.Models.Domain;
+using EllisHope.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,7 @@ public class ProfileControllerTests
 {
     private readonly Mock<UserManager<ApplicationUser>> _mockUserManager;
     private readonly Mock<SignInManager<ApplicationUser>> _mockSignInManager;
+    private readonly Mock<IMediaService> _mockMediaService;
     private readonly Mock<ILogger<ProfileController>> _mockLogger;
     private readonly ProfileController _controller;
 
@@ -33,11 +35,13 @@ public class ProfileControllerTests
             userPrincipalFactory.Object,
             null, null, null, null);
 
+        _mockMediaService = new Mock<IMediaService>();
         _mockLogger = new Mock<ILogger<ProfileController>>();
 
         _controller = new ProfileController(
             _mockUserManager.Object,
             _mockSignInManager.Object,
+            _mockMediaService.Object,
             _mockLogger.Object
         );
 
@@ -168,6 +172,9 @@ public class ProfileControllerTests
     public async Task Edit_POST_ReturnsView_WhenModelStateInvalid()
     {
         // Arrange
+        var user = new ApplicationUser { Id = "user-123", Email = "test@test.com" };
+        _mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>()))
+            .ReturnsAsync(user);
         _controller.ModelState.AddModelError("FirstName", "Required");
         var model = new EditProfileViewModel();
 
@@ -319,6 +326,159 @@ public class ProfileControllerTests
 
         // Assert
         Assert.Contains("updated", _controller.TempData["SuccessMessage"]?.ToString());
+    }
+
+    [Fact]
+    public async Task Edit_POST_UploadsProfilePhoto_WhenPhotoProvided()
+    {
+        // Arrange
+        var user = new ApplicationUser { Id = "user-123", Email = "test@test.com", FirstName = "John", LastName = "Doe" };
+
+        var fileMock = new Mock<IFormFile>();
+        fileMock.Setup(f => f.Length).Returns(1024);
+        fileMock.Setup(f => f.FileName).Returns("test-photo.jpg");
+
+        var model = new EditProfileViewModel
+        {
+            Id = "user-123",
+            FirstName = "John",
+            LastName = "Doe",
+            Email = "test@test.com",
+            ProfilePhoto = fileMock.Object
+        };
+
+        var uploadedMedia = new Media
+        {
+            Id = 1,
+            FilePath = "/uploads/media/test-photo.jpg",
+            FileName = "test-photo.jpg"
+        };
+
+        _mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>()))
+            .ReturnsAsync(user);
+        _mockMediaService.Setup(ms => ms.UploadLocalImageAsync(
+            It.IsAny<IFormFile>(),
+            It.IsAny<string>(),
+            It.IsAny<string>(),
+            MediaCategory.Team,
+            "profile,team",
+            It.IsAny<string>()))
+            .ReturnsAsync(uploadedMedia);
+        _mockUserManager.Setup(um => um.UpdateAsync(It.IsAny<ApplicationUser>()))
+            .ReturnsAsync(IdentityResult.Success);
+
+        // Act
+        var result = await _controller.Edit(model);
+
+        // Assert
+        var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+        Assert.Equal(nameof(_controller.Index), redirectResult.ActionName);
+        Assert.Equal("/uploads/media/test-photo.jpg", user.ProfilePictureUrl);
+        _mockMediaService.Verify(ms => ms.UploadLocalImageAsync(
+            fileMock.Object,
+            "John Doe profile photo",
+            "John Doe",
+            MediaCategory.Team,
+            "profile,team",
+            It.IsAny<string>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Edit_POST_ReturnsView_WhenPhotoUploadFails()
+    {
+        // Arrange
+        var user = new ApplicationUser { Id = "user-123", Email = "test@test.com" };
+
+        var fileMock = new Mock<IFormFile>();
+        fileMock.Setup(f => f.Length).Returns(1024);
+        fileMock.Setup(f => f.FileName).Returns("test-photo.jpg");
+
+        var model = new EditProfileViewModel
+        {
+            Id = "user-123",
+            FirstName = "John",
+            LastName = "Doe",
+            Email = "test@test.com",
+            ProfilePhoto = fileMock.Object
+        };
+
+        _mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>()))
+            .ReturnsAsync(user);
+        _mockMediaService.Setup(ms => ms.UploadLocalImageAsync(
+            It.IsAny<IFormFile>(),
+            It.IsAny<string>(),
+            It.IsAny<string>(),
+            It.IsAny<MediaCategory>(),
+            It.IsAny<string>(),
+            It.IsAny<string>()))
+            .ThrowsAsync(new Exception("Upload failed"));
+
+        // Act
+        var result = await _controller.Edit(model);
+
+        // Assert
+        var viewResult = Assert.IsType<ViewResult>(result);
+        Assert.False(_controller.ModelState.IsValid);
+        Assert.True(_controller.ModelState.ContainsKey("ProfilePhoto"));
+    }
+
+    [Fact]
+    public async Task Edit_POST_SkipsPhotoUpload_WhenNoPhotoProvided()
+    {
+        // Arrange
+        var user = new ApplicationUser { Id = "user-123", Email = "test@test.com", ProfilePictureUrl = "/existing/photo.jpg" };
+        var model = new EditProfileViewModel
+        {
+            Id = "user-123",
+            FirstName = "John",
+            LastName = "Doe",
+            Email = "test@test.com",
+            ProfilePhoto = null
+        };
+
+        _mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>()))
+            .ReturnsAsync(user);
+        _mockUserManager.Setup(um => um.UpdateAsync(It.IsAny<ApplicationUser>()))
+            .ReturnsAsync(IdentityResult.Success);
+
+        // Act
+        var result = await _controller.Edit(model);
+
+        // Assert
+        var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+        Assert.Equal("/existing/photo.jpg", user.ProfilePictureUrl); // Should remain unchanged
+        _mockMediaService.Verify(ms => ms.UploadLocalImageAsync(
+            It.IsAny<IFormFile>(),
+            It.IsAny<string>(),
+            It.IsAny<string>(),
+            It.IsAny<MediaCategory>(),
+            It.IsAny<string>(),
+            It.IsAny<string>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Edit_GET_IncludesCurrentProfilePictureUrl()
+    {
+        // Arrange
+        var user = new ApplicationUser
+        {
+            Id = "user-123",
+            FirstName = "John",
+            LastName = "Doe",
+            Email = "john@test.com",
+            ProfilePictureUrl = "/uploads/media/profile.jpg"
+        };
+
+        _mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>()))
+            .ReturnsAsync(user);
+
+        // Act
+        var result = await _controller.Edit();
+
+        // Assert
+        var viewResult = Assert.IsType<ViewResult>(result);
+        var model = Assert.IsType<EditProfileViewModel>(viewResult.Model);
+        Assert.Equal("/uploads/media/profile.jpg", model.CurrentProfilePictureUrl);
     }
 
     #endregion
