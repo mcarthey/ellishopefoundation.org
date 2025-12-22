@@ -16,7 +16,7 @@ public class AccountControllerTests
 {
     private readonly Mock<SignInManager<ApplicationUser>> _mockSignInManager;
     private readonly Mock<UserManager<ApplicationUser>> _mockUserManager;
-    private readonly Mock<IEmailService> _mockEmailService;
+    private readonly Mock<IAccountEmailService> _mockAccountEmailService;
     private readonly Mock<ILogger<AccountController>> _mockLogger;
     private readonly AccountController _controller;
 
@@ -37,13 +37,13 @@ public class AccountControllerTests
             claimsPrincipalFactory.Object,
             null!, null!, null!, null!);
 
-        _mockEmailService = new Mock<IEmailService>();
+        _mockAccountEmailService = new Mock<IAccountEmailService>();
         _mockLogger = new Mock<ILogger<AccountController>>();
 
         _controller = new AccountController(
             _mockSignInManager.Object,
             _mockUserManager.Object,
-            _mockEmailService.Object,
+            _mockAccountEmailService.Object,
             _mockLogger.Object);
 
         // Setup TempData

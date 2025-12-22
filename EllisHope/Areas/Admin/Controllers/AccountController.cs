@@ -13,18 +13,18 @@ public class AccountController : Controller
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly IEmailService _emailService;
+    private readonly IAccountEmailService _accountEmailService;
     private readonly ILogger<AccountController> _logger;
 
     public AccountController(
         SignInManager<ApplicationUser> signInManager,
         UserManager<ApplicationUser> userManager,
-        IEmailService emailService,
+        IAccountEmailService accountEmailService,
         ILogger<AccountController> logger)
     {
         _signInManager = signInManager;
         _userManager = userManager;
-        _emailService = emailService;
+        _accountEmailService = accountEmailService;
         _logger = logger;
     }
 
@@ -163,38 +163,7 @@ public class AccountController : Controller
                 await _userManager.AddToRoleAsync(user, "Member");
 
                 // Send welcome email
-                try
-                {
-                    await _emailService.SendEmailAsync(
-                        user.Email,
-                        "Welcome to Ellis Hope Foundation!",
-                        $@"<html>
-                            <body style='font-family: Arial, sans-serif; padding: 20px;'>
-                                <h2 style='color: #c53040;'>Welcome to Ellis Hope Foundation!</h2>
-                                <p>Hi {user.FirstName},</p>
-                                <p>Thank you for creating an account with us. We're excited to have you as part of our community!</p>
-                                <p>You can now:</p>
-                                <ul>
-                                    <li>Apply for support programs</li>
-                                    <li>View upcoming events</li>
-                                    <li>Explore volunteer opportunities</li>
-                                    <li>Stay updated with our latest news</li>
-                                </ul>
-                                <p><strong>Your Account Details:</strong></p>
-                                <ul>
-                                    <li>Email: {user.Email}</li>
-                                    <li>Member Since: {user.JoinedDate:MMMM dd, yyyy}</li>
-                                </ul>
-                                <p>If you have any questions, please don't hesitate to contact us.</p>
-                                <p>Best regards,<br/>The Ellis Hope Foundation Team</p>
-                            </body>
-                        </html>");
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Failed to send welcome email to {Email}", user.Email);
-                    // Don't fail registration if email fails
-                }
+                await _accountEmailService.SendWelcomeEmailAsync(user);
 
                 // Sign in the user
                 await _signInManager.SignInAsync(user, isPersistent: false);
@@ -228,4 +197,117 @@ public class AccountController : Controller
     {
         return View();
     }
+
+    #region Password Reset
+
+    [HttpGet]
+    public IActionResult ForgotPassword()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var user = await _userManager.FindByEmailAsync(model.Email);
+
+        // Always redirect to confirmation page to prevent user enumeration
+        // Even if user doesn't exist, we show the same message
+        if (user == null)
+        {
+            _logger.LogInformation("Password reset requested for non-existent email: {Email}", model.Email);
+            return RedirectToAction(nameof(ForgotPasswordConfirmation));
+        }
+
+        // Generate password reset token
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+        // Build reset URL
+        var resetUrl = Url.Action(
+            nameof(ResetPassword),
+            "Account",
+            new { area = "Admin", email = user.Email, token },
+            Request.Scheme);
+
+        // Send password reset email
+        await _accountEmailService.SendPasswordResetEmailAsync(user, token, resetUrl!);
+
+        _logger.LogInformation("Password reset email sent to {Email}", model.Email);
+
+        return RedirectToAction(nameof(ForgotPasswordConfirmation));
+    }
+
+    [HttpGet]
+    public IActionResult ForgotPasswordConfirmation()
+    {
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult ResetPassword(string? email = null, string? token = null)
+    {
+        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
+        {
+            return BadRequest("Invalid password reset link.");
+        }
+
+        var model = new ResetPasswordViewModel
+        {
+            Email = email,
+            Token = token
+        };
+
+        return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var user = await _userManager.FindByEmailAsync(model.Email);
+        if (user == null)
+        {
+            // Don't reveal that the user doesn't exist
+            return RedirectToAction(nameof(ResetPasswordConfirmation));
+        }
+
+        var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+
+        if (result.Succeeded)
+        {
+            _logger.LogInformation("Password reset successful for {Email}", model.Email);
+
+            // Send confirmation email
+            await _accountEmailService.SendPasswordChangedConfirmationAsync(user);
+
+            return RedirectToAction(nameof(ResetPasswordConfirmation));
+        }
+
+        // Add errors to ModelState
+        foreach (var error in result.Errors)
+        {
+            ModelState.AddModelError(string.Empty, error.Description);
+        }
+
+        return View(model);
+    }
+
+    [HttpGet]
+    public IActionResult ResetPasswordConfirmation()
+    {
+        return View();
+    }
+
+    #endregion
 }

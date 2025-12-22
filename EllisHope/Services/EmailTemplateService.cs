@@ -7,6 +7,7 @@ namespace EllisHope.Services;
 /// </summary>
 public interface IEmailTemplateService
 {
+    // Application workflow templates
     string GenerateApplicationSubmittedEmail(ClientApplication application);
     string GenerateApplicationUnderReviewEmail(ClientApplication application);
     string GenerateNewApplicationNotificationEmail(ClientApplication application, string boardMemberName);
@@ -15,6 +16,11 @@ public interface IEmailTemplateService
     string GenerateApplicationApprovedEmail(ClientApplication application);
     string GenerateApplicationRejectedEmail(ClientApplication application);
     string GenerateInformationRequestedEmail(ClientApplication application, string requestDetails);
+
+    // Account-related templates
+    string GenerateWelcomeEmail(string firstName);
+    string GeneratePasswordResetEmail(string firstName, string resetUrl);
+    string GeneratePasswordChangedEmail(string firstName);
 }
 
 public class EmailTemplateService : IEmailTemplateService
@@ -391,4 +397,170 @@ public class EmailTemplateService : IEmailTemplateService
 </body>
 </html>";
     }
+
+    #region Account Email Templates
+
+    public string GenerateWelcomeEmail(string firstName)
+    {
+        return $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+        .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+        .header {{ background-color: #c53040; color: white; padding: 20px; text-align: center; }}
+        .content {{ padding: 20px; background-color: #f8f9fa; }}
+        .button {{ display: inline-block; padding: 10px 20px; background-color: #c53040; color: white; text-decoration: none; border-radius: 5px; }}
+        .footer {{ text-align: center; padding: 20px; color: #6c757d; font-size: 12px; }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1>Welcome to Ellis Hope Foundation!</h1>
+        </div>
+        <div class='content'>
+            <p>Hi {firstName},</p>
+
+            <p>Thank you for creating an account with us. We're excited to have you as part of our community!</p>
+
+            <p><strong>You can now:</strong></p>
+            <ul>
+                <li>Apply for support programs</li>
+                <li>View upcoming events</li>
+                <li>Explore volunteer opportunities</li>
+                <li>Stay updated with our latest news</li>
+            </ul>
+
+            <p style='text-align: center;'>
+                <a href='{_baseUrl}/Admin/Account/Login' class='button'>
+                    Sign In to Your Account
+                </a>
+            </p>
+
+            <p>If you have any questions, please don't hesitate to contact us.</p>
+
+            <p>Best regards,<br/>
+            <strong>The Ellis Hope Foundation Team</strong></p>
+        </div>
+        <div class='footer'>
+            <p>Ellis Hope Foundation | Empowering Health, Fitness, and Hope</p>
+            <p>This is an automated message. Please do not reply to this email.</p>
+        </div>
+    </div>
+</body>
+</html>";
+    }
+
+    public string GeneratePasswordResetEmail(string firstName, string resetUrl)
+    {
+        return $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+        .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+        .header {{ background-color: #c53040; color: white; padding: 20px; text-align: center; }}
+        .content {{ padding: 20px; background-color: #f8f9fa; }}
+        .button {{ display: inline-block; padding: 12px 24px; background-color: #c53040; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; }}
+        .warning-box {{ background-color: #fff3cd; border: 1px solid #ffc107; padding: 15px; margin: 15px 0; border-radius: 5px; }}
+        .footer {{ text-align: center; padding: 20px; color: #6c757d; font-size: 12px; }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1>Password Reset Request</h1>
+        </div>
+        <div class='content'>
+            <p>Hi {firstName},</p>
+
+            <p>We received a request to reset your password for your Ellis Hope Foundation account.</p>
+
+            <p style='text-align: center; margin: 30px 0;'>
+                <a href='{resetUrl}' class='button'>
+                    Reset Your Password
+                </a>
+            </p>
+
+            <div class='warning-box'>
+                <p><strong>Important:</strong></p>
+                <ul style='margin-bottom: 0;'>
+                    <li>This link will expire in 24 hours</li>
+                    <li>If you didn't request this reset, please ignore this email</li>
+                    <li>Your password will remain unchanged until you create a new one</li>
+                </ul>
+            </div>
+
+            <p>If the button above doesn't work, copy and paste this link into your browser:</p>
+            <p style='word-break: break-all; font-size: 12px; color: #666;'>{resetUrl}</p>
+
+            <p>Best regards,<br/>
+            <strong>The Ellis Hope Foundation Team</strong></p>
+        </div>
+        <div class='footer'>
+            <p>Ellis Hope Foundation | Empowering Health, Fitness, and Hope</p>
+            <p>This is an automated message. Please do not reply to this email.</p>
+        </div>
+    </div>
+</body>
+</html>";
+    }
+
+    public string GeneratePasswordChangedEmail(string firstName)
+    {
+        return $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+        .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+        .header {{ background-color: #28a745; color: white; padding: 20px; text-align: center; }}
+        .content {{ padding: 20px; background-color: #f8f9fa; }}
+        .success-box {{ background-color: #d4edda; border: 1px solid #c3e6cb; padding: 15px; margin: 15px 0; border-radius: 5px; }}
+        .warning-box {{ background-color: #fff3cd; border: 1px solid #ffc107; padding: 15px; margin: 15px 0; border-radius: 5px; }}
+        .button {{ display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; }}
+        .footer {{ text-align: center; padding: 20px; color: #6c757d; font-size: 12px; }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1>Password Changed Successfully</h1>
+        </div>
+        <div class='content'>
+            <p>Hi {firstName},</p>
+
+            <div class='success-box'>
+                <p style='margin: 0;'><strong>Your password has been successfully changed.</strong></p>
+            </div>
+
+            <p>You can now use your new password to sign in to your account.</p>
+
+            <p style='text-align: center;'>
+                <a href='{_baseUrl}/Admin/Account/Login' class='button'>
+                    Sign In Now
+                </a>
+            </p>
+
+            <div class='warning-box'>
+                <p style='margin: 0;'><strong>Didn't make this change?</strong> If you didn't change your password, please contact us immediately as your account may have been compromised.</p>
+            </div>
+
+            <p>Best regards,<br/>
+            <strong>The Ellis Hope Foundation Team</strong></p>
+        </div>
+        <div class='footer'>
+            <p>Ellis Hope Foundation | Empowering Health, Fitness, and Hope</p>
+            <p>This is an automated message. Please do not reply to this email.</p>
+        </div>
+    </div>
+</body>
+</html>";
+    }
+
+    #endregion
 }

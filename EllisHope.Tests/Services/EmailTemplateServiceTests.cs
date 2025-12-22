@@ -597,4 +597,267 @@ public class EmailTemplateServiceTests
         // Assert
         Assert.Contains(baseUrl, result);
     }
+
+    #region Account Email Template Tests
+
+    [Fact]
+    public void GenerateWelcomeEmail_ContainsRequiredElements()
+    {
+        // Arrange
+        var service = CreateService();
+        var firstName = "John";
+
+        // Act
+        var result = service.GenerateWelcomeEmail(firstName);
+
+        // Assert
+        Assert.Contains("<!DOCTYPE html>", result);
+        Assert.Contains("Welcome to Ellis Hope Foundation!", result);
+        Assert.Contains(firstName, result);
+        Assert.Contains("Ellis Hope Foundation", result);
+    }
+
+    [Fact]
+    public void GenerateWelcomeEmail_ContainsSignInLink()
+    {
+        // Arrange
+        var service = CreateService();
+
+        // Act
+        var result = service.GenerateWelcomeEmail("Jane");
+
+        // Assert
+        Assert.Contains("/Admin/Account/Login", result);
+        Assert.Contains("Sign In to Your Account", result);
+    }
+
+    [Fact]
+    public void GenerateWelcomeEmail_ContainsFeaturesList()
+    {
+        // Arrange
+        var service = CreateService();
+
+        // Act
+        var result = service.GenerateWelcomeEmail("Test");
+
+        // Assert
+        Assert.Contains("Apply for support programs", result);
+        Assert.Contains("View upcoming events", result);
+        Assert.Contains("volunteer opportunities", result);
+    }
+
+    [Fact]
+    public void GeneratePasswordResetEmail_ContainsRequiredElements()
+    {
+        // Arrange
+        var service = CreateService();
+        var firstName = "John";
+        var resetUrl = "https://ellishope.org/Admin/Account/ResetPassword?token=abc123";
+
+        // Act
+        var result = service.GeneratePasswordResetEmail(firstName, resetUrl);
+
+        // Assert
+        Assert.Contains("<!DOCTYPE html>", result);
+        Assert.Contains("Password Reset Request", result);
+        Assert.Contains(firstName, result);
+        Assert.Contains(resetUrl, result);
+    }
+
+    [Fact]
+    public void GeneratePasswordResetEmail_ContainsResetButton()
+    {
+        // Arrange
+        var service = CreateService();
+        var resetUrl = "https://test.ellishope.org/reset";
+
+        // Act
+        var result = service.GeneratePasswordResetEmail("Jane", resetUrl);
+
+        // Assert
+        Assert.Contains("Reset Your Password", result);
+        Assert.Contains($"href='{resetUrl}'", result);
+    }
+
+    [Fact]
+    public void GeneratePasswordResetEmail_ContainsSecurityWarnings()
+    {
+        // Arrange
+        var service = CreateService();
+
+        // Act
+        var result = service.GeneratePasswordResetEmail("Test", "https://test.com");
+
+        // Assert
+        Assert.Contains("24 hours", result);
+        Assert.Contains("didn't request this reset", result);
+        Assert.Contains("warning-box", result);
+    }
+
+    [Fact]
+    public void GeneratePasswordResetEmail_ContainsFallbackUrlText()
+    {
+        // Arrange
+        var service = CreateService();
+        var resetUrl = "https://ellishope.org/Admin/Account/ResetPassword?token=xyz";
+
+        // Act
+        var result = service.GeneratePasswordResetEmail("User", resetUrl);
+
+        // Assert
+        Assert.Contains("If the button above doesn't work", result);
+        Assert.Contains(resetUrl, result);
+    }
+
+    [Fact]
+    public void GeneratePasswordChangedEmail_ContainsRequiredElements()
+    {
+        // Arrange
+        var service = CreateService();
+        var firstName = "John";
+
+        // Act
+        var result = service.GeneratePasswordChangedEmail(firstName);
+
+        // Assert
+        Assert.Contains("<!DOCTYPE html>", result);
+        Assert.Contains("Password Changed Successfully", result);
+        Assert.Contains(firstName, result);
+    }
+
+    [Fact]
+    public void GeneratePasswordChangedEmail_ContainsSuccessMessage()
+    {
+        // Arrange
+        var service = CreateService();
+
+        // Act
+        var result = service.GeneratePasswordChangedEmail("Jane");
+
+        // Assert
+        Assert.Contains("Your password has been successfully changed", result);
+        Assert.Contains("success-box", result);
+    }
+
+    [Fact]
+    public void GeneratePasswordChangedEmail_ContainsSignInLink()
+    {
+        // Arrange
+        var service = CreateService();
+
+        // Act
+        var result = service.GeneratePasswordChangedEmail("Test");
+
+        // Assert
+        Assert.Contains("/Admin/Account/Login", result);
+        Assert.Contains("Sign In Now", result);
+    }
+
+    [Fact]
+    public void GeneratePasswordChangedEmail_ContainsSecurityWarning()
+    {
+        // Arrange
+        var service = CreateService();
+
+        // Act
+        var result = service.GeneratePasswordChangedEmail("User");
+
+        // Assert
+        Assert.Contains("Didn't make this change?", result);
+        Assert.Contains("warning-box", result);
+    }
+
+    [Theory]
+    [InlineData("John")]
+    [InlineData("Jane")]
+    [InlineData("José")]
+    [InlineData("O'Brien")]
+    public void AccountTemplates_HandleVariousNames(string firstName)
+    {
+        // Arrange
+        var service = CreateService();
+
+        // Act
+        var welcomeResult = service.GenerateWelcomeEmail(firstName);
+        var resetResult = service.GeneratePasswordResetEmail(firstName, "https://test.com");
+        var changedResult = service.GeneratePasswordChangedEmail(firstName);
+
+        // Assert
+        Assert.Contains(firstName, welcomeResult);
+        Assert.Contains(firstName, resetResult);
+        Assert.Contains(firstName, changedResult);
+    }
+
+    [Fact]
+    public void AllAccountTemplates_ContainHtmlStructure()
+    {
+        // Arrange
+        var service = CreateService();
+
+        // Act
+        var templates = new[]
+        {
+            service.GenerateWelcomeEmail("Test"),
+            service.GeneratePasswordResetEmail("Test", "https://test.com"),
+            service.GeneratePasswordChangedEmail("Test")
+        };
+
+        // Assert
+        foreach (var template in templates)
+        {
+            Assert.Contains("<!DOCTYPE html>", template);
+            Assert.Contains("<html>", template);
+            Assert.Contains("<head>", template);
+            Assert.Contains("<body>", template);
+            Assert.Contains("</body>", template);
+            Assert.Contains("</html>", template);
+        }
+    }
+
+    [Fact]
+    public void AllAccountTemplates_ContainStyling()
+    {
+        // Arrange
+        var service = CreateService();
+
+        // Act
+        var templates = new[]
+        {
+            service.GenerateWelcomeEmail("Test"),
+            service.GeneratePasswordResetEmail("Test", "https://test.com"),
+            service.GeneratePasswordChangedEmail("Test")
+        };
+
+        // Assert
+        foreach (var template in templates)
+        {
+            Assert.Contains("<style>", template);
+            Assert.Contains("font-family", template);
+            Assert.Contains("</style>", template);
+        }
+    }
+
+    [Fact]
+    public void AllAccountTemplates_ContainFooter()
+    {
+        // Arrange
+        var service = CreateService();
+
+        // Act
+        var templates = new[]
+        {
+            service.GenerateWelcomeEmail("Test"),
+            service.GeneratePasswordResetEmail("Test", "https://test.com"),
+            service.GeneratePasswordChangedEmail("Test")
+        };
+
+        // Assert
+        foreach (var template in templates)
+        {
+            Assert.Contains("Ellis Hope Foundation", template);
+            Assert.Contains("class='footer'", template);
+        }
+    }
+
+    #endregion
 }
