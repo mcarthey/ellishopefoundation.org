@@ -128,6 +128,14 @@
                                     </a>
                                 </li>
                             }
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="Admin" asp-controller="Logs" asp-action="Index">
+                                        <i class="bi bi-journal-text"></i> System Logs
+                                    </a>
+                                </li>
+                            }
                         }
 
                         @* Client Portal Navigation *@

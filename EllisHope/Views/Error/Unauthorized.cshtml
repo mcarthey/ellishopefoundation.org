@@ -1,0 +1,70 @@
+@model EllisHope.Models.ViewModels.ErrorViewModel
+@{
+    ViewBag.Title = "Unauthorized";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main>
+    <!-- page-title-area start -->
+    <div class="page-title-area">
+        <div class="breadcrumb-wrapper" data-background="/assets/img/page-title/page-title-bg.jpg">
+            <img class="shape-1" src="~/assets/img/shape/shape-81.png" alt="shape">
+            <img class="shape-2" src="~/assets/img/shape/shape-82.png" alt="shape">
+            <div class="container">
+                <div class="breadcrumb-content text-center">
+                    <h2 class="breadcrumb-title">Sign In Required</h2>
+                    <ul class="breadcrumb-menu">
+                        <li>
+                            <a href="/">Home</a>
+                        </li>
+                        <li>
+                            <a href="#">Error</a>
+                        </li>
+                        <li>
+                            <a href="#">401</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- page-title-area end -->
+
+    <!-- error-page-wrapper start -->
+    <div class="ht-error-page-wrapper text-center pt-130 pt-lg-100 pb-100">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="error-icon mb-4">
+                        <i class="bi bi-person-lock text-info" style="font-size: 5rem;"></i>
+                    </div>
+                    <div class="title-one">
+                        <h1 class="display-1 fw-bold text-info">401</h1>
+                        <h2 class="title mt-3 wow fadeInUp">Sign In Required</h2>
+                        <p class="wow fadeInUp mt-3" data-wow-delay="0.1s">
+                            You need to sign in to access this page.
+                            Please log in with your account credentials to continue.
+                        </p>
+
+                        <div class="mt-4">
+                            <a href="/Admin/Account/Login" class="ht-btn px-4 wow fadeInUp" data-wow-delay="0.2s">
+                                <i class="bi bi-box-arrow-in-right me-2"></i> Sign In
+                            </a>
+                            <a href="/" class="ht-btn btn-outline ms-3 px-4 wow fadeInUp" data-wow-delay="0.3s">
+                                <i class="bi bi-house-door me-2"></i> Back to Home
+                            </a>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(Model?.CorrelationId))
+                        {
+                            <div class="mt-4 text-muted small">
+                                <p>Reference ID: <code>@Model.CorrelationId</code></p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- error-page-wrapper end -->
+</main>

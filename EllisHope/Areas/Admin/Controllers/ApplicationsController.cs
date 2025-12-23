@@ -152,7 +152,7 @@ public class ApplicationsController : Controller
             CommentForm = new CommentFormViewModel { ApplicationId = id }
         };
 
-        return View(viewModel);
+        return View("Details", viewModel);
     }
 
     // GET: Admin/Applications/Review/5 (same as Details but emphasized for voting)

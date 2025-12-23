@@ -4,6 +4,7 @@ using EllisHope.Data;
 using EllisHope.Services;
 using EllisHope.Models;
 using EllisHope.Models.Domain;
+using EllisHope.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -81,6 +82,7 @@ builder.Services.AddScoped<IPdfService, PdfService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IEmailTemplateService, EmailTemplateService>();
 builder.Services.AddScoped<IAccountEmailService, AccountEmailService>();
+builder.Services.AddScoped<IDatabaseLoggerService, DatabaseLoggerService>();
 
 // Configure Email Settings
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
@@ -90,9 +92,15 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
+// Use custom error handling middleware for all environments
+// This logs errors to the database and shows user-friendly error pages
+app.UseErrorHandling();
+
+// Use status code pages for 404, 403, etc.
+app.UseStatusCodePagesWithReExecute("/Error/{0}");
 
 // Only redirect to HTTPS if the request is already HTTPS or in development
 // SmarterASP.net temporary URL is HTTP-only

@@ -1,0 +1,71 @@
+@model EllisHope.Models.ViewModels.ErrorViewModel
+@{
+    ViewBag.Title = "Error";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main>
+    <!-- page-title-area start -->
+    <div class="page-title-area">
+        <div class="breadcrumb-wrapper" data-background="/assets/img/page-title/page-title-bg.jpg">
+            <img class="shape-1" src="~/assets/img/shape/shape-81.png" alt="shape">
+            <img class="shape-2" src="~/assets/img/shape/shape-82.png" alt="shape">
+            <div class="container">
+                <div class="breadcrumb-content text-center">
+                    <h2 class="breadcrumb-title">Error</h2>
+                    <ul class="breadcrumb-menu">
+                        <li>
+                            <a href="/">Home</a>
+                        </li>
+                        <li>
+                            <a href="#">Error</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- page-title-area end -->
+
+    <!-- error-page-wrapper start -->
+    <div class="ht-error-page-wrapper text-center pt-130 pt-lg-100 pb-100">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="error-icon mb-4">
+                        <i class="bi bi-exclamation-circle-fill text-danger" style="font-size: 5rem;"></i>
+                    </div>
+                    <div class="title-one">
+                        @if (Model?.StatusCode > 0)
+                        {
+                            <h1 class="display-1 fw-bold text-danger">@Model.StatusCode</h1>
+                        }
+                        <h2 class="title mt-3 wow fadeInUp">@(Model?.Title ?? "An Error Occurred")</h2>
+                        <p class="wow fadeInUp mt-3" data-wow-delay="0.1s">
+                            @(Model?.Message ?? "We're sorry, but something went wrong. Please try again later.")
+                        </p>
+
+                        @if (!string.IsNullOrEmpty(Model?.CorrelationId))
+                        {
+                            <div class="alert alert-info mt-4">
+                                <p class="mb-1"><strong>Reference ID:</strong></p>
+                                <code>@Model.CorrelationId</code>
+                            </div>
+                        }
+
+                        <div class="mt-4">
+                            <a href="/" class="ht-btn px-4 wow fadeInUp" data-wow-delay="0.2s">
+                                <i class="bi bi-house-door me-2"></i> Back to Home
+                            </a>
+                            <a href="mailto:@Model?.SupportEmail?subject=Error Report - @Model?.CorrelationId"
+                               class="ht-btn btn-outline ms-3 px-4 wow fadeInUp" data-wow-delay="0.3s">
+                                <i class="bi bi-envelope me-2"></i> Contact Support
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- error-page-wrapper end -->
+</main>

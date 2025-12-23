@@ -30,6 +30,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<ApplicationComment> ApplicationComments { get; set; }
     public DbSet<ApplicationNotification> ApplicationNotifications { get; set; }
 
+    // System tables
+    public DbSet<ApplicationLog> ApplicationLogs { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -240,7 +243,46 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         
         builder.Entity<ApplicationNotification>()
             .HasIndex(an => an.Type);
-        
+
+        #endregion
+
+        #region ApplicationLog Configuration
+
+        builder.Entity<ApplicationLog>()
+            .HasIndex(al => al.Level);
+
+        builder.Entity<ApplicationLog>()
+            .HasIndex(al => al.CreatedAt);
+
+        builder.Entity<ApplicationLog>()
+            .HasIndex(al => al.CorrelationId);
+
+        builder.Entity<ApplicationLog>()
+            .HasIndex(al => al.IsReviewed);
+
+        builder.Entity<ApplicationLog>()
+            .HasIndex(al => new { al.Level, al.CreatedAt });
+
+        builder.Entity<ApplicationLog>()
+            .Property(al => al.Message)
+            .HasMaxLength(4000);
+
+        builder.Entity<ApplicationLog>()
+            .Property(al => al.Category)
+            .HasMaxLength(500);
+
+        builder.Entity<ApplicationLog>()
+            .Property(al => al.RequestPath)
+            .HasMaxLength(2000);
+
+        builder.Entity<ApplicationLog>()
+            .Property(al => al.ExceptionType)
+            .HasMaxLength(500);
+
+        builder.Entity<ApplicationLog>()
+            .Property(al => al.CorrelationId)
+            .HasMaxLength(50);
+
         #endregion
     }
 }
