@@ -125,7 +125,7 @@ public class ApplicationsController : Controller
         }
 
         var currentUser = await _userManager.GetUserAsync(User);
-        if (currentUser == null)
+        if (currentUser == null)          
         {
             return Unauthorized();
         }
@@ -152,7 +152,7 @@ public class ApplicationsController : Controller
             CommentForm = new CommentFormViewModel { ApplicationId = id }
         };
 
-        return View("Details", viewModel);
+        return View(viewModel);
     }
 
     // GET: Admin/Applications/Review/5 (same as Details but emphasized for voting)
