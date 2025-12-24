@@ -21,9 +21,10 @@ public class MediaMigrationController : Controller
 
     // GET: Admin/MediaMigration
     /// <summary>
-    /// TODO: Describe GET /Admin/MediaMigration
+    /// Displays media migration analysis report for legacy images in the system
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe GET /Admin/MediaMigration")]
+    /// <remarks>Requires Admin role authorization. Analyzes legacy image paths and provides migration recommendations.</remarks>
+    [SwaggerOperation(Summary = "Displays media migration analysis report for legacy images in the system")]
     public async Task<IActionResult> Index()
     {
         try

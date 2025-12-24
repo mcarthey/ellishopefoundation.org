@@ -16,9 +16,9 @@ public class TeamController : Controller
 
     // GET: Team/v1 - List all board members
     /// <summary>
-    /// TODO: Describe GET /Team/v1
+    /// Displays a list of all active board members ordered by last name
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe GET /Team/v1")]
+    [SwaggerOperation(Summary = "Displays a list of all active board members ordered by last name")]
     public async Task<IActionResult> v1()
     {
         var boardMembers = await _context.Users
@@ -32,9 +32,10 @@ public class TeamController : Controller
 
     // GET: Team/details/{id} - Individual board member details
     /// <summary>
-    /// team member details
+    /// Displays detailed information for a specific team member
     /// </summary>
-    [SwaggerOperation(Summary = "team member details")]
+    /// <param name="id">The user ID of the team member</param>
+    [SwaggerOperation(Summary = "Displays detailed information for a specific team member")]
     public async Task<IActionResult> details(string id)
     {
         if (string.IsNullOrEmpty(id))
@@ -55,9 +56,9 @@ public class TeamController : Controller
 
     // Keeping v2 for potential future use
     /// <summary>
-    /// TODO: Describe GET /Team/v2
+    /// Alternative team page view (v2 layout)
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe GET /Team/v2")]
+    [SwaggerOperation(Summary = "Alternative team page view (v2 layout)")]
     public IActionResult v2()
     {
         return View();

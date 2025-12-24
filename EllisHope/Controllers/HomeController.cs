@@ -6,9 +6,9 @@ public class HomeController : Controller
 {
     // GET: Home
     /// <summary>
-    /// TODO: Describe GET /Home
+    /// Displays the main landing page of the Ellis Hope Foundation website
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe GET /Home")]
+    [SwaggerOperation(Summary = "Displays the main landing page of the Ellis Hope Foundation website")]
     public IActionResult Index()
     {
         return View();

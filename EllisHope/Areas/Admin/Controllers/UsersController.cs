@@ -219,9 +219,10 @@ public class UsersController : Controller
 
     // GET: Admin/Users/Edit/5
     /// <summary>
-    /// TODO: Describe POST /Admin/Users/Edit
+    /// Displays the user edit form with all user details and available sponsors
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe POST /Admin/Users/Edit")]
+    /// <param name="id">User ID to edit</param>
+    [SwaggerOperation(Summary = "Displays the user edit form with all user details and available sponsors")]
     public async Task<IActionResult> Edit(string id)
     {
         if (string.IsNullOrEmpty(id))
@@ -276,9 +277,11 @@ public class UsersController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     /// <summary>
-    /// TODO: Describe POST /Admin/Users/Edit
+    /// Processes user edit form submission, updating user details, role, status, and sponsor assignment. Anti-forgery required.
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe POST /Admin/Users/Edit")]
+    /// <param name="id">User ID to edit</param>
+    /// <param name="model">Updated user information</param>
+    [SwaggerOperation(Summary = "Processes user edit form submission, updating user details, role, status, and sponsor assignment. Anti-forgery required.")]
     public async Task<IActionResult> Edit(string id, UserEditViewModel model)
     {
         if (id != model.Id)

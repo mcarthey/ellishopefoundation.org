@@ -27,9 +27,10 @@ public class LogsController : Controller
 
     // GET: Admin/Logs
     /// <summary>
-    /// TODO: Describe GET /Admin/Logs
+    /// Displays application logs with filtering options for level, category, date range, and review status
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe GET /Admin/Logs")]
+    /// <remarks>Requires Admin role authorization. Supports pagination and search.</remarks>
+    [SwaggerOperation(Summary = "Displays application logs with filtering options for level, category, date range, and review status")]
     public async Task<IActionResult> Index(
         AppLogLevel? minLevel,
         AppLogLevel? maxLevel,
@@ -70,9 +71,10 @@ public class LogsController : Controller
 
     // GET: Admin/Logs/Details/5
     /// <summary>
-    /// TODO: Describe GET /Admin/Logs/Details/{id}
+    /// Displays detailed information for a specific log entry
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe GET /Admin/Logs/Details/{id}")]
+    /// <param name="id">Log entry ID</param>
+    [SwaggerOperation(Summary = "Displays detailed information for a specific log entry")]
     public async Task<IActionResult> Details(int id)
     {
         var log = await _loggerService.GetLogByIdAsync(id);
@@ -88,9 +90,11 @@ public class LogsController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     /// <summary>
-    /// TODO: Describe POST /Admin/Logs/MarkAsReviewed/{id}
+    /// Marks a log entry as reviewed by the current admin with optional notes. Anti-forgery required.
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe POST /Admin/Logs/MarkAsReviewed/{id}")]
+    /// <param name="id">Log entry ID</param>
+    /// <param name="reviewNotes">Optional notes about the review</param>
+    [SwaggerOperation(Summary = "Marks a log entry as reviewed by the current admin with optional notes. Anti-forgery required.")]
     public async Task<IActionResult> MarkAsReviewed(int id, string? reviewNotes)
     {
         var currentUser = await _userManager.GetUserAsync(User);
@@ -109,9 +113,11 @@ public class LogsController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     /// <summary>
-    /// TODO: Describe POST /Admin/Logs/Purge
+    /// Purges old log entries while keeping logs within specified retention period and level. Anti-forgery required.
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe POST /Admin/Logs/Purge")]
+    /// <param name="daysToKeep">Number of days of logs to retain (default: 90)</param>
+    /// <param name="minLevelToKeep">Minimum log level to keep regardless of age</param>
+    [SwaggerOperation(Summary = "Purges old log entries while keeping logs within specified retention period and level. Anti-forgery required.")]
     public async Task<IActionResult> Purge(int daysToKeep = 90, AppLogLevel? minLevelToKeep = null)
     {
         var deletedCount = await _loggerService.PurgeOldLogsAsync(daysToKeep, minLevelToKeep);
@@ -122,9 +128,10 @@ public class LogsController : Controller
 
     // GET: Admin/Logs/Search
     /// <summary>
-    /// TODO: Describe POST /Admin/Logs/Search
+    /// Searches for log entries by correlation ID to track related log events
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe POST /Admin/Logs/Search")]
+    /// <param name="correlationId">Correlation ID to search for</param>
+    [SwaggerOperation(Summary = "Searches for log entries by correlation ID to track related log events")]
     public async Task<IActionResult> Search(string correlationId)
     {
         if (string.IsNullOrWhiteSpace(correlationId))
@@ -151,9 +158,11 @@ public class LogsController : Controller
 
     // GET: Admin/Logs/Statistics
     /// <summary>
-    /// TODO: Describe POST /Admin/Logs/Statistics
+    /// Displays log statistics and analytics for a specified date range
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe POST /Admin/Logs/Statistics")]
+    /// <param name="fromDate">Start date for statistics (default: 7 days ago)</param>
+    /// <param name="toDate">End date for statistics (default: today)</param>
+    [SwaggerOperation(Summary = "Displays log statistics and analytics for a specified date range")]
     public async Task<IActionResult> Statistics(DateTime? fromDate, DateTime? toDate)
     {
         var from = fromDate ?? DateTime.UtcNow.AddDays(-30);

@@ -5,9 +5,9 @@ namespace EllisHope.Controllers;
 public class ServicesController : Controller
 {
     /// <summary>
-    /// TODO: Describe GET /Services
+    /// Displays the services offered by Ellis Hope Foundation
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe GET /Services")]
+    [SwaggerOperation(Summary = "Displays the services offered by Ellis Hope Foundation")]
     public IActionResult Index()
     {
         return View();

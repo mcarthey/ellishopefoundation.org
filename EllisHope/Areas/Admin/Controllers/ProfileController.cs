@@ -30,9 +30,10 @@ public class ProfileController : Controller
 
     // GET: Admin/Profile
     /// <summary>
-    /// TODO: Describe GET /Admin/Profile
+    /// Displays the current user's profile with personal information and role details
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe GET /Admin/Profile")]
+    /// <remarks>Requires authentication</remarks>
+    [SwaggerOperation(Summary = "Displays the current user's profile with personal information and role details")]
     public async Task<IActionResult> Index()
     {
         var user = await _userManager.GetUserAsync(User);

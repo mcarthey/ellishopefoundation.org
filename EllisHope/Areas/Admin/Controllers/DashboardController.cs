@@ -32,9 +32,10 @@ public class DashboardController : Controller
     }
 
     /// <summary>
-    /// TODO: Describe GET /Admin/Dashboard
+    /// Displays the admin dashboard with statistics for blog posts, events, causes, media, and pages
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe GET /Admin/Dashboard")]
+    /// <remarks>Requires Admin role authorization</remarks>
+    [SwaggerOperation(Summary = "Displays the admin dashboard with statistics for blog posts, events, causes, media, and pages")]
     public async Task<IActionResult> Index()
     {
         ViewData["UserName"] = User.Identity?.Name ?? "Admin";

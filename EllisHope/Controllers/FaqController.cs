@@ -6,9 +6,9 @@ public class FaqController : Controller
 {
     // GET: Faq
     /// <summary>
-    /// TODO: Describe GET /Faq
+    /// Displays the Frequently Asked Questions page
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe GET /Faq")]
+    [SwaggerOperation(Summary = "Displays the Frequently Asked Questions page")]
     public IActionResult Index()
     {
         return View();

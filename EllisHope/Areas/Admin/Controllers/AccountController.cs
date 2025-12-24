@@ -272,9 +272,9 @@ public class AccountController : Controller
     /// </summary>
     [HttpGet]
     /// <summary>
-    /// TODO: Describe GET /Admin/Account/ForgotPassword
+    /// Displays the forgot password form where users can request a password reset email
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe GET /Admin/Account/ForgotPassword")]
+    [SwaggerOperation(Summary = "Displays the forgot password form where users can request a password reset email")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult ForgotPassword()
     {
@@ -288,9 +288,10 @@ public class AccountController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     /// <summary>
-    /// TODO: Describe POST /Admin/Account/ForgotPassword
+    /// Processes the forgot password request and sends a password reset email to the user. Anti-forgery required.
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe POST /Admin/Account/ForgotPassword")]
+    /// <param name="model">Contains the user's email address</param>
+    [SwaggerOperation(Summary = "Processes the forgot password request and sends a password reset email to the user. Anti-forgery required.")]
     [ProducesResponseType(StatusCodes.Status302Found)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
@@ -333,9 +334,9 @@ public class AccountController : Controller
     /// </summary>
     [HttpGet]
     /// <summary>
-    /// TODO: Describe GET /Admin/Account/ForgotPasswordConfirmation
+    /// Displays confirmation page after forgot password request is submitted
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe GET /Admin/Account/ForgotPasswordConfirmation")]
+    [SwaggerOperation(Summary = "Displays confirmation page after forgot password request is submitted")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult ForgotPasswordConfirmation()
     {
@@ -349,9 +350,11 @@ public class AccountController : Controller
     /// <param name="token">Password reset token</param>
     [HttpGet]
     /// <summary>
-    /// TODO: Describe GET /Admin/Account/ResetPassword
+    /// Displays the password reset form with email and token from the reset link
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe GET /Admin/Account/ResetPassword")]
+    /// <param name="email">Email address from the reset link</param>
+    /// <param name="token">Reset token from the reset link</param>
+    [SwaggerOperation(Summary = "Displays the password reset form with email and token from the reset link")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult ResetPassword(string? email = null, string? token = null)
@@ -377,9 +380,10 @@ public class AccountController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     /// <summary>
-    /// TODO: Describe POST /Admin/Account/ResetPassword
+    /// Processes the password reset with new password. Anti-forgery required.
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe POST /Admin/Account/ResetPassword")]
+    /// <param name="model">Contains email, token, and new password</param>
+    [SwaggerOperation(Summary = "Processes the password reset with new password. Anti-forgery required.")]
     [ProducesResponseType(StatusCodes.Status302Found)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
@@ -422,9 +426,9 @@ public class AccountController : Controller
     /// </summary>
     [HttpGet]
     /// <summary>
-    /// TODO: Describe GET /Admin/Account/ResetPasswordConfirmation
+    /// Displays confirmation page after password has been successfully reset
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe GET /Admin/Account/ResetPasswordConfirmation")]
+    [SwaggerOperation(Summary = "Displays confirmation page after password has been successfully reset")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult ResetPasswordConfirmation()
     {
