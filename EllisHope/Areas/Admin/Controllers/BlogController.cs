@@ -10,6 +10,7 @@ namespace EllisHope.Areas.Admin.Controllers;
 
 [Area("Admin")]
 [Authorize(Roles = "Admin,Editor")]
+[ApiExplorerSettings(IgnoreApi = true)]
 public class BlogController : Controller
 {
     private readonly IBlogService _blogService;

@@ -9,6 +9,7 @@ namespace EllisHope.Areas.Admin.Controllers;
 
 [Area("Admin")]
 [Authorize(Roles = "Admin,Editor")]
+[ApiExplorerSettings(IgnoreApi = true)]
 public class MediaController : Controller
 {
     private readonly IMediaService _mediaService;

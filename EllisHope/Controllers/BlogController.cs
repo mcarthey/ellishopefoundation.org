@@ -5,8 +5,7 @@ using EllisHope.Models.Domain;
 
 namespace EllisHope.Controllers;
 
-[ApiExplorerSettings(GroupName = "Blog")]
-[SwaggerTag("Public blog content management. Browse published blog posts, search by keyword, filter by category, and view individual post details.")]
+[ApiExplorerSettings(IgnoreApi = true)]
 public class BlogController : Controller
 {
     private readonly IBlogService _blogService;
@@ -29,7 +28,7 @@ public class BlogController : Controller
     ///     GET /Blog/Classic
     ///     GET /Blog/Classic?search=fundraising
     ///     GET /Blog/Classic?category=3
-    ///     GET /Blog/Classic?search=community&category=5
+    ///     GET /Blog/Classic?search=community&amp;category=5
     ///
     /// Returns only published blog posts. Includes category list in sidebar for navigation.
     /// Search performs full-text search across title and content fields.

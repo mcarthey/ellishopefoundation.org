@@ -11,8 +11,7 @@ namespace EllisHope.Areas.Admin.Controllers;
 
 [Area("Admin")]
 [Authorize(Roles = "Admin,BoardMember")]
-[ApiExplorerSettings(GroupName = "Applications")]
-[SwaggerTag("Client application management and board review workflow. Handles application submission, voting, approval/rejection, and sponsor assignment.")]
+[ApiExplorerSettings(IgnoreApi = true)]
 public class ApplicationsController : Controller
 {
     private readonly IClientApplicationService _applicationService;
@@ -41,7 +40,7 @@ public class ApplicationsController : Controller
     /// <remarks>
     /// Sample request:
     ///
-    ///     GET /Admin/Applications?status=UnderReview&searchTerm=john
+    ///     GET /Admin/Applications?status=UnderReview&amp;searchTerm=john
     ///
     /// Returns applications with aggregate statistics, voting counts, and indicators for applications
     /// needing the current board member's vote. Requires Admin or BoardMember role.

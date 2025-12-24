@@ -9,6 +9,7 @@ namespace EllisHope.Areas.Admin.Controllers;
 
 [Area("Admin")]
 [Authorize(Roles = "Admin,Editor")]
+[ApiExplorerSettings(IgnoreApi = true)]
 public class CausesController : Controller
 {
     private readonly ICauseService _causeService;

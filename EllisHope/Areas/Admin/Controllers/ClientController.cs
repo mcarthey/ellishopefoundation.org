@@ -10,6 +10,7 @@ namespace EllisHope.Areas.Admin.Controllers;
 
 [Area("Admin")]
 [Authorize(Roles = "Client")]
+[ApiExplorerSettings(IgnoreApi = true)]
 public class ClientController : Controller
 {
     private readonly ApplicationDbContext _context;

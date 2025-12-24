@@ -6,6 +6,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace EllisHope.Controllers;
 
+[ApiExplorerSettings(IgnoreApi = true)]
 public class TeamController : Controller
 {
     private readonly ApplicationDbContext _context;

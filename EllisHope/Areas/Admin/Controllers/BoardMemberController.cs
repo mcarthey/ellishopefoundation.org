@@ -11,6 +11,7 @@ namespace EllisHope.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize(Roles = "BoardMember")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class BoardMemberController : Controller
     {
         private readonly IClientApplicationService _applicationService;

@@ -6,8 +6,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace EllisHope.Controllers;
 
-[ApiExplorerSettings(GroupName = "About")]
-[SwaggerTag("Organization information and board member directory. Public-facing pages describing the Ellis Hope Foundation's mission, history, values, and leadership team.")]
+[ApiExplorerSettings(IgnoreApi = true)]
 public class AboutController : Controller
 {
     private readonly ApplicationDbContext _context;

@@ -3,8 +3,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace EllisHope.Controllers;
 
-[ApiExplorerSettings(GroupName = "Services")]
-[SwaggerTag("Programs and services information. Public-facing pages describing the charitable services, support programs, and assistance offerings provided by the Ellis Hope Foundation.")]
+[ApiExplorerSettings(IgnoreApi = true)]
 public class ServicesController : Controller
 {
     /// <summary>

@@ -10,8 +10,7 @@ namespace EllisHope.Areas.Admin.Controllers;
 
 [Area("Admin")]
 [Authorize]
-[ApiExplorerSettings(GroupName = "Profile")]
-[SwaggerTag("User profile management for authenticated users. Allows users to view and update their personal information, profile photo, and password within the admin portal.")]
+[ApiExplorerSettings(IgnoreApi = true)]
 public class ProfileController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
@@ -357,7 +356,7 @@ public class ProfileController : Controller
     /// - At least one uppercase letter
     /// - At least one lowercase letter
     /// - At least one digit
-    /// - At least one special character (@$!%*?&)
+    /// - At least one special character (@$!%*?&amp;)
     ///
     /// **Authorization:**
     /// - Requires authentication

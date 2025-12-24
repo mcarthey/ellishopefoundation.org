@@ -10,6 +10,7 @@ namespace EllisHope.Areas.Admin.Controllers;
 
 [Area("Admin")]
 [Authorize(Roles = "Sponsor")]
+[ApiExplorerSettings(IgnoreApi = true)]
 public class SponsorController : Controller
 {
     private readonly ApplicationDbContext _context;

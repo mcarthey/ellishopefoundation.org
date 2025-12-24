@@ -10,8 +10,7 @@ namespace EllisHope.Areas.Admin.Controllers;
 
 [Area("Admin")]
 [Authorize(Roles = "Admin")]
-[ApiExplorerSettings(GroupName = "Logs")]
-[SwaggerTag("Application log management and monitoring. Admin-only access to view, search, filter, and analyze application logs for debugging, auditing, and security monitoring.")]
+[ApiExplorerSettings(IgnoreApi = true)]
 public class LogsController : Controller
 {
     private readonly IDatabaseLoggerService _loggerService;
@@ -68,7 +67,7 @@ public class LogsController : Controller
     ///
     /// **Common Use Cases:**
     /// - Monitor application errors: `minLevel=Error`
-    /// - Review unreviewed warnings: `minLevel=Warning&isReviewed=false`
+    /// - Review unreviewed warnings: `minLevel=Warning&amp;isReviewed=false`
     /// - Debug specific request: `searchTerm=correlation-id-abc123`
     /// - Audit specific controller: `category=EllisHope.Controllers.ApplicationsController`
     ///
@@ -155,7 +154,7 @@ public class LogsController : Controller
         OperationId = "GetLogDetails",
         Tags = new[] { "Logs" }
     )]
-    [ProducesResponseType(typeof(AppLog), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApplicationLog), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

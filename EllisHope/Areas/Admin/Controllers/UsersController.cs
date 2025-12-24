@@ -10,6 +10,7 @@ namespace EllisHope.Areas.Admin.Controllers;
 
 [Area("Admin")]
 [Authorize(Roles = "Admin")]
+[ApiExplorerSettings(IgnoreApi = true)]
 public class UsersController : Controller
 {
     private readonly IUserManagementService _userService;

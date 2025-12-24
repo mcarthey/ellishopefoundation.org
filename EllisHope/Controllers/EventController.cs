@@ -5,8 +5,7 @@ using EllisHope.Models.Domain;
 
 namespace EllisHope.Controllers;
 
-[ApiExplorerSettings(GroupName = "Events")]
-[SwaggerTag("Public event listings and details. Browse upcoming events, search by keyword, and view event information including date, location, and registration details.")]
+[ApiExplorerSettings(IgnoreApi = true)]
 public class EventController : Controller
 {
     private readonly IEventService _eventService;

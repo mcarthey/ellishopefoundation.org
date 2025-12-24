@@ -3,8 +3,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace EllisHope.Controllers;
 
-[ApiExplorerSettings(GroupName = "Home")]
-[SwaggerTag("Public homepage and landing page variations. Primary entry point for website visitors with multiple layout options for A/B testing and design exploration.")]
+[ApiExplorerSettings(IgnoreApi = true)]
 public class HomeController : Controller
 {
     // GET: Home

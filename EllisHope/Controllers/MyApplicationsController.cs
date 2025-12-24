@@ -10,8 +10,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace EllisHope.Controllers;
 
 [Authorize]
-[ApiExplorerSettings(GroupName = "My Applications")]
-[SwaggerTag("Client-facing application submission and management. Authenticated users can create applications, save drafts, submit for review, and track application status through the approval workflow.")]
+[ApiExplorerSettings(IgnoreApi = true)]
 public class MyApplicationsController : Controller
 {
     private readonly IClientApplicationService _applicationService;
@@ -180,11 +179,11 @@ public class MyApplicationsController : Controller
     ///
     /// **Application Steps:**
     /// 1. Personal Information (name, contact, demographics)
-    /// 2. Background & Circumstances (situation, needs assessment)
-    /// 3. Goals & Objectives (program goals, expected outcomes)
+    /// 2. Background and Circumstances (situation, needs assessment)
+    /// 3. Goals and Objectives (program goals, expected outcomes)
     /// 4. Financial Information (income, expenses, funding needs)
-    /// 5. References & Documents (contact references, upload documents)
-    /// 6. Review & Submit (review all entered data, final submission)
+    /// 5. References and Documents (contact references, upload documents)
+    /// 6. Review and Submit (review all entered data, final submission)
     ///
     /// **Features:**
     /// - Multi-step wizard interface with progress indicator
@@ -421,11 +420,11 @@ public class MyApplicationsController : Controller
     ///
     /// **Step Navigation:**
     /// - Step 1: Personal Information
-    /// - Step 2: Program Interest & Funding
-    /// - Step 3: Motivation & Commitment
-    /// - Step 4: Health & Fitness
+    /// - Step 2: Program Interest and Funding
+    /// - Step 3: Motivation and Commitment
+    /// - Step 4: Health and Fitness
     /// - Step 5: Program Requirements
-    /// - Step 6: Review & Sign
+    /// - Step 6: Review and Sign
     ///
     /// **Authorization:**
     /// - User must be authenticated
@@ -496,7 +495,7 @@ public class MyApplicationsController : Controller
     /// <remarks>
     /// Handles four distinct editing actions based on which button the user clicked:
     ///
-    /// **Save & Exit (SaveAndExit button):**
+    /// **Save and Exit (SaveAndExit button):**
     /// - Saves all form data WITHOUT validation (lenient for drafts)
     /// - Allows partial completion - user can save incomplete forms
     /// - Updates only the fields that have been filled
@@ -534,7 +533,7 @@ public class MyApplicationsController : Controller
     /// - Step 5: Must acknowledge 12-month commitment
     /// - Step 6: Signature required
     ///
-    /// Sample form submission (Save & Exit):
+    /// Sample form submission (Save and Exit):
     ///
     ///     POST /MyApplications/Edit/42
     ///     Content-Type: application/x-www-form-urlencoded

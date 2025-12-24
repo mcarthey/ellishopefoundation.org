@@ -10,8 +10,7 @@ namespace EllisHope.Areas.Admin.Controllers;
 
 [Area("Admin")]
 [AllowAnonymous]
-[ApiExplorerSettings(GroupName = "Admin")]
-[SwaggerTag("Account management endpoints for admin area (login, registration, password reset, etc.)")]
+[ApiExplorerSettings(IgnoreApi = true)]
 public class AccountController : Controller
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
@@ -177,10 +176,7 @@ public class AccountController : Controller
     /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    /// <summary>
-    /// sign out. Anti-forgery required.
-    /// </summary>
-    [SwaggerOperation(Summary = "sign out. Anti-forgery required.")]
+    [SwaggerOperation(Summary = "Sign out current user. Requires anti-forgery token.")]
     [ProducesResponseType(StatusCodes.Status302Found)]
     public async Task<IActionResult> Logout()
     {
@@ -194,10 +190,7 @@ public class AccountController : Controller
     /// </summary>
     /// <param name="returnUrl">Optional return URL after registration</param>
     [HttpGet]
-    /// <summary>
-    /// register new user (RegisterViewModel fields). Anti-forgery required.
-    /// </summary>
-    [SwaggerOperation(Summary = "register new user (RegisterViewModel fields). Anti-forgery required.")]
+    [SwaggerOperation(Summary = "Display registration form for new user.")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult Register(string? returnUrl = null)
     {
@@ -212,10 +205,7 @@ public class AccountController : Controller
     /// <param name="returnUrl">Optional return URL after registration</param>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    /// <summary>
-    /// register new user (RegisterViewModel fields). Anti-forgery required.
-    /// </summary>
-    [SwaggerOperation(Summary = "register new user (RegisterViewModel fields). Anti-forgery required.")]
+    [SwaggerOperation(Summary = "Register new user with form data. Requires anti-forgery token.")]
     [ProducesResponseType(StatusCodes.Status302Found)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> Register(RegisterViewModel model, string? returnUrl = null)
@@ -274,10 +264,7 @@ public class AccountController : Controller
     /// Show the access denied view.
     /// </summary>
     [HttpGet]
-    /// <summary>
-    /// access denied view.
-    /// </summary>
-    [SwaggerOperation(Summary = "access denied view.")]
+    [SwaggerOperation(Summary = "Display access denied view.")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult AccessDenied()
     {
@@ -288,10 +275,7 @@ public class AccountController : Controller
     /// Show the lockout view.
     /// </summary>
     [HttpGet]
-    /// <summary>
-    /// lockout view.
-    /// </summary>
-    [SwaggerOperation(Summary = "lockout view.")]
+    [SwaggerOperation(Summary = "Display account lockout view.")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult Lockout()
     {
@@ -304,10 +288,7 @@ public class AccountController : Controller
     /// Show the forgot password page.
     /// </summary>
     [HttpGet]
-    /// <summary>
-    /// Displays the forgot password form where users can request a password reset email
-    /// </summary>
-    [SwaggerOperation(Summary = "Displays the forgot password form where users can request a password reset email")]
+    [SwaggerOperation(Summary = "Display forgot password form for password reset requests.")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult ForgotPassword()
     {
@@ -320,11 +301,7 @@ public class AccountController : Controller
     /// <param name="model">Forgot password form data</param>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    /// <summary>
-    /// Processes the forgot password request and sends a password reset email to the user. Anti-forgery required.
-    /// </summary>
-    /// <param name="model">Contains the user's email address</param>
-    [SwaggerOperation(Summary = "Processes the forgot password request and sends a password reset email to the user. Anti-forgery required.")]
+    [SwaggerOperation(Summary = "Process forgot password request and send reset email.")]
     [ProducesResponseType(StatusCodes.Status302Found)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
@@ -366,10 +343,7 @@ public class AccountController : Controller
     /// Show the forgot password confirmation page.
     /// </summary>
     [HttpGet]
-    /// <summary>
-    /// Displays confirmation page after forgot password request is submitted
-    /// </summary>
-    [SwaggerOperation(Summary = "Displays confirmation page after forgot password request is submitted")]
+    [SwaggerOperation(Summary = "Display confirmation after forgot password request submitted.")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult ForgotPasswordConfirmation()
     {
@@ -382,12 +356,7 @@ public class AccountController : Controller
     /// <param name="email">User email</param>
     /// <param name="token">Password reset token</param>
     [HttpGet]
-    /// <summary>
-    /// Displays the password reset form with email and token from the reset link
-    /// </summary>
-    /// <param name="email">Email address from the reset link</param>
-    /// <param name="token">Reset token from the reset link</param>
-    [SwaggerOperation(Summary = "Displays the password reset form with email and token from the reset link")]
+    [SwaggerOperation(Summary = "Display password reset form with email and token from reset link.")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult ResetPassword(string? email = null, string? token = null)
@@ -412,11 +381,7 @@ public class AccountController : Controller
     /// <param name="model">Reset password form data</param>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    /// <summary>
-    /// Processes the password reset with new password. Anti-forgery required.
-    /// </summary>
-    /// <param name="model">Contains email, token, and new password</param>
-    [SwaggerOperation(Summary = "Processes the password reset with new password. Anti-forgery required.")]
+    [SwaggerOperation(Summary = "Process password reset with new password.")]
     [ProducesResponseType(StatusCodes.Status302Found)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
@@ -458,10 +423,7 @@ public class AccountController : Controller
     /// Show the reset password confirmation page.
     /// </summary>
     [HttpGet]
-    /// <summary>
-    /// Displays confirmation page after password has been successfully reset
-    /// </summary>
-    [SwaggerOperation(Summary = "Displays confirmation page after password has been successfully reset")]
+    [SwaggerOperation(Summary = "Display confirmation after password successfully reset.")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult ResetPasswordConfirmation()
     {

@@ -5,8 +5,7 @@ using EllisHope.Models.Domain;
 
 namespace EllisHope.Controllers;
 
-[ApiExplorerSettings(GroupName = "Causes")]
-[SwaggerTag("Public causes and initiatives. Browse active charitable causes, donation campaigns, and community initiatives supported by Ellis Hope Foundation.")]
+[ApiExplorerSettings(IgnoreApi = true)]
 public class CausesController : Controller
 {
     private readonly ICauseService _causeService;

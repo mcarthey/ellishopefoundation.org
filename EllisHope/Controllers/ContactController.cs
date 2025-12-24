@@ -3,8 +3,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace EllisHope.Controllers;
 
-[ApiExplorerSettings(GroupName = "Contact")]
-[SwaggerTag("Contact forms and communication channels. Public-facing pages for visitors to send messages, inquiries, and feedback to the Ellis Hope Foundation.")]
+[ApiExplorerSettings(IgnoreApi = true)]
 public class ContactController : Controller
 {
     // GET: Contact
