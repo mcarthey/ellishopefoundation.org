@@ -26,6 +26,10 @@ public class SponsorController : Controller
     }
 
     // GET: Admin/Sponsor/Dashboard
+    /// <summary>
+    /// sponsor dashboard.
+    /// </summary>
+    [SwaggerOperation(Summary = "sponsor dashboard.")]
     public async Task<IActionResult> Dashboard()
     {
         var currentUser = await _userManager.GetUserAsync(User);
@@ -75,6 +79,10 @@ public class SponsorController : Controller
     }
 
     // GET: Admin/Sponsor/ClientDetails/{id}
+    /// <summary>
+    /// view client details assigned to sponsor.
+    /// </summary>
+    [SwaggerOperation(Summary = "view client details assigned to sponsor.")]
     public async Task<IActionResult> ClientDetails(string id)
     {
         var currentUser = await _userManager.GetUserAsync(User);
@@ -119,6 +127,10 @@ public class SponsorController : Controller
     }
 
     // GET: Admin/Sponsor/MyProfile
+    /// <summary>
+    /// sponsor profile.
+    /// </summary>
+    [SwaggerOperation(Summary = "sponsor profile.")]
     public async Task<IActionResult> MyProfile()
     {
         var currentUser = await _userManager.GetUserAsync(User);

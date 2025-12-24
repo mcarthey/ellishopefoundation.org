@@ -27,7 +27,11 @@ namespace EllisHope.Areas.Admin.Controllers
         }
 
         // GET: Admin/BoardMember/Dashboard
-        public async Task<IActionResult> Dashboard()
+        /// <summary>
+    /// board member dashboard (list items needing review). Roles: BoardMember.
+    /// </summary>
+    [SwaggerOperation(Summary = "board member dashboard (list items needing review). Roles: BoardMember.")]
+    public async Task<IActionResult> Dashboard()
         {
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null)

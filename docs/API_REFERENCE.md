@@ -1,4 +1,4 @@
-# API Reference — Ellis Hope Foundation (Complete)
+# API Reference ï¿½ Ellis Hope Foundation (Complete)
 
 This is the canonical API reference for the Ellis Hope application. It documents the main endpoints (Razor views and important POST actions) used by the admin UI and public site. Keep this file up to date when routes, actions or authorization change.
 
@@ -46,13 +46,13 @@ AccountController
 -----------------
 Base path: `/Admin/Account`
 
-- GET `/Admin/Account/Login` — show login page.
-- POST `/Admin/Account/Login` — sign in (fields: `Email`, `Password`, `RememberMe`). Anti-forgery required.
-- POST `/Admin/Account/Logout` — sign out. Anti-forgery required.
-- GET `/Admin/Account/Register` — registration page.
-- POST `/Admin/Account/Register` — register new user (RegisterViewModel fields). Anti-forgery required.
-- GET `/Admin/Account/AccessDenied` — access denied view.
-- GET `/Admin/Account/Lockout` — lockout view.
+- GET `/Admin/Account/Login` ï¿½ show login page.
+- POST `/Admin/Account/Login` ï¿½ sign in (fields: `Email`, `Password`, `RememberMe`). Anti-forgery required.
+- POST `/Admin/Account/Logout` ï¿½ sign out. Anti-forgery required.
+- GET `/Admin/Account/Register` ï¿½ registration page.
+- POST `/Admin/Account/Register` ï¿½ register new user (RegisterViewModel fields). Anti-forgery required.
+- GET `/Admin/Account/AccessDenied` ï¿½ access denied view.
+- GET `/Admin/Account/Lockout` ï¿½ lockout view.
 
 Notes: Account actions are [AllowAnonymous] for Login/Register views but POST actions require antiforgery.
 
@@ -60,161 +60,161 @@ ApplicationsController
 ----------------------
 Base path: `/Admin/Applications`
 
-(Full reference — key endpoints)
-- GET `/Admin/Applications` — list applications; optional `status`, `searchTerm` query parameters. Roles: Admin, BoardMember.
-- GET `/Admin/Applications/Index` — alias for list (same as `/Admin/Applications`).
-- GET `/Admin/Applications/NeedingReview` — list apps needing current user's review.
-- GET `/Admin/Applications/Details/{id}` — app details with votes/comments. Roles: Admin, BoardMember.
-- GET `/Admin/Applications/Review/{id}` — alias to Details for review.
-- POST `/Admin/Applications/Vote` — cast vote (VoteFormViewModel: ApplicationId, Decision, Reasoning, ConfidenceLevel). Roles: BoardMember. Anti-forgery required.
-- POST `/Admin/Applications/Comment` — add comment (CommentFormViewModel: ApplicationId, Content, IsPrivate, ...). Anti-forgery required.
-- GET `/Admin/Applications/Approve/{id}` — show approve form. Roles: Admin.
-- POST `/Admin/Applications/Approve` — approve application (ApproveApplicationViewModel). Roles: Admin. Anti-forgery required.
-- GET `/Admin/Applications/Reject/{id}` — show reject form. Roles: Admin.
-- POST `/Admin/Applications/Reject` — reject application (RejectApplicationViewModel). Roles: Admin. Anti-forgery required.
-- GET `/Admin/Applications/RequestInfo/{id}` — show request info form.
-- POST `/Admin/Applications/RequestInfo` — request info (RequestInformationViewModel). Anti-forgery required.
-- POST `/Admin/Applications/StartReview/{id}` — start review workflow (Admin). Anti-forgery required.
-- GET `/Admin/Applications/Statistics` — view statistics summary.
+(Full reference ï¿½ key endpoints)
+- GET `/Admin/Applications` ï¿½ list applications; optional `status`, `searchTerm` query parameters. Roles: Admin, BoardMember.
+- GET `/Admin/Applications/Index` ï¿½ alias for list (same as `/Admin/Applications`).
+- GET `/Admin/Applications/NeedingReview` ï¿½ list apps needing current user's review.
+- GET `/Admin/Applications/Details/{id}` ï¿½ app details with votes/comments. Roles: Admin, BoardMember.
+- GET `/Admin/Applications/Review/{id}` ï¿½ alias to Details for review.
+- POST `/Admin/Applications/Vote` ï¿½ cast vote (VoteFormViewModel: ApplicationId, Decision, Reasoning, ConfidenceLevel). Roles: BoardMember. Anti-forgery required.
+- POST `/Admin/Applications/Comment` ï¿½ add comment (CommentFormViewModel: ApplicationId, Content, IsPrivate, ...). Anti-forgery required.
+- GET `/Admin/Applications/Approve/{id}` ï¿½ show approve form. Roles: Admin.
+- POST `/Admin/Applications/Approve` ï¿½ approve application (ApproveApplicationViewModel). Roles: Admin. Anti-forgery required.
+- GET `/Admin/Applications/Reject/{id}` ï¿½ show reject form. Roles: Admin.
+- POST `/Admin/Applications/Reject` ï¿½ reject application (RejectApplicationViewModel). Roles: Admin. Anti-forgery required.
+- GET `/Admin/Applications/RequestInfo/{id}` ï¿½ show request info form.
+- POST `/Admin/Applications/RequestInfo` ï¿½ request info (RequestInformationViewModel). Anti-forgery required.
+- POST `/Admin/Applications/StartReview/{id}` ï¿½ start review workflow (Admin). Anti-forgery required.
+- GET `/Admin/Applications/Statistics` ï¿½ view statistics summary.
 
 BlogController (Admin)
 ----------------------
 Base path: `/Admin/Blog`
 
-- GET `/Admin/Blog` — list/filter posts (`searchTerm`, `categoryFilter`, `showUnpublished`). Roles: Admin, Editor.
-- GET `/Admin/Blog/Index` — alias for list
-- GET `/Admin/Blog/Create` — show create form.
-- POST `/Admin/Blog/Create` — create post (BlogPostViewModel). Anti-forgery required. Roles: Admin, Editor.
-- GET `/Admin/Blog/Edit/{id}` — edit form.
-- POST `/Admin/Blog/Edit/{id}` — update post. Anti-forgery required.
-- POST `/Admin/Blog/Delete/{id}` — delete post. Anti-forgery required.
+- GET `/Admin/Blog` ï¿½ list/filter posts (`searchTerm`, `categoryFilter`, `showUnpublished`). Roles: Admin, Editor.
+- GET `/Admin/Blog/Index` ï¿½ alias for list
+- GET `/Admin/Blog/Create` ï¿½ show create form.
+- POST `/Admin/Blog/Create` ï¿½ create post (BlogPostViewModel). Anti-forgery required. Roles: Admin, Editor.
+- GET `/Admin/Blog/Edit/{id}` ï¿½ edit form.
+- POST `/Admin/Blog/Edit/{id}` ï¿½ update post. Anti-forgery required.
+- POST `/Admin/Blog/Delete/{id}` ï¿½ delete post. Anti-forgery required.
 
 BoardMemberController
 ---------------------
 Base path: `/Admin/BoardMember`
 
-- GET `/Admin/BoardMember/Dashboard` — board member dashboard (list items needing review). Roles: BoardMember.
+- GET `/Admin/BoardMember/Dashboard` ï¿½ board member dashboard (list items needing review). Roles: BoardMember.
 - Additional actions: team-specific pages and reports for board members.
 
 CausesController (Admin)
 ------------------------
 Base path: `/Admin/Causes`
 
-- GET `/Admin/Causes` — list causes. Roles: Admin, Editor.
-- GET `/Admin/Causes/Index` — alias for list
-- GET `/Admin/Causes/Create` — create form.
-- POST `/Admin/Causes/Create` — create cause. Anti-forgery required.
-- GET `/Admin/Causes/Edit/{id}` — edit cause.
-- POST `/Admin/Causes/Edit/{id}` — update cause. Anti-forgery required.
-- POST `/Admin/Causes/Delete/{id}` — delete cause. Anti-forgery required.
+- GET `/Admin/Causes` ï¿½ list causes. Roles: Admin, Editor.
+- GET `/Admin/Causes/Index` ï¿½ alias for list
+- GET `/Admin/Causes/Create` ï¿½ create form.
+- POST `/Admin/Causes/Create` ï¿½ create cause. Anti-forgery required.
+- GET `/Admin/Causes/Edit/{id}` ï¿½ edit cause.
+- POST `/Admin/Causes/Edit/{id}` ï¿½ update cause. Anti-forgery required.
+- POST `/Admin/Causes/Delete/{id}` ï¿½ delete cause. Anti-forgery required.
 
 ClientController
 ----------------
 Base path: `/Admin/Client`
 
-- GET `/Admin/Client/Dashboard` — client admin dashboard.
-- GET `/Admin/Client/MyProfile` — view/edit client profile.
-- GET `/Admin/Client/Progress` — client progress view.
-- GET `/Admin/Client/Resources` — client resources.
+- GET `/Admin/Client/Dashboard` ï¿½ client admin dashboard.
+- GET `/Admin/Client/MyProfile` ï¿½ view/edit client profile.
+- GET `/Admin/Client/Progress` ï¿½ client progress view.
+- GET `/Admin/Client/Resources` ï¿½ client resources.
 
 DashboardController
 -------------------
 Base path: `/Admin/Dashboard`
 
-- GET `/Admin/Dashboard/Index` — admin dashboard. Roles: Admin.
+- GET `/Admin/Dashboard/Index` ï¿½ admin dashboard. Roles: Admin.
 
 EventsController (Admin)
 ------------------------
 Base path: `/Admin/Events`
 
-- GET `/Admin/Events` — list events. Roles: Admin, Editor.
-- GET `/Admin/Events/Index` — alias for list
-- GET `/Admin/Events/Create` — create form.
-- POST `/Admin/Events/Create` — create event. Anti-forgery required.
-- GET `/Admin/Events/Edit/{id}` — edit event.
-- POST `/Admin/Events/Edit/{id}` — update event. Anti-forgery required.
-- POST `/Admin/Events/Delete/{id}` — delete event. Anti-forgery required.
+- GET `/Admin/Events` ï¿½ list events. Roles: Admin, Editor.
+- GET `/Admin/Events/Index` ï¿½ alias for list
+- GET `/Admin/Events/Create` ï¿½ create form.
+- POST `/Admin/Events/Create` ï¿½ create event. Anti-forgery required.
+- GET `/Admin/Events/Edit/{id}` ï¿½ edit event.
+- POST `/Admin/Events/Edit/{id}` ï¿½ update event. Anti-forgery required.
+- POST `/Admin/Events/Delete/{id}` ï¿½ delete event. Anti-forgery required.
 
 MediaController
 ---------------
 Base path: `/Admin/Media`
 
-- GET `/Admin/Media` — media index/list. Roles: Admin, Editor.
-- GET `/Admin/Media/Index` — alias for list
-- GET `/Admin/Media/Upload` — show upload form.
-- POST `/Admin/Media/Upload` — upload file (multipart form). Anti-forgery required.
-- GET `/Admin/Media/UnsplashSearch` — Unsplash search UI.
-- POST `/Admin/Media/UnsplashSearch` — perform Unsplash search.
-- GET `/Admin/Media/Edit/{id}` — edit metadata.
-- POST `/Admin/Media/Edit/{id}` — update metadata. Anti-forgery required.
-- POST `/Admin/Media/Delete/{id}` — delete media. Anti-forgery required.
-- POST `/Admin/Media/DeleteAllUnused` — remove unused media (Admin tool).
-- GET `/Admin/Media/GetDuplicates` — list duplicate media (Admin tool).
-- GET `/Admin/Media/GetUnusedMedia` — list unused media (Admin tool).
-- POST `/Admin/Media/ImportFromUnsplash` — import image from Unsplash.
-- POST `/Admin/Media/RemoveDuplicates` — remove duplicates.
-- GET `/Admin/Media/GetMediaJson` — JSON API for media listing (may require auth).
-- GET `/Admin/Media/Usages/{id}` — show usages for a media item.
+- GET `/Admin/Media` ï¿½ media index/list. Roles: Admin, Editor.
+- GET `/Admin/Media/Index` ï¿½ alias for list
+- GET `/Admin/Media/Upload` ï¿½ show upload form.
+- POST `/Admin/Media/Upload` ï¿½ upload file (multipart form). Anti-forgery required.
+- GET `/Admin/Media/UnsplashSearch` ï¿½ Unsplash search UI.
+- POST `/Admin/Media/UnsplashSearch` ï¿½ perform Unsplash search.
+- GET `/Admin/Media/Edit/{id}` ï¿½ edit metadata.
+- POST `/Admin/Media/Edit/{id}` ï¿½ update metadata. Anti-forgery required.
+- POST `/Admin/Media/Delete/{id}` ï¿½ delete media. Anti-forgery required.
+- POST `/Admin/Media/DeleteAllUnused` ï¿½ remove unused media (Admin tool).
+- GET `/Admin/Media/GetDuplicates` ï¿½ list duplicate media (Admin tool).
+- GET `/Admin/Media/GetUnusedMedia` ï¿½ list unused media (Admin tool).
+- POST `/Admin/Media/ImportFromUnsplash` ï¿½ import image from Unsplash.
+- POST `/Admin/Media/RemoveDuplicates` ï¿½ remove duplicates.
+- GET `/Admin/Media/GetMediaJson` ï¿½ JSON API for media listing (may require auth).
+- GET `/Admin/Media/Usages/{id}` ï¿½ show usages for a media item.
 
 MediaMigrationController
 ------------------------
 Base path: `/Admin/MediaMigration`
 
-- GET `/Admin/MediaMigration/Index` — migration overview.
-- GET `/Admin/MediaMigration/BrokenReferences` — list broken media refs.
-- POST `/Admin/MediaMigration/Migrate` — run migration tool.
-- POST `/Admin/MediaMigration/RemoveDuplicates` — remove duplicates discovered during migration.
+- GET `/Admin/MediaMigration/Index` ï¿½ migration overview.
+- GET `/Admin/MediaMigration/BrokenReferences` ï¿½ list broken media refs.
+- POST `/Admin/MediaMigration/Migrate` ï¿½ run migration tool.
+- POST `/Admin/MediaMigration/RemoveDuplicates` ï¿½ remove duplicates discovered during migration.
 
 MemberController
 ----------------
 Base path: `/Admin/Member`
 
-- GET `/Admin/Member/Dashboard` — member admin dashboard.
-- GET `/Admin/Member/Events` — member events listing.
-- GET `/Admin/Member/MyProfile` — member profile.
-- GET `/Admin/Member/Volunteer` — volunteer opportunities and management.
+- GET `/Admin/Member/Dashboard` ï¿½ member admin dashboard.
+- GET `/Admin/Member/Events` ï¿½ member events listing.
+- GET `/Admin/Member/MyProfile` ï¿½ member profile.
+- GET `/Admin/Member/Volunteer` ï¿½ volunteer opportunities and management.
 
 PagesController (Admin)
 -----------------------
 Base path: `/Admin/Pages`
 
-- GET `/Admin/Pages` — list pages (Admin, Editor).
-- GET `/Admin/Pages/Index` — alias for list
-- GET `/Admin/Pages/Edit/{id}` — edit page (sections, images).
-- POST `/Admin/Pages/UpdateContent` — update section content. Anti-forgery required.
-- POST `/Admin/Pages/UpdateImage` — update image reference. Anti-forgery required.
-- POST `/Admin/Pages/RemoveImage` — remove image from page. Anti-forgery required.
-- GET `/Admin/Pages/MediaPicker` — media picker view.
+- GET `/Admin/Pages` ï¿½ list pages (Admin, Editor).
+- GET `/Admin/Pages/Index` ï¿½ alias for list
+- GET `/Admin/Pages/Edit/{id}` ï¿½ edit page (sections, images).
+- POST `/Admin/Pages/UpdateContent` ï¿½ update section content. Anti-forgery required.
+- POST `/Admin/Pages/UpdateImage` ï¿½ update image reference. Anti-forgery required.
+- POST `/Admin/Pages/RemoveImage` ï¿½ remove image from page. Anti-forgery required.
+- GET `/Admin/Pages/MediaPicker` ï¿½ media picker view.
 
 ProfileController
 -----------------
 Base path: `/Admin/Profile`
 
-- GET `/Admin/Profile/Index` — show current user's profile.
-- POST `/Admin/Profile/Edit` — update profile information. Anti-forgery required.
-- POST `/Admin/Profile/ChangePassword` — change password. Anti-forgery required.
+- GET `/Admin/Profile/Index` ï¿½ show current user's profile.
+- POST `/Admin/Profile/Edit` ï¿½ update profile information. Anti-forgery required.
+- POST `/Admin/Profile/ChangePassword` ï¿½ change password. Anti-forgery required.
 
 SponsorController
 -----------------
 Base path: `/Admin/Sponsor`
 
-- GET `/Admin/Sponsor/Dashboard` — sponsor dashboard.
-- GET `/Admin/Sponsor/MyProfile` — sponsor profile.
-- GET `/Admin/Sponsor/ClientDetails` — view client details assigned to sponsor.
+- GET `/Admin/Sponsor/Dashboard` ï¿½ sponsor dashboard.
+- GET `/Admin/Sponsor/MyProfile` ï¿½ sponsor profile.
+- GET `/Admin/Sponsor/ClientDetails` ï¿½ view client details assigned to sponsor.
 
 UsersController
 ---------------
 Base path: `/Admin/Users`
 
-- GET `/Admin/Users` — list users. Roles: Admin.
-- GET `/Admin/Users/Index` — alias for list
-- GET `/Admin/Users/Create` — create user form.
-- POST `/Admin/Users/Create` — create user, assign role. Anti-forgery required.
-- GET `/Admin/Users/Edit/{id}` — edit user.
-- POST `/Admin/Users/Edit/{id}` — update user. Anti-forgery required.
-- GET `/Admin/Users/Details` — view user details.
-- POST `/Admin/Users/Delete` — delete user (confirmation flow).
-- POST `/Admin/Users/DeleteConfirmed` — delete confirmed action.
+- GET `/Admin/Users` ï¿½ list users. Roles: Admin.
+- GET `/Admin/Users/Index` ï¿½ alias for list
+- GET `/Admin/Users/Create` ï¿½ create user form.
+- POST `/Admin/Users/Create` ï¿½ create user, assign role. Anti-forgery required.
+- GET `/Admin/Users/Edit/{id}` ï¿½ edit user.
+- POST `/Admin/Users/Edit/{id}` ï¿½ update user. Anti-forgery required.
+- GET `/Admin/Users/Details` ï¿½ view user details.
+- POST `/Admin/Users/Delete` ï¿½ delete user (confirmation flow).
+- POST `/Admin/Users/DeleteConfirmed` ï¿½ delete confirmed action.
 
 
 PUBLIC CONTROLLERS
@@ -224,77 +224,77 @@ HomeController
 --------------
 Base path: `/` (root)
 
-- GET `/` — home page (Index).
-- GET `/Home/Index` — alias for home page.
-- GET `/Home/Index2` — alternate home/demo page.
-- GET `/Home/Index3` — alternate home/demo page.
-- GET `/Home/Index4` — alternate home/demo page.
-- GET `/Home/Index5` — alternate home/demo page.
-- GET `/Home/Index6` — alternate home/demo page.
-- GET `/Home/Index7` — alternate home/demo page.
-- GET `/Home/Index8` — alternate home/demo page.
+- GET `/` ï¿½ home page (Index).
+- GET `/Home/Index` ï¿½ alias for home page.
+- GET `/Home/Index2` ï¿½ alternate home/demo page.
+- GET `/Home/Index3` ï¿½ alternate home/demo page.
+- GET `/Home/Index4` ï¿½ alternate home/demo page.
+- GET `/Home/Index5` ï¿½ alternate home/demo page.
+- GET `/Home/Index6` ï¿½ alternate home/demo page.
+- GET `/Home/Index7` ï¿½ alternate home/demo page.
+- GET `/Home/Index8` ï¿½ alternate home/demo page.
 
 AboutController
 ---------------
-- GET `/About` — about page (alias: `/About/Index`).
+- GET `/About` ï¿½ about page (alias: `/About/Index`).
 
 BlogController (Public)
 ------------------------
-- GET `/Blog` — list posts, filters and search.
-- GET `/Blog/classic` — classic layout listing.
-- GET `/Blog/grid` — grid layout listing.
-- GET `/Blog/details` — details view (by slug normally).
+- GET `/Blog` ï¿½ list posts, filters and search.
+- GET `/Blog/classic` ï¿½ classic layout listing.
+- GET `/Blog/grid` ï¿½ grid layout listing.
+- GET `/Blog/details` ï¿½ details view (by slug normally).
 
 CausesController (Public)
 -------------------------
-- GET `/Causes` — list causes
-- GET `/Causes/details` — cause details
-- GET `/Causes/grid` — grid layout
-- GET `/Causes/list` — list layout
+- GET `/Causes` ï¿½ list causes
+- GET `/Causes/details` ï¿½ cause details
+- GET `/Causes/grid` ï¿½ grid layout
+- GET `/Causes/list` ï¿½ list layout
 
 EventController (Public)
 ------------------------
-- GET `/Event` — list events
-- GET `/Event/details` — details by slug
-- GET `/Event/grid` — grid layout
-- GET `/Event/list` — list layout
+- GET `/Event` ï¿½ list events
+- GET `/Event/details` ï¿½ details by slug
+- GET `/Event/grid` ï¿½ grid layout
+- GET `/Event/list` ï¿½ list layout
 
 MyApplicationsController
 ------------------------
 Base path: `/MyApplications`
 
-- GET `/MyApplications` — index of user's applications (alias)
-- GET `/MyApplications/Index` — alias for the list view
-- GET `/MyApplications/Create` — start multi-step application wizard (GET for first step)
-- POST `/MyApplications/Create` — post form data for steps; supports draft saving and final submit. Anti-forgery required.
-- GET `/MyApplications/Details/{id}` — applicant can view their application.
-- GET `/MyApplications/Edit/{id}` — edit draft.
-- POST `/MyApplications/UploadDocument` — upload supporting documents (multipart). Anti-forgery required.
-- POST `/MyApplications/Withdraw/{id}` — withdraw an application.
+- GET `/MyApplications` ï¿½ index of user's applications (alias)
+- GET `/MyApplications/Index` ï¿½ alias for the list view
+- GET `/MyApplications/Create` ï¿½ start multi-step application wizard (GET for first step)
+- POST `/MyApplications/Create` ï¿½ post form data for steps; supports draft saving and final submit. Anti-forgery required.
+- GET `/MyApplications/Details/{id}` ï¿½ applicant can view their application.
+- GET `/MyApplications/Edit/{id}` ï¿½ edit draft.
+- POST `/MyApplications/UploadDocument` ï¿½ upload supporting documents (multipart). Anti-forgery required.
+- POST `/MyApplications/Withdraw/{id}` ï¿½ withdraw an application.
 
 ContactController
 -----------------
-- GET `/Contact` and `/Contact/Index` — contact form
-- POST `/Contact` — send message (anti-forgery)
-- POST `/Contact/v2` — alternate contact API/version
+- GET `/Contact` and `/Contact/Index` ï¿½ contact form
+- POST `/Contact` ï¿½ send message (anti-forgery)
+- POST `/Contact/v2` ï¿½ alternate contact API/version
 
 ServicesController
 ------------------
-- GET `/Services` and `/Services/Index` — services offered list
-- GET `/Services/v2` — alternate services view
+- GET `/Services` and `/Services/Index` ï¿½ services offered list
+- GET `/Services/v2` ï¿½ alternate services view
 
 TeamController
 --------------
-- GET `/Team/details` — team member details
-- GET `/Team/v1` and `/Team/v2` — alternate team views
+- GET `/Team/details` ï¿½ team member details
+- GET `/Team/v1` and `/Team/v2` ï¿½ alternate team views
 
 FaqController
 -------------
-- GET `/Faq` and `/Faq/Index` — FAQ page
+- GET `/Faq` and `/Faq/Index` ï¿½ FAQ page
 
 ErrorController
 ---------------
-- GET `/Error` and `/Error/Index` — error view (used by exception handler)
+- GET `/Error` and `/Error/Index` ï¿½ error view (used by exception handler)
 
 
 DOCUMENTATION & MAINTENANCE NOTES

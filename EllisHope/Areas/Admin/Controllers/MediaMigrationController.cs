@@ -20,6 +20,10 @@ public class MediaMigrationController : Controller
     }
 
     // GET: Admin/MediaMigration
+    /// <summary>
+    /// TODO: Describe GET /Admin/MediaMigration
+    /// </summary>
+    [SwaggerOperation(Summary = "TODO: Describe GET /Admin/MediaMigration")]
     public async Task<IActionResult> Index()
     {
         try
@@ -36,6 +40,10 @@ public class MediaMigrationController : Controller
     }
 
     // GET: Admin/MediaMigration/BrokenReferences
+    /// <summary>
+    /// list broken media refs.
+    /// </summary>
+    [SwaggerOperation(Summary = "list broken media refs.")]
     public async Task<IActionResult> BrokenReferences()
     {
         try
@@ -54,6 +62,10 @@ public class MediaMigrationController : Controller
     // POST: Admin/MediaMigration/Migrate
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// run migration tool.
+    /// </summary>
+    [SwaggerOperation(Summary = "run migration tool.")]
     public async Task<IActionResult> Migrate(bool updateDatabaseReferences = true, bool deleteOldFiles = false)
     {
         try
@@ -96,6 +108,10 @@ public class MediaMigrationController : Controller
     // POST: Admin/MediaMigration/RemoveDuplicates
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// remove duplicates discovered during migration.
+    /// </summary>
+    [SwaggerOperation(Summary = "remove duplicates discovered during migration.")]
     public async Task<IActionResult> RemoveDuplicates()
     {
         try

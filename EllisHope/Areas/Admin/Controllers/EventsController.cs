@@ -28,6 +28,10 @@ public class EventsController : Controller
     }
 
     // GET: Admin/Events
+    /// <summary>
+    /// list events. Roles: Admin, Editor.
+    /// </summary>
+    [SwaggerOperation(Summary = "list events. Roles: Admin, Editor.")]
     public async Task<IActionResult> Index(string? searchTerm, bool showUnpublished = true, bool showUpcomingOnly = false)
     {
         IEnumerable<Event> events;
@@ -57,6 +61,10 @@ public class EventsController : Controller
     }
 
     // GET: Admin/Events/Create
+    /// <summary>
+    /// create event. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "create event. Anti-forgery required.")]
     public IActionResult Create()
     {
         SetTinyMceApiKey();
@@ -74,6 +82,10 @@ public class EventsController : Controller
     // POST: Admin/Events/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// create event. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "create event. Anti-forgery required.")]
     public async Task<IActionResult> Create(EventViewModel model)
     {
         // Log all ModelState errors for debugging
@@ -153,6 +165,10 @@ public class EventsController : Controller
     }
 
     // GET: Admin/Events/Edit/5
+    /// <summary>
+    /// update event. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "update event. Anti-forgery required.")]
     public async Task<IActionResult> Edit(int id)
     {
         SetTinyMceApiKey();
@@ -189,6 +205,10 @@ public class EventsController : Controller
     // POST: Admin/Events/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// update event. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "update event. Anti-forgery required.")]
     public async Task<IActionResult> Edit(int id, EventViewModel model)
     {
         if (id != model.Id)
@@ -288,6 +308,10 @@ public class EventsController : Controller
     // POST: Admin/Events/Delete/5
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// delete event. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "delete event. Anti-forgery required.")]
     public async Task<IActionResult> Delete(int id)
     {
         var eventItem = await _eventService.GetEventByIdAsync(id);

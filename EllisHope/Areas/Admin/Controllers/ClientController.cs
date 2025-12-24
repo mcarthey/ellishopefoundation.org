@@ -26,6 +26,10 @@ public class ClientController : Controller
     }
 
     // GET: Admin/Client/Dashboard
+    /// <summary>
+    /// client admin dashboard.
+    /// </summary>
+    [SwaggerOperation(Summary = "client admin dashboard.")]
     public async Task<IActionResult> Dashboard()
     {
         var currentUser = await _userManager.GetUserAsync(User);
@@ -82,6 +86,10 @@ public class ClientController : Controller
     }
 
     // GET: Admin/Client/Progress
+    /// <summary>
+    /// client progress view.
+    /// </summary>
+    [SwaggerOperation(Summary = "client progress view.")]
     public async Task<IActionResult> Progress()
     {
         var currentUser = await _userManager.GetUserAsync(User);
@@ -109,12 +117,20 @@ public class ClientController : Controller
     }
 
     // GET: Admin/Client/Resources
+    /// <summary>
+    /// client resources.
+    /// </summary>
+    [SwaggerOperation(Summary = "client resources.")]
     public IActionResult Resources()
     {
         return View();
     }
 
     // GET: Admin/Client/MyProfile
+    /// <summary>
+    /// view/edit client profile.
+    /// </summary>
+    [SwaggerOperation(Summary = "view/edit client profile.")]
     public async Task<IActionResult> MyProfile()
     {
         // Redirect to the standard profile page

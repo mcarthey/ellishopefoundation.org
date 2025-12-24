@@ -1,4 +1,4 @@
-﻿using EllisHope.Services;
+using EllisHope.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EllisHope.Controllers;
@@ -15,6 +15,10 @@ public class CausesController : Controller
     }
 
     // GET: Causes/list
+    /// <summary>
+    /// list layout
+    /// </summary>
+    [SwaggerOperation(Summary = "list layout")]
     public async Task<IActionResult> list(string? search)
     {
         IEnumerable<Models.Domain.Cause> causes;
@@ -33,6 +37,10 @@ public class CausesController : Controller
     }
 
     // GET: Causes/details/{slug}
+    /// <summary>
+    /// cause details
+    /// </summary>
+    [SwaggerOperation(Summary = "cause details")]
     public async Task<IActionResult> details(string? slug)
     {
         if (string.IsNullOrEmpty(slug))
@@ -59,6 +67,10 @@ public class CausesController : Controller
     }
 
     // GET: Causes/grid
+    /// <summary>
+    /// grid layout
+    /// </summary>
+    [SwaggerOperation(Summary = "grid layout")]
     public async Task<IActionResult> grid()
     {
         var causes = await _causeService.GetActiveCausesAsync();

@@ -29,6 +29,10 @@ public class ApplicationsController : Controller
     #region List/Index Actions
 
     // GET: Admin/Applications
+    /// <summary>
+    /// list applications; optional `status`, `searchTerm` query parameters. Roles: Admin, BoardMember.
+    /// </summary>
+    [SwaggerOperation(Summary = "list applications; optional `status`, `searchTerm` query parameters. Roles: Admin, BoardMember.")]
     public async Task<IActionResult> Index(ApplicationStatus? status, string? searchTerm)
     {
         var currentUser = await _userManager.GetUserAsync(User);
@@ -77,6 +81,10 @@ public class ApplicationsController : Controller
     }
 
     // GET: Admin/Applications/NeedingReview
+    /// <summary>
+    /// list apps needing current user's review.
+    /// </summary>
+    [SwaggerOperation(Summary = "list apps needing current user's review.")]
     public async Task<IActionResult> NeedingReview()
     {
         var currentUser = await _userManager.GetUserAsync(User);
@@ -116,6 +124,10 @@ public class ApplicationsController : Controller
     #region Details/Review Actions
 
     // GET: Admin/Applications/Details/5
+    /// <summary>
+    /// app details with votes/comments. Roles: Admin, BoardMember.
+    /// </summary>
+    [SwaggerOperation(Summary = "app details with votes/comments. Roles: Admin, BoardMember.")]
     public async Task<IActionResult> Details(int id)
     {
         var application = await _applicationService.GetApplicationByIdAsync(id);
@@ -156,6 +168,10 @@ public class ApplicationsController : Controller
     }
 
     // GET: Admin/Applications/Review/5 (same as Details but emphasized for voting)
+    /// <summary>
+    /// alias to Details for review.
+    /// </summary>
+    [SwaggerOperation(Summary = "alias to Details for review.")]
     public async Task<IActionResult> Review(int id)
     {
         return await Details(id);
@@ -169,6 +185,10 @@ public class ApplicationsController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "BoardMember")]
+    /// <summary>
+    /// cast vote (VoteFormViewModel: ApplicationId, Decision, Reasoning, ConfidenceLevel). Roles: BoardMember. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "cast vote (VoteFormViewModel: ApplicationId, Decision, Reasoning, ConfidenceLevel). Roles: BoardMember. Anti-forgery required.")]
     public async Task<IActionResult> Vote(VoteFormViewModel model)
     {
         if (!ModelState.IsValid)
@@ -209,6 +229,10 @@ public class ApplicationsController : Controller
     // POST: Admin/Applications/Comment
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// add comment (CommentFormViewModel: ApplicationId, Content, IsPrivate, ...). Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "add comment (CommentFormViewModel: ApplicationId, Content, IsPrivate, ...). Anti-forgery required.")]
     public async Task<IActionResult> Comment(CommentFormViewModel model)
     {
         if (!ModelState.IsValid)
@@ -249,6 +273,10 @@ public class ApplicationsController : Controller
 
     // GET: Admin/Applications/Approve/5
     [Authorize(Roles = "Admin")]
+    /// <summary>
+    /// show approve form. Roles: Admin.
+    /// </summary>
+    [SwaggerOperation(Summary = "show approve form. Roles: Admin.")]
     public async Task<IActionResult> Approve(int id)
     {
         var application = await _applicationService.GetApplicationByIdAsync(id);
@@ -281,6 +309,10 @@ public class ApplicationsController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Admin")]
+    /// <summary>
+    /// approve application (ApproveApplicationViewModel). Roles: Admin. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "approve application (ApproveApplicationViewModel). Roles: Admin. Anti-forgery required.")]
     public async Task<IActionResult> Approve(ApproveApplicationViewModel model)
     {
         if (!ModelState.IsValid)
@@ -317,6 +349,10 @@ public class ApplicationsController : Controller
 
     // GET: Admin/Applications/Reject/5
     [Authorize(Roles = "Admin")]
+    /// <summary>
+    /// show reject form. Roles: Admin.
+    /// </summary>
+    [SwaggerOperation(Summary = "show reject form. Roles: Admin.")]
     public async Task<IActionResult> Reject(int id)
     {
         var application = await _applicationService.GetApplicationByIdAsync(id);
@@ -337,6 +373,10 @@ public class ApplicationsController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Admin")]
+    /// <summary>
+    /// reject application (RejectApplicationViewModel). Roles: Admin. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "reject application (RejectApplicationViewModel). Roles: Admin. Anti-forgery required.")]
     public async Task<IActionResult> Reject(RejectApplicationViewModel model)
     {
         if (!ModelState.IsValid)
@@ -370,6 +410,10 @@ public class ApplicationsController : Controller
     }
 
     // GET: Admin/Applications/RequestInfo/5
+    /// <summary>
+    /// show request info form.
+    /// </summary>
+    [SwaggerOperation(Summary = "show request info form.")]
     public async Task<IActionResult> RequestInfo(int id)
     {
         var application = await _applicationService.GetApplicationByIdAsync(id);
@@ -389,6 +433,10 @@ public class ApplicationsController : Controller
     // POST: Admin/Applications/RequestInfo
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// request info (RequestInformationViewModel). Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "request info (RequestInformationViewModel). Anti-forgery required.")]
     public async Task<IActionResult> RequestInfo(RequestInformationViewModel model)
     {
         if (!ModelState.IsValid)
@@ -425,6 +473,10 @@ public class ApplicationsController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Admin")]
+    /// <summary>
+    /// start review workflow (Admin). Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "start review workflow (Admin). Anti-forgery required.")]
     public async Task<IActionResult> StartReview(int id)
     {
         var (succeeded, errors) = await _applicationService.StartReviewProcessAsync(id);
@@ -446,6 +498,10 @@ public class ApplicationsController : Controller
     #region Helper Actions
 
     // GET: Admin/Applications/Statistics
+    /// <summary>
+    /// view statistics summary.
+    /// </summary>
+    [SwaggerOperation(Summary = "view statistics summary.")]
     public async Task<IActionResult> Statistics()
     {
         var stats = await _applicationService.GetApplicationStatisticsAsync();

@@ -29,6 +29,10 @@ public class ProfileController : Controller
     }
 
     // GET: Admin/Profile
+    /// <summary>
+    /// TODO: Describe GET /Admin/Profile
+    /// </summary>
+    [SwaggerOperation(Summary = "TODO: Describe GET /Admin/Profile")]
     public async Task<IActionResult> Index()
     {
         var user = await _userManager.GetUserAsync(User);
@@ -65,6 +69,10 @@ public class ProfileController : Controller
     }
 
     // GET: Admin/Profile/Edit
+    /// <summary>
+    /// update profile information. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "update profile information. Anti-forgery required.")]
     public async Task<IActionResult> Edit()
     {
         var user = await _userManager.GetUserAsync(User);
@@ -96,6 +104,10 @@ public class ProfileController : Controller
     // POST: Admin/Profile/Edit
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// update profile information. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "update profile information. Anti-forgery required.")]
     public async Task<IActionResult> Edit(EditProfileViewModel model)
     {
         var user = await _userManager.GetUserAsync(User);
@@ -190,6 +202,10 @@ public class ProfileController : Controller
     }
 
     // GET: Admin/Profile/ChangePassword
+    /// <summary>
+    /// change password. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "change password. Anti-forgery required.")]
     public IActionResult ChangePassword()
     {
         return View();
@@ -198,6 +214,10 @@ public class ProfileController : Controller
     // POST: Admin/Profile/ChangePassword
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// change password. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "change password. Anti-forgery required.")]
     public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
     {
         if (!ModelState.IsValid)

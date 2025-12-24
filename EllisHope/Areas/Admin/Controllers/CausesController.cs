@@ -31,6 +31,10 @@ public class CausesController : Controller
     }
 
     // GET: Admin/Causes
+    /// <summary>
+    /// list causes. Roles: Admin, Editor.
+    /// </summary>
+    [SwaggerOperation(Summary = "list causes. Roles: Admin, Editor.")]
     public async Task<IActionResult> Index(string? searchTerm, bool showUnpublished = true, bool showActiveOnly = false, string? categoryFilter = null)
     {
         IEnumerable<Cause> causes;
@@ -65,6 +69,10 @@ public class CausesController : Controller
     }
 
     // GET: Admin/Causes/Create
+    /// <summary>
+    /// create cause. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "create cause. Anti-forgery required.")]
     public IActionResult Create()
     {
         SetTinyMceApiKey();
@@ -82,6 +90,10 @@ public class CausesController : Controller
     // POST: Admin/Causes/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// create cause. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "create cause. Anti-forgery required.")]
     public async Task<IActionResult> Create(CauseViewModel model)
     {
         // Log all ModelState errors for debugging
@@ -160,6 +172,10 @@ public class CausesController : Controller
     }
 
     // GET: Admin/Causes/Edit/5
+    /// <summary>
+    /// update cause. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "update cause. Anti-forgery required.")]
     public async Task<IActionResult> Edit(int id)
     {
         SetTinyMceApiKey();
@@ -195,6 +211,10 @@ public class CausesController : Controller
     // POST: Admin/Causes/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// update cause. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "update cause. Anti-forgery required.")]
     public async Task<IActionResult> Edit(int id, CauseViewModel model)
     {
         if (id != model.Id)
@@ -287,6 +307,10 @@ public class CausesController : Controller
     // POST: Admin/Causes/Delete/5
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// delete cause. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "delete cause. Anti-forgery required.")]
     public async Task<IActionResult> Delete(int id)
     {
         var cause = await _causeService.GetCauseByIdAsync(id);

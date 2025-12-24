@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using EllisHope.Services;
 
 namespace EllisHope.Controllers;
@@ -13,6 +13,10 @@ public class BlogController : Controller
     }
 
     // GET: Blog/Classic
+    /// <summary>
+    /// classic layout listing.
+    /// </summary>
+    [SwaggerOperation(Summary = "classic layout listing.")]
     public async Task<IActionResult> classic(string? search, int? category)
     {
         IEnumerable<Models.Domain.BlogPost> posts;
@@ -38,6 +42,10 @@ public class BlogController : Controller
     }
 
     // GET: Blog/Details/slug
+    /// <summary>
+    /// details view (by slug normally).
+    /// </summary>
+    [SwaggerOperation(Summary = "details view (by slug normally).")]
     public async Task<IActionResult> details(string slug)
     {
         if (string.IsNullOrEmpty(slug))
@@ -72,6 +80,10 @@ public class BlogController : Controller
         return View(post);
     }
 
+    /// <summary>
+    /// grid layout listing.
+    /// </summary>
+    [SwaggerOperation(Summary = "grid layout listing.")]
     public IActionResult grid()
     {
         return View();

@@ -1,0 +1,55 @@
+name: API Docs & OpenAPI Export
+
+on:
+  push:
+    paths:
+      - 'EllisHope/**'
+      - 'Areas/**'
+      - 'docs/**'
+      - '.github/workflows/**'
+  pull_request:
+    paths:
+      - 'EllisHope/**'
+      - 'Areas/**'
+      - 'docs/**'
+      - '.github/workflows/**'
+
+jobs:
+  generate-api-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Build solution (with XML docs)
+        run: dotnet build EllisHope.sln --configuration Release /p:DocumentationFile=bin/Release/net10.0/EllisHope.xml
+
+      - name: Run the app to export OpenAPI JSON
+        run: |
+          dotnet tool install --global Swashbuckle.AspNetCore.Cli
+          export PATH="$PATH:$HOME/.dotnet/tools"
+          dotnet swagger tofile --output docs/openapi-ci.json bin/Release/net10.0/EllisHope.dll v1
+
+      - name: Convert OpenAPI JSON to Markdown (widdershins)
+        run: |
+          npm install -g widdershins
+          widdershins docs/openapi-ci.json -o docs/API_REFERENCE.md
+
+      - name: Validate all controller methods have XML comments
+        run: |
+          if grep -r --include=*.cs "public " EllisHope/Areas/Admin/Controllers EllisHope/Controllers | grep -v "///"; then
+            echo "Some public controller methods are missing XML comments. Please add <summary> docs for Swagger."
+            exit 1
+          fi
+
+      - name: Upload OpenAPI and Markdown docs as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-docs
+          path: |
+            docs/openapi-ci.json
+            docs/API_REFERENCE.md

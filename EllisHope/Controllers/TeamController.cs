@@ -1,4 +1,4 @@
-﻿using EllisHope.Data;
+using EllisHope.Data;
 using EllisHope.Models.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +15,10 @@ public class TeamController : Controller
     }
 
     // GET: Team/v1 - List all board members
+    /// <summary>
+    /// TODO: Describe GET /Team/v1
+    /// </summary>
+    [SwaggerOperation(Summary = "TODO: Describe GET /Team/v1")]
     public async Task<IActionResult> v1()
     {
         var boardMembers = await _context.Users
@@ -27,6 +31,10 @@ public class TeamController : Controller
     }
 
     // GET: Team/details/{id} - Individual board member details
+    /// <summary>
+    /// team member details
+    /// </summary>
+    [SwaggerOperation(Summary = "team member details")]
     public async Task<IActionResult> details(string id)
     {
         if (string.IsNullOrEmpty(id))
@@ -46,6 +54,10 @@ public class TeamController : Controller
     }
 
     // Keeping v2 for potential future use
+    /// <summary>
+    /// TODO: Describe GET /Team/v2
+    /// </summary>
+    [SwaggerOperation(Summary = "TODO: Describe GET /Team/v2")]
     public IActionResult v2()
     {
         return View();

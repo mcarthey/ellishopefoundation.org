@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using EllisHope.Services;
 
 namespace EllisHope.Controllers;
@@ -13,6 +13,10 @@ public class EventController : Controller
     }
 
     // GET: Event/List
+    /// <summary>
+    /// list layout
+    /// </summary>
+    [SwaggerOperation(Summary = "list layout")]
     public async Task<IActionResult> list(string? search)
     {
         IEnumerable<Models.Domain.Event> events;
@@ -31,6 +35,10 @@ public class EventController : Controller
     }
 
     // GET: Event/Details/slug
+    /// <summary>
+    /// details by slug
+    /// </summary>
+    [SwaggerOperation(Summary = "details by slug")]
     public async Task<IActionResult> details(string slug)
     {
         if (string.IsNullOrEmpty(slug))
@@ -55,6 +63,10 @@ public class EventController : Controller
         return View(eventItem);
     }
 
+    /// <summary>
+    /// grid layout
+    /// </summary>
+    [SwaggerOperation(Summary = "grid layout")]
     public IActionResult grid()
     {
         return View();

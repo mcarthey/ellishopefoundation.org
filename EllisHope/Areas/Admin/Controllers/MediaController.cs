@@ -25,6 +25,10 @@ public class MediaController : Controller
     }
 
     // GET: Admin/Media
+    /// <summary>
+    /// media index/list. Roles: Admin, Editor.
+    /// </summary>
+    [SwaggerOperation(Summary = "media index/list. Roles: Admin, Editor.")]
     public async Task<IActionResult> Index(string? searchTerm, MediaCategory? category, MediaSource? source)
     {
         IEnumerable<Media> media;
@@ -53,6 +57,10 @@ public class MediaController : Controller
     }
 
     // GET: Admin/Media/Upload
+    /// <summary>
+    /// upload file (multipart form). Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "upload file (multipart form). Anti-forgery required.")]
     public IActionResult Upload()
     {
         return View(new MediaUploadViewModel());
@@ -61,6 +69,10 @@ public class MediaController : Controller
     // POST: Admin/Media/Upload
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// upload file (multipart form). Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "upload file (multipart form). Anti-forgery required.")]
     public async Task<IActionResult> Upload(MediaUploadViewModel model)
     {
         if (!ModelState.IsValid)
@@ -91,6 +103,10 @@ public class MediaController : Controller
     }
 
     // GET: Admin/Media/UnsplashSearch
+    /// <summary>
+    /// perform Unsplash search.
+    /// </summary>
+    [SwaggerOperation(Summary = "perform Unsplash search.")]
     public IActionResult UnsplashSearch()
     {
         return View(new UnsplashSearchViewModel());
@@ -98,6 +114,10 @@ public class MediaController : Controller
 
     // POST: Admin/Media/UnsplashSearch
     [HttpPost]
+    /// <summary>
+    /// perform Unsplash search.
+    /// </summary>
+    [SwaggerOperation(Summary = "perform Unsplash search.")]
     public async Task<IActionResult> UnsplashSearch(string query, int page = 1)
     {
         if (string.IsNullOrWhiteSpace(query))
@@ -129,6 +149,10 @@ public class MediaController : Controller
     // POST: Admin/Media/ImportFromUnsplash
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// import image from Unsplash.
+    /// </summary>
+    [SwaggerOperation(Summary = "import image from Unsplash.")]
     public async Task<IActionResult> ImportFromUnsplash(ImportUnsplashPhotoViewModel model)
     {
         if (!ModelState.IsValid)
@@ -159,6 +183,10 @@ public class MediaController : Controller
     }
 
     // GET: Admin/Media/Edit/5
+    /// <summary>
+    /// update metadata. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "update metadata. Anti-forgery required.")]
     public async Task<IActionResult> Edit(int id)
     {
         var media = await _mediaService.GetMediaByIdAsync(id);
@@ -174,6 +202,10 @@ public class MediaController : Controller
     // POST: Admin/Media/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// update metadata. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "update metadata. Anti-forgery required.")]
     public async Task<IActionResult> Edit(int id, MediaEditViewModel model)
     {
         if (id != model.Id)
@@ -211,6 +243,10 @@ public class MediaController : Controller
     // POST: Admin/Media/Delete/5
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// delete media. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "delete media. Anti-forgery required.")]
     public async Task<IActionResult> Delete(int id, bool force = false)
     {
         try
@@ -236,6 +272,10 @@ public class MediaController : Controller
     }
 
     // GET: Admin/Media/Usages/5
+    /// <summary>
+    /// show usages for a media item.
+    /// </summary>
+    [SwaggerOperation(Summary = "show usages for a media item.")]
     public async Task<IActionResult> Usages(int id)
     {
         var media = await _mediaService.GetMediaByIdAsync(id);
@@ -252,6 +292,10 @@ public class MediaController : Controller
 
     // API endpoint for AJAX requests
     [HttpGet]
+    /// <summary>
+    /// JSON API for media listing (may require auth).
+    /// </summary>
+    [SwaggerOperation(Summary = "JSON API for media listing (may require auth).")]
     public async Task<IActionResult> GetMediaJson(MediaCategory? category)
     {
         var media = await _mediaService.GetAllMediaAsync(category);
@@ -270,6 +314,10 @@ public class MediaController : Controller
 
     // GET: Admin/Media/GetUnusedMedia
     [HttpGet]
+    /// <summary>
+    /// list unused media (Admin tool).
+    /// </summary>
+    [SwaggerOperation(Summary = "list unused media (Admin tool).")]
     public async Task<IActionResult> GetUnusedMedia()
     {
         var allMedia = await _mediaService.GetAllMediaAsync();
@@ -295,6 +343,10 @@ public class MediaController : Controller
 
     // GET: Admin/Media/GetDuplicates
     [HttpGet]
+    /// <summary>
+    /// list duplicate media (Admin tool).
+    /// </summary>
+    [SwaggerOperation(Summary = "list duplicate media (Admin tool).")]
     public async Task<IActionResult> GetDuplicates()
     {
         var allMedia = await _mediaService.GetAllMediaAsync();
@@ -320,6 +372,10 @@ public class MediaController : Controller
     // POST: Admin/Media/RemoveDuplicates
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// remove duplicates.
+    /// </summary>
+    [SwaggerOperation(Summary = "remove duplicates.")]
     public async Task<IActionResult> RemoveDuplicates()
     {
         try
@@ -359,6 +415,10 @@ public class MediaController : Controller
     // POST: Admin/Media/DeleteAllUnused
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// remove unused media (Admin tool).
+    /// </summary>
+    [SwaggerOperation(Summary = "remove unused media (Admin tool).")]
     public async Task<IActionResult> DeleteAllUnused()
     {
         try

@@ -26,6 +26,10 @@ public class MyApplicationsController : Controller
     }
 
     // GET: MyApplications
+    /// <summary>
+    /// index of user's applications (alias)
+    /// </summary>
+    [SwaggerOperation(Summary = "index of user's applications (alias)")]
     public async Task<IActionResult> Index()
     {
         var currentUser = await _userManager.GetUserAsync(User);
@@ -60,6 +64,10 @@ public class MyApplicationsController : Controller
     }
 
     // GET: MyApplications/Details/5
+    /// <summary>
+    /// applicant can view their application.
+    /// </summary>
+    [SwaggerOperation(Summary = "applicant can view their application.")]
     public async Task<IActionResult> Details(int id)
     {
         var application = await _applicationService.GetApplicationByIdAsync(id, includeVotes: false);
@@ -91,6 +99,10 @@ public class MyApplicationsController : Controller
     }
 
     // GET: MyApplications/Create
+    /// <summary>
+    /// post form data for steps; supports draft saving and final submit. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "post form data for steps; supports draft saving and final submit. Anti-forgery required.")]
     public IActionResult Create()
     {
         var viewModel = new ApplicationCreateViewModel
@@ -104,6 +116,10 @@ public class MyApplicationsController : Controller
     // POST: MyApplications/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// post form data for steps; supports draft saving and final submit. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "post form data for steps; supports draft saving and final submit. Anti-forgery required.")]
     public async Task<IActionResult> Create(ApplicationCreateViewModel model)
     {
         var currentUser = await _userManager.GetUserAsync(User);
@@ -227,6 +243,10 @@ public class MyApplicationsController : Controller
     }
 
     // GET: MyApplications/Edit/5
+    /// <summary>
+    /// edit draft.
+    /// </summary>
+    [SwaggerOperation(Summary = "edit draft.")]
     public async Task<IActionResult> Edit(int id, int? step)
     {
         var application = await _applicationService.GetApplicationByIdAsync(id, includeVotes: false, includeComments: false);
@@ -261,6 +281,10 @@ public class MyApplicationsController : Controller
     // POST: MyApplications/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// edit draft.
+    /// </summary>
+    [SwaggerOperation(Summary = "edit draft.")]
     public async Task<IActionResult> Edit(int id, ApplicationEditViewModel model, string? action)
     {
         if (id != model.Id)
@@ -551,6 +575,10 @@ public class MyApplicationsController : Controller
     // POST: MyApplications/Withdraw/5
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// withdraw an application.
+    /// </summary>
+    [SwaggerOperation(Summary = "withdraw an application.")]
     public async Task<IActionResult> Withdraw(int id, string reason)
     {
         var currentUser = await _userManager.GetUserAsync(User);

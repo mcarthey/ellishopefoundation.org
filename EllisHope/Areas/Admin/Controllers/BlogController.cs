@@ -29,6 +29,10 @@ public class BlogController : Controller
     }
 
     // GET: Admin/Blog
+    /// <summary>
+    /// list/filter posts (`searchTerm`, `categoryFilter`, `showUnpublished`). Roles: Admin, Editor.
+    /// </summary>
+    [SwaggerOperation(Summary = "list/filter posts (`searchTerm`, `categoryFilter`, `showUnpublished`). Roles: Admin, Editor.")]
     public async Task<IActionResult> Index(string? searchTerm, int? categoryFilter, bool showUnpublished = true)
     {
         IEnumerable<BlogPost> posts;
@@ -58,6 +62,10 @@ public class BlogController : Controller
     }
 
     // GET: Admin/Blog/Create
+    /// <summary>
+    /// create post (BlogPostViewModel). Anti-forgery required. Roles: Admin, Editor.
+    /// </summary>
+    [SwaggerOperation(Summary = "create post (BlogPostViewModel). Anti-forgery required. Roles: Admin, Editor.")]
     public async Task<IActionResult> Create()
     {
         SetTinyMceApiKey();
@@ -74,6 +82,10 @@ public class BlogController : Controller
     // POST: Admin/Blog/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// create post (BlogPostViewModel). Anti-forgery required. Roles: Admin, Editor.
+    /// </summary>
+    [SwaggerOperation(Summary = "create post (BlogPostViewModel). Anti-forgery required. Roles: Admin, Editor.")]
     public async Task<IActionResult> Create(BlogPostViewModel model)
     {
         if (ModelState.IsValid)
@@ -160,6 +172,10 @@ public class BlogController : Controller
     }
 
     // GET: Admin/Blog/Edit/5
+    /// <summary>
+    /// update post. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "update post. Anti-forgery required.")]
     public async Task<IActionResult> Edit(int id)
     {
         SetTinyMceApiKey();
@@ -193,6 +209,10 @@ public class BlogController : Controller
     // POST: Admin/Blog/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// update post. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "update post. Anti-forgery required.")]
     public async Task<IActionResult> Edit(int id, BlogPostViewModel model)
     {
         if (id != model.Id)
@@ -269,6 +289,10 @@ public class BlogController : Controller
     // POST: Admin/Blog/Delete/5
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// delete post. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "delete post. Anti-forgery required.")]
     public async Task<IActionResult> Delete(int id)
     {
         var post = await _blogService.GetPostByIdAsync(id);

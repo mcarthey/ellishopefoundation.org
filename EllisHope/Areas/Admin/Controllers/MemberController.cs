@@ -26,6 +26,10 @@ public class MemberController : Controller
     }
 
     // GET: Admin/Member/Dashboard
+    /// <summary>
+    /// member admin dashboard.
+    /// </summary>
+    [SwaggerOperation(Summary = "member admin dashboard.")]
     public async Task<IActionResult> Dashboard()
     {
         var currentUser = await _userManager.GetUserAsync(User);
@@ -47,18 +51,30 @@ public class MemberController : Controller
     }
 
     // GET: Admin/Member/Events
+    /// <summary>
+    /// member events listing.
+    /// </summary>
+    [SwaggerOperation(Summary = "member events listing.")]
     public IActionResult Events()
     {
         return View();
     }
 
     // GET: Admin/Member/Volunteer
+    /// <summary>
+    /// volunteer opportunities and management.
+    /// </summary>
+    [SwaggerOperation(Summary = "volunteer opportunities and management.")]
     public IActionResult Volunteer()
     {
         return View();
     }
 
     // GET: Admin/Member/MyProfile
+    /// <summary>
+    /// member profile.
+    /// </summary>
+    [SwaggerOperation(Summary = "member profile.")]
     public async Task<IActionResult> MyProfile()
     {
         // Redirect to the standard profile page

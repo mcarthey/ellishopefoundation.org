@@ -18,6 +18,10 @@ public class ErrorController : Controller
 
     // GET: Error (generic)
     [Route("Error")]
+    /// <summary>
+    /// TODO: Describe GET /Error
+    /// </summary>
+    [SwaggerOperation(Summary = "TODO: Describe GET /Error")]
     public IActionResult Index()
     {
         return View("Error", CreateErrorViewModel(500, "An error occurred"));
@@ -25,6 +29,10 @@ public class ErrorController : Controller
 
     // GET: Error/404
     [Route("Error/404")]
+    /// <summary>
+    /// TODO: Describe GET /Error/NotFound404
+    /// </summary>
+    [SwaggerOperation(Summary = "TODO: Describe GET /Error/NotFound404")]
     public IActionResult NotFound404(string? correlationId)
     {
         Response.StatusCode = 404;
@@ -33,6 +41,10 @@ public class ErrorController : Controller
 
     // GET: Error/500
     [Route("Error/500")]
+    /// <summary>
+    /// TODO: Describe GET /Error/ServerError
+    /// </summary>
+    [SwaggerOperation(Summary = "TODO: Describe GET /Error/ServerError")]
     public IActionResult ServerError(string? correlationId)
     {
         Response.StatusCode = 500;
@@ -50,6 +62,10 @@ public class ErrorController : Controller
 
     // GET: Error/403
     [Route("Error/403")]
+    /// <summary>
+    /// TODO: Describe GET /Error/Forbidden
+    /// </summary>
+    [SwaggerOperation(Summary = "TODO: Describe GET /Error/Forbidden")]
     public IActionResult Forbidden(string? correlationId)
     {
         Response.StatusCode = 403;
@@ -58,6 +74,10 @@ public class ErrorController : Controller
 
     // GET: Error/{statusCode}
     [Route("Error/{statusCode:int}")]
+    /// <summary>
+    /// TODO: Describe GET /Error/HttpStatusCodeHandler
+    /// </summary>
+    [SwaggerOperation(Summary = "TODO: Describe GET /Error/HttpStatusCodeHandler")]
     public IActionResult HttpStatusCodeHandler(int statusCode, string? correlationId)
     {
         Response.StatusCode = statusCode;

@@ -5,11 +5,24 @@ using EllisHope.Services;
 using EllisHope.Models;
 using EllisHope.Models.Domain;
 using EllisHope.Middleware;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Add Swagger/OpenAPI support
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new() { Title = "Ellis Hope API", Version = "v1" });
+    // Enable XML comments for Swagger
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+        options.IncludeXmlComments(xmlPath);
+});
 
 // Add DbContext - Skip if Testing environment (will be configured by test factory)
 if (!builder.Environment.IsEnvironment("Testing"))
@@ -88,6 +101,23 @@ builder.Services.AddScoped<IDatabaseLoggerService, DatabaseLoggerService>();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
   
 var app = builder.Build();
+
+// Enable Swagger in all environments (or restrict to dev as needed)
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new() { Title = "Ellis Hope API", Version = "v1" });
+    // Optional: Enable XML comments for richer docs
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
+});
+
+app.UseSwagger();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Ellis Hope API v1");
+    options.RoutePrefix = "swagger";
+});
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

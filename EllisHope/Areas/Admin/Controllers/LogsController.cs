@@ -26,6 +26,10 @@ public class LogsController : Controller
     }
 
     // GET: Admin/Logs
+    /// <summary>
+    /// TODO: Describe GET /Admin/Logs
+    /// </summary>
+    [SwaggerOperation(Summary = "TODO: Describe GET /Admin/Logs")]
     public async Task<IActionResult> Index(
         AppLogLevel? minLevel,
         AppLogLevel? maxLevel,
@@ -65,6 +69,10 @@ public class LogsController : Controller
     }
 
     // GET: Admin/Logs/Details/5
+    /// <summary>
+    /// TODO: Describe GET /Admin/Logs/Details/{id}
+    /// </summary>
+    [SwaggerOperation(Summary = "TODO: Describe GET /Admin/Logs/Details/{id}")]
     public async Task<IActionResult> Details(int id)
     {
         var log = await _loggerService.GetLogByIdAsync(id);
@@ -79,6 +87,10 @@ public class LogsController : Controller
     // POST: Admin/Logs/MarkAsReviewed/5
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// TODO: Describe POST /Admin/Logs/MarkAsReviewed/{id}
+    /// </summary>
+    [SwaggerOperation(Summary = "TODO: Describe POST /Admin/Logs/MarkAsReviewed/{id}")]
     public async Task<IActionResult> MarkAsReviewed(int id, string? reviewNotes)
     {
         var currentUser = await _userManager.GetUserAsync(User);
@@ -96,6 +108,10 @@ public class LogsController : Controller
     // POST: Admin/Logs/Purge
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// TODO: Describe POST /Admin/Logs/Purge
+    /// </summary>
+    [SwaggerOperation(Summary = "TODO: Describe POST /Admin/Logs/Purge")]
     public async Task<IActionResult> Purge(int daysToKeep = 90, AppLogLevel? minLevelToKeep = null)
     {
         var deletedCount = await _loggerService.PurgeOldLogsAsync(daysToKeep, minLevelToKeep);
@@ -105,6 +121,10 @@ public class LogsController : Controller
     }
 
     // GET: Admin/Logs/Search
+    /// <summary>
+    /// TODO: Describe POST /Admin/Logs/Search
+    /// </summary>
+    [SwaggerOperation(Summary = "TODO: Describe POST /Admin/Logs/Search")]
     public async Task<IActionResult> Search(string correlationId)
     {
         if (string.IsNullOrWhiteSpace(correlationId))
@@ -130,6 +150,10 @@ public class LogsController : Controller
     }
 
     // GET: Admin/Logs/Statistics
+    /// <summary>
+    /// TODO: Describe POST /Admin/Logs/Statistics
+    /// </summary>
+    [SwaggerOperation(Summary = "TODO: Describe POST /Admin/Logs/Statistics")]
     public async Task<IActionResult> Statistics(DateTime? fromDate, DateTime? toDate)
     {
         var from = fromDate ?? DateTime.UtcNow.AddDays(-30);

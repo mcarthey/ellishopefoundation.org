@@ -31,6 +31,10 @@ public class PagesController : Controller
     }
 
     // GET: Admin/Pages
+    /// <summary>
+    /// list pages (Admin, Editor).
+    /// </summary>
+    [SwaggerOperation(Summary = "list pages (Admin, Editor).")]
     public async Task<IActionResult> Index(string? searchTerm)
     {
         var pages = await _pageService.GetAllPagesAsync();
@@ -52,6 +56,10 @@ public class PagesController : Controller
     }
 
     // GET: Admin/Pages/Edit/5
+    /// <summary>
+    /// edit page (sections, images).
+    /// </summary>
+    [SwaggerOperation(Summary = "edit page (sections, images).")]
     public async Task<IActionResult> Edit(int id)
     {
         SetTinyMceApiKey();
@@ -96,6 +104,10 @@ public class PagesController : Controller
     // POST: Admin/Pages/UpdateSection
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// update section content. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "update section content. Anti-forgery required.")]
     public async Task<IActionResult> UpdateContent(int pageId, string sectionKey, string content, string contentType = "RichText")
     {
         try
@@ -116,6 +128,10 @@ public class PagesController : Controller
     // POST: Admin/Pages/UpdateImage
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// update image reference. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "update image reference. Anti-forgery required.")]
     public async Task<IActionResult> UpdateImage(int pageId, string imageKey, int mediaId)
     {
         try
@@ -136,6 +152,10 @@ public class PagesController : Controller
     // POST: Admin/Pages/RemoveImage
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// remove image from page. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "remove image from page. Anti-forgery required.")]
     public async Task<IActionResult> RemoveImage(int pageId, string imageKey)
     {
         try

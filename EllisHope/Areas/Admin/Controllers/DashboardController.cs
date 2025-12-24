@@ -31,6 +31,10 @@ public class DashboardController : Controller
         _pageService = pageService;
     }
 
+    /// <summary>
+    /// TODO: Describe GET /Admin/Dashboard
+    /// </summary>
+    [SwaggerOperation(Summary = "TODO: Describe GET /Admin/Dashboard")]
     public async Task<IActionResult> Index()
     {
         ViewData["UserName"] = User.Identity?.Name ?? "Admin";

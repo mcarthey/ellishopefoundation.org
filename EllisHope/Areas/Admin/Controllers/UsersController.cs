@@ -26,6 +26,10 @@ public class UsersController : Controller
     }
 
     // GET: Admin/Users
+    /// <summary>
+    /// list users. Roles: Admin.
+    /// </summary>
+    [SwaggerOperation(Summary = "list users. Roles: Admin.")]
     public async Task<IActionResult> Index(string? searchTerm, UserRole? roleFilter, MembershipStatus? statusFilter, bool? activeFilter)
     {
         var users = await _userService.GetAllUsersAsync();
@@ -82,6 +86,10 @@ public class UsersController : Controller
     }
 
     // GET: Admin/Users/Details/5
+    /// <summary>
+    /// view user details.
+    /// </summary>
+    [SwaggerOperation(Summary = "view user details.")]
     public async Task<IActionResult> Details(string id)
     {
         if (string.IsNullOrEmpty(id))
@@ -144,6 +152,10 @@ public class UsersController : Controller
     }
 
     // GET: Admin/Users/Create
+    /// <summary>
+    /// create user, assign role. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "create user, assign role. Anti-forgery required.")]
     public async Task<IActionResult> Create()
     {
         var viewModel = new UserCreateViewModel();
@@ -153,6 +165,10 @@ public class UsersController : Controller
     // POST: Admin/Users/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// create user, assign role. Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "create user, assign role. Anti-forgery required.")]
     public async Task<IActionResult> Create(UserCreateViewModel model)
     {
         if (!ModelState.IsValid)
@@ -202,6 +218,10 @@ public class UsersController : Controller
     }
 
     // GET: Admin/Users/Edit/5
+    /// <summary>
+    /// TODO: Describe POST /Admin/Users/Edit
+    /// </summary>
+    [SwaggerOperation(Summary = "TODO: Describe POST /Admin/Users/Edit")]
     public async Task<IActionResult> Edit(string id)
     {
         if (string.IsNullOrEmpty(id))
@@ -255,6 +275,10 @@ public class UsersController : Controller
     // POST: Admin/Users/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// TODO: Describe POST /Admin/Users/Edit
+    /// </summary>
+    [SwaggerOperation(Summary = "TODO: Describe POST /Admin/Users/Edit")]
     public async Task<IActionResult> Edit(string id, UserEditViewModel model)
     {
         if (id != model.Id)
@@ -352,6 +376,10 @@ public class UsersController : Controller
     }
 
     // GET: Admin/Users/Delete/5
+    /// <summary>
+    /// delete user (confirmation flow).
+    /// </summary>
+    [SwaggerOperation(Summary = "delete user (confirmation flow).")]
     public async Task<IActionResult> Delete(string id)
     {
         if (string.IsNullOrEmpty(id))
@@ -380,6 +408,10 @@ public class UsersController : Controller
     // POST: Admin/Users/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
+    /// <summary>
+    /// delete confirmed action.
+    /// </summary>
+    [SwaggerOperation(Summary = "delete confirmed action.")]
     public async Task<IActionResult> DeleteConfirmed(string id)
     {
         var (succeeded, errors) = await _userService.DeleteUserAsync(id);
