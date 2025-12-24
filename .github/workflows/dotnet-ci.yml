@@ -35,7 +35,7 @@ jobs:
       run: dotnet build EllisHope.sln --configuration Release --no-restore
 
     - name: Run unit and integration tests with coverage
-      run: dotnet test EllisHope.sln --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" --results-directory ./coverage --filter "TestCategory!=E2E"
+      run: dotnet test EllisHope.sln --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" --results-directory ./coverage --filter "Category!=E2E"
 
     - name: Publish test results
       uses: dorny/test-reporter@v1

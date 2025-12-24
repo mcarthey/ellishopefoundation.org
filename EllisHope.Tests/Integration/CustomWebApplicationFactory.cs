@@ -52,7 +52,9 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlite(_connection);
+#if DEBUG
                 options.EnableSensitiveDataLogging();
+#endif
             });
 
             // Add test authentication scheme
