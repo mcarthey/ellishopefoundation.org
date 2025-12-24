@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using EllisHope.Services;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace EllisHope.Areas.Admin.Controllers;
 

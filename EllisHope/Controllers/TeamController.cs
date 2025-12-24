@@ -2,6 +2,7 @@ using EllisHope.Data;
 using EllisHope.Models.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace EllisHope.Controllers;
 

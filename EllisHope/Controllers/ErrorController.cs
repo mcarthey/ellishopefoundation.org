@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using EllisHope.Models.ViewModels;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace EllisHope.Controllers;
 

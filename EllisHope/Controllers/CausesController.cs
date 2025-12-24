@@ -1,5 +1,6 @@
 using EllisHope.Services;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace EllisHope.Controllers;
 

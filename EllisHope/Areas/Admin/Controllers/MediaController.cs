@@ -3,6 +3,7 @@ using EllisHope.Models.ViewModels;
 using EllisHope.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace EllisHope.Areas.Admin.Controllers;
 
