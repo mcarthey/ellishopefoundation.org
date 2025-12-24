@@ -48,23 +48,23 @@ public abstract class PlaywrightTestBase : IAsyncLifetime
         Page.Console += (_, msg) => Console.WriteLine($"Browser console: {msg.Text}");
     }
 
-    public async Task DisposeAsync()
+    public virtual async Task DisposeAsync()
     {
         if (Page != null)
         {
             await Page.CloseAsync();
         }
-        
+
         if (Context != null)
         {
             await Context.CloseAsync();
         }
-        
+
         if (Browser != null)
         {
             await Browser.CloseAsync();
         }
-        
+
         Playwright?.Dispose();
     }
 
