@@ -11,6 +11,8 @@ namespace EllisHope.Areas.Admin.Controllers;
 
 [Area("Admin")]
 [Authorize(Roles = "Admin,BoardMember")]
+[ApiExplorerSettings(GroupName = "Applications")]
+[SwaggerTag("Client application management and board review workflow. Handles application submission, voting, approval/rejection, and sponsor assignment.")]
 public class ApplicationsController : Controller
 {
     private readonly IClientApplicationService _applicationService;
@@ -31,9 +33,32 @@ public class ApplicationsController : Controller
 
     // GET: Admin/Applications
     /// <summary>
-    /// list applications; optional `status`, `searchTerm` query parameters. Roles: Admin, BoardMember.
+    /// Retrieves a paginated list of client applications with optional filtering by status and search term
     /// </summary>
-    [SwaggerOperation(Summary = "list applications; optional `status`, `searchTerm` query parameters. Roles: Admin, BoardMember.")]
+    /// <param name="status">Optional filter by application status (Draft, Submitted, UnderReview, Approved, Rejected, etc.)</param>
+    /// <param name="searchTerm">Optional search term to filter applications by applicant name or email</param>
+    /// <returns>View displaying list of applications with statistics and voting information</returns>
+    /// <remarks>
+    /// Sample request:
+    ///
+    ///     GET /Admin/Applications?status=UnderReview&searchTerm=john
+    ///
+    /// Returns applications with aggregate statistics, voting counts, and indicators for applications
+    /// needing the current board member's vote. Requires Admin or BoardMember role.
+    /// </remarks>
+    /// <response code="200">Successfully retrieved application list</response>
+    /// <response code="401">User is not authenticated</response>
+    /// <response code="403">User lacks required Admin or BoardMember role</response>
+    [HttpGet]
+    [SwaggerOperation(
+        Summary = "Retrieves a paginated list of client applications with filtering and search",
+        Description = "Returns applications with voting statistics and board member review status. Supports filtering by application status and searching by applicant name/email.",
+        OperationId = "GetApplications",
+        Tags = new[] { "Applications" }
+    )]
+    [ProducesResponseType(typeof(ApplicationListViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Index(ApplicationStatus? status, string? searchTerm)
     {
         var currentUser = await _userManager.GetUserAsync(User);
@@ -83,9 +108,26 @@ public class ApplicationsController : Controller
 
     // GET: Admin/Applications/NeedingReview
     /// <summary>
-    /// list apps needing current user's review.
+    /// Retrieves applications that require the current board member's vote
     /// </summary>
-    [SwaggerOperation(Summary = "list apps needing current user's review.")]
+    /// <returns>View displaying applications awaiting the current user's review and vote</returns>
+    /// <remarks>
+    /// Filters applications to show only those in UnderReview status where the current board member
+    /// has not yet submitted their vote. Useful for board members to track their review queue.
+    /// </remarks>
+    /// <response code="200">Successfully retrieved applications needing review</response>
+    /// <response code="401">User is not authenticated</response>
+    /// <response code="403">User lacks required BoardMember role</response>
+    [HttpGet]
+    [SwaggerOperation(
+        Summary = "Retrieves applications awaiting current board member's vote",
+        Description = "Returns only applications in UnderReview status where the authenticated board member has not yet cast their vote.",
+        OperationId = "GetApplicationsNeedingReview",
+        Tags = new[] { "Applications" }
+    )]
+    [ProducesResponseType(typeof(ApplicationListViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> NeedingReview()
     {
         var currentUser = await _userManager.GetUserAsync(User);

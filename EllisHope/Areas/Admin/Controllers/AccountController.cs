@@ -32,14 +32,22 @@ public class AccountController : Controller
     }
 
     /// <summary>
-    /// Show the login page.
+    /// Displays the admin login page
     /// </summary>
-    /// <param name="returnUrl">Optional return URL after login</param>
+    /// <param name="returnUrl">Optional URL to redirect to after successful login</param>
+    /// <returns>Login view with form for email and password</returns>
+    /// <remarks>
+    /// Renders the login form for admin area authentication. After successful login,
+    /// users are redirected based on their role (Admin, BoardMember, Editor, Sponsor, Client, or Member).
+    /// </remarks>
+    /// <response code="200">Successfully displayed login page</response>
     [HttpGet]
-    /// <summary>
-    /// sign in (fields: `Email`, `Password`, `RememberMe`). Anti-forgery required.
-    /// </summary>
-    [SwaggerOperation(Summary = "sign in (fields: `Email`, `Password`, `RememberMe`). Anti-forgery required.")]
+    [SwaggerOperation(
+        Summary = "Displays the admin login page",
+        Description = "Renders the login form where users enter email and password credentials to access the admin area.",
+        OperationId = "GetLogin",
+        Tags = new[] { "Authentication" }
+    )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult Login(string? returnUrl = null)
     {
@@ -48,18 +56,43 @@ public class AccountController : Controller
     }
 
     /// <summary>
-    /// Sign in a user.
+    /// Processes admin login credentials and authenticates the user
     /// </summary>
-    /// <param name="model">Login form data</param>
-    /// <param name="returnUrl">Optional return URL after login</param>
+    /// <param name="model">Login credentials containing Email, Password, and RememberMe options</param>
+    /// <param name="returnUrl">Optional URL to redirect to after successful authentication</param>
+    /// <returns>Redirects to appropriate dashboard based on user role, or returns to login with errors</returns>
+    /// <remarks>
+    /// Sample request:
+    ///
+    ///     POST /Admin/Account/Login
+    ///     {
+    ///        "email": "admin@example.com",
+    ///        "password": "SecurePassword123!",
+    ///        "rememberMe": true
+    ///     }
+    ///
+    /// On successful login, updates user's LastLoginDate and redirects based on role:
+    /// - Admin/BoardMember/Editor → Admin Dashboard
+    /// - Sponsor → Sponsor Portal
+    /// - Client → Client Portal
+    /// - Member → Member Portal
+    ///
+    /// Implements account lockout after 5 failed attempts (15-minute lockout period).
+    /// </remarks>
+    /// <response code="302">Successful login - redirects to role-appropriate dashboard</response>
+    /// <response code="200">Login failed - returns view with validation errors</response>
+    /// <response code="400">Invalid model state</response>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    /// <summary>
-    /// sign in (fields: `Email`, `Password`, `RememberMe`). Anti-forgery required.
-    /// </summary>
-    [SwaggerOperation(Summary = "sign in (fields: `Email`, `Password`, `RememberMe`). Anti-forgery required.")]
+    [SwaggerOperation(
+        Summary = "Authenticates user credentials and creates login session",
+        Description = "Validates email/password, updates last login timestamp, and redirects to role-based dashboard. Enforces lockout policy after multiple failed attempts.",
+        OperationId = "PostLogin",
+        Tags = new[] { "Authentication" }
+    )]
     [ProducesResponseType(StatusCodes.Status302Found)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(LoginViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
     {
         ViewData["ReturnUrl"] = returnUrl;

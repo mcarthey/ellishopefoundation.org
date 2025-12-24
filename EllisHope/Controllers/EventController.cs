@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using EllisHope.Services;
 using Swashbuckle.AspNetCore.Annotations;
+using EllisHope.Models.Domain;
 
 namespace EllisHope.Controllers;
 
+[ApiExplorerSettings(GroupName = "Events")]
+[SwaggerTag("Public event listings and details. Browse upcoming events, search by keyword, and view event information including date, location, and registration details.")]
 public class EventController : Controller
 {
     private readonly IEventService _eventService;
@@ -15,9 +18,29 @@ public class EventController : Controller
 
     // GET: Event/List
     /// <summary>
-    /// list layout
+    /// Displays upcoming events in list format with optional keyword search
     /// </summary>
-    [SwaggerOperation(Summary = "list layout")]
+    /// <param name="search">Optional keyword to search in event titles and descriptions</param>
+    /// <returns>View displaying upcoming events in list format</returns>
+    /// <remarks>
+    /// Sample requests:
+    ///
+    ///     GET /Event/List
+    ///     GET /Event/List?search=fundraiser
+    ///     GET /Event/List?search=community
+    ///
+    /// Returns upcoming published events sorted by event date. Search performs full-text search
+    /// across event title, description, and location fields. Limited to 100 upcoming events.
+    /// </remarks>
+    /// <response code="200">Successfully retrieved event list</response>
+    [HttpGet]
+    [SwaggerOperation(
+        Summary = "Retrieves upcoming events with optional search filtering",
+        Description = "Displays published upcoming events in list format. Supports keyword search across title, description, and location. Returns maximum 100 events sorted by event date.",
+        OperationId = "GetEventsList",
+        Tags = new[] { "Events" }
+    )]
+    [ProducesResponseType(typeof(IEnumerable<Event>), StatusCodes.Status200OK)]
     public async Task<IActionResult> list(string? search)
     {
         IEnumerable<Models.Domain.Event> events;
@@ -37,9 +60,36 @@ public class EventController : Controller
 
     // GET: Event/Details/slug
     /// <summary>
-    /// details by slug
+    /// Displays detailed view of a single event identified by URL slug
     /// </summary>
-    [SwaggerOperation(Summary = "details by slug")]
+    /// <param name="slug">URL-friendly slug identifying the event (e.g., "annual-gala-2024")</param>
+    /// <returns>View displaying complete event details with similar/upcoming events</returns>
+    /// <remarks>
+    /// Sample request:
+    ///
+    ///     GET /Event/Details/community-fundraiser-march
+    ///
+    /// Returns full event details including:
+    /// - Event title, description, and full details
+    /// - Event date, time, and location information
+    /// - Registration/RSVP details if applicable
+    /// - Featured image and event media
+    /// - Similar/related events (up to 4)
+    /// - Recent upcoming events in sidebar
+    ///
+    /// Route also accessible via custom route: /event/details/{slug}
+    /// </remarks>
+    /// <response code="200">Successfully retrieved event details</response>
+    /// <response code="404">Event with specified slug not found</response>
+    [HttpGet]
+    [SwaggerOperation(
+        Summary = "Retrieves individual event by URL slug",
+        Description = "Returns complete event information including date/time, location, description, and related events. Includes similar events and sidebar navigation.",
+        OperationId = "GetEventDetails",
+        Tags = new[] { "Events" }
+    )]
+    [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> details(string slug)
     {
         if (string.IsNullOrEmpty(slug))
@@ -65,9 +115,22 @@ public class EventController : Controller
     }
 
     /// <summary>
-    /// grid layout
+    /// Displays events in grid/card layout format
     /// </summary>
-    [SwaggerOperation(Summary = "grid layout")]
+    /// <returns>View displaying events in responsive grid layout</returns>
+    /// <remarks>
+    /// Alternative visual layout for event listing. Displays events as cards in a responsive grid
+    /// format, optimized for visual browsing with event images and key details.
+    /// </remarks>
+    /// <response code="200">Successfully displayed events grid view</response>
+    [HttpGet]
+    [SwaggerOperation(
+        Summary = "Displays events in grid/card layout",
+        Description = "Alternative event listing view using card-based grid layout. Optimized for visual content browsing with featured images and event highlights.",
+        OperationId = "GetEventsGrid",
+        Tags = new[] { "Events" }
+    )]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult grid()
     {
         return View();
