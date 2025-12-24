@@ -4,11 +4,14 @@ using EllisHope.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace EllisHope.Areas.Admin.Controllers;
 
 [Area("Admin")]
 [Authorize]
+[ApiExplorerSettings(GroupName = "Profile")]
+[SwaggerTag("User profile management for authenticated users. Allows users to view and update their personal information, profile photo, and password within the admin portal.")]
 public class ProfileController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
@@ -30,9 +33,45 @@ public class ProfileController : Controller
 
     // GET: Admin/Profile
     /// <summary>
-    /// TODO: Describe GET /Admin/Profile
+    /// Displays the authenticated user's complete profile with personal information, role details, and account status
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe GET /Admin/Profile")]
+    /// <returns>View displaying user profile with all personal data, roles, and account metrics</returns>
+    /// <remarks>
+    /// Sample request:
+    ///
+    ///     GET /Admin/Profile
+    ///     GET /Admin/Profile/Index
+    ///
+    /// Returns comprehensive profile information including:
+    /// - Personal details (name, email, phone, address, date of birth)
+    /// - Role and status information
+    /// - Emergency contact details
+    /// - Profile photo
+    /// - Account metrics (join date, last login)
+    /// - Assigned roles (Admin, BoardMember, Sponsor, etc.)
+    ///
+    /// Profile information is read-only on this page. Use Edit link to modify profile details.
+    ///
+    /// **Authorization:**
+    /// - Requires authentication
+    /// - Users can only view their own profile
+    ///
+    /// **User Roles Displayed:**
+    /// - Admin, BoardMember, Member, Sponsor, Client, Editor
+    /// </remarks>
+    /// <response code="200">Successfully displayed user profile</response>
+    /// <response code="401">User is not authenticated</response>
+    /// <response code="404">User profile not found</response>
+    [HttpGet]
+    [SwaggerOperation(
+        Summary = "Displays authenticated user's complete profile information",
+        Description = "Returns user profile view with personal details, roles, status, account metrics, and profile photo. Read-only display with edit link.",
+        OperationId = "GetUserProfile",
+        Tags = new[] { "Profile" }
+    )]
+    [ProducesResponseType(typeof(ProfileViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Index()
     {
         var user = await _userManager.GetUserAsync(User);
@@ -70,9 +109,50 @@ public class ProfileController : Controller
 
     // GET: Admin/Profile/Edit
     /// <summary>
-    /// update profile information. Anti-forgery required.
+    /// Displays the profile edit form pre-populated with the authenticated user's current information
     /// </summary>
-    [SwaggerOperation(Summary = "update profile information. Anti-forgery required.")]
+    /// <returns>View displaying edit form with user's current profile data</returns>
+    /// <remarks>
+    /// Sample request:
+    ///
+    ///     GET /Admin/Profile/Edit
+    ///
+    /// Returns edit form pre-filled with user's current profile information:
+    /// - Name (First/Last)
+    /// - Email address
+    /// - Phone number
+    /// - Date of birth
+    /// - Address (street, city, state, zip)
+    /// - Emergency contact details
+    /// - Current profile photo (with option to upload new photo)
+    ///
+    /// **Editable Fields:**
+    /// - All personal information fields
+    /// - Profile photo upload (jpg, png, gif - max 5MB)
+    /// - Email (triggers username update to match)
+    ///
+    /// **Non-Editable:**
+    /// - User role (requires admin intervention)
+    /// - Account status (requires admin intervention)
+    /// - Join date and last login (system-managed)
+    ///
+    /// **Authorization:**
+    /// - Requires authentication
+    /// - Users can only edit their own profile
+    /// </remarks>
+    /// <response code="200">Successfully displayed edit form</response>
+    /// <response code="401">User is not authenticated</response>
+    /// <response code="404">User profile not found</response>
+    [HttpGet]
+    [SwaggerOperation(
+        Summary = "Displays profile edit form with current user information",
+        Description = "Returns edit form pre-populated with user's profile data. Allows editing personal info, contact details, and profile photo upload.",
+        OperationId = "GetEditProfile",
+        Tags = new[] { "Profile" }
+    )]
+    [ProducesResponseType(typeof(EditProfileViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Edit()
     {
         var user = await _userManager.GetUserAsync(User);
@@ -102,12 +182,68 @@ public class ProfileController : Controller
     }
 
     // POST: Admin/Profile/Edit
+    /// <summary>
+    /// Processes profile update with personal information changes and optional profile photo upload
+    /// </summary>
+    /// <param name="model">Updated profile data including optional profile photo file</param>
+    /// <returns>Redirects to profile view on success; returns form with errors on failure</returns>
+    /// <remarks>
+    /// Sample form submission:
+    ///
+    ///     POST /Admin/Profile/Edit
+    ///     Content-Type: multipart/form-data
+    ///
+    ///     FirstName=John&amp;LastName=Doe&amp;Email=john.doe@example.com&amp;...&amp;ProfilePhoto=[file]
+    ///
+    /// **Update Process:**
+    /// 1. Validates all form fields (required fields, formats, etc.)
+    /// 2. If profile photo uploaded:
+    ///    - Validates file type (jpg, png, gif) and size (max 5MB)
+    ///    - Uploads to media service with automatic thumbnail generation
+    ///    - Updates user's ProfilePictureUrl
+    /// 3. Updates all personal information fields
+    /// 4. If email changed:
+    ///    - Updates email via UserManager
+    ///    - Updates username to match new email (username = email)
+    ///    - Validates email uniqueness
+    /// 5. Saves changes to database
+    /// 6. Redirects to profile view with success message
+    ///
+    /// **Validation:**
+    /// - First/Last name required
+    /// - Email required and must be valid format
+    /// - Phone number optional but must be valid format if provided
+    /// - Profile photo must be image file type and under size limit
+    ///
+    /// **Error Handling:**
+    /// - Photo upload errors shown with specific error message
+    /// - Email uniqueness conflicts displayed
+    /// - Identity update errors from UserManager shown to user
+    /// - Current profile photo preserved if new upload fails
+    ///
+    /// **Authorization:**
+    /// - Requires authentication
+    /// - Users can only update their own profile
+    /// - Anti-forgery token required
+    /// </remarks>
+    /// <response code="302">Redirects to profile view after successful update</response>
+    /// <response code="200">Returns form with validation errors</response>
+    /// <response code="401">User is not authenticated</response>
+    /// <response code="404">User profile not found</response>
+    /// <response code="400">Validation failed or upload error</response>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    /// <summary>
-    /// update profile information. Anti-forgery required.
-    /// </summary>
-    [SwaggerOperation(Summary = "update profile information. Anti-forgery required.")]
+    [SwaggerOperation(
+        Summary = "Processes profile updates with photo upload and email change handling",
+        Description = "Updates user profile information, handles photo upload with validation, updates email/username if changed. Validates all fields and displays errors.",
+        OperationId = "PostEditProfile",
+        Tags = new[] { "Profile" }
+    )]
+    [ProducesResponseType(StatusCodes.Status302Found)]
+    [ProducesResponseType(typeof(EditProfileViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Edit(EditProfileViewModel model)
     {
         var user = await _userManager.GetUserAsync(User);
@@ -203,21 +339,106 @@ public class ProfileController : Controller
 
     // GET: Admin/Profile/ChangePassword
     /// <summary>
-    /// change password. Anti-forgery required.
+    /// Displays the change password form for the authenticated user
     /// </summary>
-    [SwaggerOperation(Summary = "change password. Anti-forgery required.")]
+    /// <returns>View displaying password change form with current/new password fields</returns>
+    /// <remarks>
+    /// Sample request:
+    ///
+    ///     GET /Admin/Profile/ChangePassword
+    ///
+    /// Returns password change form with:
+    /// - Current password field (required for verification)
+    /// - New password field (with strength requirements)
+    /// - Confirm new password field (must match new password)
+    ///
+    /// **Password Requirements:**
+    /// - Minimum 8 characters
+    /// - At least one uppercase letter
+    /// - At least one lowercase letter
+    /// - At least one digit
+    /// - At least one special character (@$!%*?&)
+    ///
+    /// **Authorization:**
+    /// - Requires authentication
+    /// - Users can only change their own password
+    /// </remarks>
+    /// <response code="200">Successfully displayed password change form</response>
+    /// <response code="401">User is not authenticated</response>
+    [HttpGet]
+    [SwaggerOperation(
+        Summary = "Displays password change form for authenticated user",
+        Description = "Returns form with current password, new password, and confirmation fields. Enforces password strength requirements.",
+        OperationId = "GetChangePassword",
+        Tags = new[] { "Profile" }
+    )]
+    [ProducesResponseType(typeof(ChangePasswordViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public IActionResult ChangePassword()
     {
         return View();
     }
 
     // POST: Admin/Profile/ChangePassword
+    /// <summary>
+    /// Processes password change request with current password verification and new password validation
+    /// </summary>
+    /// <param name="model">Password change data including current password, new password, and confirmation</param>
+    /// <returns>Redirects to profile view on success; returns form with errors on failure</returns>
+    /// <remarks>
+    /// Sample form submission:
+    ///
+    ///     POST /Admin/Profile/ChangePassword
+    ///     Content-Type: application/x-www-form-urlencoded
+    ///
+    ///     CurrentPassword=OldPass123!&amp;NewPassword=NewSecurePass456!&amp;ConfirmPassword=NewSecurePass456!
+    ///
+    /// **Change Process:**
+    /// 1. Validates current password is correct
+    /// 2. Validates new password meets strength requirements:
+    ///    - Minimum 8 characters
+    ///    - Contains uppercase, lowercase, digit, and special character
+    /// 3. Validates new password matches confirmation
+    /// 4. Updates password via UserManager.ChangePasswordAsync
+    /// 5. Refreshes user's sign-in to prevent logout
+    /// 6. Logs password change event
+    /// 7. Redirects to profile with success message
+    ///
+    /// **Validation Errors:**
+    /// - Current password incorrect
+    /// - New password doesn't meet strength requirements
+    /// - New password doesn't match confirmation
+    /// - New password same as current password
+    ///
+    /// **Security:**
+    /// - Current password must be verified before change
+    /// - New password strength validated by Identity configuration
+    /// - User remains logged in after password change (sign-in refreshed)
+    /// - Password change logged for audit trail
+    ///
+    /// **Authorization:**
+    /// - Requires authentication
+    /// - Users can only change their own password
+    /// - Anti-forgery token required
+    /// </remarks>
+    /// <response code="302">Redirects to profile view after successful password change</response>
+    /// <response code="200">Returns form with validation errors</response>
+    /// <response code="401">User is not authenticated</response>
+    /// <response code="404">User not found</response>
+    /// <response code="400">Validation failed or current password incorrect</response>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    /// <summary>
-    /// change password. Anti-forgery required.
-    /// </summary>
-    [SwaggerOperation(Summary = "change password. Anti-forgery required.")]
+    [SwaggerOperation(
+        Summary = "Processes password change with verification and validation",
+        Description = "Verifies current password, validates new password strength, updates password, and refreshes sign-in. Requires anti-forgery token.",
+        OperationId = "PostChangePassword",
+        Tags = new[] { "Profile" }
+    )]
+    [ProducesResponseType(StatusCodes.Status302Found)]
+    [ProducesResponseType(typeof(ChangePasswordViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
     {
         if (!ModelState.IsValid)

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using EllisHope.Models.ViewModels;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace EllisHope.Controllers;
 
@@ -19,9 +20,9 @@ public class ErrorController : Controller
     // GET: Error (generic)
     [Route("Error")]
     /// <summary>
-    /// TODO: Describe GET /Error
+    /// Displays a generic error page when an unhandled exception occurs
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe GET /Error")]
+    [SwaggerOperation(Summary = "Displays a generic error page when an unhandled exception occurs")]
     public IActionResult Index()
     {
         return View("Error", CreateErrorViewModel(500, "An error occurred"));
@@ -30,9 +31,10 @@ public class ErrorController : Controller
     // GET: Error/404
     [Route("Error/404")]
     /// <summary>
-    /// TODO: Describe GET /Error/NotFound404
+    /// Displays a 404 Not Found error page with optional correlation ID for tracking
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe GET /Error/NotFound404")]
+    /// <param name="correlationId">Optional tracking identifier for the error</param>
+    [SwaggerOperation(Summary = "Displays a 404 Not Found error page with optional correlation ID for tracking")]
     public IActionResult NotFound404(string? correlationId)
     {
         Response.StatusCode = 404;
@@ -42,9 +44,10 @@ public class ErrorController : Controller
     // GET: Error/500
     [Route("Error/500")]
     /// <summary>
-    /// TODO: Describe GET /Error/ServerError
+    /// Displays a 500 Server Error page with exception details in development mode
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe GET /Error/ServerError")]
+    /// <param name="correlationId">Optional tracking identifier for the error</param>
+    [SwaggerOperation(Summary = "Displays a 500 Server Error page with exception details in development mode")]
     public IActionResult ServerError(string? correlationId)
     {
         Response.StatusCode = 500;
@@ -63,9 +66,10 @@ public class ErrorController : Controller
     // GET: Error/403
     [Route("Error/403")]
     /// <summary>
-    /// TODO: Describe GET /Error/Forbidden
+    /// Displays a 403 Forbidden error page when user lacks permissions
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe GET /Error/Forbidden")]
+    /// <param name="correlationId">Optional tracking identifier for the error</param>
+    [SwaggerOperation(Summary = "Displays a 403 Forbidden error page when user lacks permissions")]
     public IActionResult Forbidden(string? correlationId)
     {
         Response.StatusCode = 403;
@@ -75,9 +79,11 @@ public class ErrorController : Controller
     // GET: Error/{statusCode}
     [Route("Error/{statusCode:int}")]
     /// <summary>
-    /// TODO: Describe GET /Error/HttpStatusCodeHandler
+    /// Generic HTTP status code handler that routes to appropriate error view based on status code
     /// </summary>
-    [SwaggerOperation(Summary = "TODO: Describe GET /Error/HttpStatusCodeHandler")]
+    /// <param name="statusCode">The HTTP status code to handle (404, 403, 401, 400, etc.)</param>
+    /// <param name="correlationId">Optional tracking identifier for the error</param>
+    [SwaggerOperation(Summary = "Generic HTTP status code handler that routes to appropriate error view based on status code")]
     public IActionResult HttpStatusCodeHandler(int statusCode, string? correlationId)
     {
         Response.StatusCode = statusCode;

@@ -17,6 +17,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new() { Title = "Ellis Hope API", Version = "v1" });
+
+    // Enable annotations (for [SwaggerOperation] attributes)
+    options.EnableAnnotations();
+
     // Enable XML comments for Swagger
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
@@ -102,16 +106,7 @@ builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Emai
   
 var app = builder.Build();
 
-// Enable Swagger in all environments (or restrict to dev as needed)
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new() { Title = "Ellis Hope API", Version = "v1" });
-    // Optional: Enable XML comments for richer docs
-    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    c.IncludeXmlComments(xmlPath);
-});
-
+// Enable Swagger UI in all environments
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {

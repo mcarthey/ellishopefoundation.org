@@ -5,8 +5,10 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
-	  <UserSecretsId>0ec83aa3-d463-491c-acc4-b3c9fa37241f</UserSecretsId>
-  </PropertyGroup>
+		<UserSecretsId>0ec83aa3-d463-491c-acc4-b3c9fa37241f</UserSecretsId>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);1591</NoWarn><!-- Suppress warnings for missing XML comments -->
+	</PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.1" />
