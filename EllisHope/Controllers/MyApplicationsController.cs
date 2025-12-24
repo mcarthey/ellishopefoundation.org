@@ -10,6 +10,8 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace EllisHope.Controllers;
 
 [Authorize]
+[ApiExplorerSettings(GroupName = "My Applications")]
+[SwaggerTag("Client-facing application submission and management. Authenticated users can create applications, save drafts, submit for review, and track application status through the approval workflow.")]
 public class MyApplicationsController : Controller
 {
     private readonly IClientApplicationService _applicationService;
@@ -28,9 +30,41 @@ public class MyApplicationsController : Controller
 
     // GET: MyApplications
     /// <summary>
-    /// index of user's applications (alias)
+    /// Displays all applications submitted by the authenticated user with current status and available actions
     /// </summary>
-    [SwaggerOperation(Summary = "index of user's applications (alias)")]
+    /// <returns>View displaying user's applications with status, dates, and action buttons (edit/withdraw)</returns>
+    /// <remarks>
+    /// Sample request:
+    ///
+    ///     GET /MyApplications
+    ///
+    /// Returns all applications created by the current user, including:
+    /// - Draft applications (can be edited or submitted)
+    /// - Submitted applications (can be withdrawn before review)
+    /// - Applications under review (can be withdrawn)
+    /// - Approved/rejected applications (read-only with decision details)
+    ///
+    /// Each application shows:
+    /// - Current status (Draft, Submitted, UnderReview, Approved, Rejected)
+    /// - Submission date and creation date
+    /// - Funding types requested
+    /// - Estimated monthly cost
+    /// - Final decision message (if applicable)
+    /// - Available actions (Edit Draft, Withdraw, View Details)
+    ///
+    /// Requires authentication. Users can only see their own applications.
+    /// </remarks>
+    /// <response code="200">Successfully retrieved user's applications</response>
+    /// <response code="401">User is not authenticated</response>
+    [HttpGet]
+    [SwaggerOperation(
+        Summary = "Retrieves all applications for the authenticated user",
+        Description = "Returns complete list of user's applications across all statuses (Draft, Submitted, UnderReview, Approved, Rejected) with available actions and decision information.",
+        OperationId = "GetMyApplications",
+        Tags = new[] { "My Applications" }
+    )]
+    [ProducesResponseType(typeof(MyApplicationsViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Index()
     {
         var currentUser = await _userManager.GetUserAsync(User);
@@ -66,9 +100,46 @@ public class MyApplicationsController : Controller
 
     // GET: MyApplications/Details/5
     /// <summary>
-    /// applicant can view their application.
+    /// Displays detailed view of a specific application with full form data and non-private review comments
     /// </summary>
-    [SwaggerOperation(Summary = "applicant can view their application.")]
+    /// <param name="id">Application ID to view details for</param>
+    /// <returns>View displaying complete application details with review comments and available actions</returns>
+    /// <remarks>
+    /// Sample request:
+    ///
+    ///     GET /MyApplications/Details/15
+    ///
+    /// Returns complete application information including:
+    /// - All form fields submitted across all steps
+    /// - Current application status
+    /// - Review comments visible to applicant (non-private only)
+    /// - Decision details if approved/rejected
+    /// - Available actions based on status (Edit if Draft, Withdraw if Submitted/Under Review)
+    ///
+    /// Authorization:
+    /// - User must be authenticated
+    /// - User can only view their own applications
+    /// - Returns 403 Forbidden if trying to access another user's application
+    ///
+    /// Comments filtering:
+    /// - Only non-private comments are shown to applicants
+    /// - Private board member discussion comments are hidden
+    /// </remarks>
+    /// <response code="200">Successfully retrieved application details</response>
+    /// <response code="401">User is not authenticated</response>
+    /// <response code="403">User attempting to access another user's application</response>
+    /// <response code="404">Application not found</response>
+    [HttpGet]
+    [SwaggerOperation(
+        Summary = "Retrieves detailed information for a specific application",
+        Description = "Returns complete application data with non-private comments. Users can only access their own applications. Includes all form fields, status, and board feedback.",
+        OperationId = "GetMyApplicationDetails",
+        Tags = new[] { "My Applications" }
+    )]
+    [ProducesResponseType(typeof(ApplicationDetailsViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Details(int id)
     {
         var application = await _applicationService.GetApplicationByIdAsync(id, includeVotes: false);
@@ -101,9 +172,40 @@ public class MyApplicationsController : Controller
 
     // GET: MyApplications/Create
     /// <summary>
-    /// post form data for steps; supports draft saving and final submit. Anti-forgery required.
+    /// Displays the multi-step application creation form starting at Step 1 (Personal Information)
     /// </summary>
-    [SwaggerOperation(Summary = "post form data for steps; supports draft saving and final submit. Anti-forgery required.")]
+    /// <returns>View displaying the application form at Step 1</returns>
+    /// <remarks>
+    /// Initiates a new application for program sponsorship. The application process consists of:
+    ///
+    /// **Application Steps:**
+    /// 1. Personal Information (name, contact, demographics)
+    /// 2. Background & Circumstances (situation, needs assessment)
+    /// 3. Goals & Objectives (program goals, expected outcomes)
+    /// 4. Financial Information (income, expenses, funding needs)
+    /// 5. References & Documents (contact references, upload documents)
+    /// 6. Review & Submit (review all entered data, final submission)
+    ///
+    /// **Features:**
+    /// - Multi-step wizard interface with progress indicator
+    /// - Save as draft at any step to complete later
+    /// - Navigate between steps to review/edit previous sections
+    /// - Client-side validation for required fields
+    /// - Final submission triggers board review workflow
+    ///
+    /// Requires authentication. User becomes the applicant on the application.
+    /// </remarks>
+    /// <response code="200">Successfully displayed application form</response>
+    /// <response code="401">User is not authenticated</response>
+    [HttpGet]
+    [SwaggerOperation(
+        Summary = "Displays new application form starting at Step 1",
+        Description = "Initiates multi-step application creation wizard. Supports progressive form completion, draft saving, and step navigation.",
+        OperationId = "GetCreateApplication",
+        Tags = new[] { "My Applications" }
+    )]
+    [ProducesResponseType(typeof(ApplicationCreateViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public IActionResult Create()
     {
         var viewModel = new ApplicationCreateViewModel
@@ -115,12 +217,66 @@ public class MyApplicationsController : Controller
     }
 
     // POST: MyApplications/Create
+    /// <summary>
+    /// Processes multi-step application form submission with support for draft saving, step navigation, and final submission
+    /// </summary>
+    /// <param name="model">Application form data containing all fields across 6 steps</param>
+    /// <returns>Redirects to Index (on draft save), Edit (on navigation), or Details (on submit); or returns view with errors</returns>
+    /// <remarks>
+    /// Handles three distinct submission actions based on which button the user clicked:
+    ///
+    /// **Save as Draft (SaveAsDraft button):**
+    /// - Saves current form state without validation
+    /// - Creates new application with Draft status
+    /// - Redirects to MyApplications list with success message
+    /// - User can resume later from Index page
+    ///
+    /// **Navigate Previous (PreviousStep button):**
+    /// - Auto-saves current step as draft (no validation)
+    /// - Decrements step counter
+    /// - Redirects to Edit mode with saved draft ID
+    /// - Preserves all entered data
+    ///
+    /// **Navigate Next (NextStep button):**
+    /// - Validates current step before proceeding
+    /// - Auto-saves validated data as draft
+    /// - Increments step counter
+    /// - Redirects to Edit mode to continue
+    /// - Shows validation errors if step incomplete
+    ///
+    /// **Final Submit (default/final step):**
+    /// - Validates current step
+    /// - Creates application as Draft
+    /// - Immediately submits via SubmitApplicationAsync
+    /// - Changes status from Draft → Submitted
+    /// - Triggers board review workflow
+    /// - Sends email notifications to admins
+    ///
+    /// Sample form submission (Step 1 - Next button):
+    ///
+    ///     POST /MyApplications/Create
+    ///     Content-Type: application/x-www-form-urlencoded
+    ///
+    ///     FirstName=John&amp;LastName=Doe&amp;Email=john@example.com&amp;...&amp;NextStep=true&amp;CurrentStep=1
+    ///
+    /// Requires authentication and anti-forgery token.
+    /// </remarks>
+    /// <response code="302">Redirects to Index (draft saved), Edit (navigation), or Details (submitted)</response>
+    /// <response code="200">Returns view with model and validation errors</response>
+    /// <response code="401">User is not authenticated</response>
+    /// <response code="400">Validation failed or service error occurred</response>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    /// <summary>
-    /// post form data for steps; supports draft saving and final submit. Anti-forgery required.
-    /// </summary>
-    [SwaggerOperation(Summary = "post form data for steps; supports draft saving and final submit. Anti-forgery required.")]
+    [SwaggerOperation(
+        Summary = "Processes application form with multi-step navigation, draft saving, and submission",
+        Description = "Handles Save Draft, Previous/Next navigation, and final submission. Auto-saves progress between steps. Validates step data before moving forward. Triggers board review on final submit.",
+        OperationId = "PostCreateApplication",
+        Tags = new[] { "My Applications" }
+    )]
+    [ProducesResponseType(StatusCodes.Status302Found)]
+    [ProducesResponseType(typeof(ApplicationCreateViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create(ApplicationCreateViewModel model)
     {
         var currentUser = await _userManager.GetUserAsync(User);
@@ -245,9 +401,59 @@ public class MyApplicationsController : Controller
 
     // GET: MyApplications/Edit/5
     /// <summary>
-    /// edit draft.
+    /// Loads a draft application for editing, optionally at a specific step in the multi-step form
     /// </summary>
-    [SwaggerOperation(Summary = "edit draft.")]
+    /// <param name="id">Application ID to edit</param>
+    /// <param name="step">Optional step number (1-6) to display; defaults to step 1 if not specified</param>
+    /// <returns>View displaying the application edit form at the specified step</returns>
+    /// <remarks>
+    /// Sample requests:
+    ///
+    ///     GET /MyApplications/Edit/42
+    ///     GET /MyApplications/Edit/42?step=3
+    ///
+    /// Allows users to resume editing a saved draft application. Features:
+    /// - Loads all previously saved data into form fields
+    /// - Displays form at specified step (or step 1 by default)
+    /// - Supports step navigation with Previous/Next buttons
+    /// - Only Draft status applications can be edited
+    /// - Submitted/Under Review applications redirect to Details with error
+    ///
+    /// **Step Navigation:**
+    /// - Step 1: Personal Information
+    /// - Step 2: Program Interest & Funding
+    /// - Step 3: Motivation & Commitment
+    /// - Step 4: Health & Fitness
+    /// - Step 5: Program Requirements
+    /// - Step 6: Review & Sign
+    ///
+    /// **Authorization:**
+    /// - User must be authenticated
+    /// - User can only edit their own applications
+    /// - Returns 403 Forbidden if attempting to edit another user's application
+    ///
+    /// **Status Restrictions:**
+    /// - Only applications with Draft status can be edited
+    /// - Submitted/Under Review/Approved/Rejected applications cannot be edited
+    /// - Redirects to Details page with error message if status is not Draft
+    /// </remarks>
+    /// <response code="200">Successfully loaded draft application for editing</response>
+    /// <response code="302">Redirects to Details if application status is not Draft</response>
+    /// <response code="401">User is not authenticated</response>
+    /// <response code="403">User attempting to edit another user's application</response>
+    /// <response code="404">Application not found</response>
+    [HttpGet]
+    [SwaggerOperation(
+        Summary = "Loads draft application for editing at specified step",
+        Description = "Retrieves saved draft application and displays edit form. Supports step navigation. Only Draft status applications can be edited. Users can only edit their own applications.",
+        OperationId = "GetEditApplication",
+        Tags = new[] { "My Applications" }
+    )]
+    [ProducesResponseType(typeof(ApplicationEditViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status302Found)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Edit(int id, int? step)
     {
         var application = await _applicationService.GetApplicationByIdAsync(id, includeVotes: false, includeComments: false);
@@ -280,12 +486,88 @@ public class MyApplicationsController : Controller
     }
 
     // POST: MyApplications/Edit/5
+    /// <summary>
+    /// Processes draft application edits with support for saving, step navigation, and final submission
+    /// </summary>
+    /// <param name="id">Application ID being edited</param>
+    /// <param name="model">Updated application form data</param>
+    /// <param name="action">Optional action parameter (not actively used; form buttons drive behavior)</param>
+    /// <returns>Redirects to Index (on save/submit) or returns view (on navigation/errors)</returns>
+    /// <remarks>
+    /// Handles four distinct editing actions based on which button the user clicked:
+    ///
+    /// **Save & Exit (SaveAndExit button):**
+    /// - Saves all form data WITHOUT validation (lenient for drafts)
+    /// - Allows partial completion - user can save incomplete forms
+    /// - Updates only the fields that have been filled
+    /// - Redirects to MyApplications list
+    /// - Tolerates database constraint errors for incomplete drafts
+    ///
+    /// **Navigate Previous (PreviousStep button):**
+    /// - Auto-saves current step data without validation
+    /// - Decrements step counter
+    /// - Reloads application from database to ensure fresh data
+    /// - Returns view at previous step
+    /// - Never blocks navigation due to validation
+    ///
+    /// **Navigate Next (NextStep button):**
+    /// - Validates current step before proceeding
+    /// - Auto-saves validated step data
+    /// - Increments step counter
+    /// - Reloads application from database
+    /// - Returns view with errors if validation fails
+    ///
+    /// **Submit Application (SubmitApplication button):**
+    /// - Validates ALL 6 steps before allowing submission
+    /// - Checks required fields across entire form
+    /// - Updates application with complete data
+    /// - Calls SubmitApplicationAsync to change status: Draft → Submitted
+    /// - Triggers board review workflow
+    /// - Sends email notifications to admins/board
+    /// - Redirects to Details page on success
+    ///
+    /// **Step Validation Rules:**
+    /// - Step 1: First/Last Name, Phone, Email required
+    /// - Step 2: At least one funding type required
+    /// - Step 3: Personal statement, benefits, commitment (min 50 chars each)
+    /// - Step 4: Optional (health/fitness info)
+    /// - Step 5: Must acknowledge 12-month commitment
+    /// - Step 6: Signature required
+    ///
+    /// Sample form submission (Save & Exit):
+    ///
+    ///     POST /MyApplications/Edit/42
+    ///     Content-Type: application/x-www-form-urlencoded
+    ///
+    ///     Id=42&amp;FirstName=John&amp;LastName=Doe&amp;...&amp;SaveAndExit=true&amp;CurrentStep=2
+    ///
+    /// **Authorization:**
+    /// - User must be authenticated
+    /// - User can only edit their own applications
+    /// - Only Draft status applications can be edited
+    ///
+    /// Requires anti-forgery token.
+    /// </remarks>
+    /// <response code="302">Redirects to Index (saved) or Details (submitted)</response>
+    /// <response code="200">Returns view with updated model and potential validation errors</response>
+    /// <response code="401">User is not authenticated</response>
+    /// <response code="403">User attempting to edit another user's application</response>
+    /// <response code="404">Application not found</response>
+    /// <response code="400">Validation failed or application status prevents editing</response>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    /// <summary>
-    /// edit draft.
-    /// </summary>
-    [SwaggerOperation(Summary = "edit draft.")]
+    [SwaggerOperation(
+        Summary = "Processes draft application edits with save, navigation, and submission actions",
+        Description = "Handles Save & Exit (lenient), Previous/Next navigation (auto-save), and Submit (strict validation). Only Draft applications can be edited. Validates all steps before final submission.",
+        OperationId = "PostEditApplication",
+        Tags = new[] { "My Applications" }
+    )]
+    [ProducesResponseType(StatusCodes.Status302Found)]
+    [ProducesResponseType(typeof(ApplicationEditViewModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Edit(int id, ApplicationEditViewModel model, string? action)
     {
         if (id != model.Id)
@@ -574,12 +856,65 @@ public class MyApplicationsController : Controller
     }
 
     // POST: MyApplications/Withdraw/5
+    /// <summary>
+    /// Withdraws a submitted or under-review application, removing it from the board review workflow
+    /// </summary>
+    /// <param name="id">Application ID to withdraw</param>
+    /// <param name="reason">Optional reason for withdrawal; defaults to "Withdrawn by applicant" if not provided</param>
+    /// <returns>Redirects to MyApplications list with success or error message</returns>
+    /// <remarks>
+    /// Allows applicants to withdraw their applications before final board decision. Features:
+    ///
+    /// **Withdrawable Statuses:**
+    /// - Submitted (before board review starts)
+    /// - UnderReview (during board voting/discussion)
+    /// - InDiscussion (board requesting more information)
+    ///
+    /// **Non-Withdrawable Statuses:**
+    /// - Draft (can be deleted instead, not withdrawn)
+    /// - Approved (final decision made, funding allocated)
+    /// - Rejected (final decision made, already closed)
+    /// - Withdrawn (already withdrawn)
+    ///
+    /// **Workflow Impact:**
+    /// - Changes application status to Withdrawn
+    /// - Records withdrawal reason in application notes
+    /// - Sends notification email to admins and board members
+    /// - Removes application from board review queues
+    /// - Preserves application data for historical records
+    ///
+    /// **Authorization:**
+    /// - User must be authenticated
+    /// - User can only withdraw their own applications
+    /// - Returns 403 Forbidden if attempting to withdraw another user's application
+    ///
+    /// Sample form submission:
+    ///
+    ///     POST /MyApplications/Withdraw/42
+    ///     Content-Type: application/x-www-form-urlencoded
+    ///
+    ///     id=42&amp;reason=Found+alternative+funding&amp;__RequestVerificationToken=...
+    ///
+    /// Requires anti-forgery token.
+    /// </remarks>
+    /// <response code="302">Redirects to Index with success or error message in TempData</response>
+    /// <response code="401">User is not authenticated</response>
+    /// <response code="403">User attempting to withdraw another user's application</response>
+    /// <response code="404">Application not found</response>
+    /// <response code="400">Application status prevents withdrawal (e.g., already approved/rejected)</response>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    /// <summary>
-    /// withdraw an application.
-    /// </summary>
-    [SwaggerOperation(Summary = "withdraw an application.")]
+    [SwaggerOperation(
+        Summary = "Withdraws application from board review workflow",
+        Description = "Allows applicants to withdraw Submitted/UnderReview applications. Changes status to Withdrawn, notifies board, and removes from review queues. Cannot withdraw Draft/Approved/Rejected applications.",
+        OperationId = "PostWithdrawApplication",
+        Tags = new[] { "My Applications" }
+    )]
+    [ProducesResponseType(StatusCodes.Status302Found)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Withdraw(int id, string reason)
     {
         var currentUser = await _userManager.GetUserAsync(User);
