@@ -1,21 +1,19 @@
-name: API Docs & OpenAPI Export
+name: Controller Documentation
 
 on:
   push:
     paths:
       - 'EllisHope/**'
-      - 'Areas/**'
       - 'docs/**'
-      - '.github/workflows/**'
+      - '.github/workflows/api-docs.yml'
   pull_request:
     paths:
       - 'EllisHope/**'
-      - 'Areas/**'
       - 'docs/**'
-      - '.github/workflows/**'
+      - '.github/workflows/api-docs.yml'
 
 jobs:
-  generate-api-docs:
+  generate-controller-docs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,30 +24,67 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Build solution (with XML docs)
-        run: dotnet build EllisHope.sln --configuration Release /p:DocumentationFile=bin/Release/net10.0/EllisHope.xml
+        run: dotnet build EllisHope.sln --configuration Release /p:GenerateDocumentationFile=true
 
-      - name: Run the app to export OpenAPI JSON
+      - name: Generate Controller Documentation
         run: |
-          dotnet tool install --global Swashbuckle.AspNetCore.Cli
-          export PATH="$PATH:$HOME/.dotnet/tools"
-          dotnet swagger tofile --output docs/openapi-ci.json bin/Release/net10.0/EllisHope.dll v1
+          mkdir -p docs
 
-      - name: Convert OpenAPI JSON to Markdown (widdershins)
-        run: |
-          npm install -g widdershins
-          widdershins docs/openapi-ci.json -o docs/API_REFERENCE.md
+          echo "# Controller Reference" > docs/CONTROLLER_REFERENCE.md
+          echo "" >> docs/CONTROLLER_REFERENCE.md
+          echo "Auto-generated documentation for all MVC controllers in the Ellis Hope Foundation application." >> docs/CONTROLLER_REFERENCE.md
+          echo "" >> docs/CONTROLLER_REFERENCE.md
+          echo "Generated on: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> docs/CONTROLLER_REFERENCE.md
+          echo "" >> docs/CONTROLLER_REFERENCE.md
 
-      - name: Validate all controller methods have XML comments
-        run: |
-          # Check if any controller action methods lack XML comments
-          # This is a basic check - relies on the XML doc file generation warning the build
-          echo "XML documentation validation relies on build-time warnings (CS1591)"
-          echo "If you need stricter validation, use the validate-api-reference.csx script"
+          # Public Controllers
+          echo "## Public Controllers" >> docs/CONTROLLER_REFERENCE.md
+          echo "" >> docs/CONTROLLER_REFERENCE.md
 
-      - name: Upload OpenAPI and Markdown docs as artifacts
+          for file in EllisHope/Controllers/*.cs; do
+            if [ -f "$file" ]; then
+              name=$(basename "$file" .cs)
+              echo "### $name" >> docs/CONTROLLER_REFERENCE.md
+              echo "" >> docs/CONTROLLER_REFERENCE.md
+              echo "**File:** \`Controllers/$name.cs\`" >> docs/CONTROLLER_REFERENCE.md
+              echo "" >> docs/CONTROLLER_REFERENCE.md
+
+              # Extract summary comments from the file
+              grep -A1 "/// <summary>" "$file" | grep "///" | sed 's/.*\/\/\/ /- /' | head -20 >> docs/CONTROLLER_REFERENCE.md
+              echo "" >> docs/CONTROLLER_REFERENCE.md
+            fi
+          done
+
+          # Admin Controllers
+          echo "## Admin Controllers" >> docs/CONTROLLER_REFERENCE.md
+          echo "" >> docs/CONTROLLER_REFERENCE.md
+
+          for file in EllisHope/Areas/Admin/Controllers/*.cs; do
+            if [ -f "$file" ]; then
+              name=$(basename "$file" .cs)
+              echo "### $name" >> docs/CONTROLLER_REFERENCE.md
+              echo "" >> docs/CONTROLLER_REFERENCE.md
+              echo "**File:** \`Areas/Admin/Controllers/$name.cs\`" >> docs/CONTROLLER_REFERENCE.md
+              echo "" >> docs/CONTROLLER_REFERENCE.md
+
+              # Extract Authorize attribute roles
+              roles=$(grep -o 'Authorize(Roles = "[^"]*"' "$file" | head -1 | sed 's/Authorize(Roles = "/Roles: /' | sed 's/"$//')
+              if [ -n "$roles" ]; then
+                echo "**$roles**" >> docs/CONTROLLER_REFERENCE.md
+                echo "" >> docs/CONTROLLER_REFERENCE.md
+              fi
+
+              # Extract summary comments from the file
+              grep -A1 "/// <summary>" "$file" | grep "///" | sed 's/.*\/\/\/ /- /' | head -20 >> docs/CONTROLLER_REFERENCE.md
+              echo "" >> docs/CONTROLLER_REFERENCE.md
+            fi
+          done
+
+          echo "---" >> docs/CONTROLLER_REFERENCE.md
+          echo "*This documentation is auto-generated from XML comments in the source code.*" >> docs/CONTROLLER_REFERENCE.md
+
+      - name: Upload Controller Documentation
         uses: actions/upload-artifact@v4
         with:
-          name: api-docs
-          path: |
-            docs/openapi-ci.json
-            docs/API_REFERENCE.md
+          name: controller-docs
+          path: docs/CONTROLLER_REFERENCE.md
