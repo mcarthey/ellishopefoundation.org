@@ -15,15 +15,18 @@ namespace EllisHope.Areas.Admin.Controllers;
 public class ApplicationsController : Controller
 {
     private readonly IClientApplicationService _applicationService;
+    private readonly IPdfService _pdfService;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<ApplicationsController> _logger;
 
     public ApplicationsController(
         IClientApplicationService applicationService,
+        IPdfService pdfService,
         UserManager<ApplicationUser> userManager,
         ILogger<ApplicationsController> logger)
     {
         _applicationService = applicationService;
+        _pdfService = pdfService;
         _userManager = userManager;
         _logger = logger;
     }
@@ -533,6 +536,81 @@ public class ApplicationsController : Controller
         }
 
         return RedirectToAction(nameof(Details), new { id });
+    }
+
+    #endregion
+
+    #region Download Actions
+
+    // GET: Admin/Applications/DownloadPdf/5
+    /// <summary>
+    /// Downloads the application as a PDF document
+    /// </summary>
+    /// <param name="id">Application ID</param>
+    /// <param name="includeVotes">Whether to include board votes in the PDF</param>
+    /// <param name="includeComments">Whether to include discussion comments in the PDF</param>
+    /// <returns>PDF file download</returns>
+    [HttpGet]
+    [SwaggerOperation(Summary = "Download application as PDF. Optionally includes votes and comments.")]
+    public async Task<IActionResult> DownloadPdf(int id, bool includeVotes = false, bool includeComments = false)
+    {
+        var application = await _applicationService.GetApplicationByIdAsync(id);
+        if (application == null)
+        {
+            return NotFound();
+        }
+
+        try
+        {
+            var pdfBytes = await _pdfService.GenerateApplicationPdfAsync(application, includeVotes, includeComments);
+            var fileName = $"Application_{id}_{application.LastName}_{DateTime.Now:yyyyMMdd}.pdf";
+
+            return File(pdfBytes, "application/pdf", fileName);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error generating PDF for application {ApplicationId}", id);
+            TempData["ErrorMessage"] = "Error generating PDF. Please try again.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+    }
+
+    // GET: Admin/Applications/DownloadApprovalLetter/5
+    /// <summary>
+    /// Downloads the approval letter as a PDF document
+    /// </summary>
+    /// <param name="id">Application ID</param>
+    /// <returns>PDF file download of the approval letter</returns>
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
+    [SwaggerOperation(Summary = "Download approval letter as PDF. Roles: Admin.")]
+    public async Task<IActionResult> DownloadApprovalLetter(int id)
+    {
+        var application = await _applicationService.GetApplicationByIdAsync(id);
+        if (application == null)
+        {
+            return NotFound();
+        }
+
+        if (application.Status != ApplicationStatus.Approved && application.Status != ApplicationStatus.Active)
+        {
+            TempData["ErrorMessage"] = "Approval letter is only available for approved applications.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        try
+        {
+            var pdfBytes = await _pdfService.GenerateApprovalLetterPdfAsync(application);
+            var fileName = $"ApprovalLetter_{application.LastName}_{DateTime.Now:yyyyMMdd}.pdf";
+
+            return File(pdfBytes, "application/pdf", fileName);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error generating approval letter for application {ApplicationId}", id);
+            TempData["ErrorMessage"] = "Error generating approval letter. Please try again.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
     }
 
     #endregion
