@@ -21,18 +21,25 @@
                     <span class="badge @GetStatusBadgeClass(Model.Application.Status) ms-2">@Model.Application.Status</span>
                 </h2>
                 <div class="btn-group">
-                    <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                    <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-download"></i> Download
                     </button>
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" asp-action="DownloadPdf" asp-route-id="@Model.Application.Id">
                             <i class="bi bi-file-pdf"></i> Application PDF
                         </a></li>
                         <li><a class="dropdown-item" asp-action="DownloadPdf" asp-route-id="@Model.Application.Id" asp-route-includeVotes="true">
                             <i class="bi bi-file-pdf"></i> Application with Votes
                         </a></li>
-                        @if (Model.Application.Status == EllisHope.Models.Domain.ApplicationStatus.Approved)
+                        <li><a class="dropdown-item" asp-action="DownloadPdf" asp-route-id="@Model.Application.Id" asp-route-includeComments="true">
+                            <i class="bi bi-file-pdf"></i> Application with Comments
+                        </a></li>
+                        <li><a class="dropdown-item" asp-action="DownloadPdf" asp-route-id="@Model.Application.Id" asp-route-includeVotes="true" asp-route-includeComments="true">
+                            <i class="bi bi-file-pdf"></i> Full Application (Votes & Comments)
+                        </a></li>
+                        @if (Model.Application.Status == EllisHope.Models.Domain.ApplicationStatus.Approved || Model.Application.Status == EllisHope.Models.Domain.ApplicationStatus.Active)
                         {
+                            <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" asp-action="DownloadApprovalLetter" asp-route-id="@Model.Application.Id">
                                 <i class="bi bi-file-pdf"></i> Approval Letter
                             </a></li>

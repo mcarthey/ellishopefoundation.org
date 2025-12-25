@@ -166,19 +166,35 @@ public class PdfService : IPdfService
                             // Comments (if included)
                             if (includeComments && application.Comments?.Any() == true)
                             {
-                                column.Item().PageBreak();
-                                AddSection(column, "Discussion Comments");
-                                foreach (var comment in application.Comments.Where(c => !c.IsDeleted && !c.IsPrivate).OrderBy(c => c.CreatedDate))
+                                var commentsToShow = application.Comments
+                                    .Where(c => !c.IsDeleted)
+                                    .OrderBy(c => c.CreatedDate)
+                                    .ToList();
+
+                                if (commentsToShow.Any())
                                 {
-                                    column.Item().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).PaddingBottom(10).Column(commentCol =>
+                                    column.Item().PageBreak();
+                                    AddSection(column, "Discussion Comments");
+                                    foreach (var comment in commentsToShow)
                                     {
-                                        commentCol.Item().Row(row =>
+                                        column.Item().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).PaddingBottom(10).Column(commentCol =>
                                         {
-                                            row.RelativeItem().Text($"{comment.Author?.FullName ?? "Unknown"}").SemiBold();
-                                            row.RelativeItem().AlignRight().Text($"{comment.CreatedDate:MMM dd, yyyy}").FontSize(9);
+                                            commentCol.Item().Row(row =>
+                                            {
+                                                row.RelativeItem().Text($"{comment.Author?.FullName ?? "Unknown"}").SemiBold();
+                                                row.RelativeItem().AlignRight().Text($"{comment.CreatedDate:MMM dd, yyyy}").FontSize(9);
+                                            });
+                                            if (comment.IsPrivate)
+                                            {
+                                                commentCol.Item().Text("[Board Only]").FontSize(8).FontColor(Colors.Orange.Darken2);
+                                            }
+                                            if (comment.IsInformationRequest)
+                                            {
+                                                commentCol.Item().Text("[Information Request]").FontSize(8).FontColor(Colors.Blue.Darken2);
+                                            }
+                                            commentCol.Item().PaddingTop(5).Text(comment.Content).FontSize(10);
                                         });
-                                        commentCol.Item().PaddingTop(5).Text(comment.Content).FontSize(10);
-                                    });
+                                    }
                                 }
                             }
                         });
@@ -248,11 +264,11 @@ public class PdfService : IPdfService
 
                             column.Item().PaddingLeft(20).Column(details =>
                             {
-                                details.Item().Text($"• Duration: {application.ProgramDurationMonths} months");
-                                details.Item().Text($"• Start Date: {(application.ProgramStartDate?.ToString("MMMM dd, yyyy") ?? "To be determined")}");
+                                details.Item().Text($"- Duration: {application.ProgramDurationMonths} months");
+                                details.Item().Text($"- Start Date: {(application.ProgramStartDate?.ToString("MMMM dd, yyyy") ?? "To be determined")}");
                                 if (application.AssignedSponsor != null)
                                 {
-                                    details.Item().Text($"• Your Sponsor: {application.AssignedSponsor.FullName}");
+                                    details.Item().Text($"- Your Sponsor: {application.AssignedSponsor.FullName}");
                                 }
                             });
 
@@ -413,7 +429,7 @@ public class PdfService : IPdfService
     {
         column.Item().Row(row =>
         {
-            row.AutoItem().Text(isChecked ? "?" : "?").FontSize(14);
+            row.AutoItem().Text(isChecked ? "[X]" : "[ ]").FontSize(11);
             row.AutoItem().PaddingLeft(5).Text(label);
         });
     }

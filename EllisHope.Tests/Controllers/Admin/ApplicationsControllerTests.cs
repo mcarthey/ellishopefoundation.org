@@ -18,6 +18,7 @@ namespace EllisHope.Tests.Controllers.Admin;
 public class ApplicationsControllerTests
 {
     private readonly Mock<IClientApplicationService> _mockApplicationService;
+    private readonly Mock<IPdfService> _mockPdfService;
     private readonly Mock<UserManager<ApplicationUser>> _mockUserManager;
     private readonly Mock<ILogger<ApplicationsController>> _mockLogger;
     private readonly Mock<IUrlHelper> _mockUrlHelper;
@@ -30,6 +31,7 @@ public class ApplicationsControllerTests
     public ApplicationsControllerTests()
     {
         _mockApplicationService = new Mock<IClientApplicationService>();
+        _mockPdfService = new Mock<IPdfService>();
         _mockUserManager = MockHelpers.MockUserManager<ApplicationUser>();
         _mockLogger = new Mock<ILogger<ApplicationsController>>();
         _mockUrlHelper = new Mock<IUrlHelper>();
@@ -37,6 +39,7 @@ public class ApplicationsControllerTests
         // Create controller using standard constructor
         _controller = new ApplicationsController(
             _mockApplicationService.Object,
+            _mockPdfService.Object,
             _mockUserManager.Object,
             _mockLogger.Object
         );
