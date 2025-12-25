@@ -192,7 +192,257 @@ public class AccountControllerTests
     }
 
     [Fact]
-    public async Task Login_Post_ValidCredentials_NotAdminUser_RedirectsToMyApplications()
+    public async Task Login_Post_ValidCredentials_BoardMemberUser_RedirectsToBoardMemberDashboard()
+    {
+        // Arrange
+        var model = new LoginViewModel
+        {
+            Email = "boardmember@test.com",
+            Password = "Password123!",
+            RememberMe = false
+        };
+
+        var user = new ApplicationUser
+        {
+            Email = "boardmember@test.com",
+            UserName = "boardmember@test.com",
+            FirstName = "Board",
+            LastName = "Member"
+        };
+
+        _mockUserManager.Setup(u => u.FindByEmailAsync(model.Email))
+            .ReturnsAsync(user);
+
+        _mockUserManager.Setup(u => u.UpdateAsync(user))
+            .ReturnsAsync(IdentityResult.Success);
+
+        _mockSignInManager.Setup(s => s.PasswordSignInAsync(
+            model.Email,
+            model.Password,
+            model.RememberMe,
+            true))
+            .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Success);
+
+        _mockUserManager.Setup(u => u.IsInRoleAsync(user, "Admin"))
+            .ReturnsAsync(false);
+        _mockUserManager.Setup(u => u.IsInRoleAsync(user, "BoardMember"))
+            .ReturnsAsync(true);
+
+        // Act
+        var result = await _controller.Login(model, null);
+
+        // Assert - BoardMember should redirect to BoardMember Dashboard
+        var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+        Assert.Equal("Dashboard", redirectResult.ActionName);
+        Assert.Equal("BoardMember", redirectResult.ControllerName);
+    }
+
+    [Fact]
+    public async Task Login_Post_ValidCredentials_EditorUser_RedirectsToBlog()
+    {
+        // Arrange
+        var model = new LoginViewModel
+        {
+            Email = "editor@test.com",
+            Password = "Password123!",
+            RememberMe = false
+        };
+
+        var user = new ApplicationUser
+        {
+            Email = "editor@test.com",
+            UserName = "editor@test.com",
+            FirstName = "Content",
+            LastName = "Editor"
+        };
+
+        _mockUserManager.Setup(u => u.FindByEmailAsync(model.Email))
+            .ReturnsAsync(user);
+
+        _mockUserManager.Setup(u => u.UpdateAsync(user))
+            .ReturnsAsync(IdentityResult.Success);
+
+        _mockSignInManager.Setup(s => s.PasswordSignInAsync(
+            model.Email,
+            model.Password,
+            model.RememberMe,
+            true))
+            .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Success);
+
+        _mockUserManager.Setup(u => u.IsInRoleAsync(user, "Admin"))
+            .ReturnsAsync(false);
+        _mockUserManager.Setup(u => u.IsInRoleAsync(user, "BoardMember"))
+            .ReturnsAsync(false);
+        _mockUserManager.Setup(u => u.IsInRoleAsync(user, "Editor"))
+            .ReturnsAsync(true);
+
+        // Act
+        var result = await _controller.Login(model, null);
+
+        // Assert - Editor should redirect to Blog management
+        var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+        Assert.Equal("Index", redirectResult.ActionName);
+        Assert.Equal("Blog", redirectResult.ControllerName);
+    }
+
+    [Fact]
+    public async Task Login_Post_ValidCredentials_SponsorUser_RedirectsToSponsorDashboard()
+    {
+        // Arrange
+        var model = new LoginViewModel
+        {
+            Email = "sponsor@test.com",
+            Password = "Password123!",
+            RememberMe = false
+        };
+
+        var user = new ApplicationUser
+        {
+            Email = "sponsor@test.com",
+            UserName = "sponsor@test.com",
+            FirstName = "Test",
+            LastName = "Sponsor"
+        };
+
+        _mockUserManager.Setup(u => u.FindByEmailAsync(model.Email))
+            .ReturnsAsync(user);
+
+        _mockUserManager.Setup(u => u.UpdateAsync(user))
+            .ReturnsAsync(IdentityResult.Success);
+
+        _mockSignInManager.Setup(s => s.PasswordSignInAsync(
+            model.Email,
+            model.Password,
+            model.RememberMe,
+            true))
+            .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Success);
+
+        _mockUserManager.Setup(u => u.IsInRoleAsync(user, "Admin"))
+            .ReturnsAsync(false);
+        _mockUserManager.Setup(u => u.IsInRoleAsync(user, "BoardMember"))
+            .ReturnsAsync(false);
+        _mockUserManager.Setup(u => u.IsInRoleAsync(user, "Editor"))
+            .ReturnsAsync(false);
+        _mockUserManager.Setup(u => u.IsInRoleAsync(user, "Sponsor"))
+            .ReturnsAsync(true);
+
+        // Act
+        var result = await _controller.Login(model, null);
+
+        // Assert - Sponsor should redirect to Sponsor Dashboard
+        var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+        Assert.Equal("Dashboard", redirectResult.ActionName);
+        Assert.Equal("Sponsor", redirectResult.ControllerName);
+    }
+
+    [Fact]
+    public async Task Login_Post_ValidCredentials_ClientUser_RedirectsToClientDashboard()
+    {
+        // Arrange
+        var model = new LoginViewModel
+        {
+            Email = "client@test.com",
+            Password = "Password123!",
+            RememberMe = false
+        };
+
+        var user = new ApplicationUser
+        {
+            Email = "client@test.com",
+            UserName = "client@test.com",
+            FirstName = "Test",
+            LastName = "Client"
+        };
+
+        _mockUserManager.Setup(u => u.FindByEmailAsync(model.Email))
+            .ReturnsAsync(user);
+
+        _mockUserManager.Setup(u => u.UpdateAsync(user))
+            .ReturnsAsync(IdentityResult.Success);
+
+        _mockSignInManager.Setup(s => s.PasswordSignInAsync(
+            model.Email,
+            model.Password,
+            model.RememberMe,
+            true))
+            .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Success);
+
+        _mockUserManager.Setup(u => u.IsInRoleAsync(user, "Admin"))
+            .ReturnsAsync(false);
+        _mockUserManager.Setup(u => u.IsInRoleAsync(user, "BoardMember"))
+            .ReturnsAsync(false);
+        _mockUserManager.Setup(u => u.IsInRoleAsync(user, "Editor"))
+            .ReturnsAsync(false);
+        _mockUserManager.Setup(u => u.IsInRoleAsync(user, "Sponsor"))
+            .ReturnsAsync(false);
+        _mockUserManager.Setup(u => u.IsInRoleAsync(user, "Client"))
+            .ReturnsAsync(true);
+
+        // Act
+        var result = await _controller.Login(model, null);
+
+        // Assert - Client should redirect to Client Dashboard
+        var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+        Assert.Equal("Dashboard", redirectResult.ActionName);
+        Assert.Equal("Client", redirectResult.ControllerName);
+    }
+
+    [Fact]
+    public async Task Login_Post_ValidCredentials_MemberUser_RedirectsToMemberDashboard()
+    {
+        // Arrange
+        var model = new LoginViewModel
+        {
+            Email = "member@test.com",
+            Password = "Password123!",
+            RememberMe = false
+        };
+
+        var user = new ApplicationUser
+        {
+            Email = "member@test.com",
+            UserName = "member@test.com",
+            FirstName = "Test",
+            LastName = "Member"
+        };
+
+        _mockUserManager.Setup(u => u.FindByEmailAsync(model.Email))
+            .ReturnsAsync(user);
+
+        _mockUserManager.Setup(u => u.UpdateAsync(user))
+            .ReturnsAsync(IdentityResult.Success);
+
+        _mockSignInManager.Setup(s => s.PasswordSignInAsync(
+            model.Email,
+            model.Password,
+            model.RememberMe,
+            true))
+            .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Success);
+
+        _mockUserManager.Setup(u => u.IsInRoleAsync(user, "Admin"))
+            .ReturnsAsync(false);
+        _mockUserManager.Setup(u => u.IsInRoleAsync(user, "BoardMember"))
+            .ReturnsAsync(false);
+        _mockUserManager.Setup(u => u.IsInRoleAsync(user, "Editor"))
+            .ReturnsAsync(false);
+        _mockUserManager.Setup(u => u.IsInRoleAsync(user, "Sponsor"))
+            .ReturnsAsync(false);
+        _mockUserManager.Setup(u => u.IsInRoleAsync(user, "Client"))
+            .ReturnsAsync(false);
+        _mockUserManager.Setup(u => u.IsInRoleAsync(user, "Member"))
+            .ReturnsAsync(true);
+
+        // Act
+        var result = await _controller.Login(model, null);
+
+        // Assert - Member should redirect to Member Dashboard
+        var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+        Assert.Equal("Dashboard", redirectResult.ActionName);
+        Assert.Equal("Member", redirectResult.ControllerName);
+    }
+
+    [Fact]
+    public async Task Login_Post_ValidCredentials_NoRoleUser_RedirectsToMyApplications()
     {
         // Arrange
         var model = new LoginViewModel
@@ -223,7 +473,7 @@ public class AccountControllerTests
             true))
             .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Success);
 
-        // User is not in any admin roles
+        // User is not in any roles
         _mockUserManager.Setup(u => u.IsInRoleAsync(user, "Admin"))
             .ReturnsAsync(false);
         _mockUserManager.Setup(u => u.IsInRoleAsync(user, "BoardMember"))

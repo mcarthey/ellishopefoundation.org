@@ -71,7 +71,9 @@ public class AccountController : Controller
     ///     }
     ///
     /// On successful login, updates user's LastLoginDate and redirects based on role:
-    /// - Admin/BoardMember/Editor → Admin Dashboard
+    /// - Admin → Admin Dashboard
+    /// - BoardMember → BoardMember Dashboard
+    /// - Editor → Blog Management
     /// - Sponsor → Sponsor Portal
     /// - Client → Client Portal
     /// - Member → Member Portal
@@ -119,16 +121,24 @@ public class AccountController : Controller
                 if (user != null)
                 {
                     // Redirect based on user role
-                    if (await _userManager.IsInRoleAsync(user, "Admin") || 
-                        await _userManager.IsInRoleAsync(user, "BoardMember") || 
-                        await _userManager.IsInRoleAsync(user, "Editor"))
+                    if (await _userManager.IsInRoleAsync(user, "Admin"))
                     {
-                        // Admin, BoardMember, or Editor - go to admin dashboard
+                        // Admin - go to admin dashboard
                         if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                         {
                             return Redirect(returnUrl);
                         }
                         return RedirectToAction("Index", "Dashboard");
+                    }
+                    else if (await _userManager.IsInRoleAsync(user, "BoardMember"))
+                    {
+                        // BoardMember - go to board member dashboard
+                        return RedirectToAction("Dashboard", "BoardMember");
+                    }
+                    else if (await _userManager.IsInRoleAsync(user, "Editor"))
+                    {
+                        // Editor - go to blog management (primary editor area)
+                        return RedirectToAction("Index", "Blog");
                     }
                     else if (await _userManager.IsInRoleAsync(user, "Sponsor"))
                     {
