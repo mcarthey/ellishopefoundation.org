@@ -217,9 +217,9 @@ public class ApplicationsController : Controller
     /// alias to Details for review.
     /// </summary>
     [SwaggerOperation(Summary = "alias to Details for review.")]
-    public async Task<IActionResult> Review(int id)
+    public IActionResult Review(int id)
     {
-        return await Details(id);
+        return RedirectToAction(nameof(Details), new { id });
     }
 
     #endregion

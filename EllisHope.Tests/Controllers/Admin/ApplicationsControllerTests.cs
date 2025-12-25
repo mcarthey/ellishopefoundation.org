@@ -260,25 +260,15 @@ public class ApplicationsControllerTests
     }
 
     [Fact]
-    public async Task Review_CallsDetails()
+    public void Review_RedirectsToDetails()
     {
-        // Arrange
-        var application = new ClientApplication { Id = 1, FirstName = "John", LastName = "Doe", Status = ApplicationStatus.UnderReview };
-
-        _mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(_testBoardMember);
-        _mockApplicationService.Setup(s => s.GetApplicationByIdAsync(1, true, true)).ReturnsAsync(application);
-        _mockApplicationService.Setup(s => s.GetApplicationVotesAsync(1)).ReturnsAsync(new List<ApplicationVote>());
-        _mockApplicationService.Setup(s => s.GetApplicationCommentsAsync(1, true)).ReturnsAsync(new List<ApplicationComment>());
-        _mockApplicationService.Setup(s => s.GetVotingSummaryAsync(1)).ReturnsAsync(new VotingSummary());
-        _mockApplicationService.Setup(s => s.GetVoteAsync(1, _testBoardMember.Id)).ReturnsAsync((ApplicationVote?)null);
-
         // Act
-        var result = await _controller.Review(1);
+        var result = _controller.Review(1);
 
         // Assert
-        var viewResult = Assert.IsType<ViewResult>(result);
-        var model = Assert.IsType<ApplicationDetailsViewModel>(viewResult.Model);
-        Assert.Equal(1, model.Application.Id);
+        var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+        Assert.Equal("Details", redirectResult.ActionName);
+        Assert.Equal(1, redirectResult.RouteValues!["id"]);
     }
 
     #endregion
