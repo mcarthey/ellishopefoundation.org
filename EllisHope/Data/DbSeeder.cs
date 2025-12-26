@@ -118,6 +118,41 @@ public static class DbSeeder
             Console.WriteLine("Default blog categories created.");
         }
 
+        // Seed default pages (for page content management)
+        var pageNames = new[]
+        {
+            ("Home", "Home Page", "Welcome to Ellis Hope Foundation"),
+            ("About", "About Us", "Learn about our mission and values"),
+            ("Team", "Our Team", "Meet our dedicated team members"),
+            ("Services", "Our Services", "Programs and services we offer"),
+            ("Contact", "Contact Us", "Get in touch with us"),
+            ("Blog", "Blog", "News, updates, and stories from our foundation"),
+            ("Events", "Events", "Upcoming events and activities"),
+            ("Causes", "Our Causes", "Causes and initiatives we support"),
+            ("Faq", "FAQ", "Frequently asked questions about our foundation")
+        };
+
+        foreach (var (pageName, title, metaDescription) in pageNames)
+        {
+            if (!context.Pages.Any(p => p.PageName == pageName))
+            {
+                context.Pages.Add(new Page
+                {
+                    PageName = pageName,
+                    Title = title,
+                    MetaDescription = metaDescription,
+                    IsPublished = true,
+                    CreatedDate = DateTime.UtcNow
+                });
+            }
+        }
+
+        if (context.ChangeTracker.HasChanges())
+        {
+            await context.SaveChangesAsync();
+            Console.WriteLine("Default pages created/updated.");
+        }
+
         // Seed default image sizes
         if (!context.ImageSizes.Any())
         {

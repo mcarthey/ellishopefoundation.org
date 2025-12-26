@@ -62,8 +62,8 @@ public class PageTemplateService : IPageTemplateService
                         Orientation = "Landscape",
                         MaxFileSizeBytes = 5 * 1024 * 1024
                     },
-                    CurrentTemplatePath = "/assets/img/hero/hero-img-6-unsplash.png",
-                    FallbackPath = "/assets/img/hero/hero-img-6-unsplash.png"
+                    CurrentTemplatePath = "/assets/img/templates/home/hero-image.png",
+                    FallbackPath = "/assets/img/templates/home/hero-image.png"
                 },
                 new() {
                     Key = "AboutImage",
@@ -81,8 +81,8 @@ public class PageTemplateService : IPageTemplateService
                         Orientation = "Portrait",
                         MaxFileSizeBytes = 3 * 1024 * 1024
                     },
-                    CurrentTemplatePath = "/assets/img/media/about-foundation-663x839.jpg",
-                    FallbackPath = "/assets/img/media/about-foundation-663x839.jpg"
+                    CurrentTemplatePath = "/assets/img/templates/home/about-section.jpg",
+                    FallbackPath = "/assets/img/templates/home/about-section.jpg"
                 },
                 new() {
                     Key = "CTABackground",
@@ -100,8 +100,8 @@ public class PageTemplateService : IPageTemplateService
                         Orientation = "Landscape",
                         MaxFileSizeBytes = 5 * 1024 * 1024
                     },
-                    CurrentTemplatePath = "/assets/img/bg/make-difference-1800x855.jpg",
-                    FallbackPath = "/assets/img/bg/make-difference-1800x855.jpg"
+                    CurrentTemplatePath = "/assets/img/templates/home/cta-background.jpg",
+                    FallbackPath = "/assets/img/templates/home/cta-background.jpg"
                 }
             },
             ContentAreas = new List<EditableContent>
@@ -282,8 +282,8 @@ public class PageTemplateService : IPageTemplateService
                         Orientation = "Landscape",
                         MaxFileSizeBytes = 4 * 1024 * 1024
                     },
-                    CurrentTemplatePath = "/assets/img/page-title/about-us-1800x540.jpg",
-                    FallbackPath = "/assets/img/page-title/about-us-1800x540.jpg"
+                    CurrentTemplatePath = "/assets/img/templates/about/header-banner.jpg",
+                    FallbackPath = "/assets/img/templates/about/header-banner.jpg"
                 },
                 new() {
                     Key = "AboutSectionImage",
@@ -301,8 +301,8 @@ public class PageTemplateService : IPageTemplateService
                         Orientation = "Portrait",
                         MaxFileSizeBytes = 3 * 1024 * 1024
                     },
-                    CurrentTemplatePath = "/assets/img/media/gift-empowerment-587x695.jpg",
-                    FallbackPath = "/assets/img/media/gift-empowerment-587x695.jpg"
+                    CurrentTemplatePath = "/assets/img/templates/about/about-section.jpg",
+                    FallbackPath = "/assets/img/templates/about/about-section.jpg"
                 }
             },
             ContentAreas = new List<EditableContent>
@@ -483,12 +483,12 @@ public class PageTemplateService : IPageTemplateService
             Description = "Meet our team members and volunteers",
             Images = new List<EditableImage>
             {
-                new() { 
-                    Key = "HeaderBanner", 
-                    Label = "Page Header Banner", 
+                new() {
+                    Key = "HeaderBanner",
+                    Label = "Page Header Banner",
                     Description = "Banner image at top of Team page",
-                    CurrentTemplatePath = "/assets/img/page-title/page-title-bg.jpg",
-                    FallbackPath = "/assets/img/page-title/page-title-bg.jpg"
+                    CurrentTemplatePath = "/assets/img/templates/team/header-banner.jpg",
+                    FallbackPath = "/assets/img/templates/team/header-banner.jpg"
                 }
             },
             ContentAreas = new List<EditableContent>
@@ -550,8 +550,8 @@ public class PageTemplateService : IPageTemplateService
                         Orientation = "Landscape",
                         MaxFileSizeBytes = 4 * 1024 * 1024
                     },
-                    CurrentTemplatePath = "/assets/img/page-title/our-service-1800x540.jpg",
-                    FallbackPath = "/assets/img/page-title/our-service-1800x540.jpg"
+                    CurrentTemplatePath = "/assets/img/templates/services/header-banner.jpg",
+                    FallbackPath = "/assets/img/templates/services/header-banner.jpg"
                 }
             },
             ContentAreas = new List<EditableContent>
@@ -611,8 +611,8 @@ public class PageTemplateService : IPageTemplateService
                     Key = "HeaderBanner",
                     Label = "Page Header Banner",
                     Description = "Banner image at top of Contact page",
-                    CurrentTemplatePath = "/assets/img/page-title/page-title-bg.jpg",
-                    FallbackPath = "/assets/img/page-title/page-title-bg.jpg"
+                    CurrentTemplatePath = "/assets/img/templates/contact/header-banner.jpg",
+                    FallbackPath = "/assets/img/templates/contact/header-banner.jpg"
                 }
             },
             ContentAreas = new List<EditableContent>
@@ -695,8 +695,8 @@ public class PageTemplateService : IPageTemplateService
                         Orientation = "Landscape",
                         MaxFileSizeBytes = 4 * 1024 * 1024
                     },
-                    CurrentTemplatePath = "/assets/img/page-title/page-title-bg.jpg",
-                    FallbackPath = "/assets/img/page-title/page-title-bg.jpg"
+                    CurrentTemplatePath = "/assets/img/templates/blog/header-banner.jpg",
+                    FallbackPath = "/assets/img/templates/blog/header-banner.jpg"
                 }
             },
             ContentAreas = new List<EditableContent>
@@ -744,8 +744,8 @@ public class PageTemplateService : IPageTemplateService
                         Orientation = "Landscape",
                         MaxFileSizeBytes = 4 * 1024 * 1024
                     },
-                    CurrentTemplatePath = "/assets/img/page-title/numbers-1800x540.jpg",
-                    FallbackPath = "/assets/img/page-title/numbers-1800x540.jpg"
+                    CurrentTemplatePath = "/assets/img/templates/events/header-banner.jpg",
+                    FallbackPath = "/assets/img/templates/events/header-banner.jpg"
                 }
             },
             ContentAreas = new List<EditableContent>
@@ -809,8 +809,8 @@ public class PageTemplateService : IPageTemplateService
                         Orientation = "Landscape",
                         MaxFileSizeBytes = 4 * 1024 * 1024
                     },
-                    CurrentTemplatePath = "/assets/img/page-title/page-title-bg.jpg",
-                    FallbackPath = "/assets/img/page-title/page-title-bg.jpg"
+                    CurrentTemplatePath = "/assets/img/templates/causes/header-banner.jpg",
+                    FallbackPath = "/assets/img/templates/causes/header-banner.jpg"
                 }
             },
             ContentAreas = new List<EditableContent>
@@ -866,8 +866,8 @@ public class PageTemplateService : IPageTemplateService
                         Orientation = "Landscape",
                         MaxFileSizeBytes = 4 * 1024 * 1024
                     },
-                    CurrentTemplatePath = "/assets/img/page-title/page-title-bg.jpg",
-                    FallbackPath = "/assets/img/page-title/page-title-bg.jpg"
+                    CurrentTemplatePath = "/assets/img/templates/faq/header-banner.jpg",
+                    FallbackPath = "/assets/img/templates/faq/header-banner.jpg"
                 }
             },
             ContentAreas = new List<EditableContent>
@@ -921,8 +921,8 @@ public class PageTemplateService : IPageTemplateService
                     Key = "HeaderBanner",
                     Label = "Page Header Banner",
                     Description = "Banner image at top of page",
-                    CurrentTemplatePath = "/assets/img/page-title/page-title-bg.jpg",
-                    FallbackPath = "/assets/img/page-title/page-title-bg.jpg"
+                    CurrentTemplatePath = "/assets/img/templates/shared/default-header-banner.jpg",
+                    FallbackPath = "/assets/img/templates/shared/default-header-banner.jpg"
                 }
             },
             ContentAreas = new List<EditableContent>
