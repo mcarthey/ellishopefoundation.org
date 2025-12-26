@@ -1,4 +1,4 @@
-﻿@model IEnumerable<EllisHope.Models.Domain.ApplicationUser>
+@model IEnumerable<EllisHope.Models.Domain.ApplicationUser>
 @{
     ViewBag.Title = "About Us";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -8,7 +8,7 @@
 
 <!-- page-title-area start -->
 <div class="page-title-area">
-    <div class="breadcrumb-wrapper" data-background="/assets/img/page-title/about-us-1800x540.jpg">
+    <div class="breadcrumb-wrapper" data-background="@Content.Image("About", "HeaderBanner")">
         <img class="shape-1" src="~/assets/img/shape/shape-81.png" alt="shape">
         <img class="shape-2" src="~/assets/img/shape/shape-82.png" alt="shape">
         <div class="container">
@@ -38,32 +38,26 @@
                 <div class="text-wrapper-one mb-45 wow fadeInLeft">
                     <div class="title-two mb-50">
                         <h5 class="sub-title">about us</h5>
-                        <h2 class="title">
-                            Gifts Elevate
-                            <span class="position-relative">
-                                and <img class="title-img" src="~/assets/img/shape/shape-7.png" alt="shape">
-                            </span>
-                            Enrich Lives.
-                        </h2>
-                        <p>Our main purpose revolves around empowering individuals, fostering growth.</p>
+                        <h2 class="title">@Content.Text("About", "AboutTitle")</h2>
+                        <p>@Content.Text("About", "AboutSubtitle")</p>
                     </div>
                     <div class="feature-list-three mb-15">
                         <span class="icon">
                             <i class="bi bi-check"></i>
                         </span>
-                        <span class="feature-title">Contributions foster growth.</span>
+                        <span class="feature-title">@Content.Text("About", "AboutFeature1")</span>
                     </div>
                     <div class="feature-list-three mb-15">
                         <span class="icon">
                             <i class="bi bi-check"></i>
                         </span>
-                        <span class="feature-title">Supportive acts nurture human potential.</span>
+                        <span class="feature-title">@Content.Text("About", "AboutFeature2")</span>
                     </div>
                     <div class="feature-list-three">
                         <span class="icon">
                             <i class="bi bi-check"></i>
                         </span>
-                        <span class="feature-title">send us donation every countrys</span>
+                        <span class="feature-title">@Content.Text("About", "AboutFeature3")</span>
                     </div>
                     <a class="ht-btn style-2 mt-30" href="/about">More Details</a>
                 </div>
@@ -71,9 +65,9 @@
             <div class="col-xl-6 col-lg-6">
                 <div class="img-wrapper-two text-lg-end position-relative mb-45 wow fadeInRight">
                     <img class="main-img-2 img-fluid" src="~/assets/img/shape/shape-6.png" alt="shape">
-                    <img class="main-img img-fluid" src="~/assets/img/media/gift-empowerment-587x695.jpg" alt="About">
+                    <img class="main-img img-fluid" src="@Content.Image("About", "AboutSectionImage")" alt="About">
                     <div class="float-content">
-                        <p class="fs-20 text-heding mb-2">Volunteer <span class="counter">102</span>k+</p>
+                        <p class="fs-20 text-heding mb-2">Volunteer <span class="counter">@Content.Text("About", "VolunteerCount")</span></p>
                         <ul class="user-list">
                             <li>
                                 <img src="~/assets/img/media/media-10.jpg" alt="author">
@@ -105,25 +99,25 @@
             <div class="col d-flex justify-content-xl-start justify-content-center">
                 <div class="progressbar-content-2 wow fadeInUp">
                     <div class="chart2" data-percent="90">
-                        <span>90%</span>
+                        <span>@Content.Text("About", "Stat1Value")</span>
                     </div>
-                    <h3 class="progress-title">Building a hospital</h3>
+                    <h3 class="progress-title">@Content.Text("About", "Stat1Label")</h3>
                 </div>
             </div>
             <div class="col d-flex justify-content-center">
                 <div class="progressbar-content-2 wow fadeInUp" data-wow-delay="0.1">
                     <div class="chart2" data-percent="70">
-                        <span>30k</span>
+                        <span>@Content.Text("About", "Stat2Value")</span>
                     </div>
-                    <h3 class="progress-title">Monthly donors</h3>
+                    <h3 class="progress-title">@Content.Text("About", "Stat2Label")</h3>
                 </div>
             </div>
             <div class="col d-flex justify-content-xl-end justify-content-center">
                 <div class="progressbar-content-2 wow fadeInUp" data-wow-delay="0.2">
                     <div class="chart2" data-percent="82">
-                        <span>82%</span>
+                        <span>@Content.Text("About", "Stat3Value")</span>
                     </div>
-                    <h3 class="progress-title">Successful campaigns</h3>
+                    <h3 class="progress-title">@Content.Text("About", "Stat3Label")</h3>
                 </div>
             </div>
         </div>
@@ -138,18 +132,8 @@
             <div class="col-xl-9 col-lg-8">
                 <div class="title-one text-center mb-70">
                     <h5 class="sub-title wow fadeInUp">What we do</h5>
-                    <h2 class="title wow fadeInUp" data-wow-delay="0.1">
-                        Enrich Lives offer Hope
-                        <span class="position-relative">
-                            Inspire
-                            <img class="title-img-2"
-                                 src="~/assets/img/shape/shape-7.png" alt="shape">
-                        </span>Change
-                    </h2>
-                    <p class="wow fadeInUp" data-wow-delay="0.2">
-                        Charity volunteers dedicate their time and
-                        effort to improve lives end.
-                    </p>
+                    <h2 class="title wow fadeInUp" data-wow-delay="0.1">@Content.Text("About", "WhatWeDoTitle")</h2>
+                    <p class="wow fadeInUp" data-wow-delay="0.2">@Content.Text("About", "WhatWeDoSubtitle")</p>
                 </div>
             </div>
         </div>
@@ -207,18 +191,8 @@
     <div class="container">
         <div class="title-one text-center mb-50">
             <h5 class="sub-title wow fadeInUp">Our Team</h5>
-            <h2 class="title text-white wow fadeInUp" data-wow-delay="0.1">
-                Our Board
-                <span class="position-relative">
-                    Members
-                    <img class="title-img-2"
-                         src="~/assets/img/shape/shape-7.png" alt="shape">
-                </span>
-            </h2>
-            <p class="opacity-75 text-white wow fadeInUp" data-wow-delay="0.2">
-                Our board members bring diverse talents and dedicated leadership to guide
-                the Ellis Hope Foundation's mission.
-            </p>
+            <h2 class="title text-white wow fadeInUp" data-wow-delay="0.1">@Content.Text("About", "TeamSectionTitle")</h2>
+            <p class="opacity-75 text-white wow fadeInUp" data-wow-delay="0.2">@Content.Text("About", "TeamSectionSubtitle")</p>
         </div>
         @if (Model.Any())
         {
@@ -264,15 +238,12 @@
             <div class="col-lg-6">
                 <div class="title-one mb-70 mb-md-30 wow fadeInLeft">
                     <h5 class="sub-title">Testimonial</h5>
-                    <h2 class="title">Over 1000+ people have faith in us.</h2>
+                    <h2 class="title">@Content.Text("About", "TestimonialTitle")</h2>
                 </div>
             </div>
             <div class="col-lg-6 d-lg-flex justify-content-lg-end mb-70">
                 <div class="title-one ps-xxl-5 ms-xxl-5 wow fadeInRight">
-                    <p>
-                        The trust and confidence of over thousand individuals solidify and validate our
-                        excellence.
-                    </p>
+                    <p>@Content.Text("About", "TestimonialSubtitle")</p>
                 </div>
             </div>
         </div>
@@ -503,7 +474,7 @@
         <div class="row align-items-center">
             <div class="col-lg-6">
                 <div class="title-one text-lg-start text-center">
-                    <h2 class="title">Subscribe to Regular Newsletters.</h2>
+                    <h2 class="title">@Content.Text("About", "NewsletterTitle")</h2>
                 </div>
             </div>
             <div class="col-lg-6">

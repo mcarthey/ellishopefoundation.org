@@ -92,6 +92,7 @@ builder.Services.AddScoped<IMediaService, MediaService>();
 builder.Services.AddScoped<IMediaMigrationService, MediaMigrationService>();
 builder.Services.AddScoped<IPageService, PageService>();
 builder.Services.AddScoped<IPageTemplateService, PageTemplateService>();
+builder.Services.AddScoped<IPageContentHelper, PageContentHelper>();
 builder.Services.AddScoped<IUserManagementService, UserManagementService>();
 builder.Services.AddScoped<IClientApplicationService, ClientApplicationService>();
 builder.Services.AddScoped<IDocumentService, DocumentService>();

@@ -149,13 +149,13 @@ public class PageTemplateService : IPageTemplateService
         {
             PageName = "About",
             DisplayName = "About Us Page",
-            Description = "Information about Ellis Hope Foundation - mission, vision, impact",
+            Description = "Information about Ellis Hope Foundation - mission, vision, impact, and team",
             Images = new List<EditableImage>
             {
-                new() { 
-                    Key = "HeaderBanner", 
-                    Label = "Page Header Banner", 
-                    Description = "Banner image at top of About page",
+                new() {
+                    Key = "HeaderBanner",
+                    Label = "Page Header Banner",
+                    Description = "Banner image at top of About page (breadcrumb area)",
                     Requirements = new ImageRequirements
                     {
                         RecommendedWidth = 1800,
@@ -171,10 +171,10 @@ public class PageTemplateService : IPageTemplateService
                     CurrentTemplatePath = "/assets/img/page-title/about-us-1800x540.jpg",
                     FallbackPath = "/assets/img/page-title/about-us-1800x540.jpg"
                 },
-                new() { 
-                    Key = "MissionImage", 
-                    Label = "Mission Section Image", 
-                    Description = "Image accompanying mission statement",
+                new() {
+                    Key = "AboutSectionImage",
+                    Label = "About Section Image",
+                    Description = "Main image in the 'About Us' section (portrait orientation)",
                     Requirements = new ImageRequirements
                     {
                         RecommendedWidth = 587,
@@ -189,56 +189,172 @@ public class PageTemplateService : IPageTemplateService
                     },
                     CurrentTemplatePath = "/assets/img/media/gift-empowerment-587x695.jpg",
                     FallbackPath = "/assets/img/media/gift-empowerment-587x695.jpg"
-                },
-                new() { 
-                    Key = "TeamPhoto", 
-                    Label = "Team Photo", 
-                    Description = "Group photo of team/volunteers",
-                    Requirements = new ImageRequirements
-                    {
-                        RecommendedWidth = 800,
-                        RecommendedHeight = 600,
-                        MinWidth = 600,
-                        MinHeight = 400,
-                        MaxWidth = 1200,
-                        MaxHeight = 900,
-                        AspectRatio = "4:3",
-                        Orientation = "Landscape",
-                        MaxFileSizeBytes = 3 * 1024 * 1024
-                    },
-                    CurrentTemplatePath = "/assets/img/media/media-10.jpg",
-                    FallbackPath = "/assets/img/media/media-10.jpg"
                 }
             },
             ContentAreas = new List<EditableContent>
             {
-                new() { 
-                    Key = "MissionStatement", 
-                    Label = "Mission Statement", 
-                    Description = "Our mission and why we exist", 
-                    ContentType = "RichText",
-                    CurrentTemplateValue = "<h2>Our Mission</h2><p>Empowering individuals through fitness, education, and community support.</p>"
+                // About Section (first major section)
+                new() {
+                    Key = "AboutTitle",
+                    Label = "About Section Title",
+                    Description = "Main title in the about section (e.g., 'Gifts Elevate and Enrich Lives')",
+                    ContentType = "Text",
+                    MaxLength = 100,
+                    CurrentTemplateValue = "Gifts Elevate and Enrich Lives."
                 },
-                new() { 
-                    Key = "VisionStatement", 
-                    Label = "Vision Statement", 
-                    Description = "Our vision for the future", 
-                    ContentType = "RichText",
-                    CurrentTemplateValue = "<h2>Our Vision</h2><p>A healthier, more empowered community where everyone has access to wellness resources.</p>"
+                new() {
+                    Key = "AboutSubtitle",
+                    Label = "About Section Subtitle",
+                    Description = "Subtitle text under the main title",
+                    ContentType = "Text",
+                    MaxLength = 200,
+                    CurrentTemplateValue = "Our main purpose revolves around empowering individuals, fostering growth."
                 },
-                new() { 
-                    Key = "ImpactStats", 
-                    Label = "Impact Statistics", 
-                    Description = "Key achievements and impact numbers", 
-                    ContentType = "RichText",
-                    CurrentTemplateValue = "<p>102k+ Volunteers | 90% Success Rate | 30k Monthly Donors</p>"
+                new() {
+                    Key = "AboutFeature1",
+                    Label = "Feature Point 1",
+                    Description = "First bullet point in about section",
+                    ContentType = "Text",
+                    MaxLength = 100,
+                    CurrentTemplateValue = "Contributions foster growth."
                 },
-                new() { 
-                    Key = "History", 
-                    Label = "Our History", 
-                    Description = "Story of how Ellis Hope was founded", 
-                    ContentType = "RichText",
-                    CurrentTemplateValue = "<p>Founded with a vision to make health and fitness accessible to all...</p>"
+                new() {
+                    Key = "AboutFeature2",
+                    Label = "Feature Point 2",
+                    Description = "Second bullet point in about section",
+                    ContentType = "Text",
+                    MaxLength = 100,
+                    CurrentTemplateValue = "Supportive acts nurture human potential."
+                },
+                new() {
+                    Key = "AboutFeature3",
+                    Label = "Feature Point 3",
+                    Description = "Third bullet point in about section",
+                    ContentType = "Text",
+                    MaxLength = 100,
+                    CurrentTemplateValue = "We welcome donations from every country."
+                },
+                new() {
+                    Key = "VolunteerCount",
+                    Label = "Volunteer Count Display",
+                    Description = "Volunteer count shown on image (e.g., '102k+')",
+                    ContentType = "Text",
+                    MaxLength = 20,
+                    CurrentTemplateValue = "102k+"
+                },
+
+                // Impact/Fact Section
+                new() {
+                    Key = "Stat1Value",
+                    Label = "Statistic 1 Value",
+                    Description = "First statistic percentage or number (e.g., '90%')",
+                    ContentType = "Text",
+                    MaxLength = 10,
+                    CurrentTemplateValue = "90%"
+                },
+                new() {
+                    Key = "Stat1Label",
+                    Label = "Statistic 1 Label",
+                    Description = "Label for first statistic",
+                    ContentType = "Text",
+                    MaxLength = 50,
+                    CurrentTemplateValue = "Building a hospital"
+                },
+                new() {
+                    Key = "Stat2Value",
+                    Label = "Statistic 2 Value",
+                    Description = "Second statistic value (e.g., '30k')",
+                    ContentType = "Text",
+                    MaxLength = 10,
+                    CurrentTemplateValue = "30k"
+                },
+                new() {
+                    Key = "Stat2Label",
+                    Label = "Statistic 2 Label",
+                    Description = "Label for second statistic",
+                    ContentType = "Text",
+                    MaxLength = 50,
+                    CurrentTemplateValue = "Monthly donors"
+                },
+                new() {
+                    Key = "Stat3Value",
+                    Label = "Statistic 3 Value",
+                    Description = "Third statistic percentage (e.g., '82%')",
+                    ContentType = "Text",
+                    MaxLength = 10,
+                    CurrentTemplateValue = "82%"
+                },
+                new() {
+                    Key = "Stat3Label",
+                    Label = "Statistic 3 Label",
+                    Description = "Label for third statistic",
+                    ContentType = "Text",
+                    MaxLength = 50,
+                    CurrentTemplateValue = "Successful campaigns"
+                },
+
+                // What We Do Section
+                new() {
+                    Key = "WhatWeDoTitle",
+                    Label = "What We Do - Title",
+                    Description = "Main title for What We Do section",
+                    ContentType = "Text",
+                    MaxLength = 100,
+                    CurrentTemplateValue = "Enrich Lives offer Hope Inspire Change"
+                },
+                new() {
+                    Key = "WhatWeDoSubtitle",
+                    Label = "What We Do - Subtitle",
+                    Description = "Subtitle/description for What We Do section",
+                    ContentType = "Text",
+                    MaxLength = 200,
+                    CurrentTemplateValue = "Charity volunteers dedicate their time and effort to improve lives."
+                },
+
+                // Team Section
+                new() {
+                    Key = "TeamSectionTitle",
+                    Label = "Team Section Title",
+                    Description = "Title for the board members section",
+                    ContentType = "Text",
+                    MaxLength = 50,
+                    CurrentTemplateValue = "Our Board Members"
+                },
+                new() {
+                    Key = "TeamSectionSubtitle",
+                    Label = "Team Section Description",
+                    Description = "Description text for team section",
+                    ContentType = "Text",
+                    MaxLength = 300,
+                    CurrentTemplateValue = "Our board members bring diverse talents and dedicated leadership to guide the Ellis Hope Foundation's mission."
+                },
+
+                // Testimonial Section
+                new() {
+                    Key = "TestimonialTitle",
+                    Label = "Testimonial Section Title",
+                    Description = "Title for testimonials (e.g., 'Over 1000+ people have faith in us')",
+                    ContentType = "Text",
+                    MaxLength = 100,
+                    CurrentTemplateValue = "Over 1000+ people have faith in us."
+                },
+                new() {
+                    Key = "TestimonialSubtitle",
+                    Label = "Testimonial Section Description",
+                    Description = "Supporting text for testimonial section",
+                    ContentType = "Text",
+                    MaxLength = 200,
+                    CurrentTemplateValue = "The trust and confidence of over thousand individuals solidify and validate our excellence."
+                },
+
+                // Newsletter Section
+                new() {
+                    Key = "NewsletterTitle",
+                    Label = "Newsletter Section Title",
+                    Description = "Call to action for newsletter signup",
+                    ContentType = "Text",
+                    MaxLength = 100,
+                    CurrentTemplateValue = "Subscribe to Regular Newsletters."
                 }
             }
         };
