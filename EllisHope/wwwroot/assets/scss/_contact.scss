@@ -294,8 +294,8 @@
 
             input,
             textarea {
-                background: $white;
-                color: $black;
+                background: $white !important;
+                color: $black !important;
                 border: 1px solid $black;
                 font-size: 18px;
 
