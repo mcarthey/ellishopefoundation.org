@@ -104,6 +104,13 @@ builder.Services.AddScoped<IDatabaseLoggerService, DatabaseLoggerService>();
 
 // Configure Email Settings
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+
+// Configure reCAPTCHA settings
+builder.Services.Configure<RecaptchaSettings>(builder.Configuration.GetSection("Recaptcha"));
+builder.Services.AddHttpClient<IRecaptchaService, RecaptchaService>();
+
+// Configure Contact Form settings
+builder.Services.Configure<ContactFormSettings>(builder.Configuration.GetSection("ContactForm"));
   
 var app = builder.Build();
 

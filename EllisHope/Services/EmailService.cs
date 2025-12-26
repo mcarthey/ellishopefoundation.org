@@ -20,7 +20,7 @@ public class EmailService : IEmailService
         _logger = logger;
     }
 
-    public async Task SendEmailAsync(string to, string subject, string body, bool isHtml = true)
+    public async Task SendEmailAsync(string to, string subject, string body, bool isHtml = true, string? replyTo = null)
     {
         try
         {
@@ -32,7 +32,7 @@ public class EmailService : IEmailService
             // REMOVE THIS IN PRODUCTION!
             if (_settings.SmtpHost == "mail.ellishopefoundation.org")
             {
-                ServicePointManager.ServerCertificateValidationCallback = 
+                ServicePointManager.ServerCertificateValidationCallback =
                     (sender, certificate, chain, sslPolicyErrors) => true;
             }
 
@@ -45,6 +45,12 @@ public class EmailService : IEmailService
             };
 
             mailMessage.To.Add(to);
+
+            // Add reply-to header if specified (useful for contact forms)
+            if (!string.IsNullOrWhiteSpace(replyTo))
+            {
+                mailMessage.ReplyToList.Add(new MailAddress(replyTo));
+            }
 
             await client.SendMailAsync(mailMessage);
 

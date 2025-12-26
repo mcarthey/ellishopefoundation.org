@@ -138,7 +138,7 @@ public class PageTemplateServiceTests
         var pages = _service.GetAvailablePages();
 
         // Assert
-        Assert.Equal(5, pages.Count);
+        Assert.Equal(9, pages.Count);
     }
 
     #endregion

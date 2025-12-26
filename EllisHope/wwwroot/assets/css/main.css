@@ -14847,6 +14847,7 @@ ul.worklist li:last-child {
 .contact-form.form-4 .input-wrapper input,
 .contact-form.form-4 .input-wrapper textarea {
   background: #ffffff;
+  color: #000;
   border: 1px solid #000;
   font-size: 18px;
 }
