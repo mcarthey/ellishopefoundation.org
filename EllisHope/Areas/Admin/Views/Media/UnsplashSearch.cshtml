@@ -32,7 +32,7 @@
         </form>
         <div class="mt-2 text-muted small">
             <i class="bi bi-info-circle"></i>
-            Photos provided by <a href="https://unsplash.com" target="_blank">Unsplash</a>.
+            Photos provided by <a href="https://unsplash.com/?utm_source=EllisHopeFoundation&utm_medium=referral" target="_blank">Unsplash</a>.
             Free to use with attribution.
         </div>
     </div>
@@ -64,7 +64,7 @@
                                 <strong>@(photo.Width) × @(photo.Height)</strong>
                             </p>
                             <p class="small text-muted mb-0">
-                                Photo by <a href="https://unsplash.com/@@(@photo.User.Username)" target="_blank">@photo.User.Name</a>
+                                Photo by <a href="https://unsplash.com/@@(@photo.User.Username)?utm_source=EllisHopeFoundation&utm_medium=referral" target="_blank">@photo.User.Name</a> on <a href="https://unsplash.com/?utm_source=EllisHopeFoundation&utm_medium=referral" target="_blank">Unsplash</a>
                             </p>
                         </div>
                         <div class="card-footer p-2">
@@ -89,7 +89,7 @@
                             <div class="modal-body">
                                 <img src="@photo.Urls.Regular" alt="@photo.Description" class="img-fluid mb-3">
                                 <table class="table table-sm">
-                                    <tr><th>Photographer:</th><td><a href="https://unsplash.com/@@(@photo.User.Username)" target="_blank">@photo.User.Name</a></td></tr>
+                                    <tr><th>Photographer:</th><td><a href="https://unsplash.com/@@(@photo.User.Username)?utm_source=EllisHopeFoundation&utm_medium=referral" target="_blank">@photo.User.Name</a> on <a href="https://unsplash.com/?utm_source=EllisHopeFoundation&utm_medium=referral" target="_blank">Unsplash</a></td></tr>
                                     <tr><th>Dimensions:</th><td>@(photo.Width) × @(photo.Height)</td></tr>
                                     @if (!string.IsNullOrEmpty(photo.Description))
                                     {
@@ -124,7 +124,7 @@
                                     <div class="mb-3">
                                         <img src="@photo.Urls.Small" alt="@photo.Description" class="img-fluid mb-2" style="max-height: 200px;">
                                         <p class="small text-muted">
-                                            Photo by <a href="https://unsplash.com/@@(@photo.User.Username)" target="_blank">@photo.User.Name</a>
+                                            Photo by <a href="https://unsplash.com/@@(@photo.User.Username)?utm_source=EllisHopeFoundation&utm_medium=referral" target="_blank">@photo.User.Name</a> on <a href="https://unsplash.com/?utm_source=EllisHopeFoundation&utm_medium=referral" target="_blank">Unsplash</a>
                                         </p>
                                     </div>
 
