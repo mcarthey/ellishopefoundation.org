@@ -1,5 +1,5 @@
-﻿@{
-    ViewBag.Title = "Index";
+@{
+    ViewBag.Title = "Our Services";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -7,21 +7,18 @@
 
 <!-- page-title-area start -->
 <div class="page-title-area">
-    <div class="breadcrumb-wrapper" data-background="/assets/img/page-title/our-service-1800x540.jpg">
+    <div class="breadcrumb-wrapper" data-background="@Content.Image("Services", "HeaderBanner")">
         <img class="shape-1" src="~/assets/img/shape/shape-81.png" alt="shape">
         <img class="shape-2" src="~/assets/img/shape/shape-82.png" alt="shape">
         <div class="container">
             <div class="breadcrumb-content text-center">
-                <h2 class="breadcrumb-title">Our Service</h2>
+                <h2 class="breadcrumb-title">Our Services</h2>
                 <ul class="breadcrumb-menu">
                     <li>
-                        <a href="/home/">Home</a>
+                        <a href="/">Home</a>
                     </li>
                     <li>
-                        <a href="#">Pages</a>
-                    </li>
-                    <li>
-                        <a href="#">Service</a>
+                        <a href="#">Services</a>
                     </li>
                 </ul>
             </div>
@@ -29,6 +26,7 @@
     </div>
 </div>
 <!-- page-title-area end -->
+
 <!-- we-do-section start -->
 <section class="we-do-section-five position-relative z-1 pt-140 pt-lg-100 pb-95 pb-lg-15"
          data-bg-color="#FDF3F0">
@@ -40,12 +38,10 @@
                 <div class="title-one text-center mb-70">
                     <h5 class="sub-title wow fadeInUp">What we do</h5>
                     <h2 class="title wow fadeInUp" data-wow-delay="0.1">
-                        Enrich Lives offer Hope Inspire
-                        Change
+                        @Content.Text("Services", "SectionTitle")
                     </h2>
                     <p class="wow fadeInUp" data-wow-delay="0.2">
-                        Charity volunteers dedicate their time and
-                        effort to improve lives end.
+                        @Content.Text("Services", "SectionSubtitle")
                     </p>
                 </div>
             </div>
@@ -57,9 +53,9 @@
                         <img class="front-icon" src="~/assets/img/icon/icon-28.svg" alt="icon">
                         <img class="back-icon" src="~/assets/img/icon/icon-28w.svg" alt="icon">
                     </div>
-                    <h4 class="feature-title">Liquid life unveiled</h4>
-                    <p class="description">Become a member.</p>
-                    <a class="more-btn" href="#">Read More <i class="bi bi-plus"></i></a>
+                    <h4 class="feature-title">@Content.Text("Services", "Service1Title")</h4>
+                    <p class="description">@Content.Text("Services", "Service1Description")</p>
+                    <a class="more-btn" href="/contact">Learn More <i class="bi bi-plus"></i></a>
                 </div>
             </div>
             <div class="col-lg-4">
@@ -68,9 +64,9 @@
                         <img class="front-icon" src="~/assets/img/icon/icon-29.svg" alt="icon">
                         <img class="back-icon" src="~/assets/img/icon/icon-29w.svg" alt="icon">
                     </div>
-                    <h4 class="feature-title">Health tech revolution</h4>
-                    <p class="description">Become a member..</p>
-                    <a class="more-btn" href="#">Read More <i class="bi bi-plus"></i></a>
+                    <h4 class="feature-title">@Content.Text("Services", "Service2Title")</h4>
+                    <p class="description">@Content.Text("Services", "Service2Description")</p>
+                    <a class="more-btn" href="/contact">Learn More <i class="bi bi-plus"></i></a>
                 </div>
             </div>
             <div class="col-lg-4">
@@ -79,9 +75,9 @@
                         <img class="front-icon" src="~/assets/img/icon/icon-30.svg" alt="icon">
                         <img class="back-icon" src="~/assets/img/icon/icon-30w.svg" alt="icon">
                     </div>
-                    <h4 class="feature-title">Educate to elevate</h4>
-                    <p class="description">Become a member.</p>
-                    <a class="more-btn" href="#">Read More <i class="bi bi-plus"></i></a>
+                    <h4 class="feature-title">@Content.Text("Services", "Service3Title")</h4>
+                    <p class="description">@Content.Text("Services", "Service3Description")</p>
+                    <a class="more-btn" href="/contact">Learn More <i class="bi bi-plus"></i></a>
                 </div>
             </div>
             <div class="col-lg-4">
@@ -90,9 +86,9 @@
                         <img class="front-icon" src="~/assets/img/icon/icon-31.svg" alt="icon">
                         <img class="back-icon" src="~/assets/img/icon/icon-31w.svg" alt="icon">
                     </div>
-                    <h4 class="feature-title">Fresh and fit dining</h4>
-                    <p class="description">Become a member.</p>
-                    <a class="more-btn" href="#">Read More <i class="bi bi-plus"></i></a>
+                    <h4 class="feature-title">@Content.Text("Services", "Service4Title")</h4>
+                    <p class="description">@Content.Text("Services", "Service4Description")</p>
+                    <a class="more-btn" href="/contact">Learn More <i class="bi bi-plus"></i></a>
                 </div>
             </div>
             <div class="col-lg-4">
@@ -101,9 +97,9 @@
                         <img class="front-icon" src="~/assets/img/icon/icon-32.svg" alt="icon">
                         <img class="back-icon" src="~/assets/img/icon/icon-32w.svg" alt="icon">
                     </div>
-                    <h4 class="feature-title">Home offering service</h4>
-                    <p class="description">Become a member.</p>
-                    <a class="more-btn" href="#">Read More <i class="bi bi-plus"></i></a>
+                    <h4 class="feature-title">@Content.Text("Services", "Service5Title")</h4>
+                    <p class="description">@Content.Text("Services", "Service5Description")</p>
+                    <a class="more-btn" href="/contact">Learn More <i class="bi bi-plus"></i></a>
                 </div>
             </div>
             <div class="col-lg-4">
@@ -112,15 +108,16 @@
                         <img class="front-icon" src="~/assets/img/icon/icon-33.svg" alt="icon">
                         <img class="back-icon" src="~/assets/img/icon/icon-33w.svg" alt="icon">
                     </div>
-                    <h4 class="feature-title">Save green energy</h4>
-                    <p class="description">Become a member.</p>
-                    <a class="more-btn" href="#">Read More <i class="bi bi-plus"></i></a>
+                    <h4 class="feature-title">@Content.Text("Services", "Service6Title")</h4>
+                    <p class="description">@Content.Text("Services", "Service6Description")</p>
+                    <a class="more-btn" href="/contact">Learn More <i class="bi bi-plus"></i></a>
                 </div>
             </div>
         </div>
     </div>
 </section>
 <!-- we-do-section end -->
+
 <!-- feedback-section start -->
 <div class="feedback-section-four arrow-style-10 position-relative z-1 pt-180 pt-lg-60 pb-90 pb-lg-60">
     <div class="container">
@@ -129,11 +126,10 @@
                 <div class="title-one text-center mb-70">
                     <h5 class="sub-title wow fadeInUp">Testimonial</h5>
                     <h2 class="title wow fadeInUp" data-wow-delay="0.1">
-                        Over 1000+ People have Faith in us.
+                        @Content.Text("Services", "TestimonialTitle")
                     </h2>
                     <p class="wow fadeInUp" data-wow-delay="0.2">
-                        The trust and confidence of over thousand
-                        and validate our excellence.
+                        @Content.Text("Services", "TestimonialSubtitle")
                     </p>
                 </div>
             </div>
@@ -148,36 +144,14 @@
                         offered me invaluable experiences taking places
                     </p>
                     <div class="rating">
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
+                        <a href="#"><i class="bi bi-star-fill"></i></a>
+                        <a href="#"><i class="bi bi-star-fill"></i></a>
+                        <a href="#"><i class="bi bi-star-fill"></i></a>
+                        <a href="#"><i class="bi bi-star-fill"></i></a>
+                        <a href="#"><i class="bi bi-star"></i></a>
                     </div>
                     <div class="author-info">
-                        <h5 class="name">rashed kabir, <span class="designation">designer</span></h5>
+                        <h5 class="name">Sarah Johnson, <span class="designation">Community Member</span></h5>
                     </div>
                 </div>
             </div>
@@ -185,125 +159,18 @@
                 <div class="feedback-wrap-6 border-wrap">
                     <img class="author" src="~/assets/img/media/headshot2-90x90.jpg" alt="author">
                     <p class="feedback-text">
-                        I'm always eager to participate in charity events they've
-                        offered me invaluable experiences taking places
+                        The support I received from this organization changed my life.
+                        They truly care about making a difference.
                     </p>
                     <div class="rating">
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
+                        <a href="#"><i class="bi bi-star-fill"></i></a>
+                        <a href="#"><i class="bi bi-star-fill"></i></a>
+                        <a href="#"><i class="bi bi-star-fill"></i></a>
+                        <a href="#"><i class="bi bi-star-fill"></i></a>
+                        <a href="#"><i class="bi bi-star-fill"></i></a>
                     </div>
                     <div class="author-info">
-                        <h5 class="name">mahmud-amin, <span class="designation">designer</span></h5>
-
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="feedback-wrap-6 border-wrap">
-                    <img class="author" src="~/assets/img/media/media-32.jpg" alt="author">
-                    <p class="feedback-text">
-                        I'm always eager to participate in charity events they've
-                        offered me invaluable experiences taking places
-                    </p>
-                    <div class="rating">
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                    </div>
-                    <div class="author-info">
-                        <h5 class="name">rashed kabir, <span class="designation">designer</span></h5>
-
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="feedback-wrap-6 border-wrap">
-                    <img class="author" src="~/assets/img/media/media-33.jpg" alt="author">
-                    <p class="feedback-text">
-                        I'm always eager to participate in charity events they've
-                        offered me invaluable experiences taking places
-                    </p>
-                    <div class="rating">
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                    </div>
-                    <div class="author-info">
-                        <h5 class="name">mahmud-amin, <span class="designation">designer</span></h5>
-
+                        <h5 class="name">Michael Chen, <span class="designation">Program Participant</span></h5>
                     </div>
                 </div>
             </div>
@@ -317,45 +184,7 @@
     </div>
 </div>
 <!-- feedback-section end -->
-<!-- brand-section start -->
-<div class="brand-wrap-2 pt-30 pb-100">
-    <div class="container px-0">
-        <div class="row brand-slide-wrapper ht-carousel mx-0" data-slide-show="5" data-ml-slide-show="3"
-             data-lg-slide-show="3" data-md-slide-show="3" data-sm-slide-show="2">
-            <div class="brand-item">
-                <a href="#">
-                    <img src="~/assets/img/brand/brand-10.svg" alt="brand">
-                </a>
-            </div>
-            <div class="brand-item">
-                <a href="#">
-                    <img src="~/assets/img/brand/brand-11.svg" alt="brand">
-                </a>
-            </div>
-            <div class="brand-item">
-                <a href="#">
-                    <img src="~/assets/img/brand/brand-12.svg" alt="brand">
-                </a>
-            </div>
-            <div class="brand-item">
-                <a href="#">
-                    <img src="~/assets/img/brand/brand-13.svg" alt="brand">
-                </a>
-            </div>
-            <div class="brand-item">
-                <a href="#">
-                    <img src="~/assets/img/brand/brand-14.svg" alt="brand">
-                </a>
-            </div>
-            <div class="brand-item">
-                <a href="#">
-                    <img src="~/assets/img/brand/brand-10.svg" alt="brand">
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- brand-section end -->
+
 <!-- newsletter-section start -->
 <div class="newsletter-section position-relative z-1">
     <img class="shape-1 position-absolute ml-100 top-0 d-none d-lg-inline-block"
@@ -364,12 +193,12 @@
         <div class="row align-items-center newsletter-border pt-50">
             <div class="col-lg-6">
                 <div class="title-one text-lg-start text-center">
-                    <h2 class="title">Subscribe to Regular Newsletters.</h2>
+                    <h2 class="title">@Content.Text("Services", "NewsletterTitle")</h2>
                 </div>
             </div>
             <div class="col-lg-6">
                 <div class="subscribe-form sub-form-2 text-lg-end">
-                    <input type="text" placeholder="Enter Your Mail">
+                    <input type="text" placeholder="Enter Your Email">
                     <button type="submit">Subscribe</button>
                 </div>
             </div>
