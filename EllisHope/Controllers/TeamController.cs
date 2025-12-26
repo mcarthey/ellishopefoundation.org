@@ -16,12 +16,12 @@ public class TeamController : Controller
         _context = context;
     }
 
-    // GET: Team/v1 - List all board members
+    // GET: Team - List all board members
     /// <summary>
     /// Displays a list of all active board members ordered by last name
     /// </summary>
     [SwaggerOperation(Summary = "Displays a list of all active board members ordered by last name")]
-    public async Task<IActionResult> v1()
+    public async Task<IActionResult> Index()
     {
         var boardMembers = await _context.Users
             .Where(u => u.UserRole == UserRole.BoardMember && u.IsActive)
@@ -32,13 +32,13 @@ public class TeamController : Controller
         return View(boardMembers);
     }
 
-    // GET: Team/details/{id} - Individual board member details
+    // GET: Team/Details/{id} - Individual board member details
     /// <summary>
     /// Displays detailed information for a specific team member
     /// </summary>
     /// <param name="id">The user ID of the team member</param>
     [SwaggerOperation(Summary = "Displays detailed information for a specific team member")]
-    public async Task<IActionResult> details(string id)
+    public async Task<IActionResult> Details(string id)
     {
         if (string.IsNullOrEmpty(id))
         {
@@ -54,15 +54,5 @@ public class TeamController : Controller
         }
 
         return View(boardMember);
-    }
-
-    // Keeping v2 for potential future use
-    /// <summary>
-    /// Alternative team page view (v2 layout)
-    /// </summary>
-    [SwaggerOperation(Summary = "Alternative team page view (v2 layout)")]
-    public IActionResult v2()
-    {
-        return View();
     }
 }

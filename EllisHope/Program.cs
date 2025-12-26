@@ -148,19 +148,19 @@ app.MapStaticAssets();
 app.MapControllerRoute(
     name: "blogDetails",
     pattern: "blog/details/{slug}",
-    defaults: new { controller = "Blog", action = "details" });
+    defaults: new { controller = "Blog", action = "Details" });
 
 // Event details route with slug
 app.MapControllerRoute(
     name: "eventDetails",
-    pattern: "event/details/{slug}",
-    defaults: new { controller = "Event", action = "details" });
+    pattern: "events/details/{slug}",
+    defaults: new { controller = "Events", action = "Details" });
 
 // Cause details route with slug
 app.MapControllerRoute(
     name: "causeDetails",
     pattern: "causes/details/{slug}",
-    defaults: new { controller = "Causes", action = "details" });
+    defaults: new { controller = "Causes", action = "Details" });
 
 // Admin area route
 app.MapControllerRoute(

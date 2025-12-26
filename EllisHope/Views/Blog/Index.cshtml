@@ -74,7 +74,7 @@
                                     {
                                         @foreach (var category in post.BlogPostCategories)
                                         {
-                                            <a href="/blog/classic?category=@category.Category.Id" class="blog-tag me-2">@category.Category.Name</a>
+                                            <a href="/blog?category=@category.Category.Id" class="blog-tag me-2">@category.Category.Name</a>
                                         }
                                     }
                                 </div>
@@ -99,7 +99,7 @@
                     <!-- Search Widget -->
                     <div class="widget widget-search mb-50 wow fadeInUp" data-wow-delay="0.1s">
                         <h3 class="widget-title">Search</h3>
-                        <form class="search-form" asp-action="classic" method="get">
+                        <form class="search-form" asp-action="Index" method="get">
                             <input type="text" name="search" value="@searchTerm" placeholder="Search">
                             <button class="widget-btn" type="submit">
                                 <i class="bi bi-search"></i>
@@ -117,7 +117,7 @@
                                 {
                                     var count = category.BlogPostCategories.Count;
                                     <li>
-                                        <a href="/blog/classic?category=@category.Id" class="@(selectedCategory == category.Id ? "active" : "")">
+                                        <a href="/blog?category=@category.Id" class="@(selectedCategory == category.Id ? "active" : "")">
                                             @category.Name <span class="float-end">(@count)</span>
                                         </a>
                                     </li>
@@ -178,7 +178,7 @@
                             <div class="tagcloud">
                                 @foreach (var tag in allTags)
                                 {
-                                    <a href="/blog/classic?search=@tag">@tag</a>
+                                    <a href="/blog?search=@tag">@tag</a>
                                 }
                             </div>
                         </div>

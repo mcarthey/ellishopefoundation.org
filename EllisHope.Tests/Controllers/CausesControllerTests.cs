@@ -37,7 +37,7 @@ public class CausesControllerTests
             .ReturnsAsync(causes);
 
         // Act
-        var result = await _controller.list(null);
+        var result = await _controller.Index(null);
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -58,7 +58,7 @@ public class CausesControllerTests
             .ReturnsAsync(searchResults);
 
         // Act
-        var result = await _controller.list("water");
+        var result = await _controller.Index("water");
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -75,7 +75,7 @@ public class CausesControllerTests
             .ReturnsAsync(new List<Cause>());
 
         // Act
-        await _controller.list("education");
+        await _controller.Index("education");
 
         // Assert
         Assert.Equal("education", _controller.ViewBag.SearchTerm);
@@ -89,7 +89,7 @@ public class CausesControllerTests
             .ReturnsAsync(new List<Cause>());
 
         // Act
-        await _controller.list(null);
+        await _controller.Index(null);
 
         // Assert
         _mockCauseService.Verify(s => s.GetActiveCausesAsync(), Times.Once);
@@ -104,7 +104,7 @@ public class CausesControllerTests
             .ReturnsAsync(new List<Cause>());
 
         // Act
-        await _controller.list("test");
+        await _controller.Index("test");
 
         // Assert
         _mockCauseService.Verify(s => s.SearchCausesAsync("test"), Times.Once);
@@ -119,7 +119,7 @@ public class CausesControllerTests
     public async Task Details_ReturnsNotFound_WhenSlugIsNull()
     {
         // Act
-        var result = await _controller.details(null);
+        var result = await _controller.Details(null);
 
         // Assert
         Assert.IsType<NotFoundResult>(result);
@@ -129,7 +129,7 @@ public class CausesControllerTests
     public async Task Details_ReturnsNotFound_WhenSlugIsEmpty()
     {
         // Act
-        var result = await _controller.details("");
+        var result = await _controller.Details("");
 
         // Assert
         Assert.IsType<NotFoundResult>(result);
@@ -143,7 +143,7 @@ public class CausesControllerTests
             .ReturnsAsync((Cause?)null);
 
         // Act
-        var result = await _controller.details("non-existent");
+        var result = await _controller.Details("non-existent");
 
         // Assert
         Assert.IsType<NotFoundResult>(result);
@@ -170,7 +170,7 @@ public class CausesControllerTests
             .ReturnsAsync(new List<Cause>());
 
         // Act
-        var result = await _controller.details("test-cause");
+        var result = await _controller.Details("test-cause");
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -197,7 +197,7 @@ public class CausesControllerTests
             .ReturnsAsync(new List<Cause>());
 
         // Act
-        await _controller.details("main");
+        await _controller.Details("main");
 
         // Assert
         Assert.NotNull(_controller.ViewBag.SimilarCauses);
@@ -223,7 +223,7 @@ public class CausesControllerTests
             .ReturnsAsync(featuredCauses);
 
         // Act
-        await _controller.details("main");
+        await _controller.Details("main");
 
         // Assert
         Assert.NotNull(_controller.ViewBag.FeaturedCauses);
@@ -245,7 +245,7 @@ public class CausesControllerTests
             .ReturnsAsync(new List<Cause>());
 
         // Act
-        await _controller.details("main");
+        await _controller.Details("main");
 
         // Assert
         _mockCauseService.Verify(s => s.GetSimilarCausesAsync(5, 4), Times.Once);
@@ -265,7 +265,7 @@ public class CausesControllerTests
             .ReturnsAsync(new List<Cause>());
 
         // Act
-        await _controller.details("main");
+        await _controller.Details("main");
 
         // Assert
         _mockCauseService.Verify(s => s.GetFeaturedCausesAsync(3), Times.Once);
@@ -285,7 +285,7 @@ public class CausesControllerTests
             .ReturnsAsync(new List<Cause>());
 
         // Act
-        await _controller.details("test-slug");
+        await _controller.Details("test-slug");
 
         // Assert
         _mockCauseService.Verify(s => s.GetCauseBySlugAsync("test-slug"), Times.Once);
@@ -305,7 +305,7 @@ public class CausesControllerTests
             .ReturnsAsync(new List<Cause>());
 
         // Act
-        var result = await _controller.details("main");
+        var result = await _controller.Details("main");
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -326,7 +326,7 @@ public class CausesControllerTests
             .ReturnsAsync(new List<Cause>());
 
         // Act
-        var result = await _controller.details("main");
+        var result = await _controller.Details("main");
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -351,7 +351,7 @@ public class CausesControllerTests
             .ReturnsAsync(causes);
 
         // Act
-        var result = await _controller.grid();
+        var result = await _controller.Grid();
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -367,7 +367,7 @@ public class CausesControllerTests
             .ReturnsAsync(new List<Cause>());
 
         // Act
-        await _controller.grid();
+        await _controller.Grid();
 
         // Assert
         _mockCauseService.Verify(s => s.GetActiveCausesAsync(), Times.Once);
@@ -411,7 +411,7 @@ public class CausesControllerTests
             .ReturnsAsync(featuredCauses);
 
         // Act
-        var result = await _controller.details("complete-test");
+        var result = await _controller.Details("complete-test");
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -440,7 +440,7 @@ public class CausesControllerTests
             .ReturnsAsync(searchResults);
 
         // Act
-        var result = await _controller.list("water");
+        var result = await _controller.Index("water");
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);

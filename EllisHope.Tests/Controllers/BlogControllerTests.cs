@@ -38,7 +38,7 @@ public class BlogControllerTests
         _mockBlogService.Setup(s => s.GetAllCategoriesAsync()).ReturnsAsync(categories);
 
         // Act
-        var result = await _controller.classic(null, null);
+        var result = await _controller.Index(null, null);
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -61,7 +61,7 @@ public class BlogControllerTests
         _mockBlogService.Setup(s => s.GetAllCategoriesAsync()).ReturnsAsync(new List<BlogCategory>());
 
         // Act
-        var result = await _controller.classic(searchTerm, null);
+        var result = await _controller.Index(searchTerm, null);
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -84,7 +84,7 @@ public class BlogControllerTests
         _mockBlogService.Setup(s => s.GetAllCategoriesAsync()).ReturnsAsync(new List<BlogCategory>());
 
         // Act
-        var result = await _controller.classic(null, categoryId);
+        var result = await _controller.Index(null, categoryId);
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -109,7 +109,7 @@ public class BlogControllerTests
         _mockBlogService.Setup(s => s.GetAllCategoriesAsync()).ReturnsAsync(categories);
 
         // Act
-        await _controller.classic(searchTerm, categoryId);
+        await _controller.Index(searchTerm, categoryId);
 
         // Assert
         Assert.Equal(searchTerm, _controller.ViewBag.SearchTerm);
@@ -125,7 +125,7 @@ public class BlogControllerTests
     public async Task Details_ReturnsNotFound_WhenSlugIsNull()
     {
         // Act
-        var result = await _controller.details(null!);
+        var result = await _controller.Details(null!);
 
         // Assert
         Assert.IsType<NotFoundResult>(result);
@@ -135,7 +135,7 @@ public class BlogControllerTests
     public async Task Details_ReturnsNotFound_WhenSlugIsEmpty()
     {
         // Act
-        var result = await _controller.details("");
+        var result = await _controller.Details("");
 
         // Assert
         Assert.IsType<NotFoundResult>(result);
@@ -149,7 +149,7 @@ public class BlogControllerTests
         _mockBlogService.Setup(s => s.GetPostBySlugAsync(slug)).ReturnsAsync((BlogPost?)null);
 
         // Act
-        var result = await _controller.details(slug);
+        var result = await _controller.Details(slug);
 
         // Assert
         Assert.IsType<NotFoundResult>(result);
@@ -174,7 +174,7 @@ public class BlogControllerTests
         _mockBlogService.Setup(s => s.GetAllPostsAsync(false)).ReturnsAsync(new List<BlogPost> { post });
 
         // Act
-        var result = await _controller.details(slug);
+        var result = await _controller.Details(slug);
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -201,7 +201,7 @@ public class BlogControllerTests
         _mockBlogService.Setup(s => s.GetAllPostsAsync(false)).ReturnsAsync(new List<BlogPost> { post });
 
         // Act
-        await _controller.details(slug);
+        await _controller.Details(slug);
 
         // Assert
         Assert.Equal(categories, _controller.ViewBag.Categories);
@@ -234,7 +234,7 @@ public class BlogControllerTests
         _mockBlogService.Setup(s => s.GetAllPostsAsync(false)).ReturnsAsync(allPosts);
 
         // Act
-        await _controller.details(slug);
+        await _controller.Details(slug);
 
         // Assert
         var recentPosts = _controller.ViewBag.RecentPosts as IEnumerable<BlogPost>;
@@ -261,7 +261,7 @@ public class BlogControllerTests
         _mockBlogService.Setup(s => s.GetAllPostsAsync(false)).ReturnsAsync(allPosts);
 
         // Act
-        await _controller.details(slug);
+        await _controller.Details(slug);
 
         // Assert
         var tags = _controller.ViewBag.AllTags as IEnumerable<string>;
@@ -283,7 +283,7 @@ public class BlogControllerTests
         _mockBlogService.Setup(s => s.GetAllPostsAsync(false)).ReturnsAsync(new List<BlogPost> { post });
 
         // Act
-        await _controller.details(slug);
+        await _controller.Details(slug);
 
         // Assert
         _mockBlogService.Verify(s => s.GetPostBySlugAsync(slug), Times.Once);
@@ -302,7 +302,7 @@ public class BlogControllerTests
         _mockBlogService.Setup(s => s.GetAllPostsAsync(false)).ReturnsAsync(allPosts);
 
         // Act
-        var result = await _controller.details(slug);
+        var result = await _controller.Details(slug);
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -321,7 +321,7 @@ public class BlogControllerTests
         _mockBlogService.Setup(s => s.GetAllPostsAsync(false)).ReturnsAsync(new List<BlogPost> { post });
 
         // Act
-        var result = await _controller.details(slug);
+        var result = await _controller.Details(slug);
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -338,7 +338,7 @@ public class BlogControllerTests
     public void Grid_ReturnsView()
     {
         // Act
-        var result = _controller.grid();
+        var result = _controller.Grid();
 
         // Assert
         Assert.IsType<ViewResult>(result);
@@ -385,7 +385,7 @@ public class BlogControllerTests
         _mockBlogService.Setup(s => s.GetAllCategoriesAsync()).ReturnsAsync(categories);
 
         // Act
-        var result = await _controller.details(slug);
+        var result = await _controller.Details(slug);
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);

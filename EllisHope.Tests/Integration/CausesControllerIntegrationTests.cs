@@ -30,7 +30,7 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
     public async Task List_ReturnsSuccess()
     {
         // Act
-        var response = await _client.GetAsync("/Causes/list");
+        var response = await _client.GetAsync("/Causes");
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -43,7 +43,7 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
     public async Task List_WithSearchTerm_ReturnsFilteredResults()
     {
         // Act
-        var response = await _client.GetAsync("/Causes/list?search=education");
+        var response = await _client.GetAsync("/Causes?search=education");
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -87,7 +87,7 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
     public async Task Grid_ReturnsSuccess()
     {
         // Act
-        var response = await _client.GetAsync("/Causes/grid");
+        var response = await _client.GetAsync("/Causes/Grid");
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -365,8 +365,8 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
         // Test that public endpoints are accessible without authentication
         var endpoints = new[]
         {
-            "/Causes/list",
-            "/Causes/grid"
+            "/Causes",
+            "/Causes/Grid"
         };
 
         foreach (var endpoint in endpoints)
@@ -402,15 +402,15 @@ public class CausesControllerIntegrationTests : IClassFixture<CustomWebApplicati
     public async Task FullWorkflow_BrowseCausesPublicly()
     {
         // Act 1: Visit causes list
-        var listResponse = await _client.GetAsync("/Causes/list");
+        var listResponse = await _client.GetAsync("/Causes");
         Assert.Equal(HttpStatusCode.OK, listResponse.StatusCode);
 
         // Act 2: Visit grid view
-        var gridResponse = await _client.GetAsync("/Causes/grid");
+        var gridResponse = await _client.GetAsync("/Causes/Grid");
         Assert.Equal(HttpStatusCode.OK, gridResponse.StatusCode);
 
         // Act 3: Search for causes
-        var searchResponse = await _client.GetAsync("/Causes/list?search=education");
+        var searchResponse = await _client.GetAsync("/Causes?search=education");
         Assert.Equal(HttpStatusCode.OK, searchResponse.StatusCode);
 
         // Assert

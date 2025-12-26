@@ -86,7 +86,7 @@ public class TeamControllerTests : IDisposable
     public async Task V1_ReturnsViewWithActiveBoardMembers()
     {
         // Act
-        var result = await _controller.v1();
+        var result = await _controller.Index();
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -102,7 +102,7 @@ public class TeamControllerTests : IDisposable
     public async Task V1_OrdersBoardMembersByLastNameThenFirstName()
     {
         // Act
-        var result = await _controller.v1();
+        var result = await _controller.Index();
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -117,7 +117,7 @@ public class TeamControllerTests : IDisposable
     public async Task V1_ExcludesInactiveBoardMembers()
     {
         // Act
-        var result = await _controller.v1();
+        var result = await _controller.Index();
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -131,7 +131,7 @@ public class TeamControllerTests : IDisposable
     public async Task V1_ExcludesNonBoardMemberRoles()
     {
         // Act
-        var result = await _controller.v1();
+        var result = await _controller.Index();
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -149,7 +149,7 @@ public class TeamControllerTests : IDisposable
         await _context.SaveChangesAsync();
 
         // Act
-        var result = await _controller.v1();
+        var result = await _controller.Index();
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -161,7 +161,7 @@ public class TeamControllerTests : IDisposable
     public async Task Details_WithValidId_ReturnsViewWithBoardMember()
     {
         // Act
-        var result = await _controller.details("board-1");
+        var result = await _controller.Details("board-1");
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -175,7 +175,7 @@ public class TeamControllerTests : IDisposable
     public async Task Details_WithNullId_ReturnsNotFound()
     {
         // Act
-        var result = await _controller.details(null);
+        var result = await _controller.Details(null);
 
         // Assert
         Assert.IsType<NotFoundResult>(result);
@@ -185,7 +185,7 @@ public class TeamControllerTests : IDisposable
     public async Task Details_WithEmptyId_ReturnsNotFound()
     {
         // Act
-        var result = await _controller.details("");
+        var result = await _controller.Details("");
 
         // Assert
         Assert.IsType<NotFoundResult>(result);
@@ -195,7 +195,7 @@ public class TeamControllerTests : IDisposable
     public async Task Details_WithInvalidId_ReturnsNotFound()
     {
         // Act
-        var result = await _controller.details("nonexistent-id");
+        var result = await _controller.Details("nonexistent-id");
 
         // Assert
         Assert.IsType<NotFoundResult>(result);
@@ -205,7 +205,7 @@ public class TeamControllerTests : IDisposable
     public async Task Details_WithInactiveBoardMember_ReturnsNotFound()
     {
         // Act
-        var result = await _controller.details("board-inactive");
+        var result = await _controller.Details("board-inactive");
 
         // Assert
         Assert.IsType<NotFoundResult>(result);
@@ -215,7 +215,7 @@ public class TeamControllerTests : IDisposable
     public async Task Details_WithNonBoardMemberUser_ReturnsNotFound()
     {
         // Act
-        var result = await _controller.details("sponsor-1");
+        var result = await _controller.Details("sponsor-1");
 
         // Assert
         Assert.IsType<NotFoundResult>(result);
@@ -225,7 +225,7 @@ public class TeamControllerTests : IDisposable
     public async Task Details_ReturnsUserWithAllProperties()
     {
         // Act
-        var result = await _controller.details("board-1");
+        var result = await _controller.Details("board-1");
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -241,13 +241,4 @@ public class TeamControllerTests : IDisposable
         Assert.True(model.IsActive);
     }
 
-    [Fact]
-    public void V2_ReturnsView()
-    {
-        // Act
-        var result = _controller.v2();
-
-        // Assert
-        Assert.IsType<ViewResult>(result);
-    }
 }

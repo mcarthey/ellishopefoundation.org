@@ -108,7 +108,7 @@
                         }
                         @if (Model.DaysRemaining.HasValue && Model.DaysRemaining > 0)
                         {
-                            <span> • @Model.DaysRemaining days remaining</span>
+                            <span> ï¿½ @Model.DaysRemaining days remaining</span>
                         }
                     </small>
                 </div>
@@ -174,7 +174,7 @@
                 </div>
                 <p class="mb-0">
                     <small class="text-muted">
-                        Check the <a asp-controller="Event" asp-action="list" asp-area="">Events page</a> to see what's happening at the foundation.
+                        Check the <a asp-controller="Events" asp-action="Index" asp-area="">Events page</a> to see what's happening at the foundation.
                     </small>
                 </p>
             </div>

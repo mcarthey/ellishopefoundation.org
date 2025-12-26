@@ -19,7 +19,7 @@
                         <a href="/">Home</a>
                     </li>
                     <li>
-                        <a href="/blog/classic">Blog</a>
+                        <a href="/blog">Blog</a>
                     </li>
                     <li>
                         <a href="#">@Model.Title</a>
@@ -79,20 +79,20 @@
                 }
                 @foreach (var tag in tags)
                 {
-                    <a href="/blog/classic?search=@tag">@tag</a>
+                    <a href="/blog?search=@tag">@tag</a>
                 }
             </div>
         </div>
         <div class="col-md-6 text-md-end text-center">
             <div class="social-media mb-30">
                 <span>Share :</span>
-                <a href="https://www.facebook.com/sharer/sharer.php?u=@Url.Action("details", "Blog", new { slug = Model.Slug }, Context.Request.Scheme)" target="_blank">
+                <a href="https://www.facebook.com/sharer/sharer.php?u=@Url.Action("Details", "Blog", new { slug = Model.Slug }, Context.Request.Scheme)" target="_blank">
                     <img src="~/assets/img/icon/facebook.svg" alt="Facebook">
                 </a>
-                <a href="https://twitter.com/intent/tweet?url=@Url.Action("details", "Blog", new { slug = Model.Slug }, Context.Request.Scheme)&text=@Model.Title" target="_blank">
+                <a href="https://twitter.com/intent/tweet?url=@Url.Action("Details", "Blog", new { slug = Model.Slug }, Context.Request.Scheme)&text=@Model.Title" target="_blank">
                     <img src="~/assets/img/icon/twitter.svg" alt="Twitter">
                 </a>
-                <a href="https://www.linkedin.com/shareArticle?mini=true&url=@Url.Action("details", "Blog", new { slug = Model.Slug }, Context.Request.Scheme)&title=@Model.Title" target="_blank">
+                <a href="https://www.linkedin.com/shareArticle?mini=true&url=@Url.Action("Details", "Blog", new { slug = Model.Slug }, Context.Request.Scheme)&title=@Model.Title" target="_blank">
                     <img src="~/assets/img/icon/linkedin.svg" alt="LinkedIn">
                 </a>
             </div>
@@ -105,13 +105,13 @@ else
         <div class="col-md-12 text-md-end text-center">
             <div class="social-media mb-30">
                 <span>Share :</span>
-                <a href="https://www.facebook.com/sharer/sharer.php?u=@Url.Action("details", "Blog", new { slug = Model.Slug }, Context.Request.Scheme)" target="_blank">
+                <a href="https://www.facebook.com/sharer/sharer.php?u=@Url.Action("Details", "Blog", new { slug = Model.Slug }, Context.Request.Scheme)" target="_blank">
                     <img src="~/assets/img/icon/facebook.svg" alt="Facebook">
                 </a>
-                <a href="https://twitter.com/intent/tweet?url=@Url.Action("details", "Blog", new { slug = Model.Slug }, Context.Request.Scheme)&text=@Model.Title" target="_blank">
+                <a href="https://twitter.com/intent/tweet?url=@Url.Action("Details", "Blog", new { slug = Model.Slug }, Context.Request.Scheme)&text=@Model.Title" target="_blank">
                     <img src="~/assets/img/icon/twitter.svg" alt="Twitter">
                 </a>
-                <a href="https://www.linkedin.com/shareArticle?mini=true&url=@Url.Action("details", "Blog", new { slug = Model.Slug }, Context.Request.Scheme)&title=@Model.Title" target="_blank">
+                <a href="https://www.linkedin.com/shareArticle?mini=true&url=@Url.Action("Details", "Blog", new { slug = Model.Slug }, Context.Request.Scheme)&title=@Model.Title" target="_blank">
                     <img src="~/assets/img/icon/linkedin.svg" alt="LinkedIn">
                 </a>
             </div>
@@ -128,7 +128,7 @@ else
         <!-- Search Widget -->
         <div class="widget widget-search mb-50">
             <h3 class="widget-title">Search</h3>
-            <form class="search-form" asp-controller="Blog" asp-action="classic" method="get">
+            <form class="search-form" asp-controller="Blog" asp-action="Index" method="get">
                 <input type="text" name="search" placeholder="Search">
                 <button class="widget-btn" type="submit">
                     <i class="bi bi-search"></i>
@@ -149,7 +149,7 @@ else
                     {
                         var count = category.BlogPostCategories?.Count ?? 0;
                         <li>
-                            <a href="/blog/classic?category=@category.Id">
+                            <a href="/blog?category=@category.Id">
                                 @category.Name <span class="float-end">(@count)</span>
                             </a>
                         </li>
@@ -205,7 +205,7 @@ else
                 <div class="tagcloud">
                     @foreach (var tag in allTags)
                     {
-                        <a href="/blog/classic?search=@tag">@tag</a>
+                        <a href="/blog?search=@tag">@tag</a>
                     }
                 </div>
             </div>

@@ -7,21 +7,21 @@ using Xunit;
 
 namespace EllisHope.Tests.Controllers;
 
-public class EventControllerTests
+public class PublicEventsControllerTests
 {
     private readonly Mock<IEventService> _mockEventService;
-    private readonly EventController _controller;
+    private readonly EllisHope.Controllers.EventsController _controller;
 
-    public EventControllerTests()
+    public PublicEventsControllerTests()
     {
         _mockEventService = new Mock<IEventService>();
-        _controller = new EventController(_mockEventService.Object);
+        _controller = new EllisHope.Controllers.EventsController(_mockEventService.Object);
     }
 
-    #region List Action Tests
+    #region Index Action Tests
 
     [Fact]
-    public async Task List_ReturnsUpcomingEvents_WhenNoSearch()
+    public async Task Index_ReturnsUpcomingEvents_WhenNoSearch()
     {
         // Arrange
         var events = new List<Event>
@@ -33,7 +33,7 @@ public class EventControllerTests
         _mockEventService.Setup(s => s.GetUpcomingEventsAsync(100)).ReturnsAsync(events);
 
         // Act
-        var result = await _controller.list(null);
+        var result = await _controller.Index(null);
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -42,7 +42,7 @@ public class EventControllerTests
     }
 
     [Fact]
-    public async Task List_ReturnsSearchResults_WhenSearchTermProvided()
+    public async Task Index_ReturnsSearchResults_WhenSearchTermProvided()
     {
         // Arrange
         var searchTerm = "charity";
@@ -54,7 +54,7 @@ public class EventControllerTests
         _mockEventService.Setup(s => s.SearchEventsAsync(searchTerm)).ReturnsAsync(events);
 
         // Act
-        var result = await _controller.list(searchTerm);
+        var result = await _controller.Index(searchTerm);
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -64,7 +64,7 @@ public class EventControllerTests
     }
 
     [Fact]
-    public async Task List_SetsViewBagSearchTerm()
+    public async Task Index_SetsViewBagSearchTerm()
     {
         // Arrange
         var searchTerm = "test";
@@ -72,21 +72,21 @@ public class EventControllerTests
             .ReturnsAsync(new List<Event>());
 
         // Act
-        await _controller.list(searchTerm);
+        await _controller.Index(searchTerm);
 
         // Assert
         Assert.Equal(searchTerm, _controller.ViewBag.SearchTerm);
     }
 
     [Fact]
-    public async Task List_CallsGetUpcomingEventsAsync_WithLimit100()
+    public async Task Index_CallsGetUpcomingEventsAsync_WithLimit100()
     {
         // Arrange
         _mockEventService.Setup(s => s.GetUpcomingEventsAsync(100))
             .ReturnsAsync(new List<Event>());
 
         // Act
-        await _controller.list(null);
+        await _controller.Index(null);
 
         // Assert
         _mockEventService.Verify(s => s.GetUpcomingEventsAsync(100), Times.Once);
@@ -100,7 +100,7 @@ public class EventControllerTests
     public async Task Details_ReturnsNotFound_WhenSlugIsNull()
     {
         // Act
-        var result = await _controller.details(null!);
+        var result = await _controller.Details(null!);
 
         // Assert
         Assert.IsType<NotFoundResult>(result);
@@ -110,7 +110,7 @@ public class EventControllerTests
     public async Task Details_ReturnsNotFound_WhenSlugIsEmpty()
     {
         // Act
-        var result = await _controller.details("");
+        var result = await _controller.Details("");
 
         // Assert
         Assert.IsType<NotFoundResult>(result);
@@ -124,7 +124,7 @@ public class EventControllerTests
         _mockEventService.Setup(s => s.GetEventBySlugAsync(slug)).ReturnsAsync((Event?)null);
 
         // Act
-        var result = await _controller.details(slug);
+        var result = await _controller.Details(slug);
 
         // Assert
         Assert.IsType<NotFoundResult>(result);
@@ -150,7 +150,7 @@ public class EventControllerTests
         _mockEventService.Setup(s => s.GetUpcomingEventsAsync(3)).ReturnsAsync(new List<Event>());
 
         // Act
-        var result = await _controller.details(slug);
+        var result = await _controller.Details(slug);
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -177,7 +177,7 @@ public class EventControllerTests
         _mockEventService.Setup(s => s.GetUpcomingEventsAsync(3)).ReturnsAsync(new List<Event>());
 
         // Act
-        await _controller.details(slug);
+        await _controller.Details(slug);
 
         // Assert
         var viewBagSimilarEvents = _controller.ViewBag.SimilarEvents as IEnumerable<Event>;
@@ -203,7 +203,7 @@ public class EventControllerTests
         _mockEventService.Setup(s => s.GetUpcomingEventsAsync(3)).ReturnsAsync(recentEvents);
 
         // Act
-        await _controller.details(slug);
+        await _controller.Details(slug);
 
         // Assert
         var viewBagRecentEvents = _controller.ViewBag.RecentEvents as IEnumerable<Event>;
@@ -223,7 +223,7 @@ public class EventControllerTests
         _mockEventService.Setup(s => s.GetUpcomingEventsAsync(3)).ReturnsAsync(new List<Event>());
 
         // Act
-        await _controller.details(slug);
+        await _controller.Details(slug);
 
         // Assert
         _mockEventService.Verify(s => s.GetSimilarEventsAsync(eventItem.Id, 4), Times.Once);
@@ -241,7 +241,7 @@ public class EventControllerTests
         _mockEventService.Setup(s => s.GetUpcomingEventsAsync(3)).ReturnsAsync(new List<Event>());
 
         // Act
-        await _controller.details(slug);
+        await _controller.Details(slug);
 
         // Assert
         _mockEventService.Verify(s => s.GetUpcomingEventsAsync(3), Times.Once);
@@ -259,7 +259,7 @@ public class EventControllerTests
         _mockEventService.Setup(s => s.GetUpcomingEventsAsync(3)).ReturnsAsync(new List<Event>());
 
         // Act
-        await _controller.details(slug);
+        await _controller.Details(slug);
 
         // Assert
         _mockEventService.Verify(s => s.GetEventBySlugAsync(slug), Times.Once);
@@ -277,7 +277,7 @@ public class EventControllerTests
         _mockEventService.Setup(s => s.GetUpcomingEventsAsync(3)).ReturnsAsync(new List<Event>());
 
         // Act
-        var result = await _controller.details(slug);
+        var result = await _controller.Details(slug);
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -298,7 +298,7 @@ public class EventControllerTests
         _mockEventService.Setup(s => s.GetUpcomingEventsAsync(3)).ReturnsAsync(new List<Event>());
 
         // Act
-        var result = await _controller.details(slug);
+        var result = await _controller.Details(slug);
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -315,7 +315,7 @@ public class EventControllerTests
     public void Grid_ReturnsView()
     {
         // Act
-        var result = _controller.grid();
+        var result = _controller.Grid();
 
         // Assert
         Assert.IsType<ViewResult>(result);
@@ -366,7 +366,7 @@ public class EventControllerTests
         _mockEventService.Setup(s => s.GetUpcomingEventsAsync(3)).ReturnsAsync(recentEvents);
 
         // Act
-        var result = await _controller.details(slug);
+        var result = await _controller.Details(slug);
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -389,7 +389,7 @@ public class EventControllerTests
     }
 
     [Fact]
-    public async Task List_IntegrationTest_SearchWorkflow()
+    public async Task Index_IntegrationTest_SearchWorkflow()
     {
         // Arrange
         var searchTerm = "charity";
@@ -402,7 +402,7 @@ public class EventControllerTests
         _mockEventService.Setup(s => s.SearchEventsAsync(searchTerm)).ReturnsAsync(searchResults);
 
         // Act
-        var result = await _controller.list(searchTerm);
+        var result = await _controller.Index(searchTerm);
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);

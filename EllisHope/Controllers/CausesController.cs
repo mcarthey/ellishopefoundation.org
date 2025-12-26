@@ -17,18 +17,18 @@ public class CausesController : Controller
         _logger = logger;
     }
 
-    // GET: Causes/list
+    // GET: Causes
     /// <summary>
-    /// Displays active causes and initiatives in list format with optional keyword search
+    /// Displays active causes and initiatives with optional keyword search
     /// </summary>
     /// <param name="search">Optional keyword to search in cause titles and descriptions</param>
-    /// <returns>View displaying active causes in list format</returns>
+    /// <returns>View displaying active causes</returns>
     /// <remarks>
     /// Sample requests:
     ///
-    ///     GET /Causes/List
-    ///     GET /Causes/List?search=education
-    ///     GET /Causes/List?search=healthcare
+    ///     GET /Causes
+    ///     GET /Causes?search=education
+    ///     GET /Causes?search=healthcare
     ///
     /// Returns only active, published causes. Search performs full-text search across cause title,
     /// description, and goal information. Includes fundraising progress and donation details where applicable.
@@ -37,12 +37,12 @@ public class CausesController : Controller
     [HttpGet]
     [SwaggerOperation(
         Summary = "Retrieves active causes with optional search filtering",
-        Description = "Displays published active causes in list format. Supports keyword search across title and description. Shows fundraising goals and progress where available.",
-        OperationId = "GetCausesList",
+        Description = "Displays published active causes. Supports keyword search across title and description. Shows fundraising goals and progress where available.",
+        OperationId = "GetCauses",
         Tags = new[] { "Causes" }
     )]
     [ProducesResponseType(typeof(IEnumerable<Cause>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> list(string? search)
+    public async Task<IActionResult> Index(string? search)
     {
         IEnumerable<Models.Domain.Cause> causes;
 
@@ -92,7 +92,7 @@ public class CausesController : Controller
     )]
     [ProducesResponseType(typeof(Cause), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> details(string? slug)
+    public async Task<IActionResult> Details(string? slug)
     {
         if (string.IsNullOrEmpty(slug))
         {
@@ -136,7 +136,7 @@ public class CausesController : Controller
         Tags = new[] { "Causes" }
     )]
     [ProducesResponseType(typeof(IEnumerable<Cause>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> grid()
+    public async Task<IActionResult> Grid()
     {
         var causes = await _causeService.GetActiveCausesAsync();
         return View(causes);

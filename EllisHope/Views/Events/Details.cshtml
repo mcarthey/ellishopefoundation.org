@@ -24,7 +24,7 @@
                         <a href="/home/">Home</a>
                     </li>
                     <li>
-                        <a href="/event/list">Events</a>
+                        <a href="/events">Events</a>
                     </li>
                     <li>
                         <a href="#">@Model.Title</a>
@@ -128,7 +128,7 @@
                                     @foreach (var recentEvent in recentEvents)
                                     {
                                         <article class="recent-post mb-20">
-                                            <a href="/event/details/@recentEvent.Slug">
+                                            <a href="/events/details/@recentEvent.Slug">
                                                 @if (!string.IsNullOrEmpty(recentEvent.FeaturedImageUrl))
                                                 {
                                                     <figure class="post-thumb" style="background-image: url('@recentEvent.FeaturedImageUrl')">
@@ -142,7 +142,7 @@
                                             </a>
                                             <div class="post-content mb-2">
                                                 <h5 class="post-title">
-                                                    <a href="/event/details/@recentEvent.Slug">
+                                                    <a href="/events/details/@recentEvent.Slug">
                                                         @recentEvent.Title
                                                     </a>
                                                 </h5>
@@ -161,7 +161,7 @@
                                     <div class="tagcloud">
                                         @foreach (var tag in tags)
                                         {
-                                            <a href="/event/list?search=@tag">@tag</a>
+                                            <a href="/events?search=@tag">@tag</a>
                                         }
                                     </div>
                                 </div>
@@ -234,7 +234,7 @@
                                     </a>
                                 </div>
                                 <h3 class="event-title">
-                                    <a href="/event/details/@similarEvent.Slug">
+                                    <a href="/events/details/@similarEvent.Slug">
                                         @similarEvent.Title
                                     </a>
                                 </h3>

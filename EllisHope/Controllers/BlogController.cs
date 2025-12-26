@@ -15,20 +15,20 @@ public class BlogController : Controller
         _blogService = blogService;
     }
 
-    // GET: Blog/Classic
+    // GET: Blog
     /// <summary>
-    /// Displays blog posts in classic list layout with optional search and category filtering
+    /// Displays blog posts with optional search and category filtering
     /// </summary>
     /// <param name="search">Optional keyword to search in blog post titles and content</param>
     /// <param name="category">Optional category ID to filter posts by category</param>
-    /// <returns>View displaying blog posts in classic list format with sidebar categories</returns>
+    /// <returns>View displaying blog posts with sidebar categories</returns>
     /// <remarks>
     /// Sample requests:
     ///
-    ///     GET /Blog/Classic
-    ///     GET /Blog/Classic?search=fundraising
-    ///     GET /Blog/Classic?category=3
-    ///     GET /Blog/Classic?search=community&amp;category=5
+    ///     GET /Blog
+    ///     GET /Blog?search=fundraising
+    ///     GET /Blog?category=3
+    ///     GET /Blog?search=community&amp;category=5
     ///
     /// Returns only published blog posts. Includes category list in sidebar for navigation.
     /// Search performs full-text search across title and content fields.
@@ -36,13 +36,13 @@ public class BlogController : Controller
     /// <response code="200">Successfully retrieved and displayed blog posts</response>
     [HttpGet]
     [SwaggerOperation(
-        Summary = "Retrieves blog posts with search and category filtering (classic layout)",
-        Description = "Displays published blog posts in a traditional list format. Supports keyword search and category-based filtering. Returns posts with categories for sidebar navigation.",
-        OperationId = "GetBlogClassic",
+        Summary = "Retrieves blog posts with search and category filtering",
+        Description = "Displays published blog posts. Supports keyword search and category-based filtering. Returns posts with categories for sidebar navigation.",
+        OperationId = "GetBlogIndex",
         Tags = new[] { "Blog" }
     )]
     [ProducesResponseType(typeof(IEnumerable<BlogPost>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> classic(string? search, int? category)
+    public async Task<IActionResult> Index(string? search, int? category)
     {
         IEnumerable<Models.Domain.BlogPost> posts;
 
@@ -82,8 +82,6 @@ public class BlogController : Controller
     /// - Post metadata (author, publish date, category, tags)
     /// - Sidebar with categories, recent posts (excluding current), and popular tags
     /// - Featured image if available
-    ///
-    /// Route also accessible via custom route: /blog/details/{slug}
     /// </remarks>
     /// <response code="200">Successfully retrieved blog post details</response>
     /// <response code="404">Blog post with specified slug not found</response>
@@ -96,7 +94,7 @@ public class BlogController : Controller
     )]
     [ProducesResponseType(typeof(BlogPost), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> details(string slug)
+    public async Task<IActionResult> Details(string slug)
     {
         if (string.IsNullOrEmpty(slug))
         {
@@ -147,7 +145,7 @@ public class BlogController : Controller
         Tags = new[] { "Blog" }
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public IActionResult grid()
+    public IActionResult Grid()
     {
         return View();
     }

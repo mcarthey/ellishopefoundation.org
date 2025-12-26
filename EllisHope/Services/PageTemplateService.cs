@@ -24,13 +24,17 @@ public class PageTemplateService : IPageTemplateService
             "team" => GetTeamPageTemplate(),
             "services" => GetServicesPageTemplate(),
             "contact" => GetContactPageTemplate(),
+            "blog" => GetBlogPageTemplate(),
+            "events" => GetEventsPageTemplate(),
+            "causes" => GetCausesPageTemplate(),
+            "faq" => GetFaqPageTemplate(),
             _ => GetGenericPageTemplate(pageName)
         };
     }
 
     public List<string> GetAvailablePages()
     {
-        return new List<string> { "Home", "About", "Team", "Services", "Contact" };
+        return new List<string> { "Home", "About", "Team", "Services", "Contact", "Blog", "Events", "Causes", "Faq" };
     }
 
     private PageTemplate GetHomePageTemplate()
@@ -668,6 +672,242 @@ public class PageTemplateService : IPageTemplateService
         };
     }
 
+    private PageTemplate GetBlogPageTemplate()
+    {
+        return new PageTemplate
+        {
+            PageName = "Blog",
+            DisplayName = "Blog Page",
+            Description = "Blog listing page with posts and sidebar",
+            Images = new List<EditableImage>
+            {
+                new() {
+                    Key = "HeaderBanner",
+                    Label = "Page Header Banner",
+                    Description = "Banner image at top of Blog page",
+                    Requirements = new ImageRequirements
+                    {
+                        RecommendedWidth = 1800,
+                        RecommendedHeight = 540,
+                        MinWidth = 1200,
+                        MinHeight = 360,
+                        AspectRatio = "10:3",
+                        Orientation = "Landscape",
+                        MaxFileSizeBytes = 4 * 1024 * 1024
+                    },
+                    CurrentTemplatePath = "/assets/img/page-title/page-title-bg.jpg",
+                    FallbackPath = "/assets/img/page-title/page-title-bg.jpg"
+                }
+            },
+            ContentAreas = new List<EditableContent>
+            {
+                new() {
+                    Key = "PageTitle",
+                    Label = "Page Title",
+                    Description = "Main title displayed in the header",
+                    ContentType = "Text",
+                    MaxLength = 50,
+                    CurrentTemplateValue = "Blog"
+                },
+                new() {
+                    Key = "NewsletterTitle",
+                    Label = "Newsletter Section Title",
+                    Description = "Title for the newsletter signup section",
+                    ContentType = "Text",
+                    MaxLength = 100,
+                    CurrentTemplateValue = "Subscribe to Regular Newsletters."
+                }
+            }
+        };
+    }
+
+    private PageTemplate GetEventsPageTemplate()
+    {
+        return new PageTemplate
+        {
+            PageName = "Events",
+            DisplayName = "Events Page",
+            Description = "Upcoming events listing page",
+            Images = new List<EditableImage>
+            {
+                new() {
+                    Key = "HeaderBanner",
+                    Label = "Page Header Banner",
+                    Description = "Banner image at top of Events page",
+                    Requirements = new ImageRequirements
+                    {
+                        RecommendedWidth = 1800,
+                        RecommendedHeight = 540,
+                        MinWidth = 1200,
+                        MinHeight = 360,
+                        AspectRatio = "10:3",
+                        Orientation = "Landscape",
+                        MaxFileSizeBytes = 4 * 1024 * 1024
+                    },
+                    CurrentTemplatePath = "/assets/img/page-title/numbers-1800x540.jpg",
+                    FallbackPath = "/assets/img/page-title/numbers-1800x540.jpg"
+                }
+            },
+            ContentAreas = new List<EditableContent>
+            {
+                new() {
+                    Key = "PageTitle",
+                    Label = "Page Title",
+                    Description = "Main title displayed in the header",
+                    ContentType = "Text",
+                    MaxLength = 50,
+                    CurrentTemplateValue = "Upcoming Events"
+                },
+                new() {
+                    Key = "SectionTitle",
+                    Label = "Section Title",
+                    Description = "Title for the events section",
+                    ContentType = "Text",
+                    MaxLength = 100,
+                    CurrentTemplateValue = "Building Brighter Futures"
+                },
+                new() {
+                    Key = "SectionSubtitle",
+                    Label = "Section Subtitle",
+                    Description = "Description under section title",
+                    ContentType = "Text",
+                    MaxLength = 200,
+                    CurrentTemplateValue = "Join us in making a difference. Explore our upcoming events and be part of something meaningful."
+                },
+                new() {
+                    Key = "NewsletterTitle",
+                    Label = "Newsletter Section Title",
+                    Description = "Title for the newsletter signup section",
+                    ContentType = "Text",
+                    MaxLength = 100,
+                    CurrentTemplateValue = "Subscribe to Regular Newsletters."
+                }
+            }
+        };
+    }
+
+    private PageTemplate GetCausesPageTemplate()
+    {
+        return new PageTemplate
+        {
+            PageName = "Causes",
+            DisplayName = "Causes Page",
+            Description = "Causes and initiatives listing page",
+            Images = new List<EditableImage>
+            {
+                new() {
+                    Key = "HeaderBanner",
+                    Label = "Page Header Banner",
+                    Description = "Banner image at top of Causes page",
+                    Requirements = new ImageRequirements
+                    {
+                        RecommendedWidth = 1800,
+                        RecommendedHeight = 540,
+                        MinWidth = 1200,
+                        MinHeight = 360,
+                        AspectRatio = "10:3",
+                        Orientation = "Landscape",
+                        MaxFileSizeBytes = 4 * 1024 * 1024
+                    },
+                    CurrentTemplatePath = "/assets/img/page-title/page-title-bg.jpg",
+                    FallbackPath = "/assets/img/page-title/page-title-bg.jpg"
+                }
+            },
+            ContentAreas = new List<EditableContent>
+            {
+                new() {
+                    Key = "PageTitle",
+                    Label = "Page Title",
+                    Description = "Main title displayed in the header",
+                    ContentType = "Text",
+                    MaxLength = 50,
+                    CurrentTemplateValue = "Causes"
+                },
+                new() {
+                    Key = "SectionTitle",
+                    Label = "Section Title",
+                    Description = "Main section title",
+                    ContentType = "Text",
+                    MaxLength = 100,
+                    CurrentTemplateValue = "Small donations make big impacts."
+                },
+                new() {
+                    Key = "NewsletterTitle",
+                    Label = "Newsletter Section Title",
+                    Description = "Title for the newsletter signup section",
+                    ContentType = "Text",
+                    MaxLength = 100,
+                    CurrentTemplateValue = "Subscribe to Regular Newsletters."
+                }
+            }
+        };
+    }
+
+    private PageTemplate GetFaqPageTemplate()
+    {
+        return new PageTemplate
+        {
+            PageName = "Faq",
+            DisplayName = "FAQ Page",
+            Description = "Frequently asked questions page",
+            Images = new List<EditableImage>
+            {
+                new() {
+                    Key = "HeaderBanner",
+                    Label = "Page Header Banner",
+                    Description = "Banner image at top of FAQ page",
+                    Requirements = new ImageRequirements
+                    {
+                        RecommendedWidth = 1800,
+                        RecommendedHeight = 540,
+                        MinWidth = 1200,
+                        MinHeight = 360,
+                        AspectRatio = "10:3",
+                        Orientation = "Landscape",
+                        MaxFileSizeBytes = 4 * 1024 * 1024
+                    },
+                    CurrentTemplatePath = "/assets/img/page-title/page-title-bg.jpg",
+                    FallbackPath = "/assets/img/page-title/page-title-bg.jpg"
+                }
+            },
+            ContentAreas = new List<EditableContent>
+            {
+                new() {
+                    Key = "PageTitle",
+                    Label = "Page Title",
+                    Description = "Main title displayed in the header",
+                    ContentType = "Text",
+                    MaxLength = 50,
+                    CurrentTemplateValue = "Frequently Asked Questions"
+                },
+                new() {
+                    Key = "SectionTitle",
+                    Label = "Section Title",
+                    Description = "Title for the FAQ section",
+                    ContentType = "Text",
+                    MaxLength = 100,
+                    CurrentTemplateValue = "Questions Asked About Our Foundation"
+                },
+                new() {
+                    Key = "SectionSubtitle",
+                    Label = "Section Subtitle",
+                    Description = "Description under section title",
+                    ContentType = "Text",
+                    MaxLength = 200,
+                    CurrentTemplateValue = "Find answers to commonly asked questions about our programs and services."
+                },
+                new() {
+                    Key = "NewsletterTitle",
+                    Label = "Newsletter Section Title",
+                    Description = "Title for the newsletter signup section",
+                    ContentType = "Text",
+                    MaxLength = 100,
+                    CurrentTemplateValue = "Subscribe to Regular Newsletters."
+                }
+            }
+        };
+    }
+
     private PageTemplate GetGenericPageTemplate(string pageName)
     {
         return new PageTemplate
@@ -677,9 +917,9 @@ public class PageTemplateService : IPageTemplateService
             Description = $"Content for {pageName} page",
             Images = new List<EditableImage>
             {
-                new() { 
-                    Key = "HeaderBanner", 
-                    Label = "Page Header Banner", 
+                new() {
+                    Key = "HeaderBanner",
+                    Label = "Page Header Banner",
                     Description = "Banner image at top of page",
                     CurrentTemplatePath = "/assets/img/page-title/page-title-bg.jpg",
                     FallbackPath = "/assets/img/page-title/page-title-bg.jpg"
@@ -687,10 +927,10 @@ public class PageTemplateService : IPageTemplateService
             },
             ContentAreas = new List<EditableContent>
             {
-                new() { 
-                    Key = "PageContent", 
-                    Label = "Page Content", 
-                    Description = "Main content for this page", 
+                new() {
+                    Key = "PageContent",
+                    Label = "Page Content",
+                    Description = "Main content for this page",
                     ContentType = "RichText",
                     CurrentTemplateValue = "<p>Page content goes here.</p>"
                 }

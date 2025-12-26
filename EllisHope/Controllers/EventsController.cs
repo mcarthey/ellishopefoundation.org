@@ -6,16 +6,16 @@ using EllisHope.Models.Domain;
 namespace EllisHope.Controllers;
 
 [ApiExplorerSettings(IgnoreApi = true)]
-public class EventController : Controller
+public class EventsController : Controller
 {
     private readonly IEventService _eventService;
 
-    public EventController(IEventService eventService)
+    public EventsController(IEventService eventService)
     {
         _eventService = eventService;
     }
 
-    // GET: Event/List
+    // GET: Events
     /// <summary>
     /// Displays upcoming events in list format with optional keyword search
     /// </summary>
@@ -24,9 +24,9 @@ public class EventController : Controller
     /// <remarks>
     /// Sample requests:
     ///
-    ///     GET /Event/List
-    ///     GET /Event/List?search=fundraiser
-    ///     GET /Event/List?search=community
+    ///     GET /Events
+    ///     GET /Events?search=fundraiser
+    ///     GET /Events?search=community
     ///
     /// Returns upcoming published events sorted by event date. Search performs full-text search
     /// across event title, description, and location fields. Limited to 100 upcoming events.
@@ -35,12 +35,12 @@ public class EventController : Controller
     [HttpGet]
     [SwaggerOperation(
         Summary = "Retrieves upcoming events with optional search filtering",
-        Description = "Displays published upcoming events in list format. Supports keyword search across title, description, and location. Returns maximum 100 events sorted by event date.",
-        OperationId = "GetEventsList",
+        Description = "Displays published upcoming events. Supports keyword search across title, description, and location. Returns maximum 100 events sorted by event date.",
+        OperationId = "GetEvents",
         Tags = new[] { "Events" }
     )]
     [ProducesResponseType(typeof(IEnumerable<Event>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> list(string? search)
+    public async Task<IActionResult> Index(string? search)
     {
         IEnumerable<Models.Domain.Event> events;
 
@@ -89,7 +89,7 @@ public class EventController : Controller
     )]
     [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> details(string slug)
+    public async Task<IActionResult> Details(string slug)
     {
         if (string.IsNullOrEmpty(slug))
         {
@@ -130,7 +130,7 @@ public class EventController : Controller
         Tags = new[] { "Events" }
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public IActionResult grid()
+    public IActionResult Grid()
     {
         return View();
     }
