@@ -7,6 +7,9 @@
     <div class="col-12">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>@ViewData["Title"]</h2>
+            <a asp-area="Admin" asp-controller="Templates" asp-action="Images" class="btn btn-outline-primary">
+                <i class="bi bi-images"></i> Manage Template Images
+            </a>
         </div>
 
         @if (TempData["SuccessMessage"] != null)

@@ -1,4 +1,5 @@
 using EllisHope.Models.Domain;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Html;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -48,21 +49,27 @@ public class PageContentHelper : IPageContentHelper
     private readonly IPageService _pageService;
     private readonly IPageTemplateService _templateService;
     private readonly IMemoryCache _cache;
+    private readonly IWebHostEnvironment _environment;
     private readonly ILogger<PageContentHelper> _logger;
 
     // Cache keys
     private static string GetPageCacheKey(string pageName) => $"PageContent_{pageName}";
     private static readonly TimeSpan CacheDuration = TimeSpan.FromMinutes(5);
 
+    // Templates folder for custom template images
+    private const string TemplatesFolder = "assets/img/templates";
+
     public PageContentHelper(
         IPageService pageService,
         IPageTemplateService templateService,
         IMemoryCache cache,
+        IWebHostEnvironment environment,
         ILogger<PageContentHelper> logger)
     {
         _pageService = pageService;
         _templateService = templateService;
         _cache = cache;
+        _environment = environment;
         _logger = logger;
     }
 
@@ -178,6 +185,13 @@ public class PageContentHelper : IPageContentHelper
             return dbImagePath;
         }
 
+        // Check for custom template image in templates folder
+        var customTemplatePath = FindCustomTemplateImage(pageName, key);
+        if (customTemplatePath != null)
+        {
+            return customTemplatePath;
+        }
+
         // Fall back to template default
         var templateImage = pageData.Template?.Images.FirstOrDefault(i => i.Key == key);
         if (templateImage != null)
@@ -188,6 +202,31 @@ public class PageContentHelper : IPageContentHelper
         // No image found
         _logger.LogWarning("No image found for page {PageName}, key {Key}", pageName, key);
         return "/assets/img/default.jpg";
+    }
+
+    /// <summary>
+    /// Checks if a custom template image exists in the templates folder.
+    /// Looks for files matching the pattern {pagename}-{key}.*
+    /// </summary>
+    private string? FindCustomTemplateImage(string pageName, string key)
+    {
+        var templatesPath = Path.Combine(_environment.WebRootPath, TemplatesFolder);
+        if (!Directory.Exists(templatesPath))
+        {
+            return null;
+        }
+
+        var pattern = $"{pageName.ToLower()}-{key.ToLower()}.*";
+        var matchingFiles = Directory.GetFiles(templatesPath, pattern);
+
+        if (matchingFiles.Length > 0)
+        {
+            // Return the web path for the first matching file
+            var fileName = Path.GetFileName(matchingFiles[0]);
+            return $"/{TemplatesFolder}/{fileName}";
+        }
+
+        return null;
     }
 
     /// <summary>

@@ -1,0 +1,324 @@
+@model EllisHope.Areas.Admin.Models.TemplateImagesViewModel
+@{
+    ViewData["Title"] = "Template Images";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2><i class="bi bi-images"></i> Template Images</h2>
+        <p class="text-muted mb-0">Manage default images used on public pages</p>
+    </div>
+    <div>
+        <a asp-area="Admin" asp-controller="Pages" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Pages
+        </a>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle"></i> @Model.SuccessMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-circle"></i> @Model.ErrorMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<!-- Help Card -->
+<div class="card mb-4 border-info">
+    <div class="card-header bg-info text-white">
+        <h6 class="mb-0"><i class="bi bi-info-circle"></i> How Template Images Work</h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <strong>Template Images</strong> are the default images shown on public pages.
+                <ul class="mb-0 mt-2">
+                    <li>Upload new images to replace defaults</li>
+                    <li>Images are stored in <code>/assets/img/templates/</code></li>
+                    <li>Follow recommended dimensions for best results</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <strong>Tip:</strong> For page-specific overrides (like featuring a special image temporarily),
+                use the <a asp-area="Admin" asp-controller="Pages" asp-action="Index">Pages Manager</a> to select
+                images from the Media Library instead.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Stats -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="text-primary">@Model.PageGroups.Count</h3>
+                <small class="text-muted">Pages with Templates</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="text-success">@Model.PageGroups.Sum(g => g.ImageSlots.Count)</h3>
+                <small class="text-muted">Total Image Slots</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="text-info">@Model.PageGroups.Sum(g => g.ImageSlots.Count(s => s.FileExists))</h3>
+                <small class="text-muted">Images Found</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Template Images by Page -->
+@foreach (var group in Model.PageGroups)
+{
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="bi bi-file-earmark-text"></i> @group.PageDisplayName
+            </h5>
+            <span class="badge bg-light text-primary">@group.ImageSlots.Count images</span>
+        </div>
+        <div class="card-body">
+            <div class="row g-4">
+                @foreach (var slot in group.ImageSlots)
+                {
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card h-100 @(slot.FileExists ? "" : "border-warning")">
+                            <!-- Image Preview -->
+                            <div class="position-relative" style="height: 200px; background: #f8f9fa; overflow: hidden;">
+                                @if (slot.FileExists)
+                                {
+                                    <img src="@slot.CurrentPath"
+                                         alt="@slot.Label"
+                                         class="w-100 h-100"
+                                         style="object-fit: contain;"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="position-absolute top-0 start-0 w-100 h-100 d-none justify-content-center align-items-center bg-light">
+                                        <div class="text-center text-muted">
+                                            <i class="bi bi-image" style="font-size: 48px;"></i>
+                                            <p class="mb-0">Image not found</p>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="d-flex justify-content-center align-items-center h-100 text-warning">
+                                        <div class="text-center">
+                                            <i class="bi bi-exclamation-triangle" style="font-size: 48px;"></i>
+                                            <p class="mb-0">File not found</p>
+                                        </div>
+                                    </div>
+                                }
+
+                                <!-- Overlay badge for recommended size -->
+                                @if (slot.RecommendedWidth.HasValue && slot.RecommendedHeight.HasValue)
+                                {
+                                    <span class="badge bg-dark position-absolute bottom-0 end-0 m-2"
+                                          title="Recommended dimensions">
+                                        @slot.RecommendedSizeDisplay
+                                    </span>
+                                }
+                            </div>
+
+                            <!-- Card Body -->
+                            <div class="card-body">
+                                <h6 class="card-title mb-1">@slot.Label</h6>
+                                <p class="card-text small text-muted mb-2">@slot.Description</p>
+
+                                <div class="small">
+                                    <div class="d-flex justify-content-between">
+                                        <span class="text-muted">Key:</span>
+                                        <code>@slot.Key</code>
+                                    </div>
+                                    @if (slot.FileExists)
+                                    {
+                                        <div class="d-flex justify-content-between">
+                                            <span class="text-muted">Size:</span>
+                                            <span>@slot.FileSizeDisplay</span>
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(slot.AspectRatio))
+                                    {
+                                        <div class="d-flex justify-content-between">
+                                            <span class="text-muted">Aspect:</span>
+                                            <span>@slot.AspectRatio</span>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Card Footer with Actions -->
+                            <div class="card-footer bg-transparent">
+                                <div class="d-flex gap-2">
+                                    <button type="button"
+                                            class="btn btn-primary btn-sm flex-grow-1"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#uploadModal"
+                                            data-page="@slot.PageName"
+                                            data-key="@slot.Key"
+                                            data-label="@slot.Label"
+                                            data-width="@slot.RecommendedWidth"
+                                            data-height="@slot.RecommendedHeight">
+                                        <i class="bi bi-upload"></i> Replace
+                                    </button>
+                                    @if (slot.CurrentPath.Contains("/templates/"))
+                                    {
+                                        <form asp-action="Reset" method="post" class="d-inline"
+                                              onsubmit="return confirm('Reset this image to the original default?');">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="pageName" value="@slot.PageName" />
+                                            <input type="hidden" name="key" value="@slot.Key" />
+                                            <button type="submit" class="btn btn-outline-secondary btn-sm" title="Reset to default">
+                                                <i class="bi bi-arrow-counterclockwise"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                                <small class="text-muted d-block mt-2 text-truncate" title="@slot.CurrentPath">
+                                    @slot.CurrentPath
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+@if (!Model.PageGroups.Any())
+{
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> No template images configured.
+    </div>
+}
+
+<!-- Upload Modal -->
+<div class="modal fade" id="uploadModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="Upload" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="pageName" id="uploadPageName" />
+                <input type="hidden" name="key" id="uploadKey" />
+
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-upload"></i> Upload Template Image
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Uploading for:</label>
+                        <div class="alert alert-light border">
+                            <strong id="uploadLabelDisplay"></strong>
+                        </div>
+                    </div>
+
+                    <div class="mb-3" id="recommendedSizeInfo" style="display: none;">
+                        <label class="form-label">Recommended Size:</label>
+                        <div class="alert alert-info">
+                            <i class="bi bi-aspect-ratio"></i>
+                            <span id="recommendedSizeDisplay"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="uploadFile" class="form-label">Select Image File</label>
+                        <input type="file"
+                               class="form-control"
+                               id="uploadFile"
+                               name="file"
+                               accept=".jpg,.jpeg,.png,.gif,.webp,.svg"
+                               required />
+                        <div class="form-text">
+                            Accepted formats: JPG, PNG, GIF, WebP, SVG. Max size: 10MB
+                        </div>
+                    </div>
+
+                    <!-- Preview -->
+                    <div class="mb-3" id="previewContainer" style="display: none;">
+                        <label class="form-label">Preview:</label>
+                        <div class="border rounded p-2 bg-light text-center">
+                            <img id="previewImage" src="" alt="Preview" style="max-width: 100%; max-height: 200px;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-upload"></i> Upload
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Handle upload modal data
+        document.getElementById('uploadModal').addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const pageName = button.getAttribute('data-page');
+            const key = button.getAttribute('data-key');
+            const label = button.getAttribute('data-label');
+            const width = button.getAttribute('data-width');
+            const height = button.getAttribute('data-height');
+
+            document.getElementById('uploadPageName').value = pageName;
+            document.getElementById('uploadKey').value = key;
+            document.getElementById('uploadLabelDisplay').textContent = `${pageName} - ${label}`;
+
+            // Show recommended size if available
+            const sizeInfo = document.getElementById('recommendedSizeInfo');
+            const sizeDisplay = document.getElementById('recommendedSizeDisplay');
+            if (width && height && width !== '' && height !== '') {
+                sizeDisplay.textContent = `${width} × ${height} pixels`;
+                sizeInfo.style.display = 'block';
+            } else {
+                sizeInfo.style.display = 'none';
+            }
+
+            // Reset preview and file input
+            document.getElementById('uploadFile').value = '';
+            document.getElementById('previewContainer').style.display = 'none';
+        });
+
+        // Image preview
+        document.getElementById('uploadFile').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            const previewContainer = document.getElementById('previewContainer');
+            const previewImage = document.getElementById('previewImage');
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImage.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewContainer.style.display = 'none';
+            }
+        });
+    </script>
+}
