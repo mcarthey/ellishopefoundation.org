@@ -68,11 +68,11 @@
                         @if (User.Identity?.IsAuthenticated == true)
                         {
                             <div class="account-menu ms-3 d-lg-inline-block d-none">
-                                <div class="account-avatar" id="publicAccountMenuToggle">
+                                <div class="account-avatar" id="publicAccountMenuToggle" title="@User.Identity?.Name">
                                     @{
                                         var initial = User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "?";
                                     }
-                                    <i class="bi bi-person-circle"></i>
+                                    @initial
                                 </div>
                                 <div class="account-dropdown" id="publicAccountDropdown">
                                     <div class="account-dropdown-header">
@@ -156,9 +156,9 @@
                         }
                         else
                         {
-                            <div class="account-menu ms-3 d-lg-inline-block d-none">
-                                <a href="/Admin/Account/Login" class="btn btn-outline-primary btn-sm">
-                                    <i class="bi bi-box-arrow-in-right"></i> Sign In
+                            <div class="sign-in-link ms-3 d-lg-inline-block d-none">
+                                <a href="/Admin/Account/Login" class="sign-in-btn">
+                                    <i class="bi bi-person-circle"></i> Sign In
                                 </a>
                             </div>
                         }
@@ -374,6 +374,38 @@
     }
 
     .mobile-account-links a:hover {
+        color: #c53040;
+    }
+
+    /* Sign In Button - Subtle link style matching site navigation */
+    .sign-in-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #333;
+        font-size: 16px;
+        font-weight: 500;
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .sign-in-btn:hover {
+        color: #c53040;
+        background-color: rgba(197, 48, 64, 0.08);
+    }
+
+    .sign-in-btn i {
+        font-size: 18px;
+    }
+
+    /* Sticky header adjustment */
+    .sticky-menu .sign-in-btn {
+        color: #333;
+    }
+
+    .sticky-menu .sign-in-btn:hover {
         color: #c53040;
     }
 </style>
