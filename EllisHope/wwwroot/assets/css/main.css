@@ -1829,6 +1829,37 @@ html.lenis {
 	}
 }
 */
+.sign-in-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  color: #c53040;
+  font-size: 24px;
+  text-decoration: none;
+  border-radius: 50%;
+  border: 1.5px solid #c53040;
+  background: transparent;
+  -webkit-transition: all 0.3s ease 0s;
+  -moz-transition: all 0.3s ease 0s;
+  -ms-transition: all 0.3s ease 0s;
+  -o-transition: all 0.3s ease 0s;
+  transition: all 0.3s ease 0s;
+}
+.sign-in-btn:hover {
+  color: #ffffff;
+  background-color: #c53040;
+  border-color: #c53040;
+}
+@media only screen and (max-width: 767.98px) {
+  .sign-in-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+}
+
 .breadcrumb-wrapper {
   padding-top: 260px;
   padding-bottom: 130px;

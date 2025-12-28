@@ -1382,3 +1382,31 @@
 // 		}
 // 	}
 // }
+
+// Sign In Button - Icon only style
+.sign-in-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 48px;
+	height: 48px;
+	color: $theme-color;
+	font-size: 24px;
+	text-decoration: none;
+	border-radius: 50%;
+	border: 1.5px solid $theme-color;
+	background: transparent;
+	@include transition(0.3s);
+
+	&:hover {
+		color: $white;
+		background-color: $theme-color;
+		border-color: $theme-color;
+	}
+
+	@media #{$max-xs} {
+		width: 40px;
+		height: 40px;
+		font-size: 20px;
+	}
+}
