@@ -1,0 +1,114 @@
+@model EllisHope.Areas.Admin.Models.PreviewNewsletterViewModel
+@{
+    ViewData["Title"] = "Preview Newsletter";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-eye me-2"></i>Newsletter Preview</h5>
+                <span class="badge bg-light text-dark">@Model.SubscriberCount recipients</span>
+            </div>
+            <div class="card-body p-0">
+                <!-- Email Preview Frame -->
+                <div class="border-bottom bg-light p-3">
+                    <div class="row">
+                        <div class="col-2 text-end text-muted">
+                            <small>Subject:</small>
+                        </div>
+                        <div class="col-10">
+                            <strong>@Model.Subject</strong>
+                        </div>
+                    </div>
+                    <div class="row mt-1">
+                        <div class="col-2 text-end text-muted">
+                            <small>To:</small>
+                        </div>
+                        <div class="col-10">
+                            <small class="text-muted">@Model.SubscriberCount active subscribers</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email Content -->
+                <div class="p-4" style="background: #f5f5f5;">
+                    <div class="bg-white mx-auto" style="max-width: 600px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <!-- Simulated email template -->
+                        <div style="text-align: center; padding: 20px; border-bottom: 2px solid #f0784b;">
+                            <h1 style="color: #f0784b; margin: 0; font-size: 24px;">Ellis Hope Foundation</h1>
+                        </div>
+                        <div style="padding: 30px;">
+                            @Html.Raw(Model.HtmlContent)
+                        </div>
+                        <div style="text-align: center; padding: 20px; border-top: 1px solid #eee; font-size: 12px; color: #666;">
+                            <p>You received this email because you subscribed to our newsletter.</p>
+                            <p><a href="#" style="color: #f0784b;">Unsubscribe from future emails</a></p>
+                            <p>&copy; @DateTime.UtcNow.Year Ellis Hope Foundation. All rights reserved.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Ready to Send?</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-3">
+                    This newsletter will be sent to <strong>@Model.SubscriberCount active subscribers</strong>.
+                </p>
+                <div class="alert alert-warning mb-3">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>This action cannot be undone.</strong> Make sure you've reviewed the content carefully.
+                </div>
+
+                <form asp-action="Send" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.Id" />
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg"
+                                onclick="return confirm('Are you sure you want to send this newsletter to @Model.SubscriberCount subscribers?');">
+                            <i class="bi bi-send me-2"></i> Send Newsletter
+                        </button>
+                        <a asp-action="Compose" asp-route-id="@Model.Id" class="btn btn-outline-secondary">
+                            <i class="bi bi-pencil me-2"></i> Edit Newsletter
+                        </a>
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-check2-circle me-2"></i>Checklist</h5>
+            </div>
+            <div class="card-body">
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="check1">
+                    <label class="form-check-label" for="check1">Subject line is clear and compelling</label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="check2">
+                    <label class="form-check-label" for="check2">Content has been proofread</label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="check3">
+                    <label class="form-check-label" for="check3">Links have been tested</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="check4">
+                    <label class="form-check-label" for="check4">Preview looks correct</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

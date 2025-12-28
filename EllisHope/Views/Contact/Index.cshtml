@@ -186,6 +186,20 @@
         <img class="shape-1 position-absolute ml-100 d-none d-lg-inline-block"
              src="~/assets/img/shape/shape-8.png" alt="shape">
         <div class="container">
+            @if (TempData["NewsletterSuccess"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i>@TempData["NewsletterSuccess"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            @if (TempData["NewsletterError"] != null)
+            {
+                <div class="alert alert-warning alert-dismissible fade show mb-3" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["NewsletterError"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
             <div class="row align-items-center newsletter-border pt-50">
                 <div class="col-lg-6">
                     <div class="title-one text-lg-start text-center">
@@ -193,10 +207,12 @@
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <div class="subscribe-form sub-form-2 text-lg-end">
-                        <input type="text" placeholder="Enter Your Email">
+                    <form asp-controller="Newsletter" asp-action="Subscribe" method="post" class="subscribe-form sub-form-2 text-lg-end">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                        <input type="email" name="email" placeholder="Enter Your Email" required>
                         <button type="submit">Subscribe</button>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>

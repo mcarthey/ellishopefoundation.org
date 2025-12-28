@@ -1,0 +1,61 @@
+@{
+    ViewBag.Title = "Unsubscribe";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var token = ViewBag.Token as string;
+    var email = ViewBag.Email as string;
+}
+
+<main>
+    <!-- page-title-area start -->
+    <div class="page-title-area">
+        <div class="breadcrumb-wrapper" data-background="/assets/img/breadcrumb/breadcrumb-bg.jpg">
+            <img class="shape-1" src="~/assets/img/shape/shape-81.png" alt="shape">
+            <img class="shape-2" src="~/assets/img/shape/shape-82.png" alt="shape">
+            <div class="container">
+                <div class="breadcrumb-content text-center">
+                    <h2 class="breadcrumb-title">Unsubscribe</h2>
+                    <ul class="breadcrumb-menu">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="#">Unsubscribe</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- page-title-area end -->
+
+    <section class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="card shadow-sm">
+                        <div class="card-body p-4 text-center">
+                            <i class="bi bi-envelope-x text-warning" style="font-size: 4rem;"></i>
+                            <h3 class="mt-3">Unsubscribe from Newsletter</h3>
+                            <p class="text-muted mb-4">
+                                Are you sure you want to unsubscribe <strong>@email</strong> from our newsletter?
+                            </p>
+                            <p class="text-muted small mb-4">
+                                You will no longer receive updates about our foundation's activities, events, and news.
+                            </p>
+
+                            <form asp-action="ConfirmUnsubscribe" asp-controller="Newsletter" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="token" value="@token" />
+
+                                <div class="d-flex gap-3 justify-content-center">
+                                    <a href="/" class="btn btn-outline-secondary">
+                                        Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-danger">
+                                        Yes, Unsubscribe Me
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

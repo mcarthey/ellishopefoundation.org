@@ -101,6 +101,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IEmailTemplateService, EmailTemplateService>();
 builder.Services.AddScoped<IAccountEmailService, AccountEmailService>();
 builder.Services.AddScoped<IDatabaseLoggerService, DatabaseLoggerService>();
+builder.Services.AddScoped<INewsletterService, NewsletterService>();
 
 // Configure Email Settings
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));

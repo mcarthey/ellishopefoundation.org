@@ -1,0 +1,101 @@
+@model EllisHope.Models.Domain.Newsletter
+@{
+    ViewData["Title"] = "View Newsletter";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="mb-4">
+    <a asp-action="History" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Back to History
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-envelope me-2"></i>@Model.Subject</h5>
+            </div>
+            <div class="card-body p-0">
+                <!-- Email Header Info -->
+                <div class="border-bottom bg-light p-3">
+                    <div class="row">
+                        <div class="col-2 text-end text-muted">
+                            <small>Subject:</small>
+                        </div>
+                        <div class="col-10">
+                            <strong>@Model.Subject</strong>
+                        </div>
+                    </div>
+                    <div class="row mt-1">
+                        <div class="col-2 text-end text-muted">
+                            <small>Sent:</small>
+                        </div>
+                        <div class="col-10">
+                            @Model.SentAt?.ToString("MMMM d, yyyy 'at' h:mm tt")
+                        </div>
+                    </div>
+                    <div class="row mt-1">
+                        <div class="col-2 text-end text-muted">
+                            <small>Recipients:</small>
+                        </div>
+                        <div class="col-10">
+                            @Model.RecipientCount subscribers
+                        </div>
+                    </div>
+                    @if (Model.SentBy != null)
+                    {
+                        <div class="row mt-1">
+                            <div class="col-2 text-end text-muted">
+                                <small>Sent by:</small>
+                            </div>
+                            <div class="col-10">
+                                @Model.SentBy.Email
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Email Content -->
+                <div class="p-4" style="background: #f5f5f5;">
+                    <div class="bg-white mx-auto" style="max-width: 600px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <!-- Simulated email template -->
+                        <div style="text-align: center; padding: 20px; border-bottom: 2px solid #f0784b;">
+                            <h1 style="color: #f0784b; margin: 0; font-size: 24px;">Ellis Hope Foundation</h1>
+                        </div>
+                        <div style="padding: 30px;">
+                            @Html.Raw(Model.HtmlContent)
+                        </div>
+                        <div style="text-align: center; padding: 20px; border-top: 1px solid #eee; font-size: 12px; color: #666;">
+                            <p>You received this email because you subscribed to our newsletter.</p>
+                            <p><a href="#" style="color: #f0784b;">Unsubscribe from future emails</a></p>
+                            <p>&copy; @Model.SentAt?.Year Ellis Hope Foundation. All rights reserved.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-bar-chart me-2"></i>Statistics</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Recipients</span>
+                    <strong>@Model.RecipientCount</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Sent Date</span>
+                    <strong>@Model.SentAt?.ToString("MMM d, yyyy")</strong>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span class="text-muted">Sent Time</span>
+                    <strong>@Model.SentAt?.ToString("h:mm tt")</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

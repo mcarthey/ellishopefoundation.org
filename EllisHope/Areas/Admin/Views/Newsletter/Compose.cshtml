@@ -1,0 +1,135 @@
+@model EllisHope.Areas.Admin.Models.ComposeNewsletterViewModel
+@{
+    ViewData["Title"] = Model.Id.HasValue ? "Edit Newsletter" : "Compose Newsletter";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    var tinyMceApiKey = ViewData["TinyMceApiKey"] as string ?? "no-api-key";
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-2"></i>@TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-pencil-square me-2"></i>
+                    @(Model.Id.HasValue ? "Edit Newsletter" : "Compose New Newsletter")
+                </h5>
+            </div>
+            <div class="card-body">
+                <form id="newsletterForm" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="mb-3">
+                        <label asp-for="Subject" class="form-label">Subject Line <span class="text-danger">*</span></label>
+                        <input asp-for="Subject" class="form-control" placeholder="Enter newsletter subject..." />
+                        <span asp-validation-for="Subject" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="HtmlContent" class="form-label">Newsletter Content <span class="text-danger">*</span></label>
+                        <textarea asp-for="HtmlContent" id="newsletterContent" class="form-control"></textarea>
+                        <span asp-validation-for="HtmlContent" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" formaction="@Url.Action("SaveDraft")" class="btn btn-secondary">
+                            <i class="bi bi-save me-1"></i> Save Draft
+                        </button>
+                        <button type="submit" formaction="@Url.Action("Preview")" class="btn btn-primary">
+                            <i class="bi bi-eye me-1"></i> Preview & Send
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Info</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-2">
+                    <strong>Active Subscribers:</strong>
+                    <span class="badge bg-primary">@Model.SubscriberCount</span>
+                </p>
+                <hr />
+                <h6>Tips:</h6>
+                <ul class="small text-muted mb-0">
+                    <li>Keep subject lines under 50 characters</li>
+                    <li>Use clear, compelling language</li>
+                    <li>Include a call-to-action</li>
+                    <li>Preview before sending</li>
+                    <li>Unsubscribe links are added automatically</li>
+                </ul>
+            </div>
+        </div>
+
+        @if (Model.Id.HasValue)
+        {
+            <div class="card mt-3">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Draft</h5>
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted mb-2">
+                        This newsletter is saved as a draft. You can continue editing or preview and send.
+                    </p>
+                    <form asp-action="DeleteDraft" method="post"
+                          onsubmit="return confirm('Delete this draft?');">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-trash me-1"></i> Delete Draft
+                        </button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.tiny.cloud/1/@tinyMceApiKey/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: '#newsletterContent',
+            height: 400,
+            menubar: false,
+            plugins: [
+                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap',
+                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                'insertdatetime', 'media', 'table', 'help', 'wordcount'
+            ],
+            toolbar: 'undo redo | blocks | ' +
+                'bold italic forecolor | alignleft aligncenter ' +
+                'alignright alignjustify | bullist numlist outdent indent | ' +
+                'link image | removeformat | help',
+            content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 14px; }',
+            setup: function (editor) {
+                editor.on('change', function () {
+                    editor.save();
+                });
+            }
+        });
+    </script>
+}

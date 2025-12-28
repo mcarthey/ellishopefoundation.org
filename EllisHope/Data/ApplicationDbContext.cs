@@ -33,6 +33,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     // System tables
     public DbSet<ApplicationLog> ApplicationLogs { get; set; }
 
+    // Newsletter tables
+    public DbSet<Subscriber> Subscribers { get; set; }
+    public DbSet<Newsletter> Newsletters { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -282,6 +286,35 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         builder.Entity<ApplicationLog>()
             .Property(al => al.CorrelationId)
             .HasMaxLength(50);
+
+        #endregion
+
+        #region Newsletter Configuration
+
+        // Subscriber configuration
+        builder.Entity<Subscriber>()
+            .HasIndex(s => s.Email)
+            .IsUnique();
+
+        builder.Entity<Subscriber>()
+            .HasIndex(s => s.UnsubscribeToken)
+            .IsUnique();
+
+        builder.Entity<Subscriber>()
+            .HasIndex(s => s.SubscribedAt);
+
+        // Newsletter configuration
+        builder.Entity<Newsletter>()
+            .HasOne(n => n.SentBy)
+            .WithMany()
+            .HasForeignKey(n => n.SentByUserId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.Entity<Newsletter>()
+            .HasIndex(n => n.SentAt);
+
+        builder.Entity<Newsletter>()
+            .HasIndex(n => n.CreatedAt);
 
         #endregion
     }
