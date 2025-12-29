@@ -1,0 +1,65 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Publish to SmarterASP",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "publish",
+                "${workspaceFolder}/EllisHope/EllisHope.csproj",
+                "-c",
+                "Release",
+                "/p:PublishProfile=mcarthey-001-site1 - Web Deploy"
+            ],
+            "problemMatcher": "$msCompile",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "group": "build"
+        },
+        {
+            "label": "Build",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "build",
+                "${workspaceFolder}/EllisHope.sln"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Run",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "run",
+                "--project",
+                "${workspaceFolder}/EllisHope/EllisHope.csproj"
+            ],
+            "problemMatcher": "$msCompile",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            }
+        },
+        {
+            "label": "Test",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "test",
+                "${workspaceFolder}/EllisHope.sln",
+                "--filter",
+                "TestCategory!=E2E"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": "test"
+        }
+    ]
+}
