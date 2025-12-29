@@ -1,5 +1,7 @@
+using EllisHope.Areas.Admin.Models;
 using EllisHope.Data;
 using EllisHope.Models.Domain;
+using EllisHope.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,15 +17,18 @@ public class SponsorController : Controller
 {
     private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IMediaService _mediaService;
     private readonly ILogger<SponsorController> _logger;
 
     public SponsorController(
         ApplicationDbContext context,
         UserManager<ApplicationUser> userManager,
+        IMediaService mediaService,
         ILogger<SponsorController> logger)
     {
         _context = context;
         _userManager = userManager;
+        _mediaService = mediaService;
         _logger = logger;
     }
 
@@ -143,6 +148,171 @@ public class SponsorController : Controller
 
         // Redirect to the standard profile page
         return RedirectToAction("Index", "Profile");
+    }
+
+    // GET: Admin/Sponsor/MyCompanyProfile
+    /// <summary>
+    /// Edit company profile and testimonial for About page showcase.
+    /// </summary>
+    [SwaggerOperation(Summary = "Edit company profile and testimonial.")]
+    public async Task<IActionResult> MyCompanyProfile()
+    {
+        var currentUser = await _userManager.GetUserAsync(User);
+        if (currentUser == null)
+        {
+            return NotFound();
+        }
+
+        var viewModel = new SponsorProfileViewModel
+        {
+            CompanyName = currentUser.CompanyName,
+            CurrentCompanyLogoUrl = currentUser.CompanyLogoUrl,
+            SponsorQuote = currentUser.SponsorQuote,
+            SponsorRating = currentUser.SponsorRating,
+            ShowInSponsorSection = currentUser.ShowInSponsorSection,
+            QuoteApproved = currentUser.SponsorQuoteApproved,
+            QuoteSubmittedDate = currentUser.SponsorQuoteSubmittedDate,
+            RejectionReason = currentUser.SponsorQuoteRejectionReason,
+            QuoteStatus = GetQuoteStatus(currentUser)
+        };
+
+        return View(viewModel);
+    }
+
+    // POST: Admin/Sponsor/MyCompanyProfile
+    /// <summary>
+    /// Save company profile and testimonial changes.
+    /// </summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [SwaggerOperation(Summary = "Save company profile and testimonial.")]
+    public async Task<IActionResult> MyCompanyProfile(SponsorProfileViewModel model)
+    {
+        var currentUser = await _userManager.GetUserAsync(User);
+        if (currentUser == null)
+        {
+            return NotFound();
+        }
+
+        // For validation: quote is optional, but if provided must meet length requirements
+        if (!string.IsNullOrWhiteSpace(model.SponsorQuote) && model.SponsorQuote.Length < 20)
+        {
+            ModelState.AddModelError(nameof(model.SponsorQuote), "Quote must be at least 20 characters if provided.");
+        }
+
+        if (!ModelState.IsValid)
+        {
+            model.CurrentCompanyLogoUrl = currentUser.CompanyLogoUrl;
+            model.QuoteApproved = currentUser.SponsorQuoteApproved;
+            model.QuoteSubmittedDate = currentUser.SponsorQuoteSubmittedDate;
+            model.QuoteStatus = GetQuoteStatus(currentUser);
+            return View(model);
+        }
+
+        try
+        {
+            // Track if quote was changed (for re-approval logic)
+            var quoteChanged = currentUser.SponsorQuote != model.SponsorQuote;
+            var wasApproved = currentUser.SponsorQuoteApproved;
+
+            // Handle company logo upload
+            if (model.CompanyLogo?.Length > 0)
+            {
+                try
+                {
+                    var media = await _mediaService.UploadLocalImageAsync(
+                        model.CompanyLogo,
+                        $"{model.CompanyName ?? currentUser.FullName} company logo",
+                        model.CompanyName ?? currentUser.FullName,
+                        MediaCategory.Logo,
+                        "sponsor,company,logo",
+                        User.Identity?.Name);
+                    currentUser.CompanyLogoUrl = media.FilePath;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to upload company logo for sponsor {UserId}", currentUser.Id);
+                    ModelState.AddModelError("CompanyLogo", "Failed to upload company logo. Please try again.");
+                    model.CurrentCompanyLogoUrl = currentUser.CompanyLogoUrl;
+                    model.QuoteApproved = currentUser.SponsorQuoteApproved;
+                    model.QuoteSubmittedDate = currentUser.SponsorQuoteSubmittedDate;
+                    model.QuoteStatus = GetQuoteStatus(currentUser);
+                    return View(model);
+                }
+            }
+
+            // Update company info
+            currentUser.CompanyName = model.CompanyName;
+            currentUser.ShowInSponsorSection = model.ShowInSponsorSection;
+
+            // Update quote and rating
+            currentUser.SponsorQuote = model.SponsorQuote;
+            currentUser.SponsorRating = model.SponsorRating;
+
+            // If quote changed and was previously approved, reset approval status
+            if (quoteChanged && wasApproved && !string.IsNullOrWhiteSpace(model.SponsorQuote))
+            {
+                currentUser.SponsorQuoteApproved = false;
+                currentUser.SponsorQuoteApprovedDate = null;
+                currentUser.SponsorQuoteApprovedById = null;
+                currentUser.SponsorQuoteSubmittedDate = DateTime.UtcNow;
+                currentUser.SponsorQuoteRejectionReason = null;
+
+                _logger.LogInformation("Sponsor {UserId} updated their quote, resetting approval status", currentUser.Id);
+                TempData["InfoMessage"] = "Your quote has been updated and is pending approval.";
+            }
+            else if (quoteChanged && !string.IsNullOrWhiteSpace(model.SponsorQuote))
+            {
+                // New quote submitted or quote updated after rejection
+                currentUser.SponsorQuoteSubmittedDate = DateTime.UtcNow;
+                currentUser.SponsorQuoteRejectionReason = null;
+
+                _logger.LogInformation("Sponsor {UserId} submitted a new quote for approval", currentUser.Id);
+                TempData["InfoMessage"] = "Your quote has been submitted for approval.";
+            }
+            else if (string.IsNullOrWhiteSpace(model.SponsorQuote))
+            {
+                // Quote removed
+                currentUser.SponsorQuoteApproved = false;
+                currentUser.SponsorQuoteApprovedDate = null;
+                currentUser.SponsorQuoteApprovedById = null;
+                currentUser.SponsorQuoteSubmittedDate = null;
+                currentUser.SponsorQuoteRejectionReason = null;
+            }
+
+            await _context.SaveChangesAsync();
+
+            if (TempData["InfoMessage"] == null)
+            {
+                TempData["SuccessMessage"] = "Your company profile has been updated successfully.";
+            }
+
+            return RedirectToAction(nameof(MyCompanyProfile));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating company profile for sponsor {UserId}", currentUser.Id);
+            ModelState.AddModelError(string.Empty, "An error occurred while saving your profile. Please try again.");
+            model.CurrentCompanyLogoUrl = currentUser.CompanyLogoUrl;
+            model.QuoteApproved = currentUser.SponsorQuoteApproved;
+            model.QuoteSubmittedDate = currentUser.SponsorQuoteSubmittedDate;
+            model.QuoteStatus = GetQuoteStatus(currentUser);
+            return View(model);
+        }
+    }
+
+    private static string GetQuoteStatus(ApplicationUser user)
+    {
+        if (string.IsNullOrWhiteSpace(user.SponsorQuote))
+            return "Not Submitted";
+
+        if (user.SponsorQuoteApproved)
+            return "Approved";
+
+        if (!string.IsNullOrWhiteSpace(user.SponsorQuoteRejectionReason))
+            return "Rejected";
+
+        return "Pending Approval";
     }
 }
 

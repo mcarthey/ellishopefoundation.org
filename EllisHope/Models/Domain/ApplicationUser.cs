@@ -39,6 +39,22 @@ public class ApplicationUser : IdentityUser
     
     // Notes (Admin only)
     public string? AdminNotes { get; set; }
+
+    // Sponsor Company Information (for sponsors to be showcased on About page)
+    public string? CompanyName { get; set; }
+    public string? CompanyLogoUrl { get; set; }
+
+    // Sponsor Testimonial
+    public string? SponsorQuote { get; set; }
+    public int? SponsorRating { get; set; }  // 1-5 stars, optional
+    public DateTime? SponsorQuoteSubmittedDate { get; set; }
+    public bool SponsorQuoteApproved { get; set; } = false;
+    public DateTime? SponsorQuoteApprovedDate { get; set; }
+    public string? SponsorQuoteApprovedById { get; set; }
+    public string? SponsorQuoteRejectionReason { get; set; }
+
+    // Sponsor Visibility (opt-out flag, defaults to showing)
+    public bool ShowInSponsorSection { get; set; } = true;
     
     // Computed Properties
     public string FullName

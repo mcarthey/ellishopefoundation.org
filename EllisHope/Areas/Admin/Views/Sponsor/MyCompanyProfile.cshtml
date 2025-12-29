@@ -1,0 +1,230 @@
+@model EllisHope.Areas.Admin.Models.SponsorProfileViewModel
+@{
+    ViewData["Title"] = "Company Profile";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-action="Dashboard">Dashboard</a></li>
+                <li class="breadcrumb-item active">Company Profile</li>
+            </ol>
+        </nav>
+        <h2>
+            <i class="bi bi-building text-primary"></i> Company Profile
+        </h2>
+        <p class="text-muted">Manage how your company appears on our About page</p>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-2"></i>@TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["InfoMessage"] != null)
+{
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        <i class="bi bi-info-circle me-2"></i>@TempData["InfoMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<form asp-action="MyCompanyProfile" method="post" enctype="multipart/form-data">
+    <div class="row">
+        <!-- Left Column: Company Info -->
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-building"></i> Company Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="CompanyName" class="form-label"></label>
+                        <input asp-for="CompanyName" class="form-control" placeholder="Enter your company name" />
+                        <span asp-validation-for="CompanyName" class="text-danger"></span>
+                        <small class="text-muted">This will be displayed alongside your testimonial</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="CompanyLogo" class="form-label"></label>
+                        @if (!string.IsNullOrEmpty(Model.CurrentCompanyLogoUrl))
+                        {
+                            <div class="mb-2">
+                                <img src="@Model.CurrentCompanyLogoUrl" alt="Current logo" class="img-thumbnail" style="max-height: 100px;" />
+                                <p class="text-muted small mt-1">Current logo</p>
+                            </div>
+                        }
+                        <input asp-for="CompanyLogo" class="form-control" type="file" accept="image/*" />
+                        <span asp-validation-for="CompanyLogo" class="text-danger"></span>
+                        <small class="text-muted">Upload a company logo (recommended: square image, min 200x200px)</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input asp-for="ShowInSponsorSection" class="form-check-input" type="checkbox" />
+                            <label asp-for="ShowInSponsorSection" class="form-check-label"></label>
+                        </div>
+                        <small class="text-muted">When enabled, your company will be featured in our sponsor showcase</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Testimonial -->
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-quote"></i> Testimonial</h5>
+                    @{
+                        var statusClass = Model.QuoteStatus switch
+                        {
+                            "Approved" => "bg-success",
+                            "Pending Approval" => "bg-warning text-dark",
+                            "Rejected" => "bg-danger",
+                            _ => "bg-secondary"
+                        };
+                    }
+                    <span class="badge @statusClass">@Model.QuoteStatus</span>
+                </div>
+                <div class="card-body">
+                    @if (Model.QuoteStatus == "Rejected" && !string.IsNullOrEmpty(Model.RejectionReason))
+                    {
+                        <div class="alert alert-danger">
+                            <h6 class="alert-heading"><i class="bi bi-exclamation-triangle"></i> Feedback from Admin</h6>
+                            <p class="mb-0">@Model.RejectionReason</p>
+                        </div>
+                    }
+
+                    <div class="mb-3">
+                        <label asp-for="SponsorQuote" class="form-label"></label>
+                        <textarea asp-for="SponsorQuote" class="form-control" rows="4"
+                                  placeholder="Share your experience working with Ellis Hope Foundation..."></textarea>
+                        <span asp-validation-for="SponsorQuote" class="text-danger"></span>
+                        <small class="text-muted">
+                            <span id="charCount">0</span>/500 characters (minimum 20 if provided)
+                        </small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="SponsorRating" class="form-label"></label>
+                        <div class="star-rating">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <input type="radio" id="star@(i)" name="SponsorRating" value="@i"
+                                       @(Model.SponsorRating == i ? "checked" : "") />
+                                <label for="star@(i)" title="@i star@(i > 1 ? "s" : "")">
+                                    <i class="bi bi-star-fill"></i>
+                                </label>
+                            }
+                            <button type="button" class="btn btn-sm btn-link text-muted" id="clearRating">Clear</button>
+                        </div>
+                        <span asp-validation-for="SponsorRating" class="text-danger"></span>
+                        <small class="text-muted">Optional: Rate your experience (1-5 stars)</small>
+                    </div>
+
+                    @if (Model.QuoteSubmittedDate.HasValue)
+                    {
+                        <div class="text-muted small">
+                            <i class="bi bi-clock"></i> Last submitted: @Model.QuoteSubmittedDate.Value.ToString("MMM dd, yyyy 'at' h:mm tt")
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Box -->
+    <div class="alert alert-info">
+        <h6 class="alert-heading"><i class="bi bi-info-circle"></i> How it works</h6>
+        <ul class="mb-0">
+            <li>Your company logo and name will appear in our sponsor showcase on the About page</li>
+            <li>If you provide a testimonial, it will be reviewed by our team before appearing publicly</li>
+            <li>Editing an approved testimonial will require re-approval</li>
+            <li>You can opt out of the showcase at any time using the toggle above</li>
+        </ul>
+    </div>
+
+    <!-- Submit Buttons -->
+    <div class="d-flex justify-content-between">
+        <a asp-action="Dashboard" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-save"></i> Save Changes
+        </button>
+    </div>
+</form>
+
+@section Styles {
+    <style>
+        .star-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        .star-rating input[type="radio"] {
+            display: none;
+        }
+        .star-rating label {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #ddd;
+            transition: color 0.2s;
+        }
+        .star-rating label:hover,
+        .star-rating label:hover ~ label,
+        .star-rating input[type="radio"]:checked ~ label {
+            color: #ddd;
+        }
+        .star-rating label:hover,
+        .star-rating label:has(~ label:hover),
+        .star-rating input[type="radio"]:checked + label,
+        .star-rating input[type="radio"]:checked + label ~ label {
+            color: #ddd;
+        }
+        /* Reverse order for proper hover effect */
+        .star-rating {
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+            color: #ffc107;
+        }
+        .star-rating input[type="radio"]:checked ~ label {
+            color: #ffc107;
+        }
+    </style>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Character counter for quote
+        const quoteInput = document.getElementById('SponsorQuote');
+        const charCount = document.getElementById('charCount');
+
+        function updateCharCount() {
+            const count = quoteInput?.value?.length || 0;
+            if (charCount) {
+                charCount.textContent = count;
+                charCount.className = count > 500 ? 'text-danger' : (count < 20 && count > 0 ? 'text-warning' : '');
+            }
+        }
+
+        if (quoteInput) {
+            quoteInput.addEventListener('input', updateCharCount);
+            updateCharCount(); // Initial count
+        }
+
+        // Clear rating button
+        document.getElementById('clearRating')?.addEventListener('click', function() {
+            document.querySelectorAll('.star-rating input[type="radio"]').forEach(r => r.checked = false);
+        });
+    </script>
+}

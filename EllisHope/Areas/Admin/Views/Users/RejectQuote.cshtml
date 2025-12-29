@@ -1,0 +1,94 @@
+@model EllisHope.Areas.Admin.Models.RejectQuoteViewModel
+@{
+    ViewData["Title"] = "Reject Quote";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-action="Index">Users</a></li>
+                <li class="breadcrumb-item"><a asp-action="PendingSponsorQuotes">Pending Quotes</a></li>
+                <li class="breadcrumb-item active">Reject Quote</li>
+            </ol>
+        </nav>
+        <h2><i class="bi bi-x-circle text-danger"></i> Reject Quote</h2>
+        <p class="text-muted">Provide feedback to help the sponsor improve their testimonial</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Quote to Reject</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex mb-3">
+                    <div class="me-3">
+                        <strong>Sponsor:</strong>
+                    </div>
+                    <div>
+                        @Model.SponsorName
+                        @if (!string.IsNullOrEmpty(Model.CompanyName))
+                        {
+                            <span class="text-muted">(@Model.CompanyName)</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="alert alert-light border">
+                    <i class="bi bi-quote"></i>
+                    <em>"@Model.Quote"</em>
+                </div>
+            </div>
+        </div>
+
+        <form asp-action="RejectQuote" method="post">
+            <input type="hidden" asp-for="UserId" />
+            <input type="hidden" asp-for="SponsorName" />
+            <input type="hidden" asp-for="CompanyName" />
+            <input type="hidden" asp-for="Quote" />
+
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Rejection Feedback</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="Reason" class="form-label"></label>
+                        <textarea asp-for="Reason" class="form-control" rows="5"
+                                  placeholder="Explain why the quote is being rejected and suggest improvements..."></textarea>
+                        <span asp-validation-for="Reason" class="text-danger"></span>
+                        <small class="text-muted">
+                            This feedback will be shown to the sponsor so they can improve their quote.
+                            Be constructive and specific about what needs to change.
+                        </small>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="bi bi-lightbulb"></i> <strong>Tips for good feedback:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>Be specific about what aspects need improvement</li>
+                            <li>Suggest what would make the quote more appropriate</li>
+                            <li>Keep a professional and encouraging tone</li>
+                            <li>If the content is inappropriate, explain why it doesn't align with our values</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+                    <a asp-action="PendingSponsorQuotes" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-x-lg"></i> Reject Quote
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

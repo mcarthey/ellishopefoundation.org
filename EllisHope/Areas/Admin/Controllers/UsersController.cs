@@ -1,9 +1,11 @@
 using EllisHope.Areas.Admin.Models;
+using EllisHope.Data;
 using EllisHope.Models.Domain;
 using EllisHope.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace EllisHope.Areas.Admin.Controllers;
@@ -15,17 +17,20 @@ public class UsersController : Controller
 {
     private readonly IUserManagementService _userService;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly ApplicationDbContext _context;
     private readonly IMediaService _mediaService;
     private readonly ILogger<UsersController> _logger;
 
     public UsersController(
         IUserManagementService userService,
         UserManager<ApplicationUser> userManager,
+        ApplicationDbContext context,
         IMediaService mediaService,
         ILogger<UsersController> logger)
     {
         _userService = userService;
         _userManager = userManager;
+        _context = context;
         _mediaService = mediaService;
         _logger = logger;
     }
@@ -509,5 +514,146 @@ public class UsersController : Controller
 
         TempData["SuccessMessage"] = "User deleted successfully!";
         return RedirectToAction(nameof(Index));
+    }
+
+    // GET: Admin/Users/PendingSponsorQuotes
+    /// <summary>
+    /// List sponsors with pending quotes awaiting approval.
+    /// </summary>
+    [SwaggerOperation(Summary = "List sponsors with pending quotes awaiting approval.")]
+    public async Task<IActionResult> PendingSponsorQuotes()
+    {
+        var pendingQuotes = await _context.Users
+            .Where(u => u.UserRole == UserRole.Sponsor
+                && u.IsActive
+                && !string.IsNullOrEmpty(u.SponsorQuote)
+                && !u.SponsorQuoteApproved
+                && string.IsNullOrEmpty(u.SponsorQuoteRejectionReason))
+            .OrderBy(u => u.SponsorQuoteSubmittedDate)
+            .Select(u => new PendingSponsorQuoteViewModel
+            {
+                UserId = u.Id,
+                SponsorName = u.FirstName + " " + u.LastName,
+                CompanyName = u.CompanyName,
+                CompanyLogoUrl = u.CompanyLogoUrl,
+                Quote = u.SponsorQuote,
+                Rating = u.SponsorRating,
+                SubmittedDate = u.SponsorQuoteSubmittedDate,
+                Email = u.Email
+            })
+            .ToListAsync();
+
+        return View(pendingQuotes);
+    }
+
+    // POST: Admin/Users/ApproveQuote
+    /// <summary>
+    /// Approve a sponsor's quote for display on the About page.
+    /// </summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [SwaggerOperation(Summary = "Approve a sponsor's quote.")]
+    public async Task<IActionResult> ApproveQuote(string userId)
+    {
+        if (string.IsNullOrEmpty(userId))
+        {
+            return NotFound();
+        }
+
+        var sponsor = await _context.Users.FindAsync(userId);
+        if (sponsor == null)
+        {
+            return NotFound();
+        }
+
+        var currentUser = await _userManager.GetUserAsync(User);
+
+        sponsor.SponsorQuoteApproved = true;
+        sponsor.SponsorQuoteApprovedDate = DateTime.UtcNow;
+        sponsor.SponsorQuoteApprovedById = currentUser?.Id;
+        sponsor.SponsorQuoteRejectionReason = null;
+
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Admin {AdminId} approved quote for sponsor {SponsorId}",
+            currentUser?.Id, userId);
+
+        TempData["SuccessMessage"] = $"Quote for {sponsor.FullName} has been approved.";
+        return RedirectToAction(nameof(PendingSponsorQuotes));
+    }
+
+    // GET: Admin/Users/RejectQuote/5
+    /// <summary>
+    /// Display form to reject a sponsor's quote with feedback.
+    /// </summary>
+    [SwaggerOperation(Summary = "Display form to reject a sponsor's quote.")]
+    public async Task<IActionResult> RejectQuote(string id)
+    {
+        if (string.IsNullOrEmpty(id))
+        {
+            return NotFound();
+        }
+
+        var sponsor = await _context.Users.FindAsync(id);
+        if (sponsor == null)
+        {
+            return NotFound();
+        }
+
+        var viewModel = new RejectQuoteViewModel
+        {
+            UserId = sponsor.Id,
+            SponsorName = sponsor.FullName,
+            CompanyName = sponsor.CompanyName,
+            Quote = sponsor.SponsorQuote
+        };
+
+        return View(viewModel);
+    }
+
+    // POST: Admin/Users/RejectQuote
+    /// <summary>
+    /// Reject a sponsor's quote with feedback.
+    /// </summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [SwaggerOperation(Summary = "Reject a sponsor's quote with feedback.")]
+    public async Task<IActionResult> RejectQuote(RejectQuoteViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var sponsor = await _context.Users.FindAsync(model.UserId);
+        if (sponsor == null)
+        {
+            return NotFound();
+        }
+
+        sponsor.SponsorQuoteApproved = false;
+        sponsor.SponsorQuoteRejectionReason = model.Reason;
+
+        await _context.SaveChangesAsync();
+
+        var currentUser = await _userManager.GetUserAsync(User);
+        _logger.LogInformation("Admin {AdminId} rejected quote for sponsor {SponsorId} with reason: {Reason}",
+            currentUser?.Id, model.UserId, model.Reason);
+
+        TempData["SuccessMessage"] = $"Quote for {sponsor.FullName} has been rejected with feedback.";
+        return RedirectToAction(nameof(PendingSponsorQuotes));
+    }
+
+    /// <summary>
+    /// Get count of pending sponsor quotes for navigation badge.
+    /// </summary>
+    public async Task<int> GetPendingQuotesCount()
+    {
+        return await _context.Users
+            .CountAsync(u => u.UserRole == UserRole.Sponsor
+                && u.IsActive
+                && !string.IsNullOrEmpty(u.SponsorQuote)
+                && !u.SponsorQuoteApproved
+                && string.IsNullOrEmpty(u.SponsorQuoteRejectionReason));
     }
 }

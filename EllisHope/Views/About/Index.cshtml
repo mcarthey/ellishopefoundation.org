@@ -1,4 +1,4 @@
-@model IEnumerable<EllisHope.Models.Domain.ApplicationUser>
+@model EllisHope.Models.ViewModels.AboutPageViewModel
 @{
     ViewBag.Title = "About Us";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -194,11 +194,11 @@
             <h2 class="title text-white wow fadeInUp" data-wow-delay="0.1">@Content.Text("About", "TeamSectionTitle")</h2>
             <p class="opacity-75 text-white wow fadeInUp" data-wow-delay="0.2">@Content.Text("About", "TeamSectionSubtitle")</p>
         </div>
-        @if (Model.Any())
+        @if (Model.BoardMembers.Any())
         {
             <div class="row ht-carousel" data-slide-show="3" data-ml-slide-show="2" data-lg-slide-show="3"
                  data-md-slide-show="2" data-dots="true">
-                @foreach (var member in Model)
+                @foreach (var member in Model.BoardMembers)
                 {
                     var profileImage = !string.IsNullOrEmpty(member.ProfilePictureUrl)
                         ? member.ProfilePictureUrl
@@ -230,14 +230,14 @@
     </div>
 </section>
 <!-- team-section end -->
-<!-- feedback-section start -->
+<!-- sponsor-testimonials-section start -->
 <div class="feedback-section-four arrow-style-10 position-relative z-1 pt-180 pt-lg-60 pb-90 pb-lg-60"
      data-bg-color="#FFF5F2">
     <div class="container">
         <div class="row align-items-lg-end">
             <div class="col-lg-6">
                 <div class="title-one mb-70 mb-md-30 wow fadeInLeft">
-                    <h5 class="sub-title">Testimonial</h5>
+                    <h5 class="sub-title">Our Sponsors</h5>
                     <h2 class="title">@Content.Text("About", "TestimonialTitle")</h2>
                 </div>
             </div>
@@ -247,225 +247,123 @@
                 </div>
             </div>
         </div>
-        <div id="arrow-6" class="row gx-xl-5 ht-carousel" data-slide-show="2" data-lg-slide-show="2"
-             data-md-slide-show="1" data-sm-slide-show="1">
-            <div class="col-lg-6">
-                <div class="feedback-wrap-6">
-                    <img class="author" src="~/assets/img/media/headshot1-90x90.jpg" alt="author">
-                    <p class="feedback-text">
-                        I'm always eager to participate in charity events they've
-                        offered me invaluable experiences taking places
-                    </p>
-                    <div class="rating">
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                    </div>
-                    <div class="author-info">
-                        <h5 class="name">rashed kabir, <span class="designation">designer</span></h5>
+        @if (Model.SponsorsWithQuotes.Any())
+        {
+            <div id="arrow-6" class="row gx-xl-5 ht-carousel" data-slide-show="2" data-lg-slide-show="2"
+                 data-md-slide-show="1" data-sm-slide-show="1">
+                @foreach (var sponsor in Model.SponsorsWithQuotes)
+                {
+                    var logoImage = !string.IsNullOrEmpty(sponsor.CompanyLogoUrl)
+                        ? sponsor.CompanyLogoUrl
+                        : null;
+                    var displayName = !string.IsNullOrEmpty(sponsor.CompanyName)
+                        ? sponsor.CompanyName
+                        : sponsor.FullName;
 
+                    <div class="col-lg-6">
+                        <div class="feedback-wrap-6">
+                            @if (logoImage != null)
+                            {
+                                <img class="author" src="@logoImage" alt="@displayName" style="object-fit: contain;">
+                            }
+                            else
+                            {
+                                @* Placeholder with initials *@
+                                <div class="author d-flex align-items-center justify-content-center bg-primary text-white"
+                                     style="font-size: 1.5rem; font-weight: bold;">
+                                    @(displayName.Length > 0 ? displayName.Substring(0, 1).ToUpper() : "S")
+                                </div>
+                            }
+                            <p class="feedback-text">
+                                "@sponsor.SponsorQuote"
+                            </p>
+                            @if (sponsor.SponsorRating.HasValue)
+                            {
+                                <div class="rating">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= sponsor.SponsorRating.Value)
+                                        {
+                                            <span><i class="bi bi-star-fill"></i></span>
+                                        }
+                                        else
+                                        {
+                                            <span><i class="bi bi-star"></i></span>
+                                        }
+                                    }
+                                </div>
+                            }
+                            <div class="author-info">
+                                <h5 class="name">@displayName</h5>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                }
             </div>
-            <div class="col-lg-6">
-                <div class="feedback-wrap-6">
-                    <img class="author" src="~/assets/img/media/headshot2-90x90.jpg" alt="author">
-                    <p class="feedback-text">
-                        I'm always eager to participate in charity events they've
-                        offered me invaluable experiences taking places
-                    </p>
-                    <div class="rating">
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                    </div>
-                    <div class="author-info">
-                        <h5 class="name">mahmud-amin, <span class="designation">designer</span></h5>
-
-                    </div>
-                </div>
+            <button data-slick-prev="#arrow-6" class="slick-prev">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+            <button data-slick-next="#arrow-6" class="slick-next">
+                <i class="bi bi-chevron-right"></i>
+            </button>
+        }
+        else
+        {
+            <div class="text-center py-4">
+                <p class="text-muted mb-0">Sponsor testimonials coming soon!</p>
             </div>
-            <div class="col-lg-6">
-                <div class="feedback-wrap-6">
-                    <img class="author" src="~/assets/img/media/media-32.jpg" alt="author">
-                    <p class="feedback-text">
-                        I'm always eager to participate in charity events they've
-                        offered me invaluable experiences taking places
-                    </p>
-                    <div class="rating">
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                    </div>
-                    <div class="author-info">
-                        <h5 class="name">rashed kabir, <span class="designation">designer</span></h5>
-
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="feedback-wrap-6">
-                    <img class="author" src="~/assets/img/media/media-33.jpg" alt="author">
-                    <p class="feedback-text">
-                        I'm always eager to participate in charity events they've
-                        offered me invaluable experiences taking places
-                    </p>
-                    <div class="rating">
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star-fill"></i>
-                        </a>
-                        <a href="#">
-                            <i class="bi bi-star"></i>
-                        </a>
-                    </div>
-                    <div class="author-info">
-                        <h5 class="name">mahmud-amin, <span class="designation">designer</span></h5>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-        <button data-slick-prev="#arrow-6" class="slick-prev">
-            <i class="bi bi-chevron-left"></i>
-        </button>
-        <button data-slick-next="#arrow-6" class="slick-next">
-            <i class="bi bi-chevron-right"></i>
-        </button>
+        }
     </div>
 </div>
-<!-- feedback-section end -->
-<!-- brand-section start -->
-<div class="brand-wrap-2 pt-30 pb-100" data-bg-color="#FFF5F2">
-    <div class="container px-0">
-        <div class="row brand-slide-wrapper ht-carousel mx-0" data-slide-show="5" data-ml-slide-show="3"
-             data-lg-slide-show="3" data-md-slide-show="3" data-sm-slide-show="2">
-            <div class="brand-item">
-                <a href="#">
-                    <img src="~/assets/img/brand/brand-10.svg" alt="brand">
-                </a>
+<!-- sponsor-testimonials-section end -->
+<!-- sponsor-logos-section start -->
+<div class="brand-wrap-2 pt-30 pb-60" data-bg-color="#FFF5F2">
+    <div class="container">
+        @if (Model.AllSponsors.Any())
+        {
+            <div class="row brand-slide-wrapper ht-carousel mx-0" data-slide-show="5" data-ml-slide-show="3"
+                 data-lg-slide-show="3" data-md-slide-show="3" data-sm-slide-show="2">
+                @foreach (var sponsor in Model.AllSponsors)
+                {
+                    var displayName = !string.IsNullOrEmpty(sponsor.CompanyName)
+                        ? sponsor.CompanyName
+                        : sponsor.FullName;
+                    var initials = displayName.Length > 0
+                        ? string.Join("", displayName.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                            .Take(2).Select(w => w[0].ToString().ToUpper()))
+                        : "S";
+
+                    <div class="brand-item">
+                        @if (!string.IsNullOrEmpty(sponsor.CompanyLogoUrl))
+                        {
+                            <a href="#" title="@displayName">
+                                <img src="@sponsor.CompanyLogoUrl" alt="@displayName"
+                                     style="max-height: 60px; object-fit: contain;">
+                            </a>
+                        }
+                        else
+                        {
+                            @* Placeholder with initials *@
+                            <a href="#" title="@displayName" class="d-flex align-items-center justify-content-center"
+                               style="width: 80px; height: 60px; background: linear-gradient(135deg, #e74c3c, #c0392b); border-radius: 8px; color: white; font-weight: bold; font-size: 1.25rem; text-decoration: none;">
+                                @initials
+                            </a>
+                        }
+                    </div>
+                }
             </div>
-            <div class="brand-item">
-                <a href="#">
-                    <img src="~/assets/img/brand/brand-11.svg" alt="brand">
-                </a>
-            </div>
-            <div class="brand-item">
-                <a href="#">
-                    <img src="~/assets/img/brand/brand-12.svg" alt="brand">
-                </a>
-            </div>
-            <div class="brand-item">
-                <a href="#">
-                    <img src="~/assets/img/brand/brand-13.svg" alt="brand">
-                </a>
-            </div>
-            <div class="brand-item">
-                <a href="#">
-                    <img src="~/assets/img/brand/brand-14.svg" alt="brand">
-                </a>
-            </div>
-            <div class="brand-item">
-                <a href="#">
-                    <img src="~/assets/img/brand/brand-10.svg" alt="brand">
-                </a>
-            </div>
+        }
+
+        <!-- Become a Sponsor CTA -->
+        <div class="text-center mt-50">
+            <p class="mb-3 text-muted">Interested in supporting our mission?</p>
+            <a href="/contact" class="ht-btn style-2">
+                <i class="bi bi-heart"></i> Become a Sponsor
+            </a>
         </div>
     </div>
 </div>
-<!-- brand-section end -->
+<!-- sponsor-logos-section end -->
 <!-- newsletter-section start -->
 <div class="newsletter-section position-relative z-1 pt-160 pt-lg-60">
     <img class="shape-1 position-absolute ml-100 mt--90 d-none d-lg-inline-block"

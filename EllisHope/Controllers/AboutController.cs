@@ -1,5 +1,6 @@
 using EllisHope.Data;
 using EllisHope.Models.Domain;
+using EllisHope.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
@@ -42,20 +43,47 @@ public class AboutController : Controller
     /// <response code="200">Successfully displayed About page with board member directory</response>
     [HttpGet]
     [SwaggerOperation(
-        Summary = "Displays About page with mission, values, and board member directory",
-        Description = "Returns organization information page featuring mission statement, values, and alphabetically-ordered list of active board members. Public access.",
+        Summary = "Displays About page with mission, values, board members, and sponsor showcase",
+        Description = "Returns organization information page featuring mission statement, values, alphabetically-ordered list of active board members, and sponsor testimonials/logos. Public access.",
         OperationId = "GetAboutPage",
         Tags = new[] { "About" }
     )]
-    [ProducesResponseType(typeof(IEnumerable<ApplicationUser>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(AboutPageViewModel), StatusCodes.Status200OK)]
     public async Task<IActionResult> Index()
     {
+        // Get active board members
         var boardMembers = await _context.Users
             .Where(u => u.UserRole == UserRole.BoardMember && u.IsActive)
             .OrderBy(u => u.LastName)
             .ThenBy(u => u.FirstName)
             .ToListAsync();
 
-        return View(boardMembers);
+        // Get sponsors with approved quotes for testimonial carousel
+        var sponsorsWithQuotes = await _context.Users
+            .Where(u => u.UserRole == UserRole.Sponsor
+                && u.IsActive
+                && u.SponsorQuoteApproved
+                && !string.IsNullOrEmpty(u.SponsorQuote)
+                && u.ShowInSponsorSection)
+            .OrderBy(u => u.SponsorQuoteApprovedDate)
+            .ToListAsync();
+
+        // Get all active sponsors for logo section (includes those without quotes)
+        var allSponsors = await _context.Users
+            .Where(u => u.UserRole == UserRole.Sponsor
+                && u.IsActive
+                && u.ShowInSponsorSection)
+            .OrderBy(u => u.CompanyName ?? u.LastName)
+            .ThenBy(u => u.FirstName)
+            .ToListAsync();
+
+        var viewModel = new AboutPageViewModel
+        {
+            BoardMembers = boardMembers,
+            SponsorsWithQuotes = sponsorsWithQuotes,
+            AllSponsors = allSponsors
+        };
+
+        return View(viewModel);
     }
 }
