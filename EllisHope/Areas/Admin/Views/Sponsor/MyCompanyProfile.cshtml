@@ -61,7 +61,15 @@
                         }
                         <input asp-for="CompanyLogo" class="form-control" type="file" accept="image/*" />
                         <span asp-validation-for="CompanyLogo" class="text-danger"></span>
-                        <small class="text-muted">Upload a company logo (recommended: square image, min 200x200px)</small>
+                        <div class="mt-2 p-2 bg-light rounded small">
+                            <strong><i class="bi bi-info-circle"></i> Logo Guidelines:</strong>
+                            <ul class="mb-0 mt-1 ps-3">
+                                <li>Recommended size: <strong>400 x 200 pixels</strong> (2:1 ratio)</li>
+                                <li>Minimum size: 200 x 100 pixels</li>
+                                <li>Formats: PNG (preferred for transparency) or JPG</li>
+                                <li>Logos will be displayed in a white card on our About page</li>
+                            </ul>
+                        </div>
                     </div>
 
                     <div class="mb-3">
