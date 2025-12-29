@@ -1,3 +1,14 @@
+@using Microsoft.AspNetCore.Identity
+@using EllisHope.Models.Domain
+@inject UserManager<ApplicationUser> UserManager
+@{
+    string? profilePictureUrl = null;
+    if (User.Identity?.IsAuthenticated == true)
+    {
+        var currentUser = await UserManager.GetUserAsync(User);
+        profilePictureUrl = currentUser?.ProfilePictureUrl;
+    }
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,7 +29,14 @@
                 <nav class="col-md-2 d-md-block admin-sidebar p-3">
                     <div class="mb-4">
                         <h4 class="text-white">EHF Portal</h4>
-                        <small class="text-white-50">@User.Identity.Name</small>
+                        <div class="d-flex align-items-center mt-2">
+                            @if (!string.IsNullOrEmpty(profilePictureUrl))
+                            {
+                                <img src="@profilePictureUrl" alt="Profile"
+                                     class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover; border: 2px solid rgba(255,255,255,0.3);" />
+                            }
+                            <small class="text-white-50">@User.Identity.Name</small>
+                        </div>
                         @if (User.IsInRole("Admin"))
                         {
                             <span class="badge bg-danger d-block mt-1">Admin</span>
@@ -201,12 +219,21 @@
                             
                             <!-- Account Menu -->
                             <div class="account-menu">
-                                <div class="account-avatar" id="accountMenuToggle">
-                                    @{
-                                        var initial = User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "?";
-                                    }
-                                    @initial
-                                </div>
+                                @if (!string.IsNullOrEmpty(profilePictureUrl))
+                                {
+                                    <img src="@profilePictureUrl" alt="Profile" id="accountMenuToggle"
+                                         class="account-avatar-img" title="@User.Identity?.Name"
+                                         style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; cursor: pointer; border: 2px solid #e0e0e0;" />
+                                }
+                                else
+                                {
+                                    <div class="account-avatar" id="accountMenuToggle">
+                                        @{
+                                            var initial = User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "?";
+                                        }
+                                        @initial
+                                    </div>
+                                }
                                 <div class="account-dropdown" id="accountDropdown">
                                     <div class="account-dropdown-header">
                                         <div class="fw-bold">@User.Identity?.Name</div>

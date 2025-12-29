@@ -1,6 +1,15 @@
-﻿@inject IConfiguration Configuration
+﻿@using Microsoft.AspNetCore.Identity
+@using EllisHope.Models.Domain
+@inject IConfiguration Configuration
+@inject UserManager<ApplicationUser> UserManager
 @{
     var foundation = Configuration.GetSection("Foundation");
+    string? profilePictureUrl = null;
+    if (User.Identity?.IsAuthenticated == true)
+    {
+        var user = await UserManager.GetUserAsync(User);
+        profilePictureUrl = user?.ProfilePictureUrl;
+    }
 }
 
 <header class="theme-main-menu theme-menu-two">
@@ -68,12 +77,20 @@
                         @if (User.Identity?.IsAuthenticated == true)
                         {
                             <div class="account-menu ms-3 d-lg-inline-block d-none">
-                                <div class="account-avatar" id="publicAccountMenuToggle" title="@User.Identity?.Name">
-                                    @{
-                                        var initial = User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "?";
-                                    }
-                                    @initial
-                                </div>
+                                @if (!string.IsNullOrEmpty(profilePictureUrl))
+                                {
+                                    <img src="@profilePictureUrl" alt="Profile" id="publicAccountMenuToggle"
+                                         class="account-avatar-img" title="@User.Identity?.Name" />
+                                }
+                                else
+                                {
+                                    <div class="account-avatar" id="publicAccountMenuToggle" title="@User.Identity?.Name">
+                                        @{
+                                            var initial = User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "?";
+                                        }
+                                        @initial
+                                    </div>
+                                }
                                 <div class="account-dropdown" id="publicAccountDropdown">
                                     <div class="account-dropdown-header">
                                         <div class="fw-bold">@User.Identity?.Name</div>
@@ -201,9 +218,18 @@
         {
             <div class="offset-widget mb-30">
                 <div class="info-widget">
-                    <h4 class="offset-title mb-20">
-                        <i class="bi bi-person-circle"></i> @User.Identity?.Name
-                    </h4>
+                    <div class="d-flex align-items-center mb-20">
+                        @if (!string.IsNullOrEmpty(profilePictureUrl))
+                        {
+                            <img src="@profilePictureUrl" alt="Profile"
+                                 class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <i class="bi bi-person-circle me-2" style="font-size: 1.5rem;"></i>
+                        }
+                        <h4 class="offset-title mb-0">@User.Identity?.Name</h4>
+                    </div>
                     <div class="mobile-account-links">
                         @if (User.IsInRole("Admin"))
                         {
@@ -317,6 +343,21 @@
     }
 
     .account-avatar:hover {
+        transform: scale(1.05);
+        border-color: #c53040;
+    }
+
+    .account-avatar-img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        cursor: pointer;
+        border: 2px solid #e0e0e0;
+        transition: all 0.2s;
+    }
+
+    .account-avatar-img:hover {
         transform: scale(1.05);
         border-color: #c53040;
     }

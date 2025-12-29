@@ -69,6 +69,20 @@
   border-color: var(--admin-primary);
 }
 
+.account-avatar-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  border: 2px solid #e0e0e0;
+  transition: all 0.2s;
+}
+.account-avatar-img:hover {
+  transform: scale(1.05);
+  border-color: var(--admin-primary);
+}
+
 .account-dropdown {
   position: absolute;
   right: 0;
