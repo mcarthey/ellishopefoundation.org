@@ -7,6 +7,16 @@
     var profileImage = !string.IsNullOrEmpty(Model.ProfilePictureUrl)
         ? Model.ProfilePictureUrl
         : "/assets/img/avatars/avatar-01.png";
+
+    // Email obfuscation - split into parts for bot protection
+    var emailUser = "";
+    var emailDomain = "";
+    if (!string.IsNullOrEmpty(Model.Email))
+    {
+        var emailParts = Model.Email.Split('@');
+        emailUser = emailParts.Length > 0 ? emailParts[0] : "";
+        emailDomain = emailParts.Length > 1 ? emailParts[1] : "";
+    }
 }
 
 <main>
@@ -51,27 +61,19 @@
                             <h2 class="name">
                                 @Model.FullName
                             </h2>
-                            @if (!string.IsNullOrEmpty(Model.AdminNotes))
-                            {
-                                <p class="description">
-                                    @Model.AdminNotes
-                                </p>
-                            }
-                            else
-                            {
-                                <p class="description">
-                                    @Model.FirstName is a dedicated board member of the Ellis Hope Foundation,
-                                    committed to empowering health, fitness, and hope in our community.
-                                </p>
-                            }
-                            @if (!string.IsNullOrEmpty(Model.PhoneNumber))
-                            {
-                                <h5 class="addres-line"><span>Phone:</span> <a href="tel:@Model.PhoneNumber">@Model.PhoneNumber</a></h5>
-                            }
+                            <p class="description">
+                                @Model.FirstName is a dedicated board member of the Ellis Hope Foundation,
+                                committed to empowering health, fitness, and hope in our community.
+                            </p>
                             @if (!string.IsNullOrEmpty(Model.Email))
                             {
                                 <h5 class="addres-line">
-                                    <span>Email:</span> <a href="mailto:@Model.Email">@Model.Email</a>
+                                    <span>Email:</span>
+                                    <a href="#" class="obfuscated-email"
+                                       data-user="@emailUser"
+                                       data-domain="@emailDomain">
+                                        <span class="email-text">@(emailUser)[at]@(emailDomain)</span>
+                                    </a>
                                 </h5>
                             }
                             @if (Model.JoinedDate != default)
@@ -97,3 +99,21 @@
     <!-- ht-team-details-content end -->
 
 </main>
+
+@section Scripts {
+    <script>
+        // Replace [at] with @@ for users with JavaScript enabled
+        // Bots without JS execution will see the obfuscated version
+        document.addEventListener('DOMContentLoaded', function() {
+            var emailLinks = document.querySelectorAll('.obfuscated-email');
+            emailLinks.forEach(function(link) {
+                var user = link.dataset.user;
+                var domain = link.dataset.domain;
+                if (user && domain) {
+                    link.innerHTML = user + '@@' + domain;
+                    link.href = 'mailto:' + user + '@@' + domain;
+                }
+            });
+        });
+    </script>
+}
