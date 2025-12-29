@@ -86,8 +86,9 @@ public class MyApplicationsController : Controller
                 EstimatedMonthlyCost = a.EstimatedMonthlyCost,
                 FinalDecision = a.FinalDecision,
                 DecisionMessage = a.DecisionMessage,
-                CanEdit = a.Status == ApplicationStatus.Draft,
-                CanWithdraw = a.Status == ApplicationStatus.Submitted || 
+                CanEdit = a.Status == ApplicationStatus.Draft ||
+                         a.Status == ApplicationStatus.NeedsInformation,
+                CanWithdraw = a.Status == ApplicationStatus.Submitted ||
                              a.Status == ApplicationStatus.UnderReview ||
                              a.Status == ApplicationStatus.InDiscussion
             }),
@@ -160,7 +161,8 @@ public class MyApplicationsController : Controller
         {
             Application = application,
             Comments = comments,
-            CanEdit = application.Status == ApplicationStatus.Draft,
+            CanEdit = application.Status == ApplicationStatus.Draft ||
+                     application.Status == ApplicationStatus.NeedsInformation,
             CanUserVote = false, // Applicants can't vote
             HasUserVoted = false,
             CanApproveReject = false
@@ -467,14 +469,15 @@ public class MyApplicationsController : Controller
             return Forbid();
         }
 
-        if (application.Status != ApplicationStatus.Draft)
+        if (application.Status != ApplicationStatus.Draft &&
+            application.Status != ApplicationStatus.NeedsInformation)
         {
-            TempData["ErrorMessage"] = "Only draft applications can be edited.";
+            TempData["ErrorMessage"] = "This application cannot be edited in its current status.";
             return RedirectToAction(nameof(Details), new { id });
         }
 
         var viewModel = MapFromApplication(application);
-        
+
         // Set the current step from query string if provided
         if (step.HasValue && step.Value >= 1 && step.Value <= 6)
         {
@@ -586,9 +589,10 @@ public class MyApplicationsController : Controller
             return Forbid();
         }
 
-        if (application.Status != ApplicationStatus.Draft)
+        if (application.Status != ApplicationStatus.Draft &&
+            application.Status != ApplicationStatus.NeedsInformation)
         {
-            TempData["ErrorMessage"] = "Only draft applications can be edited.";
+            TempData["ErrorMessage"] = "This application cannot be edited in its current status.";
             return RedirectToAction(nameof(Details), new { id });
         }
 

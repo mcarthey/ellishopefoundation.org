@@ -631,6 +631,16 @@
                                         Next <i class="bi bi-arrow-right"></i>
                                     </button>
                                 }
+                                else if (Model.Status == EllisHope.Models.Domain.ApplicationStatus.NeedsInformation)
+                                {
+                                    <!-- Application is in NeedsInformation status - allow saving but not resubmitting -->
+                                    <button type="submit" name="SaveAndExit" value="true" class="btn btn-success btn-lg">
+                                        <i class="bi bi-check-circle"></i> Save Changes
+                                    </button>
+                                    <p class="text-muted small mt-2 mb-0">
+                                        <i class="bi bi-info-circle"></i> Your changes will be reviewed by the foundation.
+                                    </p>
+                                }
                                 else
                                 {
                                     <button type="submit" name="SubmitApplication" value="true" class="btn btn-success btn-lg">
