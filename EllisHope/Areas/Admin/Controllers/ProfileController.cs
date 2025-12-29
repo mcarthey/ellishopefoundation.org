@@ -243,7 +243,7 @@ public class ProfileController : Controller
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Edit(EditProfileViewModel model)
+    public async Task<IActionResult> Edit(EditProfileViewModel model, string? SelectedAvatarUrl)
     {
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
@@ -259,9 +259,10 @@ public class ProfileController : Controller
             return View(model);
         }
 
-        // Handle profile photo upload
+        // Handle profile photo: Upload takes priority, then avatar selection, then removal
         if (model.ProfilePhoto != null && model.ProfilePhoto.Length > 0)
         {
+            // User uploaded a new photo
             try
             {
                 var altText = $"{model.FirstName} {model.LastName} profile photo";
@@ -281,6 +282,21 @@ public class ProfileController : Controller
                 _logger.LogError(ex, "Error uploading profile photo for user {UserId}", user.Id);
                 ModelState.AddModelError("ProfilePhoto", $"Error uploading photo: {ex.Message}");
                 return View(model);
+            }
+        }
+        else if (!string.IsNullOrEmpty(SelectedAvatarUrl))
+        {
+            if (SelectedAvatarUrl == "__REMOVE__")
+            {
+                // User wants to remove their profile photo
+                user.ProfilePictureUrl = null;
+                _logger.LogInformation("User {UserId} removed their profile photo", user.Id);
+            }
+            else if (SelectedAvatarUrl.StartsWith("/assets/img/avatars/"))
+            {
+                // User selected a default avatar
+                user.ProfilePictureUrl = SelectedAvatarUrl;
+                _logger.LogInformation("User {UserId} selected default avatar: {AvatarUrl}", user.Id, SelectedAvatarUrl);
             }
         }
 
