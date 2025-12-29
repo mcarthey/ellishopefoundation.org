@@ -851,6 +851,63 @@ public class ClientApplicationService : IClientApplicationService
         }
     }
 
+    public async Task<(bool Succeeded, string[] Errors)> ResumeReviewAsync(
+        int applicationId,
+        string adminId,
+        string? reason = null)
+    {
+        try
+        {
+            var application = await GetApplicationByIdAsync(applicationId);
+            if (application == null)
+            {
+                return (false, new[] { "Application not found" });
+            }
+
+            if (application.Status != ApplicationStatus.NeedsInformation)
+            {
+                return (false, new[] { "Application must be in NeedsInformation status to resume review" });
+            }
+
+            application.Status = ApplicationStatus.UnderReview;
+            await _context.SaveChangesAsync();
+
+            // Add comment about resuming review
+            var commentContent = string.IsNullOrEmpty(reason)
+                ? "Review has been resumed by administrator."
+                : $"Review has been resumed by administrator. Reason: {reason}";
+
+            await AddCommentAsync(
+                applicationId,
+                adminId,
+                commentContent,
+                isPrivate: true,
+                isInformationRequest: false);
+
+            // Notify board members
+            var boardMemberIds = await _context.Users
+                .Where(u => u.UserRole == UserRole.BoardMember && u.IsActive)
+                .Select(u => u.Id)
+                .ToListAsync();
+
+            await SendBulkNotificationAsync(
+                boardMemberIds,
+                NotificationType.ApplicationUnderReview,
+                "Application Review Resumed",
+                $"Application #{applicationId} has been moved back to Under Review status.",
+                applicationId,
+                $"/Admin/Applications/Details/{applicationId}");
+
+            _logger.LogInformation($"Application {applicationId} review resumed by admin {adminId}");
+            return (true, Array.Empty<string>());
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error resuming review for application {applicationId}");
+            return (false, new[] { ex.Message });
+        }
+    }
+
     public async Task<(bool Succeeded, string[] Errors)> ApproveApplicationAsync(
         int applicationId,
         string approverId,

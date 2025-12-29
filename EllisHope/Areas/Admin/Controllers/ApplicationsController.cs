@@ -538,6 +538,36 @@ public class ApplicationsController : Controller
         return RedirectToAction(nameof(Details), new { id });
     }
 
+    // POST: Admin/Applications/ResumeReview/5
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
+    /// <summary>
+    /// Resume review process from NeedsInformation status (Admin). Anti-forgery required.
+    /// </summary>
+    [SwaggerOperation(Summary = "Resume review from NeedsInformation status (Admin). Anti-forgery required.")]
+    public async Task<IActionResult> ResumeReview(int id, string? reason)
+    {
+        var currentUser = await _userManager.GetUserAsync(User);
+        if (currentUser == null)
+        {
+            return Unauthorized();
+        }
+
+        var (succeeded, errors) = await _applicationService.ResumeReviewAsync(id, currentUser.Id, reason);
+
+        if (succeeded)
+        {
+            TempData["SuccessMessage"] = "Application moved back to Under Review. Board members have been notified.";
+        }
+        else
+        {
+            TempData["ErrorMessage"] = string.Join(", ", errors);
+        }
+
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
     #endregion
 
     #region Download Actions

@@ -210,6 +210,14 @@ public interface IClientApplicationService
         int applicationId,
         string requesterId,
         string requestDetails);
+
+    /// <summary>
+    /// Resume review process (move from NeedsInformation back to UnderReview)
+    /// </summary>
+    Task<(bool Succeeded, string[] Errors)> ResumeReviewAsync(
+        int applicationId,
+        string adminId,
+        string? reason = null);
     
     /// <summary>
     /// Approve application and assign sponsor (if applicable)
