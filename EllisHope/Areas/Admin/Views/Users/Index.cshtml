@@ -165,9 +165,16 @@
                             <tr class="@(!user.IsActive ? "table-secondary" : "")">
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="avatar-circle me-2">
-                                            @(string.IsNullOrWhiteSpace(user.FullName) ? "?" : user.FullName.Substring(0, 1).ToUpper())
-                                        </div>
+                                        @if (!string.IsNullOrEmpty(user.ProfilePictureUrl))
+                                        {
+                                            <img src="@user.ProfilePictureUrl" alt="@user.FullName" class="avatar-img me-2" />
+                                        }
+                                        else
+                                        {
+                                            <div class="avatar-circle me-2">
+                                                @(string.IsNullOrWhiteSpace(user.FullName) ? "?" : user.FullName.Substring(0, 1).ToUpper())
+                                            </div>
+                                        }
                                         <div>
                                             <strong>@(string.IsNullOrWhiteSpace(user.FullName) ? user.Email : user.FullName)</strong>
                                             @if (!user.IsActive)
@@ -201,7 +208,7 @@
                                     }
                                     else
                                     {
-                                        <small class="text-muted">—</small>
+                                        <small class="text-muted">ï¿½</small>
                                     }
                                 </td>
                                 <td>
@@ -211,7 +218,7 @@
                                     }
                                     else
                                     {
-                                        <small class="text-muted">—</small>
+                                        <small class="text-muted">ï¿½</small>
                                     }
                                 </td>
                                 <td>
@@ -296,6 +303,14 @@
             justify-content: center;
             font-weight: bold;
             font-size: 1.2rem;
+        }
+
+        .avatar-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #e0e0e0;
         }
     </style>
 }

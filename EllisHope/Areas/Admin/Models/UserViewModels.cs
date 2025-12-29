@@ -29,6 +29,7 @@ public class UserSummaryViewModel
     public DateTime? LastLoginDate { get; set; }
     public string? SponsorName { get; set; }
     public int SponsoredClientsCount { get; set; }
+    public string? ProfilePictureUrl { get; set; }
 }
 
 public class UserCreateViewModel

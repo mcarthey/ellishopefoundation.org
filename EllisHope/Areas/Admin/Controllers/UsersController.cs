@@ -73,7 +73,8 @@ public class UsersController : Controller
                 JoinedDate = u.JoinedDate,
                 LastLoginDate = u.LastLoginDate,
                 SponsorName = u.Sponsor?.FullName,
-                SponsoredClientsCount = u.SponsoredClients?.Count ?? 0
+                SponsoredClientsCount = u.SponsoredClients?.Count ?? 0,
+                ProfilePictureUrl = u.ProfilePictureUrl
             }),
             SearchTerm = searchTerm,
             RoleFilter = roleFilter,
@@ -138,7 +139,8 @@ public class UsersController : Controller
                 Status = c.Status,
                 IsActive = c.IsActive,
                 JoinedDate = c.JoinedDate,
-                LastLoginDate = c.LastLoginDate
+                LastLoginDate = c.LastLoginDate,
+                ProfilePictureUrl = c.ProfilePictureUrl
             }),
             MonthlyFee = user.MonthlyFee,
             MembershipStartDate = user.MembershipStartDate,
