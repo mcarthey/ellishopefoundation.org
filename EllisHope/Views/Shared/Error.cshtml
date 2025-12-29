@@ -3,6 +3,10 @@
 @{
     ViewData["Title"] = "Error";
     Layout = null;
+
+    // Email obfuscation for support email
+    var supportEmailUser = "admin";
+    var supportEmailDomain = "ellishope.org";
 }
 
 <!DOCTYPE html>
@@ -201,8 +205,11 @@
             </div>
 
             <div class="mt-3">
-                <a href="mailto:admin@ellishope.org?subject=Website Error Report&body=I encountered an error on the website.%0D%0A%0D%0APage I was trying to access: @Context.Request.Path%0D%0ARequest ID: @Model.RequestId%0D%0A%0D%0AWhat I was trying to do:%0D%0A%0D%0ASteps to reproduce:%0D%0A1. %0D%0A2. %0D%0A3. %0D%0A" 
-                   class="btn-report">
+                <a href="#" class="btn-report obfuscated-email"
+                   data-user="@supportEmailUser"
+                   data-domain="@supportEmailDomain"
+                   data-subject="Website Error Report"
+                   data-body="I encountered an error on the website.%0D%0A%0D%0APage I was trying to access: @Context.Request.Path%0D%0ARequest ID: @Model.RequestId%0D%0A%0D%0AWhat I was trying to do:%0D%0A%0D%0ASteps to reproduce:%0D%0A1. %0D%0A2. %0D%0A3. %0D%0A">
                     <i class="bi bi-envelope"></i> Report This Issue
                 </a>
             </div>
@@ -228,10 +235,38 @@
             }
 
             <p class="support-text">
-                <i class="bi bi-question-circle"></i> Need help? Contact us at 
-                <a href="mailto:admin@ellishope.org">admin@ellishope.org</a>
+                <i class="bi bi-question-circle"></i> Need help? Contact us at
+                <a href="#" class="obfuscated-email"
+                   data-user="@supportEmailUser"
+                   data-domain="@supportEmailDomain">@(supportEmailUser)[at]@(supportEmailDomain)</a>
             </p>
         </div>
     </div>
+
+    <!-- Email obfuscation script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var emailLinks = document.querySelectorAll('.obfuscated-email');
+            emailLinks.forEach(function(link) {
+                var user = link.dataset.user;
+                var domain = link.dataset.domain;
+                if (user && domain) {
+                    var email = user + '@@' + domain;
+                    var href = 'mailto:' + email;
+                    if (link.dataset.subject) {
+                        href += '?subject=' + link.dataset.subject;
+                        if (link.dataset.body) {
+                            href += '&body=' + link.dataset.body;
+                        }
+                    }
+                    link.href = href;
+                    // Only update innerHTML if it contains [at]
+                    if (link.innerHTML.includes('[at]')) {
+                        link.innerHTML = email;
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>

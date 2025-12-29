@@ -85,6 +85,33 @@
 
     <!--Custom JS here -->
     <script src="~/assets/js/main.js"></script>
+
+    <!-- Email obfuscation - replace [at] with @@ for users with JavaScript enabled -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var emailLinks = document.querySelectorAll('.obfuscated-email');
+            emailLinks.forEach(function(link) {
+                var user = link.dataset.user;
+                var domain = link.dataset.domain;
+                if (user && domain) {
+                    var email = user + '@@' + domain;
+                    var href = 'mailto:' + email;
+                    // Add subject and body if provided
+                    if (link.dataset.subject) {
+                        href += '?subject=' + encodeURIComponent(link.dataset.subject);
+                        if (link.dataset.body) {
+                            href += '&body=' + link.dataset.body;
+                        }
+                    }
+                    link.href = href;
+                    // Only update innerHTML if it contains [at]
+                    if (link.innerHTML.includes('[at]')) {
+                        link.innerHTML = email;
+                    }
+                }
+            });
+        });
+    </script>
     @RenderSection("scripts", false)
 </body>
 </html>

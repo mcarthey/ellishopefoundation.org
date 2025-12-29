@@ -2,6 +2,17 @@
 @{
     ViewBag.Title = "Error";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Email obfuscation for support email
+    var supportEmail = Model?.SupportEmail ?? "";
+    var supportEmailUser = "";
+    var supportEmailDomain = "";
+    if (!string.IsNullOrEmpty(supportEmail))
+    {
+        var emailParts = supportEmail.Split('@');
+        supportEmailUser = emailParts.Length > 0 ? emailParts[0] : "";
+        supportEmailDomain = emailParts.Length > 1 ? emailParts[1] : "";
+    }
 }
 
 <main>
@@ -57,10 +68,16 @@
                             <a href="/" class="ht-btn px-4 wow fadeInUp" data-wow-delay="0.2s">
                                 <i class="bi bi-house-door me-2"></i> Back to Home
                             </a>
-                            <a href="mailto:@Model?.SupportEmail?subject=Error Report - @Model?.CorrelationId"
-                               class="ht-btn btn-outline ms-3 px-4 wow fadeInUp" data-wow-delay="0.3s">
-                                <i class="bi bi-envelope me-2"></i> Contact Support
-                            </a>
+                            @if (!string.IsNullOrEmpty(supportEmailUser) && !string.IsNullOrEmpty(supportEmailDomain))
+                            {
+                                <a href="#" class="ht-btn btn-outline ms-3 px-4 wow fadeInUp obfuscated-email"
+                                   data-user="@supportEmailUser"
+                                   data-domain="@supportEmailDomain"
+                                   data-subject="Error Report - @Model?.CorrelationId"
+                                   data-wow-delay="0.3s">
+                                    <i class="bi bi-envelope me-2"></i> Contact Support
+                                </a>
+                            }
                         </div>
                     </div>
                 </div>

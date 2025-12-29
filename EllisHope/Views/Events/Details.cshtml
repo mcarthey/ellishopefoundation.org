@@ -7,6 +7,16 @@
     var tags = !string.IsNullOrEmpty(Model.Tags)
         ? Model.Tags.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
         : Array.Empty<string>();
+
+    // Email obfuscation for organizer email
+    var organizerEmailUser = "";
+    var organizerEmailDomain = "";
+    if (!string.IsNullOrEmpty(Model.OrganizerEmail))
+    {
+        var emailParts = Model.OrganizerEmail.Split('@');
+        organizerEmailUser = emailParts.Length > 0 ? emailParts[0] : "";
+        organizerEmailDomain = emailParts.Length > 1 ? emailParts[1] : "";
+    }
 }
 
 <main>
@@ -107,7 +117,11 @@
                                 {
                                     <li>
                                         <div class="info-label">Email:</div>
-                                        <p class="info">@Model.OrganizerEmail</p>
+                                        <p class="info">
+                                            <a href="#" class="obfuscated-email"
+                                               data-user="@organizerEmailUser"
+                                               data-domain="@organizerEmailDomain">@(organizerEmailUser)[at]@(organizerEmailDomain)</a>
+                                        </p>
                                     </li>
                                 }
                             </ul>

@@ -10,6 +10,17 @@
         var user = await UserManager.GetUserAsync(User);
         profilePictureUrl = user?.ProfilePictureUrl;
     }
+
+    // Email obfuscation - split into parts for bot protection
+    var foundationEmail = foundation["Email"] ?? "";
+    var emailUser = "";
+    var emailDomain = "";
+    if (!string.IsNullOrEmpty(foundationEmail))
+    {
+        var emailParts = foundationEmail.Split('@');
+        emailUser = emailParts.Length > 0 ? emailParts[0] : "";
+        emailDomain = emailParts.Length > 1 ? emailParts[1] : "";
+    }
 }
 
 <header class="theme-main-menu theme-menu-two">
@@ -310,7 +321,9 @@
                 </p>
                 <p>
                     <i class="fal fa-envelope-open"></i>
-                    @foundation["Email"]
+                    <a href="#" class="obfuscated-email"
+                       data-user="@emailUser"
+                       data-domain="@emailDomain">@(emailUser)[at]@(emailDomain)</a>
                 </p>
             </div>
         </div>
