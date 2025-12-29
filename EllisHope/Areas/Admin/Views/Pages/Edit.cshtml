@@ -83,7 +83,7 @@
                                                 <li><strong>Aspect Ratio:</strong> @image.Requirements.AspectRatio (@image.Requirements.Orientation)</li>
                                                 @if (image.Requirements.MinWidth.HasValue)
                                                 {
-                                                    <li><strong>Min:</strong> @(image.Requirements.MinWidth)×@(image.Requirements.MinHeight)px</li>
+                                                    <li><strong>Min:</strong> @(image.Requirements.MinWidth)ï¿½@(image.Requirements.MinHeight)px</li>
                                                 }
                                                 <li><strong>Max File Size:</strong> @((image.Requirements.MaxFileSizeBytes / 1024 / 1024))MB</li>
                                             </ul>
@@ -119,27 +119,39 @@
                                             
                                             <div class="mb-2">
                                                 <label class="form-label small fw-bold">Select Image:</label>
-                                                <select name="mediaId" 
-                                                        class="form-select form-select-sm image-select" 
+                                                <select name="mediaId"
+                                                        class="form-select form-select-sm image-select"
                                                         id="select-@image.Key"
                                                         data-requirements='@System.Text.Json.JsonSerializer.Serialize(image.Requirements)'
                                                         onchange="previewImageFromSelect(this, '@image.Key')"
                                                         required>
                                                     <option value="">-- Choose from Media Library --</option>
-                                                    @foreach (var media in availableMedia.Where(m => m.MimeType.StartsWith("image/")))
+                                                    @foreach (var category in availableMedia.Where(m => m.MimeType.StartsWith("image/")).GroupBy(m => m.Category).OrderBy(g => g.Key))
                                                     {
-                                                        var sizeInfo = $"{media.Width}×{media.Height}px, {(media.FileSize / 1024 / 1024):F2}MB";
-                                                        <option value="@media.Id" 
-                                                                data-width="@media.Width"
-                                                                data-height="@media.Height"
-                                                                data-filesize="@media.FileSize"
-                                                                data-path="@media.FilePath"
-                                                                selected="@(media.Id == image.CurrentMediaId)">
-                                                            @media.FileName - [@sizeInfo]
-                                                        </option>
+                                                        <optgroup label="@category.Key">
+                                                            @foreach (var media in category.OrderByDescending(m => m.UploadedDate))
+                                                            {
+                                                                var displayName = !string.IsNullOrEmpty(media.Title) ? media.Title : media.FileName;
+                                                                var sizeInfo = $"{media.Width}Ã—{media.Height}px";
+                                                                var sourceInfo = media.Source == EllisHope.Models.Domain.MediaSource.Unsplash ? "Unsplash" : "Upload";
+                                                                <option value="@media.Id"
+                                                                        data-width="@media.Width"
+                                                                        data-height="@media.Height"
+                                                                        data-filesize="@media.FileSize"
+                                                                        data-path="@media.FilePath"
+                                                                        data-title="@media.Title"
+                                                                        data-filename="@media.FileName"
+                                                                        data-alt="@media.AltText"
+                                                                        data-source="@sourceInfo"
+                                                                        selected="@(media.Id == image.CurrentMediaId)">
+                                                                    @displayName [@sizeInfo] (@sourceInfo)
+                                                                </option>
+                                                            }
+                                                        </optgroup>
                                                     }
                                                 </select>
                                                 <div id="warning-@image.Key" class="mt-1"></div>
+                                                <div id="details-@image.Key" class="mt-1 small text-muted"></div>
                                             </div>
                                             
                                             <div class="d-flex gap-2">
@@ -342,15 +354,41 @@
             const selectedOption = selectElement.options[selectElement.selectedIndex];
             const imagePath = selectedOption.dataset.path;
             const warningDiv = document.getElementById(`warning-${imageKey}`);
+            const detailsDiv = document.getElementById(`details-${imageKey}`);
             const previewImg = document.getElementById(`preview-${imageKey}`);
-            
+
             if (!imagePath) {
                 warningDiv.innerHTML = '';
+                if (detailsDiv) detailsDiv.innerHTML = '';
                 return;
             }
-            
+
             // Update preview
             previewImg.src = imagePath;
+
+            // Show image details
+            const title = selectedOption.dataset.title;
+            const filename = selectedOption.dataset.filename;
+            const altText = selectedOption.dataset.alt;
+            const source = selectedOption.dataset.source;
+            const width = selectedOption.dataset.width;
+            const height = selectedOption.dataset.height;
+            const fileSize = parseInt(selectedOption.dataset.filesize) || 0;
+            const fileSizeMB = (fileSize / 1024 / 1024).toFixed(2);
+
+            let detailsHtml = '<div class="border rounded p-2 bg-light">';
+            if (title) {
+                detailsHtml += `<div><strong>Title:</strong> ${title}</div>`;
+            }
+            detailsHtml += `<div><strong>File:</strong> ${filename}</div>`;
+            if (altText) {
+                detailsHtml += `<div><strong>Alt:</strong> ${altText}</div>`;
+            }
+            detailsHtml += `<div><strong>Size:</strong> ${width}Ã—${height}px (${fileSizeMB}MB)</div>`;
+            detailsHtml += `<div><strong>Source:</strong> ${source}</div>`;
+            detailsHtml += '</div>';
+
+            if (detailsDiv) detailsDiv.innerHTML = detailsHtml;
             
             // Get requirements
             const requirementsJson = selectElement.dataset.requirements;
@@ -390,7 +428,7 @@
                 const expectedRatio = parseFloat(requirements.AspectRatioDecimal);
                 
                 if (expectedRatio && Math.abs(actualRatio - expectedRatio) > expectedRatio * 0.15) {
-                    warnings.push(`Aspect ratio mismatch: ${width}×${height} = ${actualRatio.toFixed(2)}:1 (expected ${requirements.AspectRatio})`);
+                    warnings.push(`Aspect ratio mismatch: ${width}ï¿½${height} = ${actualRatio.toFixed(2)}:1 (expected ${requirements.AspectRatio})`);
                 }
             }
             
@@ -423,7 +461,7 @@
             } else {
                 warningDiv.innerHTML = `
                     <div class="alert alert-success alert-sm py-1 px-2 mb-0">
-                        <small><i class="bi bi-check-circle"></i> Image meets requirements (${width}×${height}px)</small>
+                        <small><i class="bi bi-check-circle"></i> Image meets requirements (${width}ï¿½${height}px)</small>
                     </div>`;
             }
         }
