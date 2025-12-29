@@ -19,6 +19,7 @@ public class UsersControllerTests
 {
     private readonly Mock<IUserManagementService> _mockUserService;
     private readonly Mock<UserManager<ApplicationUser>> _mockUserManager;
+    private readonly Mock<IMediaService> _mockMediaService;
     private readonly Mock<ILogger<UsersController>> _mockLogger;
     private readonly Mock<IUrlHelper> _mockUrlHelper;
     private readonly UsersController _controller;
@@ -29,6 +30,7 @@ public class UsersControllerTests
     {
         _mockUserService = new Mock<IUserManagementService>();
         _mockUserManager = MockHelpers.MockUserManager<ApplicationUser>();
+        _mockMediaService = new Mock<IMediaService>();
         _mockLogger = new Mock<ILogger<UsersController>>();
         _mockUrlHelper = new Mock<IUrlHelper>();
 
@@ -36,6 +38,7 @@ public class UsersControllerTests
         _controller = new UsersController(
             _mockUserService.Object,
             _mockUserManager.Object,
+            _mockMediaService.Object,
             _mockLogger.Object
         );
 
@@ -707,6 +710,348 @@ public class UsersControllerTests
         // Assert
         var redirectResult = Assert.IsType<RedirectToActionResult>(result);
         Assert.Contains("reassign clients", _controller.TempData["ErrorMessage"]?.ToString(), StringComparison.OrdinalIgnoreCase);
+    }
+
+    #endregion
+
+    #region Board Member Photo Requirement Tests
+
+    [Fact]
+    public async Task Create_POST_RequiresPhoto_ForBoardMember_WithoutPhoto()
+    {
+        // Arrange
+        var createModel = new UserCreateViewModel
+        {
+            FirstName = "Board",
+            LastName = "Member",
+            Email = "boardmember@test.com",
+            Password = "Test@123456",
+            ConfirmPassword = "Test@123456",
+            UserRole = UserRole.BoardMember,
+            Status = MembershipStatus.Active,
+            IsActive = true,
+            ProfilePhoto = null,
+            SelectedAvatarUrl = null
+        };
+
+        // Act
+        var result = await _controller.Create(createModel);
+
+        // Assert
+        var viewResult = Assert.IsType<ViewResult>(result);
+        Assert.False(_controller.ModelState.IsValid);
+        Assert.True(_controller.ModelState.ContainsKey("ProfilePhoto"));
+        Assert.Contains("Board members must have a profile photo",
+            _controller.ModelState["ProfilePhoto"]!.Errors.First().ErrorMessage);
+    }
+
+    [Fact]
+    public async Task Create_POST_Succeeds_ForBoardMember_WithPhotoUpload()
+    {
+        // Arrange
+        var fileMock = new Mock<IFormFile>();
+        fileMock.Setup(f => f.Length).Returns(1024);
+        fileMock.Setup(f => f.FileName).Returns("profile.jpg");
+
+        var createModel = new UserCreateViewModel
+        {
+            FirstName = "Board",
+            LastName = "Member",
+            Email = "boardmember@test.com",
+            Password = "Test@123456",
+            ConfirmPassword = "Test@123456",
+            UserRole = UserRole.BoardMember,
+            Status = MembershipStatus.Active,
+            IsActive = true,
+            ProfilePhoto = fileMock.Object,
+            SelectedAvatarUrl = null
+        };
+
+        var uploadedMedia = new Media
+        {
+            Id = 1,
+            FilePath = "/uploads/media/profile.jpg",
+            FileName = "profile.jpg"
+        };
+
+        _mockMediaService.Setup(ms => ms.UploadLocalImageAsync(
+            It.IsAny<IFormFile>(),
+            It.IsAny<string>(),
+            It.IsAny<string>(),
+            MediaCategory.Team,
+            "profile,team",
+            It.IsAny<string>()))
+            .ReturnsAsync(uploadedMedia);
+
+        _mockUserService.Setup(s => s.CreateUserAsync(It.IsAny<ApplicationUser>(), createModel.Password))
+            .ReturnsAsync((true, Array.Empty<string>()));
+
+        // Act
+        var result = await _controller.Create(createModel);
+
+        // Assert
+        var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+        Assert.Equal(nameof(_controller.Index), redirectResult.ActionName);
+        _mockMediaService.Verify(ms => ms.UploadLocalImageAsync(
+            fileMock.Object,
+            "Board Member profile photo",
+            "Board Member",
+            MediaCategory.Team,
+            "profile,team",
+            It.IsAny<string>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Create_POST_Succeeds_ForBoardMember_WithAvatarSelection()
+    {
+        // Arrange
+        var createModel = new UserCreateViewModel
+        {
+            FirstName = "Board",
+            LastName = "Member",
+            Email = "boardmember@test.com",
+            Password = "Test@123456",
+            ConfirmPassword = "Test@123456",
+            UserRole = UserRole.BoardMember,
+            Status = MembershipStatus.Active,
+            IsActive = true,
+            ProfilePhoto = null,
+            SelectedAvatarUrl = "/assets/img/avatars/avatar-01.png"
+        };
+
+        _mockUserService.Setup(s => s.CreateUserAsync(It.Is<ApplicationUser>(u =>
+            u.ProfilePictureUrl == "/assets/img/avatars/avatar-01.png"), createModel.Password))
+            .ReturnsAsync((true, Array.Empty<string>()));
+
+        // Act
+        var result = await _controller.Create(createModel);
+
+        // Assert
+        var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+        Assert.Equal(nameof(_controller.Index), redirectResult.ActionName);
+        _mockUserService.Verify(s => s.CreateUserAsync(
+            It.Is<ApplicationUser>(u => u.ProfilePictureUrl == "/assets/img/avatars/avatar-01.png"),
+            createModel.Password), Times.Once);
+    }
+
+    [Fact]
+    public async Task Create_POST_DoesNotRequirePhoto_ForNonBoardMember()
+    {
+        // Arrange
+        var createModel = new UserCreateViewModel
+        {
+            FirstName = "Regular",
+            LastName = "Member",
+            Email = "member@test.com",
+            Password = "Test@123456",
+            ConfirmPassword = "Test@123456",
+            UserRole = UserRole.Member,
+            Status = MembershipStatus.Active,
+            IsActive = true,
+            ProfilePhoto = null,
+            SelectedAvatarUrl = null
+        };
+
+        _mockUserService.Setup(s => s.CreateUserAsync(It.IsAny<ApplicationUser>(), createModel.Password))
+            .ReturnsAsync((true, Array.Empty<string>()));
+
+        // Act
+        var result = await _controller.Create(createModel);
+
+        // Assert
+        var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+        Assert.Equal(nameof(_controller.Index), redirectResult.ActionName);
+    }
+
+    [Fact]
+    public async Task Edit_POST_UploadsProfilePhoto_WhenPhotoProvided()
+    {
+        // Arrange
+        var user = new ApplicationUser
+        {
+            Id = "user-1",
+            FirstName = "John",
+            LastName = "Doe",
+            Email = "john@test.com",
+            UserRole = UserRole.Client,
+            Status = MembershipStatus.Active,
+            IsActive = true
+        };
+
+        var fileMock = new Mock<IFormFile>();
+        fileMock.Setup(f => f.Length).Returns(1024);
+        fileMock.Setup(f => f.FileName).Returns("profile.jpg");
+
+        var editModel = new UserEditViewModel
+        {
+            Id = "user-1",
+            FirstName = "John",
+            LastName = "Doe",
+            Email = "john@test.com",
+            UserRole = UserRole.Client,
+            Status = MembershipStatus.Active,
+            IsActive = true,
+            ProfilePhoto = fileMock.Object
+        };
+
+        var uploadedMedia = new Media
+        {
+            Id = 1,
+            FilePath = "/uploads/media/profile.jpg",
+            FileName = "profile.jpg"
+        };
+
+        _mockUserService.Setup(s => s.GetUserByIdAsync("user-1")).ReturnsAsync(user);
+        _mockMediaService.Setup(ms => ms.UploadLocalImageAsync(
+            It.IsAny<IFormFile>(),
+            It.IsAny<string>(),
+            It.IsAny<string>(),
+            MediaCategory.Team,
+            "profile,team",
+            It.IsAny<string>()))
+            .ReturnsAsync(uploadedMedia);
+        _mockUserService.Setup(s => s.UpdateUserAsync(It.IsAny<ApplicationUser>()))
+            .ReturnsAsync((true, Array.Empty<string>()));
+
+        // Act
+        var result = await _controller.Edit("user-1", editModel);
+
+        // Assert
+        var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+        Assert.Equal("/uploads/media/profile.jpg", user.ProfilePictureUrl);
+    }
+
+    [Fact]
+    public async Task Edit_POST_SelectsAvatar_WhenAvatarSelected()
+    {
+        // Arrange
+        var user = new ApplicationUser
+        {
+            Id = "user-1",
+            FirstName = "John",
+            LastName = "Doe",
+            Email = "john@test.com",
+            UserRole = UserRole.Client,
+            Status = MembershipStatus.Active,
+            IsActive = true,
+            ProfilePictureUrl = "/old/photo.jpg"
+        };
+
+        var editModel = new UserEditViewModel
+        {
+            Id = "user-1",
+            FirstName = "John",
+            LastName = "Doe",
+            Email = "john@test.com",
+            UserRole = UserRole.Client,
+            Status = MembershipStatus.Active,
+            IsActive = true,
+            ProfilePhoto = null,
+            SelectedAvatarUrl = "/assets/img/avatars/avatar-05.png"
+        };
+
+        _mockUserService.Setup(s => s.GetUserByIdAsync("user-1")).ReturnsAsync(user);
+        _mockUserService.Setup(s => s.UpdateUserAsync(It.IsAny<ApplicationUser>()))
+            .ReturnsAsync((true, Array.Empty<string>()));
+
+        // Act
+        var result = await _controller.Edit("user-1", editModel);
+
+        // Assert
+        var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+        Assert.Equal("/assets/img/avatars/avatar-05.png", user.ProfilePictureUrl);
+    }
+
+    [Fact]
+    public async Task Edit_POST_RemovesProfilePhoto_WhenRemoveRequested()
+    {
+        // Arrange
+        var user = new ApplicationUser
+        {
+            Id = "user-1",
+            FirstName = "John",
+            LastName = "Doe",
+            Email = "john@test.com",
+            UserRole = UserRole.Client,
+            Status = MembershipStatus.Active,
+            IsActive = true,
+            ProfilePictureUrl = "/uploads/media/existing-photo.jpg"
+        };
+
+        var editModel = new UserEditViewModel
+        {
+            Id = "user-1",
+            FirstName = "John",
+            LastName = "Doe",
+            Email = "john@test.com",
+            UserRole = UserRole.Client,
+            Status = MembershipStatus.Active,
+            IsActive = true,
+            ProfilePhoto = null,
+            SelectedAvatarUrl = "__REMOVE__"  // Sentinel value for removal
+        };
+
+        _mockUserService.Setup(s => s.GetUserByIdAsync("user-1")).ReturnsAsync(user);
+        _mockUserService.Setup(s => s.UpdateUserAsync(It.IsAny<ApplicationUser>()))
+            .ReturnsAsync((true, Array.Empty<string>()));
+
+        // Act
+        var result = await _controller.Edit("user-1", editModel);
+
+        // Assert
+        var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+        Assert.Null(user.ProfilePictureUrl);
+    }
+
+    [Fact]
+    public async Task Edit_POST_ReturnsView_WhenPhotoUploadFails()
+    {
+        // Arrange
+        var user = new ApplicationUser
+        {
+            Id = "user-1",
+            FirstName = "John",
+            LastName = "Doe",
+            Email = "john@test.com",
+            UserRole = UserRole.Client,
+            Status = MembershipStatus.Active,
+            IsActive = true
+        };
+
+        var fileMock = new Mock<IFormFile>();
+        fileMock.Setup(f => f.Length).Returns(1024);
+        fileMock.Setup(f => f.FileName).Returns("profile.jpg");
+
+        var editModel = new UserEditViewModel
+        {
+            Id = "user-1",
+            FirstName = "John",
+            LastName = "Doe",
+            Email = "john@test.com",
+            UserRole = UserRole.Client,
+            Status = MembershipStatus.Active,
+            IsActive = true,
+            ProfilePhoto = fileMock.Object
+        };
+
+        _mockUserService.Setup(s => s.GetUserByIdAsync("user-1")).ReturnsAsync(user);
+        _mockUserService.Setup(s => s.GetSponsorsAsync()).ReturnsAsync(new List<ApplicationUser>());
+        _mockMediaService.Setup(ms => ms.UploadLocalImageAsync(
+            It.IsAny<IFormFile>(),
+            It.IsAny<string>(),
+            It.IsAny<string>(),
+            It.IsAny<MediaCategory>(),
+            It.IsAny<string>(),
+            It.IsAny<string>()))
+            .ThrowsAsync(new Exception("Upload failed"));
+
+        // Act
+        var result = await _controller.Edit("user-1", editModel);
+
+        // Assert
+        var viewResult = Assert.IsType<ViewResult>(result);
+        Assert.False(_controller.ModelState.IsValid);
+        Assert.True(_controller.ModelState.ContainsKey("ProfilePhoto"));
     }
 
     #endregion

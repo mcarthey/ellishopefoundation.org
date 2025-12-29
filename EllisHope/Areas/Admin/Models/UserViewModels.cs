@@ -1,4 +1,5 @@
 using EllisHope.Models.Domain;
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace EllisHope.Areas.Admin.Models;
@@ -122,6 +123,12 @@ public class UserCreateViewModel
 
     [Display(Name = "Send Welcome Email")]
     public bool SendWelcomeEmail { get; set; } = true;
+
+    [Display(Name = "Profile Photo")]
+    public IFormFile? ProfilePhoto { get; set; }
+
+    [Display(Name = "Selected Avatar")]
+    public string? SelectedAvatarUrl { get; set; }
 }
 
 public class UserEditViewModel
@@ -206,7 +213,13 @@ public class UserEditViewModel
     public string? ProfilePictureUrl { get; set; }
     public DateTime JoinedDate { get; set; }
     public DateTime? LastLoginDate { get; set; }
-    
+
+    [Display(Name = "Profile Photo")]
+    public IFormFile? ProfilePhoto { get; set; }
+
+    [Display(Name = "Selected Avatar")]
+    public string? SelectedAvatarUrl { get; set; }
+
     // Available sponsors for dropdown
     public IEnumerable<UserSelectItem> AvailableSponsors { get; set; } = new List<UserSelectItem>();
 }

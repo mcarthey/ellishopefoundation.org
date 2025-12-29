@@ -179,7 +179,7 @@ public class ProfileControllerTests
         var model = new EditProfileViewModel();
 
         // Act
-        var result = await _controller.Edit(model);
+        var result = await _controller.Edit(model, null);
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -195,7 +195,7 @@ public class ProfileControllerTests
             .ReturnsAsync((ApplicationUser?)null);
 
         // Act
-        var result = await _controller.Edit(model);
+        var result = await _controller.Edit(model, null);
 
         // Assert
         Assert.IsType<NotFoundResult>(result);
@@ -232,7 +232,7 @@ public class ProfileControllerTests
             .ReturnsAsync(IdentityResult.Success);
 
         // Act
-        var result = await _controller.Edit(model);
+        var result = await _controller.Edit(model, null);
 
         // Assert
         var redirectResult = Assert.IsType<RedirectToActionResult>(result);
@@ -275,7 +275,7 @@ public class ProfileControllerTests
             .ReturnsAsync(IdentityResult.Success);
 
         // Act
-        var result = await _controller.Edit(model);
+        var result = await _controller.Edit(model, null);
 
         // Assert
         var redirectResult = Assert.IsType<RedirectToActionResult>(result);
@@ -302,7 +302,7 @@ public class ProfileControllerTests
             .ReturnsAsync(IdentityResult.Failed(errors));
 
         // Act
-        var result = await _controller.Edit(model);
+        var result = await _controller.Edit(model, null);
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -322,7 +322,7 @@ public class ProfileControllerTests
             .ReturnsAsync(IdentityResult.Success);
 
         // Act
-        await _controller.Edit(model);
+        await _controller.Edit(model, null);
 
         // Assert
         Assert.Contains("updated", _controller.TempData["SuccessMessage"]?.ToString());
@@ -368,7 +368,7 @@ public class ProfileControllerTests
             .ReturnsAsync(IdentityResult.Success);
 
         // Act
-        var result = await _controller.Edit(model);
+        var result = await _controller.Edit(model, null);
 
         // Assert
         var redirectResult = Assert.IsType<RedirectToActionResult>(result);
@@ -414,7 +414,7 @@ public class ProfileControllerTests
             .ThrowsAsync(new Exception("Upload failed"));
 
         // Act
-        var result = await _controller.Edit(model);
+        var result = await _controller.Edit(model, null);
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -442,7 +442,7 @@ public class ProfileControllerTests
             .ReturnsAsync(IdentityResult.Success);
 
         // Act
-        var result = await _controller.Edit(model);
+        var result = await _controller.Edit(model, null);
 
         // Assert
         var redirectResult = Assert.IsType<RedirectToActionResult>(result);

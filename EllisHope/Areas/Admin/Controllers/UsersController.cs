@@ -15,15 +15,18 @@ public class UsersController : Controller
 {
     private readonly IUserManagementService _userService;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IMediaService _mediaService;
     private readonly ILogger<UsersController> _logger;
 
     public UsersController(
         IUserManagementService userService,
         UserManager<ApplicationUser> userManager,
+        IMediaService mediaService,
         ILogger<UsersController> logger)
     {
         _userService = userService;
         _userManager = userManager;
+        _mediaService = mediaService;
         _logger = logger;
     }
 
@@ -175,6 +178,16 @@ public class UsersController : Controller
     [SwaggerOperation(Summary = "create user, assign role. Anti-forgery required.")]
     public async Task<IActionResult> Create(UserCreateViewModel model)
     {
+        // Validate that board members must have a profile photo
+        if (model.UserRole == UserRole.BoardMember)
+        {
+            var hasPhoto = model.ProfilePhoto?.Length > 0 || !string.IsNullOrEmpty(model.SelectedAvatarUrl);
+            if (!hasPhoto)
+            {
+                ModelState.AddModelError("ProfilePhoto", "Board members must have a profile photo. Please upload a photo or select an avatar.");
+            }
+        }
+
         if (!ModelState.IsValid)
         {
             return View(model);
@@ -203,6 +216,32 @@ public class UsersController : Controller
             AdminNotes = model.AdminNotes
         };
 
+        // Handle profile photo upload or avatar selection
+        if (model.ProfilePhoto?.Length > 0)
+        {
+            try
+            {
+                var media = await _mediaService.UploadLocalImageAsync(
+                    model.ProfilePhoto,
+                    $"{model.FirstName} {model.LastName} profile photo",
+                    $"{model.FirstName} {model.LastName}",
+                    MediaCategory.Team,
+                    "profile,team",
+                    User.Identity?.Name);
+                user.ProfilePictureUrl = media.FilePath;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to upload profile photo for new user {Email}", model.Email);
+                ModelState.AddModelError("ProfilePhoto", "Failed to upload profile photo. Please try again.");
+                return View(model);
+            }
+        }
+        else if (!string.IsNullOrEmpty(model.SelectedAvatarUrl))
+        {
+            user.ProfilePictureUrl = model.SelectedAvatarUrl;
+        }
+
         var (succeeded, errors) = await _userService.CreateUserAsync(user, model.Password);
 
         if (!succeeded)
@@ -215,9 +254,9 @@ public class UsersController : Controller
         }
 
         TempData["SuccessMessage"] = $"User '{user.FullName}' created successfully!";
-        
+
         // TODO: Send welcome email if model.SendWelcomeEmail is true
-        
+
         return RedirectToAction(nameof(Index));
     }
 
@@ -327,6 +366,45 @@ public class UsersController : Controller
         user.MembershipStartDate = model.MembershipStartDate;
         user.MembershipEndDate = model.MembershipEndDate;
         user.AdminNotes = model.AdminNotes;
+
+        // Handle profile photo upload, avatar selection, or removal
+        if (model.ProfilePhoto?.Length > 0)
+        {
+            try
+            {
+                var media = await _mediaService.UploadLocalImageAsync(
+                    model.ProfilePhoto,
+                    $"{model.FirstName} {model.LastName} profile photo",
+                    $"{model.FirstName} {model.LastName}",
+                    MediaCategory.Team,
+                    "profile,team",
+                    User.Identity?.Name);
+                user.ProfilePictureUrl = media.FilePath;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to upload profile photo for user {UserId}", id);
+                ModelState.AddModelError("ProfilePhoto", "Failed to upload profile photo. Please try again.");
+                var sponsors = await _userService.GetSponsorsAsync();
+                model.AvailableSponsors = sponsors.Select(s => new UserSelectItem
+                {
+                    Id = s.Id,
+                    DisplayName = s.FullName
+                });
+                return View(model);
+            }
+        }
+        else if (!string.IsNullOrEmpty(model.SelectedAvatarUrl))
+        {
+            if (model.SelectedAvatarUrl == "__REMOVE__")
+            {
+                user.ProfilePictureUrl = null;
+            }
+            else
+            {
+                user.ProfilePictureUrl = model.SelectedAvatarUrl;
+            }
+        }
 
         // Handle role change
         if (user.UserRole != model.UserRole)
