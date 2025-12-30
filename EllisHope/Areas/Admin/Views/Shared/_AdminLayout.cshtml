@@ -1,12 +1,32 @@
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
 @using EllisHope.Models.Domain
+@using EllisHope.Data
 @inject UserManager<ApplicationUser> UserManager
+@inject ApplicationDbContext DbContext
 @{
     string? profilePictureUrl = null;
+    int pendingQuotesCount = 0;
+    int pendingApplicationsCount = 0;
+
     if (User.Identity?.IsAuthenticated == true)
     {
         var currentUser = await UserManager.GetUserAsync(User);
         profilePictureUrl = currentUser?.ProfilePictureUrl;
+
+        // Get notification counts for admin users
+        if (User.IsInRole("Admin") || User.IsInRole("BoardMember") || User.IsInRole("Editor"))
+        {
+            pendingQuotesCount = await DbContext.Users
+                .CountAsync(u => u.UserRole == UserRole.Sponsor
+                    && !string.IsNullOrEmpty(u.SponsorQuote)
+                    && u.SponsorQuoteSubmittedDate != null
+                    && !u.SponsorQuoteApproved);
+
+            pendingApplicationsCount = await DbContext.ClientApplications
+                .CountAsync(a => a.Status == ApplicationStatus.Submitted
+                    || a.Status == ApplicationStatus.UnderReview);
+        }
     }
 }
 <!DOCTYPE html>
@@ -113,14 +133,22 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" asp-area="Admin" asp-controller="Users" asp-action="PendingSponsorQuotes">
-                                        <i class="bi bi-quote"></i> Pending Quotes
+                                    <a class="nav-link d-flex justify-content-between align-items-center" asp-area="Admin" asp-controller="Users" asp-action="PendingSponsorQuotes">
+                                        <span><i class="bi bi-quote"></i> Pending Quotes</span>
+                                        @if (pendingQuotesCount > 0)
+                                        {
+                                            <span class="badge bg-warning text-dark rounded-pill">@pendingQuotesCount</span>
+                                        }
                                     </a>
                                 </li>
                             }
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="Admin" asp-controller="Applications" asp-action="Index">
-                                    <i class="bi bi-file-earmark-text"></i> Applications
+                                <a class="nav-link d-flex justify-content-between align-items-center" asp-area="Admin" asp-controller="Applications" asp-action="Index">
+                                    <span><i class="bi bi-file-earmark-text"></i> Applications</span>
+                                    @if (pendingApplicationsCount > 0)
+                                    {
+                                        <span class="badge bg-danger rounded-pill">@pendingApplicationsCount</span>
+                                    }
                                 </a>
                             </li>
                             @if (User.IsInRole("Admin") || User.IsInRole("Editor"))
