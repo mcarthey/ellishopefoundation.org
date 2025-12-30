@@ -264,13 +264,14 @@
                         <div class="feedback-wrap-6">
                             @if (logoImage != null)
                             {
-                                <img class="author" src="@logoImage" alt="@displayName" style="object-fit: contain;">
+                                <img class="author" src="@logoImage" alt="@displayName"
+                                     style="object-fit: contain; max-width: 200px; max-height: 100px; width: auto; height: auto;">
                             }
                             else
                             {
                                 @* Placeholder with initials *@
                                 <div class="author d-flex align-items-center justify-content-center bg-primary text-white"
-                                     style="font-size: 1.5rem; font-weight: bold;">
+                                     style="font-size: 1.5rem; font-weight: bold; width: 80px; height: 80px;">
                                     @(displayName.Length > 0 ? displayName.Substring(0, 1).ToUpper() : "S")
                                 </div>
                             }

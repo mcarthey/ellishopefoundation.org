@@ -173,6 +173,8 @@
     <style>
         .star-rating {
             display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
             align-items: center;
             gap: 0.25rem;
         }
@@ -185,26 +187,12 @@
             color: #ddd;
             transition: color 0.2s;
         }
-        .star-rating label:hover,
-        .star-rating label:hover ~ label,
-        .star-rating input[type="radio"]:checked ~ label {
-            color: #ddd;
-        }
-        .star-rating label:hover,
-        .star-rating label:has(~ label:hover),
-        .star-rating input[type="radio"]:checked + label,
-        .star-rating input[type="radio"]:checked + label ~ label {
-            color: #ddd;
-        }
-        /* Reverse order for proper hover effect */
-        .star-rating {
-            flex-direction: row-reverse;
-            justify-content: flex-end;
-        }
+        /* Hover effect: highlight hovered star and all preceding stars */
         .star-rating label:hover,
         .star-rating label:hover ~ label {
             color: #ffc107;
         }
+        /* Checked state: highlight checked star and all preceding stars */
         .star-rating input[type="radio"]:checked ~ label {
             color: #ffc107;
         }
