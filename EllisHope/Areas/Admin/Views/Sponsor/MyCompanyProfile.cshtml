@@ -121,7 +121,9 @@
                     <div class="mb-3">
                         <label asp-for="SponsorRating" class="form-label"></label>
                         <div class="star-rating">
-                            @for (int i = 1; i <= 5; i++)
+                            <button type="button" class="btn btn-sm btn-link text-muted" id="clearRating">Clear</button>
+                            @* Stars rendered 5-to-1 because CSS uses flex-direction: row-reverse for hover effect *@
+                            @for (int i = 5; i >= 1; i--)
                             {
                                 <input type="radio" id="star@(i)" name="SponsorRating" value="@i"
                                        @(Model.SponsorRating == i ? "checked" : "") />
@@ -129,7 +131,6 @@
                                     <i class="bi bi-star-fill"></i>
                                 </label>
                             }
-                            <button type="button" class="btn btn-sm btn-link text-muted" id="clearRating">Clear</button>
                         </div>
                         <span asp-validation-for="SponsorRating" class="text-danger"></span>
                         <small class="text-muted">Optional: Rate your experience (1-5 stars)</small>
