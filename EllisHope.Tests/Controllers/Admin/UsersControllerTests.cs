@@ -20,6 +20,7 @@ namespace EllisHope.Tests.Controllers.Admin;
 public class UsersControllerTests
 {
     private readonly Mock<IUserManagementService> _mockUserService;
+    private readonly Mock<IResponsibilityService> _mockResponsibilityService;
     private readonly Mock<UserManager<ApplicationUser>> _mockUserManager;
     private readonly Mock<IMediaService> _mockMediaService;
     private readonly Mock<ILogger<UsersController>> _mockLogger;
@@ -32,6 +33,7 @@ public class UsersControllerTests
     public UsersControllerTests()
     {
         _mockUserService = new Mock<IUserManagementService>();
+        _mockResponsibilityService = new Mock<IResponsibilityService>();
         _mockUserManager = MockHelpers.MockUserManager<ApplicationUser>();
         _mockMediaService = new Mock<IMediaService>();
         _mockLogger = new Mock<ILogger<UsersController>>();
@@ -46,6 +48,7 @@ public class UsersControllerTests
         // Create controller using standard constructor
         _controller = new UsersController(
             _mockUserService.Object,
+            _mockResponsibilityService.Object,
             _mockUserManager.Object,
             _context,
             _mockMediaService.Object,

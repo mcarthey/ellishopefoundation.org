@@ -32,7 +32,10 @@ public class ApplicationUser : IdentityUser
     public string? SponsorId { get; set; }
     public virtual ApplicationUser? Sponsor { get; set; }
     public virtual ICollection<ApplicationUser> SponsoredClients { get; set; } = new List<ApplicationUser>();
-    
+
+    // User Responsibilities (for content management permissions)
+    public virtual ICollection<UserResponsibility> Responsibilities { get; set; } = new List<UserResponsibility>();
+
     public decimal? MonthlyFee { get; set; }
     public DateTime? MembershipStartDate { get; set; }
     public DateTime? MembershipEndDate { get; set; }

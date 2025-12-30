@@ -154,6 +154,7 @@
                             <th>Status</th>
                             <th>Sponsor</th>
                             <th>Clients</th>
+                            <th>Responsibilities</th>
                             <th>Joined</th>
                             <th>Last Login</th>
                             <th>Actions</th>
@@ -208,7 +209,7 @@
                                     }
                                     else
                                     {
-                                        <small class="text-muted">�</small>
+                                        <small class="text-muted">—</small>
                                     }
                                 </td>
                                 <td>
@@ -218,7 +219,19 @@
                                     }
                                     else
                                     {
-                                        <small class="text-muted">�</small>
+                                        <small class="text-muted">—</small>
+                                    }
+                                </td>
+                                <td>
+                                    @if (user.ResponsibilitiesCount > 0)
+                                    {
+                                        <span class="badge bg-success" title="@user.ResponsibilitiesCount assigned responsibilities">
+                                            <i class="bi bi-shield-check"></i> @user.ResponsibilitiesCount
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <small class="text-muted">—</small>
                                     }
                                 </td>
                                 <td>
@@ -241,6 +254,9 @@
                                         </a>
                                         <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-outline-secondary" title="Edit">
                                             <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-action="Responsibilities" asp-route-id="@user.Id" class="btn btn-outline-success" title="Manage Responsibilities">
+                                            <i class="bi bi-shield-check"></i>
                                         </a>
                                         <a asp-action="Delete" asp-route-id="@user.Id" class="btn btn-outline-danger" title="Delete">
                                             <i class="bi bi-trash"></i>

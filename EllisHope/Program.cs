@@ -76,6 +76,41 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.SameSite = SameSiteMode.Lax; // Changed from Strict to Lax for better compatibility
 });
 
+// Configure Authorization policies for user responsibilities
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("CanManageBlogs", policy =>
+        policy.Requirements.Add(new EllisHope.Authorization.ResponsibilityRequirement(
+            EllisHope.Models.Domain.Responsibility.Blogger)));
+
+    options.AddPolicy("CanManageEvents", policy =>
+        policy.Requirements.Add(new EllisHope.Authorization.ResponsibilityRequirement(
+            EllisHope.Models.Domain.Responsibility.EventPlanner)));
+
+    options.AddPolicy("CanManageCauses", policy =>
+        policy.Requirements.Add(new EllisHope.Authorization.ResponsibilityRequirement(
+            EllisHope.Models.Domain.Responsibility.CauseManager)));
+
+    options.AddPolicy("CanManageNewsletters", policy =>
+        policy.Requirements.Add(new EllisHope.Authorization.ResponsibilityRequirement(
+            EllisHope.Models.Domain.Responsibility.NewsletterEditor)));
+
+    options.AddPolicy("CanReviewSponsors", policy =>
+        policy.Requirements.Add(new EllisHope.Authorization.ResponsibilityRequirement(
+            EllisHope.Models.Domain.Responsibility.SponsorReviewer)));
+
+    options.AddPolicy("CanManageMedia", policy =>
+        policy.Requirements.Add(new EllisHope.Authorization.ResponsibilityRequirement(
+            EllisHope.Models.Domain.Responsibility.MediaManager,
+            EllisHope.Models.Domain.Responsibility.Blogger,
+            EllisHope.Models.Domain.Responsibility.EventPlanner,
+            EllisHope.Models.Domain.Responsibility.CauseManager)));
+});
+
+// Register the responsibility authorization handler
+builder.Services.AddScoped<Microsoft.AspNetCore.Authorization.IAuthorizationHandler,
+    EllisHope.Authorization.ResponsibilityAuthorizationHandler>();
+
 // Configure Unsplash settings
 builder.Services.Configure<UnsplashSettings>(
     builder.Configuration.GetSection("Unsplash"));
@@ -94,6 +129,7 @@ builder.Services.AddScoped<IPageService, PageService>();
 builder.Services.AddScoped<IPageTemplateService, PageTemplateService>();
 builder.Services.AddScoped<IPageContentHelper, PageContentHelper>();
 builder.Services.AddScoped<IUserManagementService, UserManagementService>();
+builder.Services.AddScoped<IResponsibilityService, ResponsibilityService>();
 builder.Services.AddScoped<IClientApplicationService, ClientApplicationService>();
 builder.Services.AddScoped<IDocumentService, DocumentService>();
 builder.Services.AddScoped<IPdfService, PdfService>();

@@ -16,6 +16,7 @@ namespace EllisHope.Areas.Admin.Controllers;
 public class UsersController : Controller
 {
     private readonly IUserManagementService _userService;
+    private readonly IResponsibilityService _responsibilityService;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ApplicationDbContext _context;
     private readonly IMediaService _mediaService;
@@ -23,12 +24,14 @@ public class UsersController : Controller
 
     public UsersController(
         IUserManagementService userService,
+        IResponsibilityService responsibilityService,
         UserManager<ApplicationUser> userManager,
         ApplicationDbContext context,
         IMediaService mediaService,
         ILogger<UsersController> logger)
     {
         _userService = userService;
+        _responsibilityService = responsibilityService;
         _userManager = userManager;
         _context = context;
         _mediaService = mediaService;
@@ -67,6 +70,14 @@ public class UsersController : Controller
             }
         }
 
+        // Load responsibilities counts for all users
+        var userIds = users.Select(u => u.Id).ToList();
+        var responsibilityCounts = await _context.UserResponsibilities
+            .Where(ur => userIds.Contains(ur.UserId))
+            .GroupBy(ur => ur.UserId)
+            .Select(g => new { UserId = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.UserId, x => x.Count);
+
         var viewModel = new UserListViewModel
         {
             Users = users.Select(u => new UserSummaryViewModel
@@ -82,7 +93,8 @@ public class UsersController : Controller
                 LastLoginDate = u.LastLoginDate,
                 SponsorName = u.Sponsor?.FullName,
                 SponsoredClientsCount = u.SponsoredClients?.Count ?? 0,
-                ProfilePictureUrl = u.ProfilePictureUrl
+                ProfilePictureUrl = u.ProfilePictureUrl,
+                ResponsibilitiesCount = responsibilityCounts.TryGetValue(u.Id, out var count) ? count : 0
             }),
             SearchTerm = searchTerm,
             RoleFilter = roleFilter,
@@ -115,6 +127,8 @@ public class UsersController : Controller
         }
 
         var roles = await _userManager.GetRolesAsync(user);
+        var userResponsibilities = await _responsibilityService.GetUserResponsibilitiesAsync(id);
+        var responsibilityDescriptions = GetResponsibilityDescriptions();
 
         var viewModel = new UserDetailsViewModel
         {
@@ -165,7 +179,15 @@ public class UsersController : Controller
             SponsorRating = user.SponsorRating,
             SponsorQuoteApproved = user.SponsorQuoteApproved,
             SponsorQuoteSubmittedDate = user.SponsorQuoteSubmittedDate,
-            ShowInSponsorSection = user.ShowInSponsorSection
+            ShowInSponsorSection = user.ShowInSponsorSection,
+            // User Responsibilities
+            Responsibilities = userResponsibilities.Select(ur => new UserResponsibilityDisplayItem
+            {
+                Responsibility = ur.Responsibility,
+                Name = responsibilityDescriptions.TryGetValue(ur.Responsibility, out var desc) ? desc.Name : ur.Responsibility.ToString(),
+                AutoApprove = ur.AutoApprove,
+                AssignedDate = ur.AssignedDate
+            })
         };
 
         return View(viewModel);
@@ -709,4 +731,136 @@ public class UsersController : Controller
                 && !u.SponsorQuoteApproved
                 && string.IsNullOrEmpty(u.SponsorQuoteRejectionReason));
     }
+
+    #region Responsibility Management
+
+    // GET: Admin/Users/Responsibilities/{id}
+    /// <summary>
+    /// Edit responsibilities for a specific user.
+    /// </summary>
+    [SwaggerOperation(Summary = "Edit user responsibilities. Roles: Admin.")]
+    public async Task<IActionResult> Responsibilities(string id)
+    {
+        var user = await _userService.GetUserByIdAsync(id);
+        if (user == null)
+        {
+            TempData["ErrorMessage"] = "User not found.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        var userResponsibilities = await _responsibilityService.GetUserResponsibilitiesAsync(id);
+        var responsibilityLookup = userResponsibilities.ToDictionary(r => r.Responsibility);
+
+        var viewModel = new EditResponsibilitiesViewModel
+        {
+            UserId = user.Id,
+            UserName = user.FullName,
+            Email = user.Email ?? string.Empty,
+            UserRole = user.UserRole,
+            Responsibilities = GetResponsibilityDescriptions()
+                .Select(r => new ResponsibilityAssignment
+                {
+                    Responsibility = r.Key,
+                    Name = r.Value.Name,
+                    Description = r.Value.Description,
+                    IsAssigned = responsibilityLookup.ContainsKey(r.Key),
+                    AutoApprove = responsibilityLookup.TryGetValue(r.Key, out var ur) && ur.AutoApprove
+                })
+                .ToList()
+        };
+
+        return View(viewModel);
+    }
+
+    // POST: Admin/Users/Responsibilities/{id}
+    /// <summary>
+    /// Save responsibility changes for a user.
+    /// </summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [SwaggerOperation(Summary = "Save user responsibilities. Roles: Admin.")]
+    public async Task<IActionResult> Responsibilities(string id, EditResponsibilitiesViewModel model)
+    {
+        var user = await _userService.GetUserByIdAsync(id);
+        if (user == null)
+        {
+            TempData["ErrorMessage"] = "User not found.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        var currentUserId = _userManager.GetUserId(User);
+        if (string.IsNullOrEmpty(currentUserId))
+        {
+            TempData["ErrorMessage"] = "Unable to identify current user.";
+            return RedirectToAction(nameof(Responsibilities), new { id });
+        }
+
+        var currentResponsibilities = (await _responsibilityService.GetUserResponsibilitiesAsync(id))
+            .ToDictionary(r => r.Responsibility);
+
+        var errors = new List<string>();
+
+        foreach (var item in model.Responsibilities)
+        {
+            var hasNow = currentResponsibilities.ContainsKey(item.Responsibility);
+
+            if (item.IsAssigned && !hasNow)
+            {
+                // Add new responsibility
+                var (success, itemErrors) = await _responsibilityService.AssignResponsibilityAsync(
+                    id, item.Responsibility, item.AutoApprove, currentUserId);
+                if (!success)
+                    errors.AddRange(itemErrors);
+            }
+            else if (!item.IsAssigned && hasNow)
+            {
+                // Remove responsibility
+                var (success, itemErrors) = await _responsibilityService.RemoveResponsibilityAsync(
+                    id, item.Responsibility);
+                if (!success)
+                    errors.AddRange(itemErrors);
+            }
+            else if (item.IsAssigned && hasNow)
+            {
+                // Update auto-approve if changed
+                var current = currentResponsibilities[item.Responsibility];
+                if (current.AutoApprove != item.AutoApprove)
+                {
+                    var (success, itemErrors) = await _responsibilityService.UpdateAutoApproveAsync(
+                        id, item.Responsibility, item.AutoApprove);
+                    if (!success)
+                        errors.AddRange(itemErrors);
+                }
+            }
+        }
+
+        if (errors.Any())
+        {
+            TempData["ErrorMessage"] = string.Join(" ", errors);
+        }
+        else
+        {
+            TempData["SuccessMessage"] = $"Responsibilities updated for {user.FullName}.";
+        }
+
+        return RedirectToAction(nameof(Responsibilities), new { id });
+    }
+
+    /// <summary>
+    /// Gets descriptions for all responsibilities.
+    /// </summary>
+    private static Dictionary<Responsibility, (string Name, string Description)> GetResponsibilityDescriptions()
+    {
+        return new Dictionary<Responsibility, (string Name, string Description)>
+        {
+            [Responsibility.Blogger] = ("Blogger", "Create and edit blog posts"),
+            [Responsibility.EventPlanner] = ("Event Planner", "Create and edit events"),
+            [Responsibility.CauseManager] = ("Cause Manager", "Create and edit causes and fundraising campaigns"),
+            [Responsibility.NewsletterEditor] = ("Newsletter Editor", "Create and edit newsletters (sending requires Admin)"),
+            [Responsibility.SponsorReviewer] = ("Sponsor Reviewer", "Review and approve sponsor quotes"),
+            [Responsibility.MediaManager] = ("Media Manager", "Full access to the media library")
+        };
+    }
+
+    #endregion
 }

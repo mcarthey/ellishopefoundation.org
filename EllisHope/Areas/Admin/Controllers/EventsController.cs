@@ -8,7 +8,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace EllisHope.Areas.Admin.Controllers;
 
 [Area("Admin")]
-[Authorize(Roles = "Admin,Editor")]
+[Authorize(Policy = "CanManageEvents")]
 [ApiExplorerSettings(IgnoreApi = true)]
 public class EventsController : Controller
 {

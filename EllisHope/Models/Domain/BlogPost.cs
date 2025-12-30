@@ -48,6 +48,18 @@ public class BlogPost
     public DateTime CreatedDate { get; set; } = DateTime.Now;
     public DateTime? ModifiedDate { get; set; }
 
+    // Approval workflow (for users without auto-approve)
+    public bool RequiresApproval { get; set; } = false;
+
+    [MaxLength(450)]
+    public string? CreatedById { get; set; }
+    public ApplicationUser? CreatedBy { get; set; }
+
+    [MaxLength(450)]
+    public string? ApprovedById { get; set; }
+    public ApplicationUser? ApprovedBy { get; set; }
+    public DateTime? ApprovedDate { get; set; }
+
     // Navigation properties
     public ICollection<BlogPostCategory> BlogPostCategories { get; set; } = new List<BlogPostCategory>();
 }

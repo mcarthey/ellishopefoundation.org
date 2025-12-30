@@ -23,6 +23,9 @@
                 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
                     <i class="bi bi-pencil"></i> Edit
                 </a>
+                <a asp-action="Responsibilities" asp-route-id="@Model.Id" class="btn btn-success">
+                    <i class="bi bi-shield-check"></i> Responsibilities
+                </a>
                 <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
                     <i class="bi bi-trash"></i> Delete
                 </a>
@@ -93,7 +96,7 @@
                                 }
                                 else
                                 {
-                                    <span class="text-muted">�</span>
+                                    <span class="text-muted">—</span>
                                 }
                             </dd>
 
@@ -109,7 +112,7 @@
                                 }
                                 else
                                 {
-                                    <span class="text-muted">�</span>
+                                    <span class="text-muted">—</span>
                                 }
                             </dd>
                         </dl>
@@ -177,7 +180,7 @@
                                 }
                                 else
                                 {
-                                    <span class="text-muted">�</span>
+                                    <span class="text-muted">—</span>
                                 }
                             </dd>
                         </dl>
@@ -196,7 +199,7 @@
                                 }
                                 else
                                 {
-                                    <span class="text-muted">�</span>
+                                    <span class="text-muted">—</span>
                                 }
                             </dd>
                         </dl>
@@ -377,18 +380,18 @@
                             }
                             else
                             {
-                                <span class="text-muted">�</span>
+                                <span class="text-muted">—</span>
                             }
                         </dd>
 
                         <dt class="col-sm-4">Start Date:</dt>
                         <dd class="col-sm-8">
-                            @(Model.MembershipStartDate?.ToString("MMMM dd, yyyy") ?? "�")
+                            @(Model.MembershipStartDate?.ToString("MMMM dd, yyyy") ?? "—")
                         </dd>
 
                         <dt class="col-sm-4">End Date:</dt>
                         <dd class="col-sm-8">
-                            @(Model.MembershipEndDate?.ToString("MMMM dd, yyyy") ?? "�")
+                            @(Model.MembershipEndDate?.ToString("MMMM dd, yyyy") ?? "—")
                         </dd>
                     </dl>
                 </div>
@@ -409,6 +412,58 @@
                 </div>
             </div>
         }
+
+        <!-- User Responsibilities -->
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-shield-check"></i> Responsibilities
+                </h5>
+                <a asp-action="Responsibilities" asp-route-id="@Model.Id" class="btn btn-sm btn-light">
+                    <i class="bi bi-pencil"></i> Edit
+                </a>
+            </div>
+            <div class="card-body">
+                @if (Model.Responsibilities.Any())
+                {
+                    <div class="row">
+                        @foreach (var resp in Model.Responsibilities)
+                        {
+                            <div class="col-md-6 mb-3">
+                                <div class="border rounded p-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi @GetResponsibilityIcon(resp.Responsibility) text-success me-2"></i>
+                                        <strong>@resp.Name</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mt-1">
+                                        @if (resp.AutoApprove)
+                                        {
+                                            <span class="badge bg-warning text-dark">
+                                                <i class="bi bi-lightning-charge"></i> Auto-Approve
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">
+                                                <i class="bi bi-hourglass-split"></i> Requires Approval
+                                            </span>
+                                        }
+                                        <small class="text-muted">@resp.AssignedDate.ToString("MM/dd/yy")</small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-info-circle"></i> No responsibilities assigned.
+                        <a asp-action="Responsibilities" asp-route-id="@Model.Id">Assign responsibilities</a>
+                    </p>
+                }
+            </div>
+        </div>
     </div>
 
     <!-- Right Column -->
@@ -464,6 +519,9 @@
                 <a asp-action="Edit" asp-route-id="@Model.Id" class="list-group-item list-group-item-action">
                     <i class="bi bi-pencil"></i> Edit User Profile
                 </a>
+                <a asp-action="Responsibilities" asp-route-id="@Model.Id" class="list-group-item list-group-item-action">
+                    <i class="bi bi-shield-check"></i> Manage Responsibilities
+                </a>
                 <a href="#" class="list-group-item list-group-item-action disabled">
                     <i class="bi bi-key"></i> Reset Password
                 </a>
@@ -511,6 +569,20 @@
             EllisHope.Models.Domain.MembershipStatus.Expired => "danger",
             EllisHope.Models.Domain.MembershipStatus.Cancelled => "dark",
             _ => "secondary"
+        };
+    }
+
+    private string GetResponsibilityIcon(EllisHope.Models.Domain.Responsibility responsibility)
+    {
+        return responsibility switch
+        {
+            EllisHope.Models.Domain.Responsibility.Blogger => "bi-pencil-square",
+            EllisHope.Models.Domain.Responsibility.EventPlanner => "bi-calendar-event",
+            EllisHope.Models.Domain.Responsibility.CauseManager => "bi-heart",
+            EllisHope.Models.Domain.Responsibility.NewsletterEditor => "bi-envelope",
+            EllisHope.Models.Domain.Responsibility.SponsorReviewer => "bi-chat-quote",
+            EllisHope.Models.Domain.Responsibility.MediaManager => "bi-images",
+            _ => "bi-check"
         };
     }
 }

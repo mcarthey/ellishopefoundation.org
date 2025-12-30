@@ -9,7 +9,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace EllisHope.Areas.Admin.Controllers;
 
 [Area("Admin")]
-[Authorize(Roles = "Admin,Editor")]
+[Authorize(Policy = "CanManageBlogs")]
 [ApiExplorerSettings(IgnoreApi = true)]
 public class BlogController : Controller
 {

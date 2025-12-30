@@ -23,6 +23,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<BlogPostCategory> BlogPostCategories { get; set; }
     public DbSet<Event> Events { get; set; }
     public DbSet<Cause> Causes { get; set; }
+
+    // User Responsibility tables
+    public DbSet<UserResponsibility> UserResponsibilities { get; set; }
     
     // Application System tables
     public DbSet<ClientApplication> ClientApplications { get; set; }
@@ -60,6 +63,82 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
         builder.Entity<ApplicationUser>()
             .HasIndex(u => u.IsActive);
+
+        #region UserResponsibility Configuration
+
+        builder.Entity<UserResponsibility>()
+            .HasOne(ur => ur.User)
+            .WithMany(u => u.Responsibilities)
+            .HasForeignKey(ur => ur.UserId)
+            .OnDelete(DeleteBehavior.Restrict); // Restrict to avoid multiple cascade paths
+
+        builder.Entity<UserResponsibility>()
+            .HasOne(ur => ur.AssignedBy)
+            .WithMany()
+            .HasForeignKey(ur => ur.AssignedById)
+            .OnDelete(DeleteBehavior.Restrict); // Restrict to avoid multiple cascade paths
+
+        // Ensure one responsibility type per user
+        builder.Entity<UserResponsibility>()
+            .HasIndex(ur => new { ur.UserId, ur.Responsibility })
+            .IsUnique();
+
+        builder.Entity<UserResponsibility>()
+            .HasIndex(ur => ur.Responsibility);
+
+        #endregion
+
+        #region Content Approval Relationships
+
+        // BlogPost approval relationships (Restrict to avoid multiple cascade paths)
+        builder.Entity<BlogPost>()
+            .HasOne(b => b.CreatedBy)
+            .WithMany()
+            .HasForeignKey(b => b.CreatedById)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<BlogPost>()
+            .HasOne(b => b.ApprovedBy)
+            .WithMany()
+            .HasForeignKey(b => b.ApprovedById)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<BlogPost>()
+            .HasIndex(b => b.RequiresApproval);
+
+        // Event approval relationships (Restrict to avoid multiple cascade paths)
+        builder.Entity<Event>()
+            .HasOne(e => e.CreatedBy)
+            .WithMany()
+            .HasForeignKey(e => e.CreatedById)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Event>()
+            .HasOne(e => e.ApprovedBy)
+            .WithMany()
+            .HasForeignKey(e => e.ApprovedById)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Event>()
+            .HasIndex(e => e.RequiresApproval);
+
+        // Cause approval relationships (Restrict to avoid multiple cascade paths)
+        builder.Entity<Cause>()
+            .HasOne(c => c.CreatedBy)
+            .WithMany()
+            .HasForeignKey(c => c.CreatedById)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Cause>()
+            .HasOne(c => c.ApprovedBy)
+            .WithMany()
+            .HasForeignKey(c => c.ApprovedById)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Cause>()
+            .HasIndex(c => c.RequiresApproval);
+
+        #endregion
 
         // Configure composite key for BlogPostCategories
         builder.Entity<BlogPostCategory>()

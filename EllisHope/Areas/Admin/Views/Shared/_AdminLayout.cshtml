@@ -2,20 +2,55 @@
 @using Microsoft.EntityFrameworkCore
 @using EllisHope.Models.Domain
 @using EllisHope.Data
+@using EllisHope.Services
+@using System.Security.Claims
 @inject UserManager<ApplicationUser> UserManager
 @inject ApplicationDbContext DbContext
+@inject IResponsibilityService ResponsibilityService
 @{
     string? profilePictureUrl = null;
     int pendingQuotesCount = 0;
     int pendingApplicationsCount = 0;
 
+    // Responsibility flags (default to false, set below if user has them)
+    bool canManageBlogs = false;
+    bool canManageEvents = false;
+    bool canManageCauses = false;
+    bool canManageNewsletters = false;
+    bool canManageMedia = false;
+    bool canReviewSponsors = false;
+    bool isAdmin = User.IsInRole("Admin");
+
     if (User.Identity?.IsAuthenticated == true)
     {
         var currentUser = await UserManager.GetUserAsync(User);
         profilePictureUrl = currentUser?.ProfilePictureUrl;
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        // Get notification counts for admin users
-        if (User.IsInRole("Admin") || User.IsInRole("BoardMember") || User.IsInRole("Editor"))
+        // Admins have all capabilities
+        if (isAdmin)
+        {
+            canManageBlogs = true;
+            canManageEvents = true;
+            canManageCauses = true;
+            canManageNewsletters = true;
+            canManageMedia = true;
+            canReviewSponsors = true;
+        }
+        else if (!string.IsNullOrEmpty(userId))
+        {
+            // Check individual responsibilities for non-admin users
+            canManageBlogs = await ResponsibilityService.HasResponsibilityAsync(userId, Responsibility.Blogger);
+            canManageEvents = await ResponsibilityService.HasResponsibilityAsync(userId, Responsibility.EventPlanner);
+            canManageCauses = await ResponsibilityService.HasResponsibilityAsync(userId, Responsibility.CauseManager);
+            canManageNewsletters = await ResponsibilityService.HasResponsibilityAsync(userId, Responsibility.NewsletterEditor);
+            canManageMedia = await ResponsibilityService.HasAnyResponsibilityAsync(userId,
+                Responsibility.MediaManager, Responsibility.Blogger, Responsibility.EventPlanner, Responsibility.CauseManager);
+            canReviewSponsors = await ResponsibilityService.HasResponsibilityAsync(userId, Responsibility.SponsorReviewer);
+        }
+
+        // Get notification counts for admin users or those with relevant responsibilities
+        if (isAdmin || User.IsInRole("BoardMember") || User.IsInRole("Editor") || canReviewSponsors)
         {
             pendingQuotesCount = await DbContext.Users
                 .CountAsync(u => u.UserRole == UserRole.Sponsor
@@ -151,33 +186,50 @@
                                     }
                                 </a>
                             </li>
-                            @if (User.IsInRole("Admin") || User.IsInRole("Editor"))
+                            @* Pages are Admin-only *@
+                            @if (isAdmin)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link" asp-area="Admin" asp-controller="Pages" asp-action="Index">
                                         <i class="bi bi-file-earmark-text"></i> Pages
                                     </a>
                                 </li>
+                            }
+                            @* Content management - responsibility-based *@
+                            @if (canManageBlogs)
+                            {
                                 <li class="nav-item">
                                     <a class="nav-link" asp-area="Admin" asp-controller="Blog" asp-action="Index">
                                         <i class="bi bi-newspaper"></i> Blog Posts
                                     </a>
                                 </li>
+                            }
+                            @if (canManageEvents)
+                            {
                                 <li class="nav-item">
                                     <a class="nav-link" asp-area="Admin" asp-controller="Events" asp-action="Index">
                                         <i class="bi bi-calendar-event"></i> Events
                                     </a>
                                 </li>
+                            }
+                            @if (canManageCauses)
+                            {
                                 <li class="nav-item">
                                     <a class="nav-link" asp-area="Admin" asp-controller="Causes" asp-action="Index">
                                         <i class="bi bi-heart"></i> Causes
                                     </a>
                                 </li>
+                            }
+                            @if (canManageMedia)
+                            {
                                 <li class="nav-item">
                                     <a class="nav-link" asp-area="Admin" asp-controller="Media" asp-action="Index">
                                         <i class="bi bi-image"></i> Media Library
                                     </a>
                                 </li>
+                            }
+                            @if (canManageNewsletters)
+                            {
                                 <li class="nav-item">
                                     <a class="nav-link" asp-area="Admin" asp-controller="Newsletter" asp-action="Index">
                                         <i class="bi bi-envelope"></i> Newsletter

@@ -31,6 +31,7 @@ public class UserSummaryViewModel
     public string? SponsorName { get; set; }
     public int SponsoredClientsCount { get; set; }
     public string? ProfilePictureUrl { get; set; }
+    public int ResponsibilitiesCount { get; set; }
 }
 
 public class UserCreateViewModel
@@ -296,6 +297,17 @@ public class UserDetailsViewModel
     public bool SponsorQuoteApproved { get; set; }
     public DateTime? SponsorQuoteSubmittedDate { get; set; }
     public bool ShowInSponsorSection { get; set; }
+
+    // User Responsibilities
+    public IEnumerable<UserResponsibilityDisplayItem> Responsibilities { get; set; } = new List<UserResponsibilityDisplayItem>();
+}
+
+public class UserResponsibilityDisplayItem
+{
+    public Responsibility Responsibility { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public bool AutoApprove { get; set; }
+    public DateTime AssignedDate { get; set; }
 }
 
 public class UserSelectItem

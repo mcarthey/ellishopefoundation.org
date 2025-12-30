@@ -8,7 +8,7 @@ using System.Text;
 namespace EllisHope.Areas.Admin.Controllers;
 
 [Area("Admin")]
-[Authorize(Roles = "Admin,Editor")]
+[Authorize(Policy = "CanManageNewsletters")]
 [ApiExplorerSettings(IgnoreApi = true)]
 public class NewsletterController : Controller
 {
@@ -164,8 +164,10 @@ public class NewsletterController : Controller
     }
 
     // POST: Admin/Newsletter/Send
+    // Sending newsletters is Admin-only for safety
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Send(int id)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

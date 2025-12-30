@@ -8,7 +8,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace EllisHope.Areas.Admin.Controllers;
 
 [Area("Admin")]
-[Authorize(Roles = "Admin,Editor")]
+[Authorize(Policy = "CanManageMedia")]
 [ApiExplorerSettings(IgnoreApi = true)]
 public class MediaController : Controller
 {
