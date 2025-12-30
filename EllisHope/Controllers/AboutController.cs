@@ -77,13 +77,153 @@ public class AboutController : Controller
             .ThenBy(u => u.FirstName)
             .ToListAsync();
 
+        // Build statistics from causes and fallback data
+        var statistics = await BuildStatisticsAsync();
+
         var viewModel = new AboutPageViewModel
         {
             BoardMembers = boardMembers,
             SponsorsWithQuotes = sponsorsWithQuotes,
-            AllSponsors = allSponsors
+            AllSponsors = allSponsors,
+            Statistics = statistics
         };
 
         return View(viewModel);
+    }
+
+    /// <summary>
+    /// Builds statistics list from published causes (up to 3) and fills remaining slots with user/event counts
+    /// </summary>
+    private async Task<List<AboutStatistic>> BuildStatisticsAsync()
+    {
+        var statistics = new List<AboutStatistic>();
+
+        // Get published causes with fundraising goals, ordered by featured first then by progress
+        var causes = await _context.Causes
+            .Where(c => c.IsPublished && c.GoalAmount > 0)
+            .OrderByDescending(c => c.IsFeatured)
+            .ThenByDescending(c => c.RaisedAmount / c.GoalAmount)
+            .Take(3)
+            .ToListAsync();
+
+        // Add cause statistics
+        foreach (var cause in causes)
+        {
+            var percentage = cause.GoalAmount > 0
+                ? (int)Math.Min(Math.Round(cause.RaisedAmount / cause.GoalAmount * 100), 100)
+                : 0;
+
+            statistics.Add(new AboutStatistic
+            {
+                DisplayValue = $"{percentage}%",
+                Label = cause.Title,
+                Percentage = percentage,
+                IsPercentage = true
+            });
+        }
+
+        // If we need more stats, add fallback statistics
+        if (statistics.Count < 3)
+        {
+            var fallbackStats = await GetFallbackStatisticsAsync();
+
+            foreach (var stat in fallbackStats)
+            {
+                if (statistics.Count >= 3) break;
+                statistics.Add(stat);
+            }
+        }
+
+        return statistics;
+    }
+
+    /// <summary>
+    /// Gets fallback statistics when there aren't enough causes
+    /// </summary>
+    private async Task<List<AboutStatistic>> GetFallbackStatisticsAsync()
+    {
+        var fallbacks = new List<AboutStatistic>();
+
+        // Count active members
+        var memberCount = await _context.Users
+            .CountAsync(u => u.UserRole == UserRole.Member && u.IsActive);
+        if (memberCount > 0)
+        {
+            fallbacks.Add(new AboutStatistic
+            {
+                DisplayValue = FormatCount(memberCount),
+                Label = "Active Members",
+                Percentage = Math.Min(memberCount * 10, 100), // Scale for visual appeal
+                IsPercentage = false
+            });
+        }
+
+        // Count active clients
+        var clientCount = await _context.Users
+            .CountAsync(u => u.UserRole == UserRole.Client && u.IsActive);
+        if (clientCount > 0)
+        {
+            fallbacks.Add(new AboutStatistic
+            {
+                DisplayValue = FormatCount(clientCount),
+                Label = "Clients Served",
+                Percentage = Math.Min(clientCount * 10, 100),
+                IsPercentage = false
+            });
+        }
+
+        // Count active sponsors
+        var sponsorCount = await _context.Users
+            .CountAsync(u => u.UserRole == UserRole.Sponsor && u.IsActive);
+        if (sponsorCount > 0)
+        {
+            fallbacks.Add(new AboutStatistic
+            {
+                DisplayValue = FormatCount(sponsorCount),
+                Label = "Sponsors",
+                Percentage = Math.Min(sponsorCount * 15, 100),
+                IsPercentage = false
+            });
+        }
+
+        // Count published events
+        var eventCount = await _context.Events
+            .CountAsync(e => e.IsPublished);
+        if (eventCount > 0)
+        {
+            fallbacks.Add(new AboutStatistic
+            {
+                DisplayValue = FormatCount(eventCount),
+                Label = "Events Hosted",
+                Percentage = Math.Min(eventCount * 10, 100),
+                IsPercentage = false
+            });
+        }
+
+        // Count board members
+        var boardCount = await _context.Users
+            .CountAsync(u => u.UserRole == UserRole.BoardMember && u.IsActive);
+        if (boardCount > 0)
+        {
+            fallbacks.Add(new AboutStatistic
+            {
+                DisplayValue = FormatCount(boardCount),
+                Label = "Board Members",
+                Percentage = Math.Min(boardCount * 15, 100),
+                IsPercentage = false
+            });
+        }
+
+        return fallbacks;
+    }
+
+    /// <summary>
+    /// Formats a count for display (e.g., 1500 -> "1.5k")
+    /// </summary>
+    private static string FormatCount(int count)
+    {
+        if (count >= 1000)
+            return $"{count / 1000.0:0.#}k";
+        return count.ToString();
     }
 }

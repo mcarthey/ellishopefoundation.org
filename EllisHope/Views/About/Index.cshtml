@@ -96,30 +96,55 @@
 <div class="fact-section pt-90 pt-lg-60 pb-45 pb-lg-15">
     <div class="container">
         <div class="row align-items-center justify-content-center row-cols-xl-3 row-cols-lg-2 row-cols-md-2 row-cols-1">
-            <div class="col d-flex justify-content-xl-start justify-content-center">
-                <div class="progressbar-content-2 wow fadeInUp">
-                    <div class="chart2" data-percent="90">
-                        <span>@Content.Text("About", "Stat1Value")</span>
+            @if (Model.Statistics.Any())
+            {
+                var delays = new[] { "0", "0.1", "0.2" };
+                var alignments = new[] { "justify-content-xl-start", "justify-content-center", "justify-content-xl-end" };
+
+                for (int i = 0; i < Math.Min(Model.Statistics.Count, 3); i++)
+                {
+                    var stat = Model.Statistics[i];
+                    var alignment = i < alignments.Length ? alignments[i] : "justify-content-center";
+                    var delay = i < delays.Length ? delays[i] : "0";
+
+                    <div class="col d-flex @alignment justify-content-center">
+                        <div class="progressbar-content-2 wow fadeInUp" data-wow-delay="@delay">
+                            <div class="chart2" data-percent="@stat.Percentage">
+                                <span>@stat.DisplayValue</span>
+                            </div>
+                            <h3 class="progress-title">@stat.Label</h3>
+                        </div>
                     </div>
-                    <h3 class="progress-title">@Content.Text("About", "Stat1Label")</h3>
-                </div>
-            </div>
-            <div class="col d-flex justify-content-center">
-                <div class="progressbar-content-2 wow fadeInUp" data-wow-delay="0.1">
-                    <div class="chart2" data-percent="70">
-                        <span>@Content.Text("About", "Stat2Value")</span>
+                }
+            }
+            else
+            {
+                @* Fallback to static content if no statistics available *@
+                <div class="col d-flex justify-content-xl-start justify-content-center">
+                    <div class="progressbar-content-2 wow fadeInUp">
+                        <div class="chart2" data-percent="90">
+                            <span>@Content.Text("About", "Stat1Value")</span>
+                        </div>
+                        <h3 class="progress-title">@Content.Text("About", "Stat1Label")</h3>
                     </div>
-                    <h3 class="progress-title">@Content.Text("About", "Stat2Label")</h3>
                 </div>
-            </div>
-            <div class="col d-flex justify-content-xl-end justify-content-center">
-                <div class="progressbar-content-2 wow fadeInUp" data-wow-delay="0.2">
-                    <div class="chart2" data-percent="82">
-                        <span>@Content.Text("About", "Stat3Value")</span>
+                <div class="col d-flex justify-content-center">
+                    <div class="progressbar-content-2 wow fadeInUp" data-wow-delay="0.1">
+                        <div class="chart2" data-percent="70">
+                            <span>@Content.Text("About", "Stat2Value")</span>
+                        </div>
+                        <h3 class="progress-title">@Content.Text("About", "Stat2Label")</h3>
                     </div>
-                    <h3 class="progress-title">@Content.Text("About", "Stat3Label")</h3>
                 </div>
-            </div>
+                <div class="col d-flex justify-content-xl-end justify-content-center">
+                    <div class="progressbar-content-2 wow fadeInUp" data-wow-delay="0.2">
+                        <div class="chart2" data-percent="82">
+                            <span>@Content.Text("About", "Stat3Value")</span>
+                        </div>
+                        <h3 class="progress-title">@Content.Text("About", "Stat3Label")</h3>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 </div>

@@ -21,4 +21,35 @@ public class AboutPageViewModel
     /// All active sponsors for the logo section (includes those without quotes)
     /// </summary>
     public IEnumerable<ApplicationUser> AllSponsors { get; set; } = Enumerable.Empty<ApplicationUser>();
+
+    /// <summary>
+    /// Statistics to display in the fact section (causes progress + fallback stats)
+    /// </summary>
+    public List<AboutStatistic> Statistics { get; set; } = new();
+}
+
+/// <summary>
+/// A single statistic to display in the fact/progress section
+/// </summary>
+public class AboutStatistic
+{
+    /// <summary>
+    /// The display value (e.g., "90%", "25", "1.2k")
+    /// </summary>
+    public string DisplayValue { get; set; } = string.Empty;
+
+    /// <summary>
+    /// The label below the statistic (e.g., "Building a Hospital", "Active Members")
+    /// </summary>
+    public string Label { get; set; } = string.Empty;
+
+    /// <summary>
+    /// The percentage for the circular progress (0-100)
+    /// </summary>
+    public int Percentage { get; set; }
+
+    /// <summary>
+    /// Whether this is a percentage stat (shows %) or a count stat
+    /// </summary>
+    public bool IsPercentage { get; set; }
 }
