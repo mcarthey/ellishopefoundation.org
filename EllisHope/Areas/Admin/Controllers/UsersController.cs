@@ -157,7 +157,15 @@ public class UsersController : Controller
             ProfilePictureUrl = user.ProfilePictureUrl,
             JoinedDate = user.JoinedDate,
             LastLoginDate = user.LastLoginDate,
-            Roles = roles
+            Roles = roles,
+            // Sponsor company fields
+            CompanyName = user.CompanyName,
+            CompanyLogoUrl = user.CompanyLogoUrl,
+            SponsorQuote = user.SponsorQuote,
+            SponsorRating = user.SponsorRating,
+            SponsorQuoteApproved = user.SponsorQuoteApproved,
+            SponsorQuoteSubmittedDate = user.SponsorQuoteSubmittedDate,
+            ShowInSponsorSection = user.ShowInSponsorSection
         };
 
         return View(viewModel);
@@ -315,7 +323,15 @@ public class UsersController : Controller
             {
                 Id = s.Id,
                 DisplayName = s.FullName
-            })
+            }),
+            // Sponsor company fields
+            CompanyName = user.CompanyName,
+            CompanyLogoUrl = user.CompanyLogoUrl,
+            SponsorQuote = user.SponsorQuote,
+            SponsorRating = user.SponsorRating,
+            ShowInSponsorSection = user.ShowInSponsorSection,
+            SponsorQuoteApproved = user.SponsorQuoteApproved,
+            SponsorQuoteSubmittedDate = user.SponsorQuoteSubmittedDate
         };
 
         return View(viewModel);
@@ -408,6 +424,43 @@ public class UsersController : Controller
             else
             {
                 user.ProfilePictureUrl = model.SelectedAvatarUrl;
+            }
+        }
+
+        // Handle sponsor company fields (for sponsor users)
+        if (model.UserRole == UserRole.Sponsor || user.UserRole == UserRole.Sponsor)
+        {
+            user.CompanyName = model.CompanyName;
+            user.SponsorQuote = model.SponsorQuote;
+            user.SponsorRating = model.SponsorRating;
+            user.ShowInSponsorSection = model.ShowInSponsorSection;
+
+            // Handle company logo upload
+            if (model.CompanyLogo?.Length > 0)
+            {
+                try
+                {
+                    var media = await _mediaService.UploadLocalImageAsync(
+                        model.CompanyLogo,
+                        $"{model.CompanyName ?? model.FirstName} company logo",
+                        model.CompanyName ?? $"{model.FirstName} {model.LastName}",
+                        MediaCategory.Logo,
+                        "logo,sponsor",
+                        User.Identity?.Name);
+                    user.CompanyLogoUrl = media.FilePath;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to upload company logo for user {UserId}", id);
+                    ModelState.AddModelError("CompanyLogo", "Failed to upload company logo. Please try again.");
+                    var sponsors = await _userService.GetSponsorsAsync();
+                    model.AvailableSponsors = sponsors.Select(s => new UserSelectItem
+                    {
+                        Id = s.Id,
+                        DisplayName = s.FullName
+                    });
+                    return View(model);
+                }
             }
         }
 

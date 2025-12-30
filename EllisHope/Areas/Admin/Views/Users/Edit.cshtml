@@ -282,6 +282,75 @@
                 </div>
             }
 
+            <!-- Sponsor Company Information (Sponsor only) -->
+            @if (Model.UserRole == EllisHope.Models.Domain.UserRole.Sponsor)
+            {
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-building"></i> Company Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="CompanyName" class="form-label"></label>
+                                <input asp-for="CompanyName" class="form-control" />
+                                <span asp-validation-for="CompanyName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="CompanyLogo" class="form-label"></label>
+                                @if (!string.IsNullOrEmpty(Model.CompanyLogoUrl))
+                                {
+                                    <div class="mb-2">
+                                        <img src="@Model.CompanyLogoUrl" alt="Current logo" class="img-thumbnail" style="max-height: 80px;" />
+                                        <span class="text-muted small ms-2">Current logo</span>
+                                    </div>
+                                }
+                                <input asp-for="CompanyLogo" class="form-control" type="file" accept="image/*" />
+                                <span asp-validation-for="CompanyLogo" class="text-danger"></span>
+                                <small class="form-text text-muted">Upload a new logo (400x200px recommended)</small>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label asp-for="SponsorQuote" class="form-label"></label>
+                                <textarea asp-for="SponsorQuote" class="form-control" rows="3"
+                                          placeholder="Testimonial quote..."></textarea>
+                                <span asp-validation-for="SponsorQuote" class="text-danger"></span>
+                                @if (Model.SponsorQuoteApproved)
+                                {
+                                    <span class="badge bg-success mt-1">Approved</span>
+                                }
+                                else if (!string.IsNullOrEmpty(Model.SponsorQuote))
+                                {
+                                    <span class="badge bg-warning text-dark mt-1">Pending Approval</span>
+                                }
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="SponsorRating" class="form-label"></label>
+                                <select asp-for="SponsorRating" class="form-select">
+                                    <option value="">-- No Rating --</option>
+                                    <option value="1">1 Star</option>
+                                    <option value="2">2 Stars</option>
+                                    <option value="3">3 Stars</option>
+                                    <option value="4">4 Stars</option>
+                                    <option value="5">5 Stars</option>
+                                </select>
+                                <span asp-validation-for="SponsorRating" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input asp-for="ShowInSponsorSection" class="form-check-input" type="checkbox" />
+                                <label asp-for="ShowInSponsorSection" class="form-check-label"></label>
+                            </div>
+                            <small class="form-text text-muted">Display company on the public About page sponsor showcase</small>
+                        </div>
+                    </div>
+                </div>
+            }
+
             <!-- Membership Information -->
             <div class="card mb-4">
                 <div class="card-header bg-warning text-dark">

@@ -250,6 +250,114 @@
             </div>
         }
 
+        <!-- Sponsor Company Information -->
+        @if (Model.UserRole == EllisHope.Models.Domain.UserRole.Sponsor)
+        {
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-building"></i> Company Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            @if (!string.IsNullOrEmpty(Model.CompanyLogoUrl))
+                            {
+                                <img src="@Model.CompanyLogoUrl" alt="@Model.CompanyName"
+                                     class="img-thumbnail mb-2" style="max-height: 120px; object-fit: contain;">
+                                <p class="small text-muted mb-0">Company Logo</p>
+                            }
+                            else
+                            {
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center mx-auto mb-2"
+                                     style="width: 120px; height: 80px;">
+                                    <i class="bi bi-image text-muted" style="font-size: 2rem;"></i>
+                                </div>
+                                <p class="small text-muted mb-0">No logo uploaded</p>
+                            }
+                        </div>
+                        <div class="col-md-8">
+                            <dl class="row mb-0">
+                                <dt class="col-sm-4">Company Name:</dt>
+                                <dd class="col-sm-8">
+                                    @if (!string.IsNullOrEmpty(Model.CompanyName))
+                                    {
+                                        @Model.CompanyName
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Not set</span>
+                                    }
+                                </dd>
+
+                                <dt class="col-sm-4">Show on About:</dt>
+                                <dd class="col-sm-8">
+                                    @if (Model.ShowInSponsorSection)
+                                    {
+                                        <span class="text-success"><i class="bi bi-check-circle"></i> Yes</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted"><i class="bi bi-x-circle"></i> No (opted out)</span>
+                                    }
+                                </dd>
+
+                                <dt class="col-sm-4">Quote Status:</dt>
+                                <dd class="col-sm-8">
+                                    @if (string.IsNullOrEmpty(Model.SponsorQuote))
+                                    {
+                                        <span class="badge bg-secondary">Not Submitted</span>
+                                    }
+                                    else if (Model.SponsorQuoteApproved)
+                                    {
+                                        <span class="badge bg-success">Approved</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">Pending Approval</span>
+                                    }
+                                </dd>
+
+                                @if (Model.SponsorRating.HasValue)
+                                {
+                                    <dt class="col-sm-4">Rating:</dt>
+                                    <dd class="col-sm-8">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (i <= Model.SponsorRating.Value)
+                                            {
+                                                <i class="bi bi-star-fill text-warning"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-star text-muted"></i>
+                                            }
+                                        }
+                                    </dd>
+                                }
+                            </dl>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.SponsorQuote))
+                    {
+                        <hr />
+                        <div class="mt-3">
+                            <strong>Testimonial Quote:</strong>
+                            <blockquote class="blockquote mt-2 ps-3 border-start border-primary border-3">
+                                <p class="mb-0 fst-italic">"@Model.SponsorQuote"</p>
+                            </blockquote>
+                            @if (Model.SponsorQuoteSubmittedDate.HasValue)
+                            {
+                                <small class="text-muted">Submitted: @Model.SponsorQuoteSubmittedDate.Value.ToString("MMM dd, yyyy")</small>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
         <!-- Membership Information -->
         @if (Model.MonthlyFee.HasValue || Model.MembershipStartDate.HasValue)
         {

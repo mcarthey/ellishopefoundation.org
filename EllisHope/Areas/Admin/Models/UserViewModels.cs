@@ -222,6 +222,31 @@ public class UserEditViewModel
 
     // Available sponsors for dropdown
     public IEnumerable<UserSelectItem> AvailableSponsors { get; set; } = new List<UserSelectItem>();
+
+    // Sponsor Company Information (for sponsors only)
+    [StringLength(200)]
+    [Display(Name = "Company Name")]
+    public string? CompanyName { get; set; }
+
+    public string? CompanyLogoUrl { get; set; }
+
+    [Display(Name = "Company Logo")]
+    public IFormFile? CompanyLogo { get; set; }
+
+    [StringLength(500)]
+    [Display(Name = "Testimonial Quote")]
+    public string? SponsorQuote { get; set; }
+
+    [Range(1, 5)]
+    [Display(Name = "Rating")]
+    public int? SponsorRating { get; set; }
+
+    [Display(Name = "Show in Sponsor Section")]
+    public bool ShowInSponsorSection { get; set; } = true;
+
+    // Read-only status info
+    public bool SponsorQuoteApproved { get; set; }
+    public DateTime? SponsorQuoteSubmittedDate { get; set; }
 }
 
 public class UserDetailsViewModel
@@ -237,31 +262,40 @@ public class UserDetailsViewModel
     public bool IsActive { get; set; }
     public int? Age { get; set; }
     public DateTime? DateOfBirth { get; set; }
-    
+
     public string? Address { get; set; }
     public string? City { get; set; }
     public string? State { get; set; }
     public string? ZipCode { get; set; }
     public string FullAddress => string.Join(", ", new[] { Address, City, State, ZipCode }.Where(s => !string.IsNullOrEmpty(s)));
-    
+
     public string? EmergencyContactName { get; set; }
     public string? EmergencyContactPhone { get; set; }
-    
+
     public string? SponsorId { get; set; }
     public string? SponsorName { get; set; }
     public IEnumerable<UserSummaryViewModel> SponsoredClients { get; set; } = new List<UserSummaryViewModel>();
-    
+
     public decimal? MonthlyFee { get; set; }
     public DateTime? MembershipStartDate { get; set; }
     public DateTime? MembershipEndDate { get; set; }
-    
+
     public string? AdminNotes { get; set; }
     public string? ProfilePictureUrl { get; set; }
-    
+
     public DateTime JoinedDate { get; set; }
     public DateTime? LastLoginDate { get; set; }
-    
+
     public IEnumerable<string> Roles { get; set; } = new List<string>();
+
+    // Sponsor Company Information (for sponsors only)
+    public string? CompanyName { get; set; }
+    public string? CompanyLogoUrl { get; set; }
+    public string? SponsorQuote { get; set; }
+    public int? SponsorRating { get; set; }
+    public bool SponsorQuoteApproved { get; set; }
+    public DateTime? SponsorQuoteSubmittedDate { get; set; }
+    public bool ShowInSponsorSection { get; set; }
 }
 
 public class UserSelectItem
