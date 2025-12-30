@@ -1,5 +1,6 @@
 using EllisHope.Areas.Admin.Controllers;
 using EllisHope.Areas.Admin.Models;
+using EllisHope.Data;
 using EllisHope.Models.Domain;
 using EllisHope.Services;
 using Microsoft.AspNetCore.Http;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -22,6 +24,7 @@ public class UsersControllerTests
     private readonly Mock<IMediaService> _mockMediaService;
     private readonly Mock<ILogger<UsersController>> _mockLogger;
     private readonly Mock<IUrlHelper> _mockUrlHelper;
+    private readonly ApplicationDbContext _context;
     private readonly UsersController _controller;
     private readonly DefaultHttpContext _httpContext;
     private readonly ApplicationUser _testAdmin;
@@ -34,10 +37,17 @@ public class UsersControllerTests
         _mockLogger = new Mock<ILogger<UsersController>>();
         _mockUrlHelper = new Mock<IUrlHelper>();
 
+        // Create in-memory database for context
+        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+        _context = new ApplicationDbContext(options);
+
         // Create controller using standard constructor
         _controller = new UsersController(
             _mockUserService.Object,
             _mockUserManager.Object,
+            _context,
             _mockMediaService.Object,
             _mockLogger.Object
         );
@@ -360,7 +370,9 @@ public class UsersControllerTests
             ConfirmPassword = "Test@123456",
             UserRole = role,
             Status = MembershipStatus.Active,
-            IsActive = true
+            IsActive = true,
+            // Board members require a profile photo - provide an avatar URL
+            SelectedAvatarUrl = role == UserRole.BoardMember ? "/assets/img/avatars/avatar-01.png" : null
         };
 
         _mockUserService.Setup(s => s.CreateUserAsync(It.Is<ApplicationUser>(u => u.UserRole == role), createModel.Password))

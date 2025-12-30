@@ -1,6 +1,7 @@
 using EllisHope.Controllers;
 using EllisHope.Data;
 using EllisHope.Models.Domain;
+using EllisHope.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -89,9 +90,9 @@ public class AboutControllerTests : IDisposable
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
-        var model = Assert.IsAssignableFrom<IEnumerable<ApplicationUser>>(viewResult.Model);
+        var model = Assert.IsType<AboutPageViewModel>(viewResult.Model);
 
-        var boardMembers = model.ToList();
+        var boardMembers = model.BoardMembers.ToList();
         Assert.Equal(2, boardMembers.Count); // Only active board members
         Assert.All(boardMembers, member => Assert.Equal(UserRole.BoardMember, member.UserRole));
         Assert.All(boardMembers, member => Assert.True(member.IsActive));
@@ -105,9 +106,9 @@ public class AboutControllerTests : IDisposable
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
-        var model = Assert.IsAssignableFrom<IEnumerable<ApplicationUser>>(viewResult.Model);
+        var model = Assert.IsType<AboutPageViewModel>(viewResult.Model);
 
-        var boardMembers = model.ToList();
+        var boardMembers = model.BoardMembers.ToList();
         Assert.Equal("Doe", boardMembers[0].LastName);
         Assert.Equal("Smith", boardMembers[1].LastName);
     }
@@ -120,9 +121,9 @@ public class AboutControllerTests : IDisposable
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
-        var model = Assert.IsAssignableFrom<IEnumerable<ApplicationUser>>(viewResult.Model);
+        var model = Assert.IsType<AboutPageViewModel>(viewResult.Model);
 
-        var boardMembers = model.ToList();
+        var boardMembers = model.BoardMembers.ToList();
         Assert.DoesNotContain(boardMembers, m => m.Id == "board-inactive");
     }
 
@@ -134,9 +135,9 @@ public class AboutControllerTests : IDisposable
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
-        var model = Assert.IsAssignableFrom<IEnumerable<ApplicationUser>>(viewResult.Model);
+        var model = Assert.IsType<AboutPageViewModel>(viewResult.Model);
 
-        var boardMembers = model.ToList();
+        var boardMembers = model.BoardMembers.ToList();
         Assert.DoesNotContain(boardMembers, m => m.UserRole != UserRole.BoardMember);
     }
 
@@ -152,8 +153,8 @@ public class AboutControllerTests : IDisposable
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
-        var model = Assert.IsAssignableFrom<IEnumerable<ApplicationUser>>(viewResult.Model);
-        Assert.Empty(model);
+        var model = Assert.IsType<AboutPageViewModel>(viewResult.Model);
+        Assert.Empty(model.BoardMembers);
     }
 
     [Fact]
@@ -165,5 +166,104 @@ public class AboutControllerTests : IDisposable
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
         Assert.Null(viewResult.ViewName); // Default view
+    }
+
+    [Fact]
+    public async Task Index_ReturnsSponsorsWithApprovedQuotes()
+    {
+        // Arrange
+        var sponsorWithQuote = new ApplicationUser
+        {
+            Id = "sponsor-with-quote",
+            FirstName = "Sponsor",
+            LastName = "WithQuote",
+            Email = "sponsor.quote@test.com",
+            UserRole = UserRole.Sponsor,
+            IsActive = true,
+            SponsorQuote = "Great organization!",
+            SponsorQuoteApproved = true,
+            ShowInSponsorSection = true
+        };
+        _context.Users.Add(sponsorWithQuote);
+        await _context.SaveChangesAsync();
+
+        // Act
+        var result = await _controller.Index();
+
+        // Assert
+        var viewResult = Assert.IsType<ViewResult>(result);
+        var model = Assert.IsType<AboutPageViewModel>(viewResult.Model);
+        Assert.Contains(model.SponsorsWithQuotes, s => s.Id == "sponsor-with-quote");
+    }
+
+    [Fact]
+    public async Task Index_ExcludesSponsorsWithUnapprovedQuotes()
+    {
+        // Arrange
+        var sponsorWithUnapprovedQuote = new ApplicationUser
+        {
+            Id = "sponsor-unapproved",
+            FirstName = "Sponsor",
+            LastName = "Unapproved",
+            Email = "sponsor.unapproved@test.com",
+            UserRole = UserRole.Sponsor,
+            IsActive = true,
+            SponsorQuote = "Pending quote",
+            SponsorQuoteApproved = false, // Not approved
+            ShowInSponsorSection = true
+        };
+        _context.Users.Add(sponsorWithUnapprovedQuote);
+        await _context.SaveChangesAsync();
+
+        // Act
+        var result = await _controller.Index();
+
+        // Assert
+        var viewResult = Assert.IsType<ViewResult>(result);
+        var model = Assert.IsType<AboutPageViewModel>(viewResult.Model);
+        Assert.DoesNotContain(model.SponsorsWithQuotes, s => s.Id == "sponsor-unapproved");
+    }
+
+    [Fact]
+    public async Task Index_ReturnsAllActiveSponsors()
+    {
+        // Arrange - sponsor-1 already exists from constructor
+        var anotherSponsor = new ApplicationUser
+        {
+            Id = "sponsor-2",
+            FirstName = "Another",
+            LastName = "Sponsor",
+            Email = "another@test.com",
+            UserRole = UserRole.Sponsor,
+            IsActive = true,
+            ShowInSponsorSection = true
+        };
+        _context.Users.Add(anotherSponsor);
+
+        // Update existing sponsor to show in sponsor section
+        var existingSponsor = await _context.Users.FindAsync("sponsor-1");
+        existingSponsor!.ShowInSponsorSection = true;
+
+        await _context.SaveChangesAsync();
+
+        // Act
+        var result = await _controller.Index();
+
+        // Assert
+        var viewResult = Assert.IsType<ViewResult>(result);
+        var model = Assert.IsType<AboutPageViewModel>(viewResult.Model);
+        Assert.Equal(2, model.AllSponsors.Count());
+    }
+
+    [Fact]
+    public async Task Index_ReturnsStatistics()
+    {
+        // Act
+        var result = await _controller.Index();
+
+        // Assert
+        var viewResult = Assert.IsType<ViewResult>(result);
+        var model = Assert.IsType<AboutPageViewModel>(viewResult.Model);
+        Assert.NotNull(model.Statistics);
     }
 }

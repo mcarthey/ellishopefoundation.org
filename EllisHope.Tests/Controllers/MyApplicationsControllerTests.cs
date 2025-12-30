@@ -221,7 +221,7 @@ public class MyApplicationsControllerTests
         // Assert
         var redirectResult = Assert.IsType<RedirectToActionResult>(result);
         Assert.Equal(nameof(_controller.Details), redirectResult.ActionName);
-        Assert.Equal("Only draft applications can be edited.", _controller.TempData["ErrorMessage"]);
+        Assert.Equal("This application cannot be edited in its current status.", _controller.TempData["ErrorMessage"]);
     }
 
     [Fact]

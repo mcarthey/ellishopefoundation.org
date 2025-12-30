@@ -287,6 +287,7 @@ public enum NotificationType
     ApplicationRejected,
     SponsorAssigned,
     ProgramStarting,
+    ProgramCompleted,
     
     // Board/Admin notifications
     NewApplicationReceived,

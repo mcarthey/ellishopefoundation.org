@@ -17,6 +17,11 @@ public interface IEmailTemplateService
     string GenerateApplicationRejectedEmail(ClientApplication application);
     string GenerateInformationRequestedEmail(ClientApplication application, string requestDetails);
 
+    // Sponsor/Program templates
+    string GenerateSponsorAssignedEmail(ClientApplication application, string sponsorName);
+    string GenerateProgramStartingEmail(ClientApplication application);
+    string GenerateProgramCompletedEmail(ClientApplication application);
+
     // Account-related templates
     string GenerateWelcomeEmail(string firstName);
     string GeneratePasswordResetEmail(string firstName, string resetUrl);
@@ -397,6 +402,214 @@ public class EmailTemplateService : IEmailTemplateService
 </body>
 </html>";
     }
+
+    #region Sponsor/Program Email Templates
+
+    public string GenerateSponsorAssignedEmail(ClientApplication application, string sponsorName)
+    {
+        return $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+        .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+        .header {{ background-color: #c53040; color: white; padding: 20px; text-align: center; }}
+        .content {{ padding: 20px; background-color: #f8f9fa; }}
+        .button {{ display: inline-block; padding: 10px 20px; background-color: #c53040; color: white; text-decoration: none; border-radius: 5px; }}
+        .info-box {{ background-color: white; padding: 15px; margin: 15px 0; border-left: 4px solid #c53040; }}
+        .footer {{ text-align: center; padding: 20px; color: #6c757d; font-size: 12px; }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1>New Client Assignment</h1>
+        </div>
+        <div class='content'>
+            <p>Dear {sponsorName},</p>
+
+            <p>You have been assigned as a sponsor for a new client through the Ellis Hope Foundation!</p>
+
+            <div class='info-box'>
+                <p><strong>Client:</strong> {application.FullName}</p>
+                <p><strong>Application ID:</strong> #{application.Id}</p>
+                {(application.ApprovedMonthlyAmount.HasValue ? $"<p><strong>Monthly Support:</strong> ${application.ApprovedMonthlyAmount:N2}</p>" : "")}
+                <p><strong>Program Duration:</strong> {application.ProgramDurationMonths} months</p>
+            </div>
+
+            <p><strong>Your Role as a Sponsor:</strong></p>
+            <ul>
+                <li>Provide encouragement and support throughout their fitness journey</li>
+                <li>Check in periodically to monitor progress</li>
+                <li>Help celebrate milestones and achievements</li>
+                <li>Be a point of contact for any questions or concerns</li>
+            </ul>
+
+            <p style='text-align: center;'>
+                <a href='{_baseUrl}/Admin/Sponsor/Dashboard' class='button'>
+                    View Sponsor Dashboard
+                </a>
+            </p>
+
+            <p>Thank you for your generous support of the Ellis Hope Foundation!</p>
+
+            <p>Best regards,<br/>
+            <strong>The Ellis Hope Foundation Team</strong></p>
+        </div>
+        <div class='footer'>
+            <p>Ellis Hope Foundation | Empowering Health, Fitness, and Hope</p>
+        </div>
+    </div>
+</body>
+</html>";
+    }
+
+    public string GenerateProgramStartingEmail(ClientApplication application)
+    {
+        return $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+        .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+        .header {{ background-color: #28a745; color: white; padding: 20px; text-align: center; }}
+        .content {{ padding: 20px; background-color: #f8f9fa; }}
+        .button {{ display: inline-block; padding: 10px 20px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px; }}
+        .highlight-box {{ background-color: #d4edda; border: 1px solid #c3e6cb; padding: 15px; margin: 15px 0; border-radius: 5px; text-align: center; }}
+        .info-box {{ background-color: white; padding: 15px; margin: 15px 0; border-left: 4px solid #28a745; }}
+        .footer {{ text-align: center; padding: 20px; color: #6c757d; font-size: 12px; }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1>Your Program is Starting!</h1>
+        </div>
+        <div class='content'>
+            <p>Dear {application.FirstName},</p>
+
+            <div class='highlight-box'>
+                <h2 style='color: #155724; margin: 0;'>Your fitness journey begins!</h2>
+            </div>
+
+            <p>We're excited to let you know that your program with the Ellis Hope Foundation is officially starting!</p>
+
+            <div class='info-box'>
+                <p><strong>Program Start Date:</strong> {application.ProgramStartDate:MMMM dd, yyyy}</p>
+                <p><strong>Program End Date:</strong> {application.ProgramEndDate:MMMM dd, yyyy}</p>
+                {(application.ApprovedMonthlyAmount.HasValue ? $"<p><strong>Monthly Support:</strong> ${application.ApprovedMonthlyAmount:N2}</p>" : "")}
+                {(!string.IsNullOrEmpty(application.AssignedSponsor?.FullName) ? $"<p><strong>Your Sponsor:</strong> {application.AssignedSponsor.FullName}</p>" : "")}
+            </div>
+
+            <p><strong>What to Expect:</strong></p>
+            <ul>
+                <li>Initial consultation with your personal trainer</li>
+                <li>Nutritional assessment and meal planning</li>
+                <li>Weekly check-ins to track your progress</li>
+                <li>Monthly progress reports and goal adjustments</li>
+                <li>Ongoing support from the Ellis Hope Foundation team</li>
+            </ul>
+
+            <p><strong>Tips for Success:</strong></p>
+            <ul>
+                <li>Stay committed to your scheduled sessions</li>
+                <li>Communicate openly with your trainer about any challenges</li>
+                <li>Celebrate small victories along the way</li>
+                <li>Remember that every step forward is progress!</li>
+            </ul>
+
+            <p style='text-align: center;'>
+                <a href='{_baseUrl}/MyApplications/Details/{application.Id}' class='button'>
+                    View Your Program Details
+                </a>
+            </p>
+
+            <p>We believe in you and can't wait to see your transformation!</p>
+
+            <p>Best regards,<br/>
+            <strong>The Ellis Hope Foundation Team</strong></p>
+        </div>
+        <div class='footer'>
+            <p>Ellis Hope Foundation | Empowering Health, Fitness, and Hope</p>
+        </div>
+    </div>
+</body>
+</html>";
+    }
+
+    public string GenerateProgramCompletedEmail(ClientApplication application)
+    {
+        return $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+        .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+        .header {{ background-color: #ffc107; color: #333; padding: 20px; text-align: center; }}
+        .content {{ padding: 20px; background-color: #f8f9fa; }}
+        .button {{ display: inline-block; padding: 10px 20px; background-color: #c53040; color: white; text-decoration: none; border-radius: 5px; }}
+        .celebration-box {{ background-color: #fff3cd; border: 2px solid #ffc107; padding: 20px; margin: 15px 0; border-radius: 10px; text-align: center; }}
+        .footer {{ text-align: center; padding: 20px; color: #6c757d; font-size: 12px; }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1>🎉 Congratulations! 🎉</h1>
+        </div>
+        <div class='content'>
+            <p>Dear {application.FirstName},</p>
+
+            <div class='celebration-box'>
+                <h2 style='color: #856404; margin: 0;'>You Did It!</h2>
+                <p style='margin-bottom: 0; font-size: 18px;'>You have successfully completed your program!</p>
+            </div>
+
+            <p>What an incredible journey it has been! From the day you submitted your application to now, you've shown dedication, perseverance, and an unwavering commitment to improving your health.</p>
+
+            <p><strong>Your Achievement:</strong></p>
+            <ul>
+                <li>Completed {application.ProgramDurationMonths} months of dedicated fitness training</li>
+                <li>Worked with professional trainers and nutritionists</li>
+                <li>Overcame challenges and pushed through obstacles</li>
+                <li>Transformed not just your body, but your mindset</li>
+            </ul>
+
+            <p><strong>What's Next?</strong></p>
+            <p>While your formal program has ended, your fitness journey continues! Here are some ways to maintain your progress:</p>
+            <ul>
+                <li>Continue with the healthy habits you've developed</li>
+                <li>Stay connected with the fitness community</li>
+                <li>Consider sharing your story to inspire others</li>
+                <li>Apply the discipline you've learned to other areas of life</li>
+            </ul>
+
+            <p>We are so proud of everything you've accomplished. You are proof that with determination and support, amazing things are possible!</p>
+
+            <p style='text-align: center;'>
+                <a href='{_baseUrl}/contact' class='button'>
+                    Share Your Story With Us
+                </a>
+            </p>
+
+            <p>Thank you for being part of the Ellis Hope Foundation family. We wish you continued success in all your future endeavors!</p>
+
+            <p>With pride and best wishes,<br/>
+            <strong>The Ellis Hope Foundation Team</strong></p>
+        </div>
+        <div class='footer'>
+            <p>Ellis Hope Foundation | Empowering Health, Fitness, and Hope</p>
+            <p>Once a member of our family, always a member of our family.</p>
+        </div>
+    </div>
+</body>
+</html>";
+    }
+
+    #endregion
 
     #region Account Email Templates
 

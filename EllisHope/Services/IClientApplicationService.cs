@@ -153,6 +153,14 @@ public interface IClientApplicationService
     /// <summary>
     /// Send notification to user(s)
     /// </summary>
+    /// <param name="recipientId">User ID to receive the notification</param>
+    /// <param name="type">Type of notification</param>
+    /// <param name="title">Notification title</param>
+    /// <param name="message">Plain text message (fallback if no HTML body)</param>
+    /// <param name="applicationId">Optional application ID related to notification</param>
+    /// <param name="actionUrl">Optional URL for the notification action</param>
+    /// <param name="sendEmail">Whether to also send an email notification</param>
+    /// <param name="htmlEmailBody">Optional HTML email body (uses templates for rich emails)</param>
     Task SendNotificationAsync(
         string recipientId,
         NotificationType type,
@@ -160,11 +168,20 @@ public interface IClientApplicationService
         string message,
         int? applicationId = null,
         string? actionUrl = null,
-        bool sendEmail = false);
-    
+        bool sendEmail = false,
+        string? htmlEmailBody = null);
+
     /// <summary>
     /// Send notification to multiple users
     /// </summary>
+    /// <param name="recipientIds">User IDs to receive the notification</param>
+    /// <param name="type">Type of notification</param>
+    /// <param name="title">Notification title</param>
+    /// <param name="message">Plain text message (fallback if no HTML body)</param>
+    /// <param name="applicationId">Optional application ID related to notification</param>
+    /// <param name="actionUrl">Optional URL for the notification action</param>
+    /// <param name="sendEmail">Whether to also send email notifications</param>
+    /// <param name="htmlEmailBodyGenerator">Optional function to generate personalized HTML email for each recipient</param>
     Task SendBulkNotificationAsync(
         IEnumerable<string> recipientIds,
         NotificationType type,
@@ -172,7 +189,8 @@ public interface IClientApplicationService
         string message,
         int? applicationId = null,
         string? actionUrl = null,
-        bool sendEmail = false);
+        bool sendEmail = false,
+        Func<string, string>? htmlEmailBodyGenerator = null);
     
     /// <summary>
     /// Get unread notifications for user

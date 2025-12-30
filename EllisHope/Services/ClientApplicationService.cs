@@ -13,15 +13,18 @@ public class ClientApplicationService : IClientApplicationService
     private readonly ApplicationDbContext _context;
     private readonly ILogger<ClientApplicationService> _logger;
     private readonly IEmailService? _emailService;
+    private readonly IEmailTemplateService? _emailTemplateService;
 
     public ClientApplicationService(
         ApplicationDbContext context,
         ILogger<ClientApplicationService> logger,
-        IEmailService? emailService = null)
+        IEmailService? emailService = null,
+        IEmailTemplateService? emailTemplateService = null)
     {
         _context = context;
         _logger = logger;
         _emailService = emailService;
+        _emailTemplateService = emailTemplateService;
     }
 
     #region Application CRUD Operations
@@ -206,14 +209,19 @@ public class ClientApplicationService : IClientApplicationService
 
             await _context.SaveChangesAsync();
 
-            // Notify applicant
+            // Reload application to get full entity for email template
+            var submittedApp = await GetApplicationByIdAsync(id);
+
+            // Notify applicant with full HTML email
+            var htmlBody = _emailTemplateService?.GenerateApplicationSubmittedEmail(submittedApp!);
             await SendNotificationAsync(
                 applicantId,
                 NotificationType.ApplicationSubmitted,
-                "Application Submitted",
+                "Application Submitted Successfully",
                 "Your application has been successfully submitted and is pending review.",
                 id,
-                sendEmail: true);
+                sendEmail: true,
+                htmlEmailBody: htmlBody);
 
             _logger.LogInformation($"Application submitted: {id}");
             return (true, Array.Empty<string>());
@@ -323,18 +331,21 @@ public class ClientApplicationService : IClientApplicationService
             var summary = await GetVotingSummaryAsync(applicationId);
             if (summary.HasSufficientVotes)
             {
-                // Notify board that quorum is reached
+                // Notify board that quorum is reached with full HTML email
                 var boardMembers = await _context.Users
                     .Where(u => u.UserRole == UserRole.BoardMember && u.IsActive)
                     .Select(u => u.Id)
                     .ToListAsync();
 
+                var quorumEmailBody = _emailTemplateService?.GenerateQuorumReachedEmail(application);
                 await SendBulkNotificationAsync(
                     boardMembers,
                     NotificationType.QuorumReached,
-                    "Quorum Reached",
-                    $"Application #{applicationId} has received all required votes.",
-                    applicationId);
+                    "Quorum Reached - Decision Ready",
+                    $"Application #{applicationId} has received all required votes and is ready for final decision.",
+                    applicationId,
+                    sendEmail: true,
+                    htmlEmailBodyGenerator: _ => quorumEmailBody ?? "");
             }
 
             _logger.LogInformation($"Vote cast on application {applicationId} by {voterId}: {decision}");
@@ -639,7 +650,8 @@ public class ClientApplicationService : IClientApplicationService
         string message,
         int? applicationId = null,
         string? actionUrl = null,
-        bool sendEmail = false)
+        bool sendEmail = false,
+        string? htmlEmailBody = null)
     {
         try
         {
@@ -666,7 +678,9 @@ public class ClientApplicationService : IClientApplicationService
                     var recipient = await _context.Users.FindAsync(recipientId);
                     if (recipient != null && !string.IsNullOrEmpty(recipient.Email))
                     {
-                        await _emailService.SendEmailAsync(recipient.Email, title, message);
+                        // Use HTML template if provided, otherwise fall back to plain message
+                        var emailBody = htmlEmailBody ?? message;
+                        await _emailService.SendEmailAsync(recipient.Email, title, emailBody);
                         notification.EmailSent = true;
                         notification.EmailSentDate = DateTime.UtcNow;
                         await _context.SaveChangesAsync();
@@ -693,11 +707,13 @@ public class ClientApplicationService : IClientApplicationService
         string message,
         int? applicationId = null,
         string? actionUrl = null,
-        bool sendEmail = false)
+        bool sendEmail = false,
+        Func<string, string>? htmlEmailBodyGenerator = null)
     {
         foreach (var recipientId in recipientIds)
         {
-            await SendNotificationAsync(recipientId, type, title, message, applicationId, actionUrl, sendEmail);
+            var htmlBody = htmlEmailBodyGenerator?.Invoke(recipientId);
+            await SendNotificationAsync(recipientId, type, title, message, applicationId, actionUrl, sendEmail, htmlBody);
         }
     }
 
@@ -774,29 +790,37 @@ public class ClientApplicationService : IClientApplicationService
 
             await _context.SaveChangesAsync();
 
-            // Notify applicant
+            // Notify applicant with full HTML email
+            var applicantEmailBody = _emailTemplateService?.GenerateApplicationUnderReviewEmail(application);
             await SendNotificationAsync(
                 application.ApplicantId,
                 NotificationType.ApplicationUnderReview,
                 "Application Under Review",
                 "Your application is now being reviewed by our board members.",
                 applicationId,
-                sendEmail: true);
+                sendEmail: true,
+                htmlEmailBody: applicantEmailBody);
 
-            // Notify all board members
+            // Notify all board members with personalized emails
             var boardMembers = await _context.Users
                 .Where(u => u.UserRole == UserRole.BoardMember && u.IsActive)
-                .Select(u => u.Id)
                 .ToListAsync();
 
+            var boardMemberIds = boardMembers.Select(u => u.Id).ToList();
+
+            // Create a lookup for board member names
+            var boardMemberNames = boardMembers.ToDictionary(u => u.Id, u => u.FullName);
+
             await SendBulkNotificationAsync(
-                boardMembers,
+                boardMemberIds,
                 NotificationType.NewApplicationReceived,
-                "New Application Received",
+                "New Application Ready for Review",
                 $"A new application from {application.FullName} is ready for review.",
                 applicationId,
                 actionUrl: $"/Admin/Applications/Review/{applicationId}",
-                sendEmail: true);
+                sendEmail: true,
+                htmlEmailBodyGenerator: recipientId =>
+                    _emailTemplateService?.GenerateNewApplicationNotificationEmail(application, boardMemberNames.GetValueOrDefault(recipientId, "Board Member")) ?? "");
 
             _logger.LogInformation($"Review process started for application {applicationId}");
             return (true, Array.Empty<string>());
@@ -832,14 +856,16 @@ public class ClientApplicationService : IClientApplicationService
                 isPrivate: false,
                 isInformationRequest: true);
 
-            // Notify applicant
+            // Notify applicant with full HTML email
+            var infoRequestEmailBody = _emailTemplateService?.GenerateInformationRequestedEmail(application, requestDetails);
             await SendNotificationAsync(
                 application.ApplicantId,
                 NotificationType.InformationRequested,
                 "Additional Information Requested",
                 "The board has requested additional information regarding your application.",
                 applicationId,
-                sendEmail: true);
+                sendEmail: true,
+                htmlEmailBody: infoRequestEmailBody);
 
             _logger.LogInformation($"Additional information requested for application {applicationId}");
             return (true, Array.Empty<string>());
@@ -943,25 +969,33 @@ public class ClientApplicationService : IClientApplicationService
 
             await _context.SaveChangesAsync();
 
-            // Notify applicant
-            await SendNotificationAsync(
-                application.ApplicantId,
-                NotificationType.ApplicationApproved,
-                "Application Approved!",
-                application.DecisionMessage,
-                applicationId,
-                sendEmail: true);
+            // Reload application to get updated fields for email template
+            application = await GetApplicationByIdAsync(applicationId);
 
-            // Notify sponsor if assigned
+            // Notify applicant with full HTML email
+            var approvalEmailBody = _emailTemplateService?.GenerateApplicationApprovedEmail(application!);
+            await SendNotificationAsync(
+                application!.ApplicantId,
+                NotificationType.ApplicationApproved,
+                "Congratulations - Application Approved!",
+                application.DecisionMessage ?? "Your application has been approved!",
+                applicationId,
+                sendEmail: true,
+                htmlEmailBody: approvalEmailBody);
+
+            // Notify sponsor if assigned with personalized HTML email
             if (!string.IsNullOrEmpty(sponsorId))
             {
+                var sponsor = await _context.Users.FindAsync(sponsorId);
+                var sponsorEmailBody = _emailTemplateService?.GenerateSponsorAssignedEmail(application, sponsor?.FullName ?? "Sponsor");
                 await SendNotificationAsync(
                     sponsorId,
                     NotificationType.SponsorAssigned,
-                    "New Client Assigned",
+                    "New Client Assignment",
                     $"You have been assigned to support {application.FullName}.",
                     applicationId,
-                    sendEmail: true);
+                    sendEmail: true,
+                    htmlEmailBody: sponsorEmailBody);
             }
 
             _logger.LogInformation($"Application {applicationId} approved");
@@ -1005,14 +1039,16 @@ public class ClientApplicationService : IClientApplicationService
 
             await _context.SaveChangesAsync();
 
-            // Notify applicant
+            // Notify applicant with full HTML email
+            var rejectionEmailBody = _emailTemplateService?.GenerateApplicationRejectedEmail(application);
             await SendNotificationAsync(
                 application.ApplicantId,
                 NotificationType.ApplicationRejected,
                 "Application Decision",
                 "We regret to inform you that your application was not approved at this time.",
                 applicationId,
-                sendEmail: true);
+                sendEmail: true,
+                htmlEmailBody: rejectionEmailBody);
 
             _logger.LogInformation($"Application {applicationId} rejected");
             return (true, Array.Empty<string>());
@@ -1048,14 +1084,16 @@ public class ClientApplicationService : IClientApplicationService
 
             await _context.SaveChangesAsync();
 
-            // Notify applicant
+            // Notify applicant with full HTML email
+            var programStartEmailBody = _emailTemplateService?.GenerateProgramStartingEmail(application);
             await SendNotificationAsync(
                 application.ApplicantId,
                 NotificationType.ProgramStarting,
-                "Program Starting",
+                "Your Program is Starting!",
                 $"Your program will start on {startDate:MMMM dd, yyyy}.",
                 applicationId,
-                sendEmail: true);
+                sendEmail: true,
+                htmlEmailBody: programStartEmailBody);
 
             _logger.LogInformation($"Program started for application {applicationId}");
             return (true, Array.Empty<string>());
@@ -1079,6 +1117,17 @@ public class ClientApplicationService : IClientApplicationService
 
             application.Status = ApplicationStatus.Completed;
             await _context.SaveChangesAsync();
+
+            // Notify applicant with full HTML email
+            var programCompletedEmailBody = _emailTemplateService?.GenerateProgramCompletedEmail(application);
+            await SendNotificationAsync(
+                application.ApplicantId,
+                NotificationType.ProgramCompleted,
+                "Congratulations on Completing Your Program!",
+                "Congratulations! You have successfully completed your program with the Ellis Hope Foundation.",
+                applicationId,
+                sendEmail: true,
+                htmlEmailBody: programCompletedEmailBody);
 
             _logger.LogInformation($"Program completed for application {applicationId}");
             return (true, Array.Empty<string>());

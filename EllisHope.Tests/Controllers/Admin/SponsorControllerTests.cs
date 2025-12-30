@@ -1,6 +1,7 @@
 using EllisHope.Areas.Admin.Controllers;
 using EllisHope.Data;
 using EllisHope.Models.Domain;
+using EllisHope.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,7 @@ public class SponsorControllerTests
 {
     private readonly ApplicationDbContext _context;
     private readonly Mock<UserManager<ApplicationUser>> _mockUserManager;
+    private readonly Mock<IMediaService> _mockMediaService;
     private readonly Mock<ILogger<SponsorController>> _mockLogger;
     private readonly SponsorController _controller;
     private readonly ApplicationUser _testSponsor;
@@ -33,11 +35,13 @@ public class SponsorControllerTests
         _context = new ApplicationDbContext(options);
 
         _mockUserManager = MockHelpers.MockUserManager<ApplicationUser>();
+        _mockMediaService = new Mock<IMediaService>();
         _mockLogger = new Mock<ILogger<SponsorController>>();
 
         _controller = new SponsorController(
             _context,
             _mockUserManager.Object,
+            _mockMediaService.Object,
             _mockLogger.Object
         );
 
