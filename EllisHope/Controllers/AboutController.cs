@@ -98,16 +98,16 @@ public class AboutController : Controller
     {
         var statistics = new List<AboutStatistic>();
 
-        // Get published causes with fundraising goals, ordered by featured first then by progress
-        var causes = await _context.Causes
+        // Get all published causes with fundraising goals
+        var allCauses = await _context.Causes
             .Where(c => c.IsPublished && c.GoalAmount > 0)
-            .OrderByDescending(c => c.IsFeatured)
-            .ThenByDescending(c => c.RaisedAmount / c.GoalAmount)
-            .Take(3)
             .ToListAsync();
 
+        // Select up to 3 causes: featured first, then random selection from the rest
+        var selectedCauses = SelectCausesWithPreference(allCauses, 3);
+
         // Add cause statistics
-        foreach (var cause in causes)
+        foreach (var cause in selectedCauses)
         {
             var percentage = cause.GoalAmount > 0
                 ? (int)Math.Min(Math.Round(cause.RaisedAmount / cause.GoalAmount * 100), 100)
@@ -135,6 +135,37 @@ public class AboutController : Controller
         }
 
         return statistics;
+    }
+
+    /// <summary>
+    /// Selects causes with preference for featured causes, then random selection from the rest
+    /// </summary>
+    private static List<Cause> SelectCausesWithPreference(List<Cause> allCauses, int count)
+    {
+        if (allCauses.Count <= count)
+            return allCauses;
+
+        var selected = new List<Cause>();
+        var random = new Random();
+
+        // First, add featured causes (randomized if more than needed)
+        var featuredCauses = allCauses.Where(c => c.IsFeatured).ToList();
+        if (featuredCauses.Count > 0)
+        {
+            var shuffledFeatured = featuredCauses.OrderBy(_ => random.Next()).ToList();
+            selected.AddRange(shuffledFeatured.Take(count));
+        }
+
+        // If we still need more, randomly select from non-featured causes
+        if (selected.Count < count)
+        {
+            var nonFeatured = allCauses.Where(c => !c.IsFeatured).ToList();
+            var shuffledNonFeatured = nonFeatured.OrderBy(_ => random.Next()).ToList();
+            selected.AddRange(shuffledNonFeatured.Take(count - selected.Count));
+        }
+
+        // Shuffle the final selection so featured aren't always first
+        return selected.OrderBy(_ => random.Next()).ToList();
     }
 
     /// <summary>
