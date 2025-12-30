@@ -58,8 +58,8 @@
                         {
                             <img id="currentPhoto" src="@Model.ProfilePictureUrl" alt="Current profile photo"
                                  class="rounded-circle img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
-                            <div id="currentPhotoPlaceholder" class="rounded-circle bg-secondary d-flex align-items-center justify-content-center mx-auto"
-                                 style="width: 150px; height: 150px; display: none;">
+                            <div id="currentPhotoPlaceholder" class="rounded-circle bg-secondary align-items-center justify-content-center mx-auto d-none"
+                                 style="width: 150px; height: 150px;">
                                 <i class="bi bi-person text-white" style="font-size: 4rem;"></i>
                             </div>
                         }
@@ -70,7 +70,7 @@
                                 <i class="bi bi-person text-white" style="font-size: 4rem;"></i>
                             </div>
                             <img id="currentPhoto" src="" alt="Profile photo preview"
-                                 class="rounded-circle img-thumbnail" style="width: 150px; height: 150px; object-fit: cover; display: none;">
+                                 class="rounded-circle img-thumbnail d-none" style="width: 150px; height: 150px; object-fit: cover;">
                         }
                         <p class="text-muted small mt-2 mb-0">Current Photo</p>
                     </div>
@@ -461,9 +461,10 @@
                     var placeholder = document.getElementById('currentPhotoPlaceholder');
 
                     currentPhoto.src = e.target.result;
-                    currentPhoto.style.display = 'block';
+                    currentPhoto.classList.remove('d-none');
                     if (placeholder) {
-                        placeholder.style.display = 'none';
+                        placeholder.classList.add('d-none');
+                        placeholder.classList.remove('d-flex');
                     }
 
                     // Clear any avatar selection when uploading
@@ -495,9 +496,10 @@
             var placeholder = document.getElementById('currentPhotoPlaceholder');
 
             currentPhoto.src = avatarUrl;
-            currentPhoto.style.display = 'block';
+            currentPhoto.classList.remove('d-none');
             if (placeholder) {
-                placeholder.style.display = 'none';
+                placeholder.classList.add('d-none');
+                placeholder.classList.remove('d-flex');
             }
 
             // Show confirmation message
@@ -525,10 +527,11 @@
             var placeholder = document.getElementById('currentPhotoPlaceholder');
 
             // Hide photo, show placeholder
-            currentPhoto.style.display = 'none';
+            currentPhoto.classList.add('d-none');
             currentPhoto.src = '';
             if (placeholder) {
-                placeholder.style.display = 'flex';
+                placeholder.classList.remove('d-none');
+                placeholder.classList.add('d-flex');
             }
 
             // Set hidden field to sentinel value for removal
