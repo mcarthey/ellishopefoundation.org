@@ -26,6 +26,9 @@ public interface IEmailTemplateService
     string GenerateWelcomeEmail(string firstName);
     string GeneratePasswordResetEmail(string firstName, string resetUrl);
     string GeneratePasswordChangedEmail(string firstName);
+
+    // Contact form templates
+    string GenerateContactFormConfirmationEmail(string name, string message);
 }
 
 public class EmailTemplateService : IEmailTemplateService
@@ -769,6 +772,70 @@ public class EmailTemplateService : IEmailTemplateService
         <div class='footer'>
             <p>Ellis Hope Foundation | Empowering Health, Fitness, and Hope</p>
             <p>This is an automated message. Please do not reply to this email.</p>
+        </div>
+    </div>
+</body>
+</html>";
+    }
+
+    #endregion
+
+    #region Contact Form Templates
+
+    public string GenerateContactFormConfirmationEmail(string name, string message)
+    {
+        return $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+        .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+        .header {{ background-color: #c53040; color: white; padding: 20px; text-align: center; }}
+        .content {{ padding: 20px; background-color: #f8f9fa; }}
+        .message-box {{ background-color: white; padding: 15px; margin: 15px 0; border-left: 4px solid #c53040; font-style: italic; }}
+        .button {{ display: inline-block; padding: 10px 20px; background-color: #c53040; color: white; text-decoration: none; border-radius: 5px; }}
+        .footer {{ text-align: center; padding: 20px; color: #6c757d; font-size: 12px; }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1>Thank You for Contacting Us!</h1>
+        </div>
+        <div class='content'>
+            <p>Dear {System.Web.HttpUtility.HtmlEncode(name)},</p>
+
+            <p>Thank you for reaching out to the Ellis Hope Foundation! We have received your message and wanted to confirm that it's in good hands.</p>
+
+            <p><strong>Your Message:</strong></p>
+            <div class='message-box'>
+                {System.Web.HttpUtility.HtmlEncode(message).Replace("\n", "<br>")}
+            </div>
+
+            <p><strong>What happens next?</strong></p>
+            <ul>
+                <li>A member of our team will review your message</li>
+                <li>We typically respond within 1-2 business days</li>
+                <li>For urgent matters, please call us directly</li>
+            </ul>
+
+            <p>In the meantime, feel free to explore more about our mission and programs:</p>
+            <p style='text-align: center;'>
+                <a href='{_baseUrl}/about' class='button'>
+                    Learn About Us
+                </a>
+            </p>
+
+            <p>We appreciate your interest in the Ellis Hope Foundation and look forward to connecting with you!</p>
+
+            <p>Warm regards,<br/>
+            <strong>The Ellis Hope Foundation Team</strong></p>
+        </div>
+        <div class='footer'>
+            <p>Ellis Hope Foundation | Empowering Health, Fitness, and Hope</p>
+            <p>This is an automated confirmation. Please do not reply to this email.</p>
+            <p>If you did not submit this message, please disregard this email.</p>
         </div>
     </div>
 </body>

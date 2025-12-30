@@ -15,6 +15,7 @@ public class ContactControllerTests
 {
     private readonly Mock<IRecaptchaService> _recaptchaServiceMock;
     private readonly Mock<IEmailService> _emailServiceMock;
+    private readonly Mock<IEmailTemplateService> _emailTemplateServiceMock;
     private readonly Mock<ILogger<ContactController>> _loggerMock;
     private readonly IOptions<ContactFormSettings> _contactSettings;
     private readonly IOptions<RecaptchaSettings> _recaptchaSettings;
@@ -24,6 +25,7 @@ public class ContactControllerTests
     {
         _recaptchaServiceMock = new Mock<IRecaptchaService>();
         _emailServiceMock = new Mock<IEmailService>();
+        _emailTemplateServiceMock = new Mock<IEmailTemplateService>();
         _loggerMock = new Mock<ILogger<ContactController>>();
         _contactSettings = Options.Create(new ContactFormSettings
         {
@@ -37,9 +39,14 @@ public class ContactControllerTests
             MinimumScore = 0.5f
         });
 
+        // Setup email template service mock
+        _emailTemplateServiceMock.Setup(e => e.GenerateContactFormConfirmationEmail(It.IsAny<string>(), It.IsAny<string>()))
+            .Returns("<html>Confirmation email</html>");
+
         _controller = new ContactController(
             _recaptchaServiceMock.Object,
             _emailServiceMock.Object,
+            _emailTemplateServiceMock.Object,
             _contactSettings,
             _recaptchaSettings,
             _loggerMock.Object);

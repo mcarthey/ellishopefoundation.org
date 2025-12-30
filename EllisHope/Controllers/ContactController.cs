@@ -11,6 +11,7 @@ public class ContactController : Controller
 {
     private readonly IRecaptchaService _recaptchaService;
     private readonly IEmailService _emailService;
+    private readonly IEmailTemplateService _emailTemplateService;
     private readonly ContactFormSettings _contactSettings;
     private readonly RecaptchaSettings _recaptchaSettings;
     private readonly ILogger<ContactController> _logger;
@@ -18,12 +19,14 @@ public class ContactController : Controller
     public ContactController(
         IRecaptchaService recaptchaService,
         IEmailService emailService,
+        IEmailTemplateService emailTemplateService,
         IOptions<ContactFormSettings> contactSettings,
         IOptions<RecaptchaSettings> recaptchaSettings,
         ILogger<ContactController> logger)
     {
         _recaptchaService = recaptchaService;
         _emailService = emailService;
+        _emailTemplateService = emailTemplateService;
         _contactSettings = contactSettings.Value;
         _recaptchaSettings = recaptchaSettings.Value;
         _logger = logger;
@@ -105,11 +108,11 @@ public class ContactController : Controller
 
         try
         {
-            // Build email content
+            // Build email content for admin
             var subject = $"{_contactSettings.SubjectPrefix} Message from {model.Name}";
             var body = BuildEmailBody(model);
 
-            // Send email to the configured recipient
+            // Send email to the configured recipient (admin)
             await _emailService.SendEmailAsync(
                 _contactSettings.RecipientEmail,
                 subject,
@@ -120,10 +123,28 @@ public class ContactController : Controller
 
             _logger.LogInformation("Contact form submitted successfully from {Email}", model.Email);
 
+            // Send confirmation email to the sender
+            try
+            {
+                var confirmationBody = _emailTemplateService.GenerateContactFormConfirmationEmail(model.Name, model.Message);
+                await _emailService.SendEmailAsync(
+                    model.Email,
+                    "Thank You for Contacting Ellis Hope Foundation",
+                    confirmationBody,
+                    isHtml: true
+                );
+                _logger.LogInformation("Contact form confirmation email sent to {Email}", model.Email);
+            }
+            catch (Exception ex)
+            {
+                // Log but don't fail the request if confirmation email fails
+                _logger.LogWarning(ex, "Failed to send confirmation email to {Email}", model.Email);
+            }
+
             // Return success
             return View(new ContactFormViewModel
             {
-                SuccessMessage = "Thank you for your message! We'll get back to you as soon as possible."
+                SuccessMessage = "Thank you for your message! We'll get back to you as soon as possible. A confirmation has been sent to your email."
             });
         }
         catch (Exception ex)
