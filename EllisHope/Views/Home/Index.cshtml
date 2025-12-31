@@ -36,16 +36,16 @@
                     }
                     @if (testimonials != null && testimonials.Any())
                     {
-                        <div class="testimonial-carousel slick-slider">
+                        <div class="testimonial-carousel slick-slider" style="min-height: 220px;">
                             @foreach (var testimonial in testimonials)
                             {
                                 <div class="feedback-wrap-2">
                                     @if (!string.IsNullOrEmpty(testimonial.AuthorRole))
                                     {
-                                        <h5 class="slogan-author">@testimonial.AuthorRole</h5>
+                                        <h5 class="slogan-author" style="font-size: 14px;">@testimonial.AuthorRole</h5>
                                     }
-                                    <p class="feedback-text">"@testimonial.Quote"</p>
-                                    <h4 class="name">- @testimonial.AuthorName</h4>
+                                    <p class="feedback-text" style="font-size: 18px; line-height: 1.6;">"@testimonial.Quote"</p>
+                                    <h4 class="name" style="font-size: 16px;">- @testimonial.AuthorName</h4>
                                 </div>
                             }
                         </div>
@@ -54,9 +54,9 @@
                     {
                         <!-- Fallback to page content system if no testimonials -->
                         <div class="feedback-wrap-2">
-                            <h5 class="slogan-author">@Content.Text("Home", "TestimonialLabel")</h5>
-                            <p class="feedback-text">"@Content.Text("Home", "TestimonialQuote")"</p>
-                            <h4 class="name">@Content.Text("Home", "TestimonialAuthor")</h4>
+                            <h5 class="slogan-author" style="font-size: 14px;">@Content.Text("Home", "TestimonialLabel")</h5>
+                            <p class="feedback-text" style="font-size: 18px; line-height: 1.6;">"@Content.Text("Home", "TestimonialQuote")"</p>
+                            <h4 class="name" style="font-size: 16px;">@Content.Text("Home", "TestimonialAuthor")</h4>
                         </div>
                     }
                 </div>
@@ -219,7 +219,7 @@
                 autoplaySpeed: 5000,
                 cssEase: 'linear',
                 pauseOnHover: true,
-                adaptiveHeight: true
+                adaptiveHeight: false
             });
         });
     </script>
