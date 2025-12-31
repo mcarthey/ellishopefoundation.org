@@ -1,3 +1,4 @@
+using EllisHope.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -6,6 +7,13 @@ namespace EllisHope.Controllers;
 [ApiExplorerSettings(IgnoreApi = true)]
 public class HomeController : Controller
 {
+    private readonly ITestimonialService _testimonialService;
+
+    public HomeController(ITestimonialService testimonialService)
+    {
+        _testimonialService = testimonialService;
+    }
+
     // GET: Home
     /// <summary>
     /// Displays the primary landing page of the Ellis Hope Foundation website (default layout)
@@ -31,8 +39,10 @@ public class HomeController : Controller
         Tags = new[] { "Home" }
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
+        var testimonials = await _testimonialService.GetFeaturedTestimonialsAsync(5);
+        ViewBag.Testimonials = testimonials;
         return View();
     }
 

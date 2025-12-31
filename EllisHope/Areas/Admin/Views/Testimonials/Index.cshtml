@@ -1,0 +1,199 @@
+@model EllisHope.Areas.Admin.Models.TestimonialListViewModel
+@{
+    ViewData["Title"] = "Testimonials";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Testimonials</h2>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Add Testimonial
+    </a>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["WarningMessage"] != null)
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        @TempData["WarningMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (Model.PendingApprovalCount > 0)
+{
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> @Model.PendingApprovalCount testimonial(s) pending approval.
+    </div>
+}
+
+<!-- Testimonials Table -->
+<div class="card">
+    <div class="card-body">
+        @if (Model.Testimonials.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">Order</th>
+                            <th>Testimonial</th>
+                            <th>Author</th>
+                            <th>Status</th>
+                            <th style="width: 200px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var testimonial in Model.Testimonials)
+                        {
+                            <tr class="@(testimonial.RequiresApproval ? "table-warning" : "") @(testimonial.IsFeatured ? "table-info" : "")">
+                                <td>
+                                    <span class="badge bg-secondary">@testimonial.DisplayOrder</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-start">
+                                        @if (testimonial.AuthorPhoto != null)
+                                        {
+                                            <img src="@testimonial.AuthorPhoto.FilePath" alt="@testimonial.AuthorName"
+                                                 style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px; border-radius: 50%;">
+                                        }
+                                        <div>
+                                            <p class="mb-1 text-truncate" style="max-width: 400px;" title="@testimonial.Quote">
+                                                "@testimonial.Quote"
+                                            </p>
+                                            @if (testimonial.IsFeatured)
+                                            {
+                                                <span class="badge bg-info"><i class="bi bi-star-fill"></i> Featured</span>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <strong>@testimonial.AuthorName</strong>
+                                    @if (!string.IsNullOrEmpty(testimonial.AuthorRole))
+                                    {
+                                        <br><small class="text-muted">@testimonial.AuthorRole</small>
+                                    }
+                                </td>
+                                <td>
+                                    @if (testimonial.RequiresApproval)
+                                    {
+                                        <span class="badge bg-warning text-dark">Pending Approval</span>
+                                    }
+                                    else if (testimonial.IsPublished)
+                                    {
+                                        <span class="badge bg-success">Published</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Draft</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="Edit" asp-route-id="@testimonial.Id" class="btn btn-sm btn-outline-primary" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+
+                                        @if (testimonial.RequiresApproval && User.IsInRole("Admin"))
+                                        {
+                                            <form asp-action="Approve" asp-route-id="@testimonial.Id" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-sm btn-outline-success" title="Approve">
+                                                    <i class="bi bi-check-lg"></i>
+                                                </button>
+                                            </form>
+                                        }
+
+                                        @if (!testimonial.RequiresApproval)
+                                        {
+                                            @if (testimonial.IsPublished)
+                                            {
+                                                <form asp-action="Unpublish" asp-route-id="@testimonial.Id" method="post" class="d-inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-sm btn-outline-secondary" title="Unpublish">
+                                                        <i class="bi bi-eye-slash"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <form asp-action="Publish" asp-route-id="@testimonial.Id" method="post" class="d-inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-sm btn-outline-success" title="Publish">
+                                                        <i class="bi bi-eye"></i>
+                                                    </button>
+                                                </form>
+                                            }
+
+                                            @if (testimonial.IsFeatured)
+                                            {
+                                                <form asp-action="Feature" asp-route-id="@testimonial.Id" asp-route-featured="false" method="post" class="d-inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-sm btn-outline-warning" title="Remove from Home Page">
+                                                        <i class="bi bi-star-fill"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <form asp-action="Feature" asp-route-id="@testimonial.Id" asp-route-featured="true" method="post" class="d-inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-sm btn-outline-info" title="Feature on Home Page">
+                                                        <i class="bi bi-star"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                        }
+
+                                        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal@(testimonial.Id)" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+
+                                    <!-- Delete Confirmation Modal -->
+                                    <div class="modal fade" id="deleteModal@(testimonial.Id)" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Delete Testimonial</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete the testimonial from "<strong>@testimonial.AuthorName</strong>"?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <form asp-action="Delete" asp-route-id="@testimonial.Id" method="post" class="d-inline">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-chat-quote" style="font-size: 4rem; color: #ccc;"></i>
+                <p class="text-muted mt-3">No testimonials found.</p>
+                <a asp-action="Create" class="btn btn-primary mt-2">
+                    <i class="bi bi-plus-circle"></i> Add Your First Testimonial
+                </a>
+            </div>
+        }
+    </div>
+</div>

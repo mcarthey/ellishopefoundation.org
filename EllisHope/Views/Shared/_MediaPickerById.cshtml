@@ -1,0 +1,248 @@
+@model int?
+@{
+    var fieldName = ViewData["FieldName"] as string ?? "MediaId";
+    var fieldLabel = ViewData["FieldLabel"] as string ?? "Image";
+    var currentValue = Model;
+    var category = ViewData["Category"] as string ?? "";
+}
+
+<div class="media-picker-by-id-container">
+    <!-- Hidden input to store selected media ID -->
+    <input type="hidden" name="@fieldName" id="@fieldName" value="@currentValue" />
+
+    <!-- Current Image Display -->
+    <div class="current-image-display-id mb-3" id="currentImageId_@fieldName" style="display:none;">
+        <img src="" alt="Current Image" class="img-fluid" style="max-height: 150px; border: 1px solid #dee2e6; border-radius: 4px;" />
+        <div class="mt-2">
+            <small class="text-muted">Selected Image</small>
+            <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="clearMediaSelectionById('@fieldName')">
+                <i class="bi bi-x"></i> Remove
+            </button>
+        </div>
+    </div>
+
+    <!-- Action Button -->
+    <div class="mb-3">
+        <button type="button" class="btn btn-outline-primary w-100" onclick="openMediaLibraryModalById('@fieldName', '@category')">
+            <i class="bi bi-images"></i> Browse Media Library
+        </button>
+    </div>
+</div>
+
+<!-- Media Library Modal -->
+<div class="modal fade" id="mediaLibraryModalId_@fieldName" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Select Image from Media Library</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Search and Filter -->
+                <div class="row mb-3">
+                    <div class="col-md-9">
+                        <input type="text" class="form-control" id="mediaSearchId_@fieldName" placeholder="Search images...">
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" id="mediaCategoryId_@fieldName" onchange="loadMediaLibraryById('@fieldName')">
+                            <option value="">All Categories</option>
+                            <option value="0">Uncategorized</option>
+                            <option value="1">Hero</option>
+                            <option value="2">Page</option>
+                            <option value="3">Blog</option>
+                            <option value="4">Event</option>
+                            <option value="5">Cause</option>
+                            <option value="6">Team</option>
+                            <option value="7">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Media Grid -->
+                <div id="mediaGridId_@fieldName" class="row g-3" style="max-height: 400px; overflow-y: auto;">
+                    <div class="col-12 text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading media library...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        window.openMediaLibraryModalById = window.openMediaLibraryModalById || function(fieldName, category) {
+            const modal = new bootstrap.Modal(document.getElementById('mediaLibraryModalId_' + fieldName));
+            modal.show();
+
+            if (category) {
+                const categorySelect = document.getElementById('mediaCategoryId_' + fieldName);
+                if (categorySelect) {
+                    categorySelect.value = category;
+                }
+            }
+
+            loadMediaLibraryById(fieldName);
+        };
+
+        window.loadMediaLibraryById = window.loadMediaLibraryById || function(fieldName) {
+            const searchInput = document.getElementById('mediaSearchId_' + fieldName);
+            const categorySelect = document.getElementById('mediaCategoryId_' + fieldName);
+            const gridContainer = document.getElementById('mediaGridId_' + fieldName);
+
+            if (!gridContainer) return;
+
+            const searchTerm = searchInput ? searchInput.value : '';
+            const category = categorySelect ? categorySelect.value : '';
+
+            let url = '/Admin/Media/GetMediaJson';
+            if (category) {
+                url += '?category=' + category;
+            }
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    let filteredData = data;
+                    if (searchTerm) {
+                        const searchLower = searchTerm.toLowerCase();
+                        filteredData = data.filter(m =>
+                            (m.fileName && m.fileName.toLowerCase().includes(searchLower)) ||
+                            (m.altText && m.altText.toLowerCase().includes(searchLower)) ||
+                            (m.title && m.title.toLowerCase().includes(searchLower))
+                        );
+                    }
+
+                    if (filteredData.length === 0) {
+                        gridContainer.innerHTML = `
+                            <div class="col-12 text-center py-5">
+                                <i class="bi bi-images" style="font-size: 3rem; color: #ccc;"></i>
+                                <p class="mt-3 text-muted">No images found</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    let html = '';
+                    filteredData.forEach(media => {
+                        const thumbPath = media.thumbnailPath || media.filePath;
+                        html += `
+                            <div class="col-lg-2 col-md-3 col-sm-4 col-6">
+                                <div class="card h-100 media-item-id" style="cursor: pointer;"
+                                     onclick="selectMediaById('${fieldName}', ${media.id}, '${thumbPath}')">
+                                    <div class="position-relative" style="padding-top: 100%; overflow: hidden;">
+                                        <img src="${thumbPath}"
+                                             alt="${media.altText || ''}"
+                                             class="position-absolute top-0 start-0 w-100 h-100"
+                                             style="object-fit: cover;">
+                                    </div>
+                                    <div class="card-body p-2">
+                                        <small class="text-truncate d-block" title="${media.fileName}">${media.fileName}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    gridContainer.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error loading media:', error);
+                    gridContainer.innerHTML = `
+                        <div class="col-12 text-center py-5">
+                            <div class="alert alert-danger">
+                                <i class="bi bi-exclamation-triangle"></i>
+                                Error loading media library.
+                            </div>
+                        </div>
+                    `;
+                });
+        };
+
+        window.selectMediaById = window.selectMediaById || function(fieldName, mediaId, imagePath) {
+            const hiddenInput = document.getElementById(fieldName);
+            const currentImageDiv = document.getElementById('currentImageId_' + fieldName);
+
+            if (hiddenInput) {
+                hiddenInput.value = mediaId;
+            }
+
+            if (currentImageDiv) {
+                const img = currentImageDiv.querySelector('img');
+                if (img) {
+                    img.src = imagePath;
+                }
+                currentImageDiv.style.display = 'block';
+            }
+
+            const modalElement = document.getElementById('mediaLibraryModalId_' + fieldName);
+            if (modalElement) {
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                if (modal) {
+                    modal.hide();
+                }
+            }
+        };
+
+        window.clearMediaSelectionById = window.clearMediaSelectionById || function(fieldName) {
+            const hiddenInput = document.getElementById(fieldName);
+            const currentImageDiv = document.getElementById('currentImageId_' + fieldName);
+
+            if (hiddenInput) {
+                hiddenInput.value = '';
+            }
+
+            if (currentImageDiv) {
+                currentImageDiv.style.display = 'none';
+            }
+        };
+
+        // Initialize: Load current image if ID is set
+        (function initMediaPickerById() {
+            const fieldName = '@fieldName';
+            const currentId = @(currentValue?.ToString() ?? "null");
+
+            if (currentId) {
+                fetch('/Admin/Media/GetMediaJson')
+                    .then(response => response.json())
+                    .then(data => {
+                        const media = data.find(m => m.id === currentId);
+                        if (media) {
+                            const currentImageDiv = document.getElementById('currentImageId_' + fieldName);
+                            if (currentImageDiv) {
+                                const img = currentImageDiv.querySelector('img');
+                                if (img) {
+                                    img.src = media.thumbnailPath || media.filePath;
+                                }
+                                currentImageDiv.style.display = 'block';
+                            }
+                        }
+                    })
+                    .catch(console.error);
+            }
+        })();
+
+        // Add hover styles
+        if (!document.getElementById('mediaPickerById_styles')) {
+            const style = document.createElement('style');
+            style.id = 'mediaPickerById_styles';
+            style.textContent = `
+                .media-item-id:hover {
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+                    transform: translateY(-2px);
+                    transition: all 0.2s;
+                }
+                .media-item-id {
+                    transition: all 0.2s;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    })();
+</script>

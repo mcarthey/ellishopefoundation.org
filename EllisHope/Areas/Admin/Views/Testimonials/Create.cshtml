@@ -1,0 +1,107 @@
+@model EllisHope.Areas.Admin.Models.TestimonialCreateViewModel
+@{
+    ViewData["Title"] = "Add Testimonial";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Add Testimonial</h2>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Back to List
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <!-- Quote -->
+                    <div class="mb-3">
+                        <label asp-for="Quote" class="form-label"></label>
+                        <textarea asp-for="Quote" class="form-control" rows="5" maxlength="1000" placeholder="Enter the testimonial quote..."></textarea>
+                        <span asp-validation-for="Quote" class="text-danger"></span>
+                        <small class="form-text text-muted">Max 1000 characters</small>
+                    </div>
+
+                    <!-- Author Name -->
+                    <div class="mb-3">
+                        <label asp-for="AuthorName" class="form-label"></label>
+                        <input asp-for="AuthorName" class="form-control" placeholder="e.g., John D." />
+                        <span asp-validation-for="AuthorName" class="text-danger"></span>
+                        <small class="form-text text-muted">Use first name and last initial for privacy</small>
+                    </div>
+
+                    <!-- Author Role -->
+                    <div class="mb-3">
+                        <label asp-for="AuthorRole" class="form-label"></label>
+                        <input asp-for="AuthorRole" class="form-control" placeholder="e.g., Foundation Client, Community Member" />
+                        <span asp-validation-for="AuthorRole" class="text-danger"></span>
+                        <small class="form-text text-muted">Optional role or description</small>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <!-- Author Photo -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <strong>Author Photo (Optional)</strong>
+                        </div>
+                        <div class="card-body">
+                            @{
+                                ViewData["FieldName"] = "AuthorPhotoId";
+                                ViewData["FieldLabel"] = "Author Photo";
+                                ViewData["AllowUpload"] = true;
+                                ViewData["Category"] = "7"; // MediaCategory.Other
+                                ViewData["UseMediaId"] = true;
+                            }
+                            <partial name="_MediaPickerById" model="Model.AuthorPhotoId" />
+                        </div>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <strong>Status</strong>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input asp-for="IsPublished" class="form-check-input" type="checkbox" id="isPublished">
+                                    <label asp-for="IsPublished" class="form-check-label" for="isPublished"></label>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input asp-for="IsFeatured" class="form-check-input" type="checkbox" id="isFeatured">
+                                    <label asp-for="IsFeatured" class="form-check-label" for="isFeatured"></label>
+                                </div>
+                                <small class="form-text text-muted">Featured testimonials appear on the home page carousel</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="DisplayOrder" class="form-label"></label>
+                                <input asp-for="DisplayOrder" class="form-control" type="number" min="0" />
+                                <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+                                <small class="form-text text-muted">Lower numbers appear first</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Save Testimonial
+                </button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

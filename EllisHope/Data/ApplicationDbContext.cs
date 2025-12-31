@@ -23,6 +23,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<BlogPostCategory> BlogPostCategories { get; set; }
     public DbSet<Event> Events { get; set; }
     public DbSet<Cause> Causes { get; set; }
+    public DbSet<Testimonial> Testimonials { get; set; }
 
     // User Responsibility tables
     public DbSet<UserResponsibility> UserResponsibilities { get; set; }
@@ -394,6 +395,42 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
         builder.Entity<Newsletter>()
             .HasIndex(n => n.CreatedAt);
+
+        #endregion
+
+        #region Testimonial Configuration
+
+        // Testimonial relationships (Restrict to avoid cascade issues)
+        builder.Entity<Testimonial>()
+            .HasOne(t => t.AuthorPhoto)
+            .WithMany()
+            .HasForeignKey(t => t.AuthorPhotoId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.Entity<Testimonial>()
+            .HasOne(t => t.CreatedBy)
+            .WithMany()
+            .HasForeignKey(t => t.CreatedById)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Testimonial>()
+            .HasOne(t => t.ApprovedBy)
+            .WithMany()
+            .HasForeignKey(t => t.ApprovedById)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Indexes for performance
+        builder.Entity<Testimonial>()
+            .HasIndex(t => t.IsPublished);
+
+        builder.Entity<Testimonial>()
+            .HasIndex(t => t.IsFeatured);
+
+        builder.Entity<Testimonial>()
+            .HasIndex(t => t.DisplayOrder);
+
+        builder.Entity<Testimonial>()
+            .HasIndex(t => t.RequiresApproval);
 
         #endregion
     }

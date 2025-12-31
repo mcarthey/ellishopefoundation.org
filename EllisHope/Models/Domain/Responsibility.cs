@@ -34,5 +34,10 @@ public enum Responsibility
     /// <summary>
     /// Has full access to the media library
     /// </summary>
-    MediaManager = 6
+    MediaManager = 6,
+
+    /// <summary>
+    /// Can create, edit, and publish testimonials
+    /// </summary>
+    TestimonialManager = 7
 }

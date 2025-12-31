@@ -19,6 +19,7 @@
     bool canManageNewsletters = false;
     bool canManageMedia = false;
     bool canReviewSponsors = false;
+    bool canManageTestimonials = false;
     bool isAdmin = User.IsInRole("Admin");
 
     if (User.Identity?.IsAuthenticated == true)
@@ -36,6 +37,7 @@
             canManageNewsletters = true;
             canManageMedia = true;
             canReviewSponsors = true;
+            canManageTestimonials = true;
         }
         else if (!string.IsNullOrEmpty(userId))
         {
@@ -47,6 +49,7 @@
             canManageMedia = await ResponsibilityService.HasAnyResponsibilityAsync(userId,
                 Responsibility.MediaManager, Responsibility.Blogger, Responsibility.EventPlanner, Responsibility.CauseManager);
             canReviewSponsors = await ResponsibilityService.HasResponsibilityAsync(userId, Responsibility.SponsorReviewer);
+            canManageTestimonials = await ResponsibilityService.HasResponsibilityAsync(userId, Responsibility.TestimonialManager);
         }
 
         // Get notification counts for admin users or those with relevant responsibilities
@@ -217,6 +220,14 @@
                                 <li class="nav-item">
                                     <a class="nav-link" asp-area="Admin" asp-controller="Causes" asp-action="Index">
                                         <i class="bi bi-heart"></i> Causes
+                                    </a>
+                                </li>
+                            }
+                            @if (canManageTestimonials)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="Admin" asp-controller="Testimonials" asp-action="Index">
+                                        <i class="bi bi-chat-quote"></i> Testimonials
                                     </a>
                                 </li>
                             }

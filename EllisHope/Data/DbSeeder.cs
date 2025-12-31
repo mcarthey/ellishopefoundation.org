@@ -193,5 +193,53 @@ public static class DbSeeder
             await context.SaveChangesAsync();
             Console.WriteLine("Default image sizes created.");
         }
+
+        // Seed default testimonials
+        if (!context.Testimonials.Any())
+        {
+            var testimonials = new[]
+            {
+                new Testimonial
+                {
+                    Quote = "I am so very grateful to the Ellis Hope Foundation for approving me to have a gym membership. I was also given a personal trainer to assist me with my workouts. Kevin also kept in touch with me on a regular basis to check & see how I was progressing. He was very helpful & encouraging.",
+                    AuthorName = "Sheri V.",
+                    IsPublished = true,
+                    IsFeatured = true,
+                    DisplayOrder = 1,
+                    CreatedDate = DateTime.UtcNow
+                },
+                new Testimonial
+                {
+                    Quote = "Personal training saved my life. I lost 285 pounds in one year. Thank you!",
+                    AuthorName = "Bill P.",
+                    IsPublished = true,
+                    IsFeatured = true,
+                    DisplayOrder = 2,
+                    CreatedDate = DateTime.UtcNow
+                },
+                new Testimonial
+                {
+                    Quote = "Hurting financially and supporting my wife through her health issues causing us not to have the money in our budget for a gym membership. With the support of the Ellis foundation funding me a gym membership and even a personal trainer, allowing me to get my health back on track. Since I started with the Ellis foundation I am down over 30 pounds so far. Thank you so much for the support.",
+                    AuthorName = "Steve K.",
+                    IsPublished = true,
+                    IsFeatured = true,
+                    DisplayOrder = 3,
+                    CreatedDate = DateTime.UtcNow
+                },
+                new Testimonial
+                {
+                    Quote = "We joined to improve our overall health. Working with a personal trainer to increase our physical strength and stamina and in doing so improve the quality of our lives as we get older. Two years into our journey I can without reservation say that we have achieved and exceeded our own goals and expectations.",
+                    AuthorName = "Randy R.",
+                    IsPublished = true,
+                    IsFeatured = true,
+                    DisplayOrder = 4,
+                    CreatedDate = DateTime.UtcNow
+                }
+            };
+
+            context.Testimonials.AddRange(testimonials);
+            await context.SaveChangesAsync();
+            Console.WriteLine("Default testimonials created.");
+        }
     }
 }

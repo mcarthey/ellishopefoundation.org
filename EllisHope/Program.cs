@@ -105,6 +105,10 @@ builder.Services.AddAuthorization(options =>
             EllisHope.Models.Domain.Responsibility.Blogger,
             EllisHope.Models.Domain.Responsibility.EventPlanner,
             EllisHope.Models.Domain.Responsibility.CauseManager)));
+
+    options.AddPolicy("CanManageTestimonials", policy =>
+        policy.Requirements.Add(new EllisHope.Authorization.ResponsibilityRequirement(
+            EllisHope.Models.Domain.Responsibility.TestimonialManager)));
 });
 
 // Register the responsibility authorization handler
@@ -138,6 +142,7 @@ builder.Services.AddScoped<IEmailTemplateService, EmailTemplateService>();
 builder.Services.AddScoped<IAccountEmailService, AccountEmailService>();
 builder.Services.AddScoped<IDatabaseLoggerService, DatabaseLoggerService>();
 builder.Services.AddScoped<INewsletterService, NewsletterService>();
+builder.Services.AddScoped<ITestimonialService, TestimonialService>();
 
 // Configure Email Settings
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));

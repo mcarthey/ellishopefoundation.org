@@ -858,7 +858,8 @@ public class UsersController : Controller
             [Responsibility.CauseManager] = ("Cause Manager", "Create and edit causes and fundraising campaigns"),
             [Responsibility.NewsletterEditor] = ("Newsletter Editor", "Create and edit newsletters (sending requires Admin)"),
             [Responsibility.SponsorReviewer] = ("Sponsor Reviewer", "Review and approve sponsor quotes"),
-            [Responsibility.MediaManager] = ("Media Manager", "Full access to the media library")
+            [Responsibility.MediaManager] = ("Media Manager", "Full access to the media library"),
+            [Responsibility.TestimonialManager] = ("Testimonial Manager", "Create and edit testimonials")
         };
     }
 
