@@ -643,6 +643,27 @@ public class ApplicationsController : Controller
         }
     }
 
+    // GET: Admin/Applications/DownloadBlankForm
+    /// <summary>
+    /// Downloads a blank application form PDF for printing
+    /// </summary>
+    [HttpGet]
+    [SwaggerOperation(Summary = "Download blank application form as PDF for printing.")]
+    public async Task<IActionResult> DownloadBlankForm()
+    {
+        try
+        {
+            var pdfBytes = await _pdfService.GenerateBlankApplicationFormPdfAsync();
+            return File(pdfBytes, "application/pdf", "EHF_Application_Form.pdf");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error generating blank application form PDF");
+            TempData["ErrorMessage"] = "Error generating blank form. Please try again.";
+            return RedirectToAction(nameof(Index));
+        }
+    }
+
     #endregion
 
     #region Helper Actions

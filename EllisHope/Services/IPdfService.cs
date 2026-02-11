@@ -21,4 +21,9 @@ public interface IPdfService
     /// Generate statistics report PDF
     /// </summary>
     Task<byte[]> GenerateStatisticsReportPdfAsync(ApplicationStatistics statistics);
+
+    /// <summary>
+    /// Generate a blank application form PDF for printing
+    /// </summary>
+    Task<byte[]> GenerateBlankApplicationFormPdfAsync();
 }

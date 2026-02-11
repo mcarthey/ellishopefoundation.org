@@ -11,11 +11,13 @@ namespace EllisHope.Services;
 public class PdfService : IPdfService
 {
     private readonly ILogger<PdfService> _logger;
+    private readonly IConfiguration _configuration;
 
-    public PdfService(ILogger<PdfService> logger)
+    public PdfService(ILogger<PdfService> logger, IConfiguration configuration)
     {
         _logger = logger;
-        
+        _configuration = configuration;
+
         // Configure QuestPDF license (Community license is free for non-commercial use)
         QuestPDF.Settings.License = LicenseType.Community;
     }
@@ -398,6 +400,147 @@ public class PdfService : IPdfService
         });
     }
 
+    public async Task<byte[]> GenerateBlankApplicationFormPdfAsync()
+    {
+        return await Task.Run(() =>
+        {
+            var foundationName = _configuration["Foundation:Name"] ?? "Ellis Hope Foundation";
+            var tagline = _configuration["Foundation:Tagline"] ?? "";
+            var email = _configuration["Foundation:Email"] ?? "";
+            var phone = _configuration["Foundation:Phone"] ?? "";
+            var address = _configuration["Foundation:Address"] ?? "";
+            var city = _configuration["Foundation:City"] ?? "";
+            var state = _configuration["Foundation:State"] ?? "";
+            var zipCode = _configuration["Foundation:ZipCode"] ?? "";
+            var fullAddress = $"{address}, {city}, {state} {zipCode}";
+
+            var document = Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.Letter);
+                    page.Margin(50);
+                    page.PageColor(Colors.White);
+                    page.DefaultTextStyle(x => x.FontSize(11).FontFamily("Arial"));
+
+                    page.Header()
+                        .Column(header =>
+                        {
+                            header.Item().Text(foundationName)
+                                .SemiBold().FontSize(20).FontColor(Colors.Blue.Darken2);
+                            if (!string.IsNullOrEmpty(tagline))
+                            {
+                                header.Item().Text(tagline)
+                                    .Italic().FontSize(10).FontColor(Colors.Grey.Darken2);
+                            }
+                            header.Item().PaddingTop(3).Text($"{fullAddress} | {phone} | {email}")
+                                .FontSize(9).FontColor(Colors.Grey.Darken1);
+                            header.Item().PaddingTop(5).LineHorizontal(2).LineColor(Colors.Blue.Darken2);
+                        });
+
+                    page.Content()
+                        .PaddingVertical(10)
+                        .Column(column =>
+                        {
+                            column.Spacing(8);
+
+                            column.Item().PaddingTop(5).Text("Client Application Form")
+                                .FontSize(16).SemiBold();
+                            column.Item().Text("Please complete all sections. Use additional paper if needed.")
+                                .FontSize(9).Italic().FontColor(Colors.Grey.Darken2);
+                            column.Item().PaddingBottom(5).LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
+
+                            // Personal Information
+                            AddSection(column, "Personal Information");
+                            AddBlankField(column, "First Name");
+                            AddBlankField(column, "Last Name");
+                            AddBlankField(column, "Email");
+                            AddBlankField(column, "Phone");
+                            AddBlankField(column, "Address");
+                            AddBlankField(column, "City / State / Zip");
+                            AddBlankField(column, "Occupation");
+                            AddBlankField(column, "Date of Birth");
+
+                            // Emergency Contact
+                            AddSection(column, "Emergency Contact");
+                            AddBlankField(column, "Contact Name");
+                            AddBlankField(column, "Contact Phone");
+
+                            // Program Interest & Funding
+                            AddSection(column, "Program Interest & Funding");
+                            column.Item().Text("Types of Support Requested (check all that apply):")
+                                .FontSize(10).SemiBold();
+                            AddCheckbox(column, "Gym Membership", false);
+                            AddCheckbox(column, "Personal Training", false);
+                            AddCheckbox(column, "Nutritionist Consultation", false);
+                            AddCheckbox(column, "Fitness Apparel", false);
+                            AddCheckbox(column, "Fitness Equipment", false);
+                            AddCheckbox(column, "Nutrition Supplements", false);
+                            AddCheckbox(column, "Group Classes", false);
+                            AddCheckbox(column, "Online Programs", false);
+                            AddCheckbox(column, "Other", false);
+                            AddBlankField(column, "Estimated Monthly Cost");
+                            AddBlankField(column, "Program Duration (months)");
+                            AddBlankTextArea(column, "Funding Details", 3);
+
+                            // Motivation & Commitment
+                            AddSection(column, "Motivation & Commitment");
+                            AddBlankTextArea(column, "Personal Statement", 6);
+                            AddBlankTextArea(column, "Expected Benefits", 4);
+                            AddBlankTextArea(column, "Commitment Statement", 4);
+                            AddBlankTextArea(column, "Concerns / Obstacles (optional)", 3);
+
+                            // Health & Fitness
+                            AddSection(column, "Health & Fitness");
+                            column.Item().Text("Current Fitness Level (circle one):  Beginner  /  Intermediate  /  Advanced")
+                                .FontSize(10);
+                            AddBlankField(column, "Last Physical Exam Date");
+                            AddBlankTextArea(column, "Medical Conditions", 3);
+                            AddBlankTextArea(column, "Current Medications", 3);
+                            AddBlankTextArea(column, "Fitness Goals", 3);
+
+                            // Program Requirements
+                            AddSection(column, "Program Requirements Agreement");
+                            column.Item().Text("By checking the boxes below, I agree to the following:")
+                                .FontSize(10).Italic();
+                            AddCheckbox(column, "I agree to work with a nutritionist", false);
+                            AddCheckbox(column, "I agree to work with a personal trainer", false);
+                            AddCheckbox(column, "I agree to weekly check-ins", false);
+                            AddCheckbox(column, "I agree to monthly progress reports", false);
+                            AddCheckbox(column, "I understand this is a 12-month commitment", false);
+
+                            // Signature
+                            AddSection(column, "Signature & Consent");
+                            column.Item().PaddingTop(25).LineHorizontal(1).LineColor(Colors.Black);
+                            column.Item().Text("Signature").FontSize(9).FontColor(Colors.Grey.Darken2);
+                            column.Item().PaddingTop(20).LineHorizontal(1).LineColor(Colors.Black);
+                            column.Item().Text("Printed Name").FontSize(9).FontColor(Colors.Grey.Darken2);
+                            column.Item().PaddingTop(20).LineHorizontal(1).LineColor(Colors.Black);
+                            column.Item().Text("Date").FontSize(9).FontColor(Colors.Grey.Darken2);
+                        });
+
+                    page.Footer()
+                        .Column(footer =>
+                        {
+                            footer.Item().AlignCenter().Text($"{foundationName} | www.ellishope.org")
+                                .FontSize(9).FontColor(Colors.Grey.Darken1);
+                            footer.Item().AlignCenter()
+                                .DefaultTextStyle(x => x.FontSize(8).FontColor(Colors.Grey.Lighten1))
+                                .Text(x =>
+                                {
+                                    x.Span("Page ");
+                                    x.CurrentPageNumber();
+                                    x.Span(" of ");
+                                    x.TotalPages();
+                                });
+                        });
+                });
+            });
+
+            return document.GeneratePdf();
+        });
+    }
+
     #region Helper Methods
 
     private void AddSection(ColumnDescriptor column, string title)
@@ -431,6 +574,27 @@ public class PdfService : IPdfService
         {
             row.AutoItem().Text(isChecked ? "[X]" : "[ ]").FontSize(11);
             row.AutoItem().PaddingLeft(5).Text(label);
+        });
+    }
+
+    private void AddBlankField(ColumnDescriptor column, string label)
+    {
+        column.Item().PaddingTop(5).Row(row =>
+        {
+            row.ConstantItem(150).Text($"{label}:").SemiBold();
+            row.RelativeItem().PaddingTop(12).LineHorizontal(0.5f).LineColor(Colors.Grey.Darken1);
+        });
+    }
+
+    private void AddBlankTextArea(ColumnDescriptor column, string label, int lines)
+    {
+        column.Item().PaddingTop(5).Column(col =>
+        {
+            col.Item().Text($"{label}:").SemiBold();
+            for (int i = 0; i < lines; i++)
+            {
+                col.Item().PaddingTop(18).LineHorizontal(0.5f).LineColor(Colors.Grey.Lighten1);
+            }
         });
     }
 

@@ -1,5 +1,6 @@
 using EllisHope.Models.Domain;
 using EllisHope.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
@@ -13,12 +14,26 @@ namespace EllisHope.Tests.Unit;
 public class PdfServiceTests
 {
     private readonly Mock<ILogger<PdfService>> _loggerMock;
+    private readonly IConfiguration _configuration;
     private readonly PdfService _service;
 
     public PdfServiceTests()
     {
         _loggerMock = new Mock<ILogger<PdfService>>();
-        _service = new PdfService(_loggerMock.Object);
+        _configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Foundation:Name"] = "Ellis Hope Foundation",
+                ["Foundation:Tagline"] = "Empowering Health, Fitness, and Hope",
+                ["Foundation:Email"] = "admin@ellishopefoundation.org",
+                ["Foundation:Phone"] = "+1 (262) 567-0362",
+                ["Foundation:Address"] = "N48W36105 E Wisconsin Ave",
+                ["Foundation:City"] = "Oconomowoc",
+                ["Foundation:State"] = "WI",
+                ["Foundation:ZipCode"] = "53066"
+            })
+            .Build();
+        _service = new PdfService(_loggerMock.Object, _configuration);
     }
 
     #region Application PDF Tests
@@ -242,6 +257,32 @@ public class PdfServiceTests
         // Assert
         Assert.NotNull(pdfBytes);
         Assert.NotEmpty(pdfBytes);
+    }
+
+    #endregion
+
+    #region Blank Application Form PDF Tests
+
+    [Fact]
+    public async Task GenerateBlankApplicationFormPdfAsync_GeneratesValidPdf()
+    {
+        // Act
+        var pdfBytes = await _service.GenerateBlankApplicationFormPdfAsync();
+
+        // Assert
+        Assert.NotNull(pdfBytes);
+        Assert.NotEmpty(pdfBytes);
+        Assert.True(IsPdfFormat(pdfBytes));
+    }
+
+    [Fact]
+    public async Task GenerateBlankApplicationFormPdfAsync_GeneratesSubstantialPdf()
+    {
+        // Act
+        var pdfBytes = await _service.GenerateBlankApplicationFormPdfAsync();
+
+        // Assert
+        Assert.True(pdfBytes.Length > 1000, "Blank form PDF should be substantial in size");
     }
 
     #endregion
