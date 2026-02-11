@@ -640,7 +640,7 @@ public class PdfService : IPdfService
     {
         column.Item().PaddingTop(5).Row(row =>
         {
-            row.ConstantItem(150).Text($"{label}:").SemiBold();
+            row.ConstantItem(120).Text($"{label}:").SemiBold();
             row.RelativeItem().PaddingTop(12).LineHorizontal(0.5f).LineColor(Colors.Grey.Darken1);
         });
     }
