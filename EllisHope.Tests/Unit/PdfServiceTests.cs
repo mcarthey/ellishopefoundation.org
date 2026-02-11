@@ -1,5 +1,6 @@
 using EllisHope.Models.Domain;
 using EllisHope.Services;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -14,12 +15,15 @@ namespace EllisHope.Tests.Unit;
 public class PdfServiceTests
 {
     private readonly Mock<ILogger<PdfService>> _loggerMock;
+    private readonly Mock<IWebHostEnvironment> _environmentMock;
     private readonly IConfiguration _configuration;
     private readonly PdfService _service;
 
     public PdfServiceTests()
     {
         _loggerMock = new Mock<ILogger<PdfService>>();
+        _environmentMock = new Mock<IWebHostEnvironment>();
+        _environmentMock.Setup(e => e.WebRootPath).Returns(Path.GetTempPath());
         _configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
@@ -33,7 +37,7 @@ public class PdfServiceTests
                 ["Foundation:ZipCode"] = "53066"
             })
             .Build();
-        _service = new PdfService(_loggerMock.Object, _configuration);
+        _service = new PdfService(_loggerMock.Object, _configuration, _environmentMock.Object);
     }
 
     #region Application PDF Tests
