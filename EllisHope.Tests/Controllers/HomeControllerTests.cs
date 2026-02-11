@@ -1,19 +1,33 @@
 using EllisHope.Controllers;
+using EllisHope.Models.Domain;
+using EllisHope.Services;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 using Xunit;
 
 namespace EllisHope.Tests.Controllers;
 
 public class HomeControllerTests
 {
+    private readonly Mock<ITestimonialService> _testimonialServiceMock = new();
+
+    public HomeControllerTests()
+    {
+        _testimonialServiceMock
+            .Setup(s => s.GetFeaturedTestimonialsAsync(It.IsAny<int>()))
+            .ReturnsAsync(Enumerable.Empty<Testimonial>());
+    }
+
+    private HomeController CreateController() => new(_testimonialServiceMock.Object);
+
     [Fact]
-    public void Index_ReturnsViewResult()
+    public async Task Index_ReturnsViewResult()
     {
         // Arrange
-        var controller = new HomeController();
+        var controller = CreateController();
 
         // Act
-        var result = controller.Index();
+        var result = await controller.Index();
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -24,7 +38,7 @@ public class HomeControllerTests
     public void Index2_ReturnsViewResult()
     {
         // Arrange
-        var controller = new HomeController();
+        var controller = CreateController();
 
         // Act
         var result = controller.Index2();
@@ -38,7 +52,7 @@ public class HomeControllerTests
     public void Index3_ReturnsViewResult()
     {
         // Arrange
-        var controller = new HomeController();
+        var controller = CreateController();
 
         // Act
         var result = controller.Index3();
@@ -52,7 +66,7 @@ public class HomeControllerTests
     public void Index4_ReturnsViewResult()
     {
         // Arrange
-        var controller = new HomeController();
+        var controller = CreateController();
 
         // Act
         var result = controller.Index4();
@@ -66,7 +80,7 @@ public class HomeControllerTests
     public void Index5_ReturnsViewResult()
     {
         // Arrange
-        var controller = new HomeController();
+        var controller = CreateController();
 
         // Act
         var result = controller.Index5();
@@ -80,7 +94,7 @@ public class HomeControllerTests
     public void Index6_ReturnsViewResult()
     {
         // Arrange
-        var controller = new HomeController();
+        var controller = CreateController();
 
         // Act
         var result = controller.Index6();
@@ -94,7 +108,7 @@ public class HomeControllerTests
     public void Index7_ReturnsViewResult()
     {
         // Arrange
-        var controller = new HomeController();
+        var controller = CreateController();
 
         // Act
         var result = controller.Index7();
@@ -108,7 +122,7 @@ public class HomeControllerTests
     public void Index8_ReturnsViewResult()
     {
         // Arrange
-        var controller = new HomeController();
+        var controller = CreateController();
 
         // Act
         var result = controller.Index8();
@@ -122,7 +136,7 @@ public class HomeControllerTests
     public void Controller_CanBeInstantiated()
     {
         // Act
-        var controller = new HomeController();
+        var controller = CreateController();
 
         // Assert
         Assert.NotNull(controller);
@@ -137,14 +151,20 @@ public class HomeControllerTests
     [InlineData("Index6")]
     [InlineData("Index7")]
     [InlineData("Index8")]
-    public void AllIndexActions_ReturnViewResults(string actionName)
+    public async Task AllIndexActions_ReturnViewResults(string actionName)
     {
         // Arrange
-        var controller = new HomeController();
+        var controller = CreateController();
         var method = controller.GetType().GetMethod(actionName);
 
         // Act
         var result = method?.Invoke(controller, null);
+
+        // Unwrap async results
+        if (result is Task<IActionResult> taskResult)
+        {
+            result = await taskResult;
+        }
 
         // Assert
         Assert.NotNull(result);
