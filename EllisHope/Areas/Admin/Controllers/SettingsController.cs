@@ -28,7 +28,8 @@ public class SettingsController : Controller
         {
             Enabled = await _settingsService.IsGivebutterEnabledAsync(),
             AccountId = await _settingsService.GetGivebutterAccountIdAsync(),
-            DefaultCampaignUrl = await _settingsService.GetDefaultDonationUrlAsync()
+            DefaultCampaignUrl = await _settingsService.GetDefaultDonationUrlAsync(),
+            DefaultWidgetId = await _settingsService.GetDefaultWidgetIdAsync()
         };
 
         return View(model);
@@ -51,6 +52,8 @@ public class SettingsController : Controller
             model.AccountId, "Givebutter account ID");
         await _settingsService.SetSettingAsync("Givebutter.DefaultCampaignUrl",
             model.DefaultCampaignUrl, "Default donation campaign URL");
+        await _settingsService.SetSettingAsync("Givebutter.DefaultWidgetId",
+            model.DefaultWidgetId, "Givebutter widget ID for donation overlay");
 
         _logger.LogInformation("Givebutter settings updated by {User}", User.Identity?.Name);
         TempData["SuccessMessage"] = "Donation settings saved successfully!";

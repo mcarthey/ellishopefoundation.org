@@ -55,8 +55,18 @@
                                placeholder="https://givebutter.com/YourCampaign" />
                         <span asp-validation-for="DefaultCampaignUrl" class="text-danger"></span>
                         <small class="form-text text-muted">
-                            Used for general Donate buttons (header, footer, homepage).
+                            Fallback URL when the widget overlay is unavailable.
                             Per-cause donation URLs are managed in each cause's edit page.
+                        </small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="DefaultWidgetId" class="form-label"></label>
+                        <input asp-for="DefaultWidgetId" class="form-control" placeholder="e.g. gO8l4p" />
+                        <span asp-validation-for="DefaultWidgetId" class="text-danger"></span>
+                        <small class="form-text text-muted">
+                            Widget ID from your Givebutter dashboard (Settings &rarr; Widgets &rarr; create a Donation button widget).
+                            This enables the donation overlay popup on Donate buttons.
                         </small>
                     </div>
 

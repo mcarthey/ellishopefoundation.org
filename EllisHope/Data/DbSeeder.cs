@@ -247,7 +247,8 @@ public static class DbSeeder
         {
             ("Givebutter.Enabled", "true", "Enable Givebutter donation widget"),
             ("Givebutter.AccountId", "hT6RjF97wDnuVW83", "Givebutter account ID"),
-            ("Givebutter.DefaultCampaignUrl", "https://givebutter.com/QMBsZm", "Default donation campaign URL")
+            ("Givebutter.DefaultCampaignUrl", "https://givebutter.com/QMBsZm", "Default donation campaign URL"),
+            ("Givebutter.DefaultWidgetId", "gO8l4p", "Givebutter widget ID for donation overlay")
         };
 
         foreach (var (key, value, description) in givebutterDefaults)
