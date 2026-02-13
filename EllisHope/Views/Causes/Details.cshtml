@@ -1,7 +1,9 @@
 ﻿@model EllisHope.Models.Domain.Cause
+@inject EllisHope.Services.ISiteSettingsService SiteSettings
 @{
     ViewBag.Title = Model?.Title ?? "Cause Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var defaultDonateUrl = await SiteSettings.GetDefaultDonationUrlAsync() ?? "/contact";
     var similarCauses = ViewBag.SimilarCauses as IEnumerable<EllisHope.Models.Domain.Cause> ?? Enumerable.Empty<EllisHope.Models.Domain.Cause>();
     var featuredCauses = ViewBag.FeaturedCauses as IEnumerable<EllisHope.Models.Domain.Cause> ?? Enumerable.Empty<EllisHope.Models.Domain.Cause>();
 }
@@ -113,7 +115,7 @@
                         }
                         else
                         {
-                            <a href="/contact" class="donation-btn">Contact Us</a>
+                            <a href="@defaultDonateUrl" target="_blank" class="donation-btn">Donate Now</a>
                         }
                     </div>
                 </li>

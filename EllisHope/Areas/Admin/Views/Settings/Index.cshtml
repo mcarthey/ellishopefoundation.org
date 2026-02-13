@@ -1,0 +1,86 @@
+@model EllisHope.Areas.Admin.Models.GivebutterSettingsViewModel
+@{
+    ViewData["Title"] = "Donation Settings";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2><i class="bi bi-gear"></i> Donation Settings</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-credit-card"></i> Givebutter Configuration</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Index" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3 form-check form-switch">
+                        <input asp-for="Enabled" class="form-check-input" type="checkbox" />
+                        <label asp-for="Enabled" class="form-check-label"></label>
+                        <small class="form-text text-muted d-block">
+                            When enabled, the Givebutter widget script loads on all public pages
+                            and Donate buttons link to the campaign URL below.
+                        </small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="AccountId" class="form-label"></label>
+                        <input asp-for="AccountId" class="form-control" placeholder="e.g. hT6RjF97wDnuVW83" />
+                        <span asp-validation-for="AccountId" class="text-danger"></span>
+                        <small class="form-text text-muted">
+                            Found in your Givebutter embed code (the <code>acct=</code> parameter).
+                        </small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="DefaultCampaignUrl" class="form-label"></label>
+                        <input asp-for="DefaultCampaignUrl" class="form-control" type="url"
+                               placeholder="https://givebutter.com/YourCampaign" />
+                        <span asp-validation-for="DefaultCampaignUrl" class="text-danger"></span>
+                        <small class="form-text text-muted">
+                            Used for general Donate buttons (header, footer, homepage).
+                            Per-cause donation URLs are managed in each cause's edit page.
+                        </small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Save Settings
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-info-circle"></i> How It Works</h5>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li class="mb-2"><strong>General Donate buttons</strong> (header, footer, home page) link to the Default Campaign URL.</li>
+                    <li class="mb-2"><strong>Per-cause Donate buttons</strong> use the Donation URL set on each cause's edit page.</li>
+                    <li class="mb-2">If a cause has no Donation URL, its donate button falls back to the Default Campaign URL.</li>
+                    <li>The Givebutter widget script loads globally when enabled, providing enhanced donation features.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

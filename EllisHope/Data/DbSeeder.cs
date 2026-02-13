@@ -241,5 +241,33 @@ public static class DbSeeder
             await context.SaveChangesAsync();
             Console.WriteLine("Default testimonials created.");
         }
+
+        // Seed default Givebutter/donation settings
+        var givebutterDefaults = new (string Key, string Value, string Description)[]
+        {
+            ("Givebutter.Enabled", "true", "Enable Givebutter donation widget"),
+            ("Givebutter.AccountId", "hT6RjF97wDnuVW83", "Givebutter account ID"),
+            ("Givebutter.DefaultCampaignUrl", "https://givebutter.com/QMBsZm", "Default donation campaign URL")
+        };
+
+        foreach (var (key, value, description) in givebutterDefaults)
+        {
+            if (!context.SiteSettings.Any(s => s.Key == key))
+            {
+                context.SiteSettings.Add(new SiteSetting
+                {
+                    Key = key,
+                    Value = value,
+                    Description = description,
+                    UpdatedDate = DateTime.UtcNow
+                });
+            }
+        }
+
+        if (context.ChangeTracker.HasChanges())
+        {
+            await context.SaveChangesAsync();
+            Console.WriteLine("Default site settings seeded.");
+        }
     }
 }

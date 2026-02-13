@@ -41,6 +41,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Subscriber> Subscribers { get; set; }
     public DbSet<Newsletter> Newsletters { get; set; }
 
+    // Site configuration
+    public DbSet<SiteSetting> SiteSettings { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -431,6 +434,13 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
         builder.Entity<Testimonial>()
             .HasIndex(t => t.RequiresApproval);
+
+        #endregion
+
+        #region SiteSetting Configuration
+
+        builder.Entity<SiteSetting>()
+            .HasKey(s => s.Key);
 
         #endregion
     }

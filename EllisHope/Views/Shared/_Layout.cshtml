@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+@inject EllisHope.Services.ISiteSettingsService SiteSettings
+@{
+    var givebutterEnabled = await SiteSettings.IsGivebutterEnabledAsync();
+    var givebutterAccountId = await SiteSettings.GetGivebutterAccountIdAsync();
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -112,6 +117,10 @@
             });
         });
     </script>
+    @if (givebutterEnabled && !string.IsNullOrEmpty(givebutterAccountId))
+    {
+        <script async src="https://widgets.givebutter.com/latest.umd.cjs?acct=@givebutterAccountId&p=other"></script>
+    }
     @RenderSection("scripts", false)
 </body>
 </html>

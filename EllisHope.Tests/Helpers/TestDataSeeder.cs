@@ -55,9 +55,20 @@ public class TestDataSeeder : IDisposable
             _createdEntities.AddRange(imageSizes);
         }
 
+        // Seed default site settings (Givebutter etc.)
+        if (!_context.SiteSettings.Any())
+        {
+            _context.SiteSettings.AddRange(
+                new SiteSetting { Key = "Givebutter.Enabled", Value = "true", Description = "Enable Givebutter widget" },
+                new SiteSetting { Key = "Givebutter.AccountId", Value = "testaccount", Description = "Test account ID" },
+                new SiteSetting { Key = "Givebutter.DefaultCampaignUrl", Value = "https://givebutter.com/test", Description = "Test campaign URL" }
+            );
+            await _context.SaveChangesAsync();
+        }
+
         // Seed Default Pages (Member Dashboard needs pages)
         await SeedDefaultPagesAsync();
-        
+
         // Seed content that Member Portal views expect
         await SeedMemberPortalContentAsync();
     }

@@ -1,6 +1,8 @@
 ﻿@inject IConfiguration Configuration
+@inject EllisHope.Services.ISiteSettingsService SiteSettings
 @{
     var foundation = Configuration.GetSection("Foundation");
+    var defaultDonateUrl = await SiteSettings.GetDefaultDonationUrlAsync() ?? "/contact";
 
     // Email obfuscation - split into parts for bot protection
     var foundationEmail = foundation["Email"] ?? "";
@@ -59,7 +61,7 @@
                 <div class="footer-widget mb-30">
                     <h4 class="widget-title">Get Involved</h4>
                     <ul>
-                        <li><a href="/contact">Donate</a></li>
+                        <li><a href="@defaultDonateUrl" target="_blank">Donate</a></li>
                         <li><a href="/events">Events</a></li>
                         <li><a href="/team">Volunteer</a></li>
                     </ul>
