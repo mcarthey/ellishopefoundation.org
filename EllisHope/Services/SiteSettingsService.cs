@@ -79,4 +79,14 @@ public class SiteSettingsService : ISiteSettingsService
     {
         return await GetSettingAsync("Givebutter.DefaultCampaignUrl");
     }
+
+    public async Task<string?> GetDefaultCampaignSlugAsync()
+    {
+        var url = await GetDefaultDonationUrlAsync();
+        if (string.IsNullOrEmpty(url)) return null;
+
+        // Extract slug from URL like "https://givebutter.com/QMBsZm" → "QMBsZm"
+        var uri = Uri.TryCreate(url, UriKind.Absolute, out var parsed) ? parsed : null;
+        return uri?.AbsolutePath.TrimStart('/').Split('/').FirstOrDefault();
+    }
 }
