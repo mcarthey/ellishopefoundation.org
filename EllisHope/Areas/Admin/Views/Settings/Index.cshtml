@@ -61,11 +61,11 @@
                     </div>
 
                     <div class="mb-3">
-                        <label asp-for="DefaultWidgetId" class="form-label"></label>
-                        <input asp-for="DefaultWidgetId" class="form-control" placeholder="e.g. gO8l4p" />
-                        <span asp-validation-for="DefaultWidgetId" class="text-danger"></span>
+                        <label asp-for="CampaignCode" class="form-label"></label>
+                        <input asp-for="CampaignCode" class="form-control" placeholder="e.g. QMBsZm" />
+                        <span asp-validation-for="CampaignCode" class="text-danger"></span>
                         <small class="form-text text-muted">
-                            Widget ID from your Givebutter dashboard (Settings &rarr; Widgets &rarr; create a Donation button widget).
+                            The campaign code from your Givebutter campaign URL (e.g. givebutter.com/<strong>QMBsZm</strong>).
                             This enables the donation overlay popup on Donate buttons.
                         </small>
                     </div>
@@ -88,7 +88,7 @@
                     <li class="mb-2"><strong>General Donate buttons</strong> (header, footer, home page) link to the Default Campaign URL.</li>
                     <li class="mb-2"><strong>Per-cause Donate buttons</strong> use the Donation URL set on each cause's edit page.</li>
                     <li class="mb-2">If a cause has no Donation URL, its donate button falls back to the Default Campaign URL.</li>
-                    <li>The Givebutter widget script loads globally when enabled, providing enhanced donation features.</li>
+                    <li>When the Campaign Code is set, clicking Donate opens a donation overlay. The Campaign URL is used as a fallback link.</li>
                 </ul>
             </div>
         </div>

@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     var defaultDonateUrl = await SiteSettings.GetDefaultDonationUrlAsync() ?? "/contact";
     var givebutterAccountId = await SiteSettings.GetGivebutterAccountIdAsync();
-    var givebutterWidgetId = await SiteSettings.GetDefaultWidgetIdAsync();
+    var givebutterCampaignCode = await SiteSettings.GetCampaignCodeAsync();
     var similarCauses = ViewBag.SimilarCauses as IEnumerable<EllisHope.Models.Domain.Cause> ?? Enumerable.Empty<EllisHope.Models.Domain.Cause>();
     var featuredCauses = ViewBag.FeaturedCauses as IEnumerable<EllisHope.Models.Domain.Cause> ?? Enumerable.Empty<EllisHope.Models.Domain.Cause>();
 }
@@ -118,7 +118,7 @@
                         else
                         {
                             <a href="@defaultDonateUrl" target="_blank" class="donation-btn"
-                               data-gb-account="@givebutterAccountId" data-gb-campaign="@givebutterWidgetId">Donate Now</a>
+                               data-gb-account="@givebutterAccountId" data-gb-campaign="@givebutterCampaignCode">Donate Now</a>
                         }
                     </div>
                 </li>

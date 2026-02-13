@@ -10,5 +10,5 @@ public interface ISiteSettingsService
     Task<bool> IsGivebutterEnabledAsync();
     Task<string?> GetGivebutterAccountIdAsync();
     Task<string?> GetDefaultDonationUrlAsync();
-    Task<string?> GetDefaultWidgetIdAsync();
+    Task<string?> GetCampaignCodeAsync();
 }

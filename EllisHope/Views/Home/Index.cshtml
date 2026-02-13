@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     var defaultDonateUrl = await SiteSettings.GetDefaultDonationUrlAsync() ?? "/contact";
     var givebutterAccountId = await SiteSettings.GetGivebutterAccountIdAsync();
-    var givebutterWidgetId = await SiteSettings.GetDefaultWidgetIdAsync();
+    var givebutterCampaignCode = await SiteSettings.GetCampaignCodeAsync();
 }
 
 <main>
@@ -18,7 +18,7 @@
                         <h1 class="main-title">@Content.Text("Home", "HeroTitle")</h1>
                         <p class="description">@Content.Text("Home", "HeroSubtitle")</p>
                         <a href="@defaultDonateUrl" target="_blank" class="ht-btn style-2"
-                                           data-gb-account="@givebutterAccountId" data-gb-campaign="@givebutterWidgetId">Donate Today</a>
+                           data-gb-account="@givebutterAccountId" data-gb-campaign="@givebutterCampaignCode">Donate Today</a>
                     </div>
                 </div>
                 <div class="col-lg-6">
@@ -69,7 +69,7 @@
                     <div class="right-content text-center">
                         <p class="text-white">Ready to help?</p>
                         <a href="@defaultDonateUrl" target="_blank" class="ht-btn style-2"
-                                           data-gb-account="@givebutterAccountId" data-gb-campaign="@givebutterWidgetId">Donate Today</a>
+                           data-gb-account="@givebutterAccountId" data-gb-campaign="@givebutterCampaignCode">Donate Today</a>
                     </div>
                 </div>
             </div>
@@ -135,7 +135,7 @@
                             </h3>
                             <p>Provide professional fitness training scholarships to individuals in need.</p>
                             <a href="@defaultDonateUrl" target="_blank" class="donation-btn"
-                                           data-gb-account="@givebutterAccountId" data-gb-campaign="@givebutterWidgetId">Donate Now</a>
+                               data-gb-account="@givebutterAccountId" data-gb-campaign="@givebutterCampaignCode">Donate Now</a>
                         </div>
                     </div>
                 </div>
@@ -150,7 +150,7 @@
                             </h3>
                             <p>Educational classes teaching healthy habits, nutrition, and fitness basics.</p>
                             <a href="@defaultDonateUrl" target="_blank" class="donation-btn"
-                                           data-gb-account="@givebutterAccountId" data-gb-campaign="@givebutterWidgetId">Donate Now</a>
+                               data-gb-account="@givebutterAccountId" data-gb-campaign="@givebutterCampaignCode">Donate Now</a>
                         </div>
                     </div>
                 </div>
@@ -165,7 +165,7 @@
                             </h3>
                             <p>Fun local events promoting teamwork, fitness, and mutual encouragement.</p>
                             <a href="@defaultDonateUrl" target="_blank" class="donation-btn"
-                                           data-gb-account="@givebutterAccountId" data-gb-campaign="@givebutterWidgetId">Donate Now</a>
+                               data-gb-account="@givebutterAccountId" data-gb-campaign="@givebutterCampaignCode">Donate Now</a>
                         </div>
                     </div>
                 </div>

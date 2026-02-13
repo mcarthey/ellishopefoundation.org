@@ -80,8 +80,8 @@ public class SiteSettingsService : ISiteSettingsService
         return await GetSettingAsync("Givebutter.DefaultCampaignUrl");
     }
 
-    public async Task<string?> GetDefaultWidgetIdAsync()
+    public async Task<string?> GetCampaignCodeAsync()
     {
-        return await GetSettingAsync("Givebutter.DefaultWidgetId");
+        return await GetSettingAsync("Givebutter.CampaignCode");
     }
 }

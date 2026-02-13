@@ -16,7 +16,7 @@ public class GivebutterSettingsViewModel
     [MaxLength(500)]
     public string? DefaultCampaignUrl { get; set; }
 
-    [Display(Name = "Default Widget ID")]
+    [Display(Name = "Campaign Code")]
     [MaxLength(100)]
-    public string? DefaultWidgetId { get; set; }
+    public string? CampaignCode { get; set; }
 }

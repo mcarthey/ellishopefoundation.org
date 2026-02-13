@@ -7,7 +7,7 @@
     var foundation = Configuration.GetSection("Foundation");
     var defaultDonateUrl = await SiteSettings.GetDefaultDonationUrlAsync() ?? "/contact";
     var givebutterAccountId = await SiteSettings.GetGivebutterAccountIdAsync();
-    var givebutterWidgetId = await SiteSettings.GetDefaultWidgetIdAsync();
+    var givebutterCampaignCode = await SiteSettings.GetCampaignCodeAsync();
     string? profilePictureUrl = null;
     if (User.Identity?.IsAuthenticated == true)
     {
@@ -86,7 +86,7 @@
                     <div class="right-nav d-flex align-items-center justify-content-end">
                         <div class="quote-btn d-lg-inline-block d-none">
                             <a href="@defaultDonateUrl" target="_blank" class="ht-btn bs-btn"
-                               data-gb-account="@givebutterAccountId" data-gb-campaign="@givebutterWidgetId">Donate Now</a>
+                               data-gb-account="@givebutterAccountId" data-gb-campaign="@givebutterCampaignCode">Donate Now</a>
                         </div>
                         
                         <!-- Account Menu -->

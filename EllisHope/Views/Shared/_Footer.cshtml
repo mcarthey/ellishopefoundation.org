@@ -4,7 +4,7 @@
     var foundation = Configuration.GetSection("Foundation");
     var defaultDonateUrl = await SiteSettings.GetDefaultDonationUrlAsync() ?? "/contact";
     var givebutterAccountId = await SiteSettings.GetGivebutterAccountIdAsync();
-    var givebutterWidgetId = await SiteSettings.GetDefaultWidgetIdAsync();
+    var givebutterCampaignCode = await SiteSettings.GetCampaignCodeAsync();
 
     // Email obfuscation - split into parts for bot protection
     var foundationEmail = foundation["Email"] ?? "";
@@ -64,7 +64,7 @@
                     <h4 class="widget-title">Get Involved</h4>
                     <ul>
                         <li><a href="@defaultDonateUrl" target="_blank"
-                               data-gb-account="@givebutterAccountId" data-gb-campaign="@givebutterWidgetId">Donate</a></li>
+                               data-gb-account="@givebutterAccountId" data-gb-campaign="@givebutterCampaignCode">Donate</a></li>
                         <li><a href="/events">Events</a></li>
                         <li><a href="/team">Volunteer</a></li>
                     </ul>

@@ -180,6 +180,27 @@ public class SiteSettingsServiceTests : IDisposable
         Assert.Null(result);
     }
 
+    [Fact]
+    public async Task GetCampaignCodeAsync_ReturnsValue()
+    {
+        _context.SiteSettings.Add(new SiteSetting
+        {
+            Key = "Givebutter.CampaignCode",
+            Value = "QMBsZm"
+        });
+        await _context.SaveChangesAsync();
+
+        var result = await _service.GetCampaignCodeAsync();
+        Assert.Equal("QMBsZm", result);
+    }
+
+    [Fact]
+    public async Task GetCampaignCodeAsync_ReturnsNull_WhenNotSet()
+    {
+        var result = await _service.GetCampaignCodeAsync();
+        Assert.Null(result);
+    }
+
     public void Dispose()
     {
         _context.Dispose();
