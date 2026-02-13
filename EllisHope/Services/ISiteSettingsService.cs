@@ -11,4 +11,5 @@ public interface ISiteSettingsService
     Task<string?> GetGivebutterAccountIdAsync();
     Task<string?> GetDefaultDonationUrlAsync();
     Task<string?> GetCampaignCodeAsync();
+    string? ExtractCampaignCode(string? givebutterUrl);
 }

@@ -4,7 +4,7 @@
     var foundation = Configuration.GetSection("Foundation");
     var defaultDonateUrl = await SiteSettings.GetDefaultDonationUrlAsync() ?? "/contact";
     var givebutterAccountId = await SiteSettings.GetGivebutterAccountIdAsync();
-    var givebutterCampaignCode = await SiteSettings.GetCampaignCodeAsync();
+    var givebutterCampaignCode = SiteSettings.ExtractCampaignCode(defaultDonateUrl);
 
     // Email obfuscation - split into parts for bot protection
     var foundationEmail = foundation["Email"] ?? "";

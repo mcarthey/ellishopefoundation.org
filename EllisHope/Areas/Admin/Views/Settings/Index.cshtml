@@ -55,18 +55,9 @@
                                placeholder="https://givebutter.com/YourCampaign" />
                         <span asp-validation-for="DefaultCampaignUrl" class="text-danger"></span>
                         <small class="form-text text-muted">
-                            Fallback URL when the widget overlay is unavailable.
+                            The Givebutter campaign URL used for general Donate buttons.
+                            The campaign code is extracted automatically to enable the donation overlay popup.
                             Per-cause donation URLs are managed in each cause's edit page.
-                        </small>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="CampaignCode" class="form-label"></label>
-                        <input asp-for="CampaignCode" class="form-control" placeholder="e.g. QMBsZm" />
-                        <span asp-validation-for="CampaignCode" class="text-danger"></span>
-                        <small class="form-text text-muted">
-                            The campaign code from your Givebutter campaign URL (e.g. givebutter.com/<strong>QMBsZm</strong>).
-                            This enables the donation overlay popup on Donate buttons.
                         </small>
                     </div>
 
@@ -85,10 +76,10 @@
             </div>
             <div class="card-body">
                 <ul class="mb-0">
-                    <li class="mb-2"><strong>General Donate buttons</strong> (header, footer, home page) link to the Default Campaign URL.</li>
+                    <li class="mb-2"><strong>General Donate buttons</strong> (header, footer, home page) use the Default Campaign URL above.</li>
                     <li class="mb-2"><strong>Per-cause Donate buttons</strong> use the Donation URL set on each cause's edit page.</li>
                     <li class="mb-2">If a cause has no Donation URL, its donate button falls back to the Default Campaign URL.</li>
-                    <li>When the Campaign Code is set, clicking Donate opens a donation overlay. The Campaign URL is used as a fallback link.</li>
+                    <li>Any Givebutter URL (default or per-cause) automatically opens a donation overlay popup. The URL is used as a fallback link.</li>
                 </ul>
             </div>
         </div>

@@ -61,8 +61,7 @@ public class TestDataSeeder : IDisposable
             _context.SiteSettings.AddRange(
                 new SiteSetting { Key = "Givebutter.Enabled", Value = "true", Description = "Enable Givebutter widget" },
                 new SiteSetting { Key = "Givebutter.AccountId", Value = "testaccount", Description = "Test account ID" },
-                new SiteSetting { Key = "Givebutter.DefaultCampaignUrl", Value = "https://givebutter.com/test", Description = "Test campaign URL" },
-                new SiteSetting { Key = "Givebutter.CampaignCode", Value = "test", Description = "Test campaign code" }
+                new SiteSetting { Key = "Givebutter.DefaultCampaignUrl", Value = "https://givebutter.com/test", Description = "Test campaign URL" }
             );
             await _context.SaveChangesAsync();
         }

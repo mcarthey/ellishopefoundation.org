@@ -181,12 +181,12 @@ public class SiteSettingsServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task GetCampaignCodeAsync_ReturnsValue()
+    public async Task GetCampaignCodeAsync_DerivesCampaignCodeFromUrl()
     {
         _context.SiteSettings.Add(new SiteSetting
         {
-            Key = "Givebutter.CampaignCode",
-            Value = "QMBsZm"
+            Key = "Givebutter.DefaultCampaignUrl",
+            Value = "https://givebutter.com/QMBsZm"
         });
         await _context.SaveChangesAsync();
 
@@ -195,10 +195,25 @@ public class SiteSettingsServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task GetCampaignCodeAsync_ReturnsNull_WhenNotSet()
+    public async Task GetCampaignCodeAsync_ReturnsNull_WhenUrlNotSet()
     {
         var result = await _service.GetCampaignCodeAsync();
         Assert.Null(result);
+    }
+
+    [Theory]
+    [InlineData("https://givebutter.com/QMBsZm", "QMBsZm")]
+    [InlineData("https://givebutter.com/MyCampaign", "MyCampaign")]
+    [InlineData("https://givebutter.com/QMBsZm/", "QMBsZm")]
+    [InlineData("https://www.givebutter.com/ABC123", "ABC123")]
+    [InlineData("https://example.com/notgivebutter", null)]
+    [InlineData("https://givebutter.com/", null)]
+    [InlineData("", null)]
+    [InlineData(null, null)]
+    public void ExtractCampaignCode_ExtractsCodeFromGivebutterUrls(string? url, string? expected)
+    {
+        var result = _service.ExtractCampaignCode(url);
+        Assert.Equal(expected, result);
     }
 
     public void Dispose()

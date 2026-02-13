@@ -15,8 +15,4 @@ public class GivebutterSettingsViewModel
     [Url(ErrorMessage = "Please enter a valid URL")]
     [MaxLength(500)]
     public string? DefaultCampaignUrl { get; set; }
-
-    [Display(Name = "Campaign Code")]
-    [MaxLength(100)]
-    public string? CampaignCode { get; set; }
 }

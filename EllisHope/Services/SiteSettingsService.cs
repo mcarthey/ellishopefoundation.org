@@ -82,6 +82,22 @@ public class SiteSettingsService : ISiteSettingsService
 
     public async Task<string?> GetCampaignCodeAsync()
     {
-        return await GetSettingAsync("Givebutter.CampaignCode");
+        var url = await GetDefaultDonationUrlAsync();
+        return ExtractCampaignCode(url);
+    }
+
+    public string? ExtractCampaignCode(string? givebutterUrl)
+    {
+        if (string.IsNullOrWhiteSpace(givebutterUrl))
+            return null;
+
+        if (Uri.TryCreate(givebutterUrl, UriKind.Absolute, out var uri)
+            && uri.Host.EndsWith("givebutter.com", StringComparison.OrdinalIgnoreCase))
+        {
+            var code = uri.AbsolutePath.TrimEnd('/').Split('/').LastOrDefault();
+            return string.IsNullOrEmpty(code) ? null : code;
+        }
+
+        return null;
     }
 }
